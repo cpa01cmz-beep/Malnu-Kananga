@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { MessageList } from './MessageList';
 import { MessageThread } from './MessageThread';
 import { MessageInput } from './MessageInput';
@@ -31,11 +31,76 @@ export function GroupChat({ currentUser }: GroupChatProps) {
   const [selectedSubject, setSelectedSubject] = useState<string>();
   const [creatingGroup, setCreatingGroup] = useState(false);
 
+  const loadClasses = useCallback(async () => {
+    try {
+      const response = await apiService.classes.getAll();
+      if (response.success && response.data) {
+        setClasses(response.data);
+      }
+    } catch (err) {
+      logger.error('Failed to load classes:', err);
+    }
+  }, []);
+
+  const loadSubjects = useCallback(async () => {
+    try {
+      const response = await apiService.subjects.getAll();
+      if (response.success && response.data) {
+        setSubjects(response.data);
+      }
+    } catch (err) {
+      logger.error('Failed to load subjects:', err);
+    }
+  }, []);
+
+  const loadAvailableUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.users.getAll();
+      if (response.success && response.data) {
+        const otherUsers = response.data.filter(u => u.id !== currentUser.id);
+        setAvailableUsers(otherUsers);
+      }
+    } catch (err) {
+      logger.error('Failed to load users:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [currentUser.id]);
+
+  const loadSubjectParticipants = useCallback(async (_subjectId: string) => {
+    try {
+      const response = await apiService.students.getAll();
+      if (response.success && response.data) {
+        const studentsInClass = response.data.filter(s => s.class === selectedClass);
+        const participantIds = studentsInClass.map(s => s.userId);
+        setSelectedParticipants(participantIds);
+      }
+    } catch (err) {
+      logger.error('Failed to load subject participants:', err);
+    }
+  }, [selectedClass]);
+
+  const loadClassParticipants = useCallback(async (classId: string) => {
+    try {
+      const response = await apiService.students.getAll();
+      if (response.success && response.data) {
+        const classStudents = response.data.filter(s => s.class === classId);
+        const participantIds = classStudents.map(s => s.userId);
+        setSelectedParticipants(participantIds);
+      }
+    } catch (err) {
+      logger.error('Failed to load class participants:', err);
+    } finally {
+      setCreatingGroup(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadClasses();
     loadSubjects();
     loadAvailableUsers();
-  }, []);
+  }, [loadClasses, loadSubjects, loadAvailableUsers]);
 
   useEffect(() => {
     if (groupType === 'class' && selectedClass) {
@@ -48,43 +113,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
       setGroupName(subject?.name || '');
       setGroupDescription(`Grup diskusi untuk mata pelajaran ${subject?.name}`);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupType, selectedClass, selectedSubject]);
-
-  const loadClasses = async () => {
-    try {
-      const response = await apiService.classes.getAll();
-      if (response.success && response.data) {
-        setClasses(response.data);
-      }
-    } catch (err) {
-      logger.error('Failed to load classes:', err);
-    }
-  };
-
-  const loadSubjects = async () => {
-    try {
-      const response = await apiService.subjects.getAll();
-      if (response.success && response.data) {
-        setSubjects(response.data);
-      }
-    } catch (err) {
-      logger.error('Failed to load subjects:', err);
-    }
-  };
-
-  const loadSubjectParticipants = async (_subjectId: string) => {
-    try {
-      const response = await apiService.students.getAll();
-      if (response.success && response.data) {
-        const studentsInClass = response.data.filter(s => s.class === selectedClass);
-        const participantIds = studentsInClass.map(s => s.userId);
-        setSelectedParticipants(participantIds);
-      }
-    } catch (err) {
-      logger.error('Failed to load subject participants:', err);
-    }
-  };
+  }, [groupType, selectedClass, selectedSubject, subjects, loadSubjectParticipants, loadClassParticipants]);
 
   const handleConversationSelect = (conversationId: string) => {
     setSelectedConversationId(conversationId);
@@ -110,36 +139,6 @@ export function GroupChat({ currentUser }: GroupChatProps) {
       }
     } catch (err) {
       logger.error('Failed to create group:', err);
-    } finally {
-      setCreatingGroup(false);
-    }
-  };
-
-  const loadAvailableUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await apiService.users.getAll();
-      if (response.success && response.data) {
-        const otherUsers = response.data.filter(u => u.id !== currentUser.id);
-        setAvailableUsers(otherUsers);
-      }
-    } catch (err) {
-      logger.error('Failed to load users:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadClassParticipants = async (classId: string) => {
-    try {
-      const response = await apiService.students.getAll();
-      if (response.success && response.data) {
-        const classStudents = response.data.filter(s => s.class === classId);
-        const participantIds = classStudents.map(s => s.userId);
-        setSelectedParticipants(participantIds);
-      }
-    } catch (err) {
-      logger.error('Failed to remove participant:', err);
     } finally {
       setCreatingGroup(false);
     }

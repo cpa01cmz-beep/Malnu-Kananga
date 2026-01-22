@@ -1,6 +1,6 @@
 # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-22 (Voice Input Integration Tests Completed - GAP-104)
+**Last Updated**: 2026-01-22 (Error Message Migration Phase 1 - GAP-107-2 Phase 1 Complete)
 
 ## Architecture Overview
 
@@ -269,7 +269,16 @@
   - Add new questions manually
 
 ##### Dashboard Components
-- **`AdminDashboard.tsx`** - Admin dashboard with management cards
+ - **`AdminDashboard.tsx`** - Admin dashboard with management cards (enhanced 2026-01-22, GAP-110)
+   - Enhanced error handling with automatic retry using exponential backoff
+   - Added sync status indicator with states (idle/syncing/synced/failed)
+   - Integrated offline action queue visibility (pending/failed action counts)
+   - Implemented manual sync controls with disabled state when offline/syncing
+   - Error categorization: Error state includes type (ErrorType) and message for better user guidance
+   - Graceful degradation: Fallback to cached data on API failures with proper error messages
+   - Data freshness indicator: Last sync timestamp display
+   - Sync controls section added to dashboard header with visual status and action queue badge
+   - Quality: Typecheck PASSING, Lint PASSING
 
 ##### Admin Components
 - **`SystemStats.tsx`** - System statistics and monitoring
@@ -476,6 +485,7 @@
   - **OCR results display** (extracted grades, confidence, quality metrics)
   - **Re-run OCR capability** for any document
   - Statistics dashboard
+  - **Centralized error messages** (migrated 2026-01-22, using VALIDATION_MESSAGES, SUCCESS_MESSAGES, API_ERROR_MESSAGES, FILE_ERROR_MESSAGES)
 
 #### Assignments & Grading
 - **Current Implementation**: Full assignment lifecycle model (enhanced 2026-01-19)

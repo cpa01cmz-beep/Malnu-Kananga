@@ -1,5 +1,6 @@
 import { logger } from './logger';
 import { ADMIN_EMAIL } from '../constants';
+import { ERROR_MESSAGES as CENTRALIZED_ERROR_MESSAGES } from './errorMessages';
 
 export enum ErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
@@ -60,25 +61,10 @@ export class GeminiAPIError extends AppError {
   }
 }
 
-const ERROR_MESSAGES: Record<ErrorType, string> = {
-  [ErrorType.NETWORK_ERROR]: 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.',
-  [ErrorType.TIMEOUT_ERROR]: 'Waktu habis saat memproses permintaan. Silakan coba lagi.',
-  [ErrorType.RATE_LIMIT_ERROR]: 'Terlalu banyak permintaan. Silakan tunggu sebentar sebelum mencoba lagi.',
-  [ErrorType.API_KEY_ERROR]: 'Konfigurasi API tidak valid. Hubungi administrator.',
-  [ErrorType.QUOTA_EXCEEDED_ERROR]: 'Kuota API telah habis. Silakan coba lagi nanti.',
-  [ErrorType.CONTENT_FILTER_ERROR]: 'Permintaan Anda tidak dapat diproses karena kebijakan konten.',
-  [ErrorType.SERVER_ERROR]: 'Server sedang mengalami gangguan. Silakan coba sesaat lagi.',
-  [ErrorType.UNKNOWN_ERROR]: 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.',
-  [ErrorType.OCR_ERROR]: 'Gagal memproses dokumen. Silakan pastikan gambar jelas dan coba lagi.',
-  [ErrorType.NOTIFICATION_ERROR]: 'Tidak dapat mengirim notifikasi. Periksa pengaturan perangkat Anda.',
-  [ErrorType.VALIDATION_ERROR]: 'Data yang dimasukkan tidak valid. Silakan periksa kembali.',
-  [ErrorType.PERMISSION_ERROR]: 'Anda tidak memiliki izin untuk melakukan tindakan ini.',
-  [ErrorType.OFFLINE_ERROR]: 'Tidak dapat melakukan operasi saat offline. Data akan disinkronkan saat online.',
-  [ErrorType.CONFLICT_ERROR]: 'Data telah diubah oleh pengguna lain. Silakan refresh dan coba lagi.'
-};
+// ERROR_MESSAGES imported from errorMessages.ts - centralized error message constants
 
 export function getUserFriendlyMessage(error: AppError): string {
-  return ERROR_MESSAGES[error.type] || ERROR_MESSAGES[ErrorType.UNKNOWN_ERROR];
+  return CENTRALIZED_ERROR_MESSAGES[error.type] || CENTRALIZED_ERROR_MESSAGES.UNKNOWN_ERROR;
 }
 
 export function classifyError(error: unknown, context: ErrorContext): AppError {
@@ -89,7 +75,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
   // Handle null/undefined errors
   if (error === null || error === undefined) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.UNKNOWN_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.UNKNOWN_ERROR,
       ErrorType.UNKNOWN_ERROR,
       context,
       true,
@@ -101,7 +87,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (!navigator.onLine) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.NETWORK_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.NETWORK_ERROR,
       ErrorType.NETWORK_ERROR,
       context,
       true,
@@ -113,7 +99,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('timeout') || errorMessage.includes('time out') || errorMessage.includes('timed')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.TIMEOUT_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.TIMEOUT_ERROR,
       ErrorType.TIMEOUT_ERROR,
       context,
       true,
@@ -123,7 +109,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.RATE_LIMIT_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.RATE_LIMIT_ERROR,
       ErrorType.RATE_LIMIT_ERROR,
       context,
       true,
@@ -133,7 +119,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('api key') || errorMessage.includes('unauthorized') || errorMessage.includes('401') || errorMessage.includes('403')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.API_KEY_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.API_KEY_ERROR,
       ErrorType.API_KEY_ERROR,
       context,
       false,
@@ -143,7 +129,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('quota') || errorMessage.includes('exceeded')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.QUOTA_EXCEEDED_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.QUOTA_EXCEEDED_ERROR,
       ErrorType.QUOTA_EXCEEDED_ERROR,
       context,
       false,
@@ -153,7 +139,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('content filter') || errorMessage.includes('safety')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.CONTENT_FILTER_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.CONTENT_FILTER_ERROR,
       ErrorType.CONTENT_FILTER_ERROR,
       context,
       false,
@@ -163,7 +149,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.NETWORK_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.NETWORK_ERROR,
       ErrorType.NETWORK_ERROR,
       context,
       true,
@@ -173,7 +159,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('ocr') || errorMessage.includes('tesseract') || errorMessage.includes('gambar') || errorMessage.includes('dokumen')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.OCR_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.OCR_ERROR,
       ErrorType.OCR_ERROR,
       context,
       true,
@@ -183,7 +169,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('notification') || errorMessage.includes('push') || errorMessage.includes('permission')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.NOTIFICATION_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.NOTIFICATION_ERROR,
       ErrorType.NOTIFICATION_ERROR,
       context,
       true,
@@ -193,7 +179,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('validasi') || errorMessage.includes('validation') || errorMessage.includes('invalid')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.VALIDATION_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.VALIDATION_ERROR,
       ErrorType.VALIDATION_ERROR,
       context,
       false,
@@ -203,7 +189,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('permission') || errorMessage.includes('izin')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.PERMISSION_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.PERMISSION_ERROR,
       ErrorType.PERMISSION_ERROR,
       context,
       false,
@@ -213,7 +199,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
 
   if (errorMessage.includes('conflict') || errorMessage.includes('konflik') || errorMessage.includes('409')) {
     return new AppError(
-      ERROR_MESSAGES[ErrorType.CONFLICT_ERROR],
+      CENTRALIZED_ERROR_MESSAGES.CONFLICT_ERROR,
       ErrorType.CONFLICT_ERROR,
       context,
       true,
@@ -222,7 +208,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
   }
 
   return new AppError(
-    ERROR_MESSAGES[ErrorType.UNKNOWN_ERROR],
+    CENTRALIZED_ERROR_MESSAGES.UNKNOWN_ERROR,
     ErrorType.UNKNOWN_ERROR,
     context,
     true,
@@ -307,7 +293,7 @@ export async function retryWithBackoff<T>(
   }
 
   throw lastError || new AppError(
-    ERROR_MESSAGES[ErrorType.UNKNOWN_ERROR],
+    CENTRALIZED_ERROR_MESSAGES.UNKNOWN_ERROR,
     ErrorType.UNKNOWN_ERROR,
     { operation: operationName, timestamp: Date.now() },
     false
@@ -425,7 +411,7 @@ export function createError(
   isRetryable: boolean = true,
   originalError?: unknown
 ): AppError {
-  const message = userMessage || ERROR_MESSAGES[type];
+  const message = userMessage || CENTRALIZED_ERROR_MESSAGES[type];
   return new AppError(
     message,
     type,
@@ -465,9 +451,9 @@ export function createValidationError(operation: string, validationMessage?: str
 }
 
 export function createPermissionError(operation: string, permission?: string): AppError {
-  const message = permission 
+  const message = permission
     ? `Anda tidak memiliki izin ${permission} untuk melakukan tindakan ini.`
-    : ERROR_MESSAGES[ErrorType.PERMISSION_ERROR];
+    : CENTRALIZED_ERROR_MESSAGES[ErrorType.PERMISSION_ERROR];
   return createError(
     ErrorType.PERMISSION_ERROR,
     operation,

@@ -27,6 +27,14 @@ import { STORAGE_KEYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { VoiceLanguage } from '../types';
+import {
+  VALIDATION_MESSAGES,
+  SUCCESS_MESSAGES,
+  API_ERROR_MESSAGES,
+  ERROR_MESSAGES,
+  FILE_ERROR_MESSAGES,
+  USER_GUIDANCE,
+} from '../utils/errorMessages';
 
 interface PPDBRegistrationProps {
   isOpen: boolean;
@@ -71,36 +79,36 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
   // Validation rules for each field
   const validationRules = {
     fullName: [
-      standardValidationRules.required('Nama lengkap wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.FULL_NAME_REQUIRED),
       {
         validate: (value: string) => value.trim().length >= 3,
-        message: 'Nama lengkap minimal 3 karakter'
+        message: VALIDATION_MESSAGES.FULL_NAME_MIN_LENGTH
       },
       {
         validate: (value: string) => /^[a-zA-Z\s\-']+$/.test(value.trim()),
-        message: 'Nama hanya boleh berisi huruf, spasi, tanda hubung, dan tanda kutip'
+        message: VALIDATION_MESSAGES.FULL_NAME_INVALID_CHARS
       }
     ],
     nisn: [
-      standardValidationRules.required('NISN wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.NISN_REQUIRED),
       standardValidationRules.nisn()
     ],
     originSchool: [
-      standardValidationRules.required('Asal sekolah wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.ORIGIN_SCHOOL_REQUIRED),
       {
         validate: (value: string) => value.trim().length >= 5,
-        message: 'Nama sekolah minimal 5 karakter'
+        message: VALIDATION_MESSAGES.ORIGIN_SCHOOL_MIN_LENGTH
       }
     ],
     parentName: [
-      standardValidationRules.required('Nama orang tua/wali wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.PARENT_NAME_REQUIRED),
       {
         validate: (value: string) => value.trim().length >= 3,
-        message: 'Nama orang tua/wali minimal 3 karakter'
+        message: VALIDATION_MESSAGES.PARENT_NAME_MIN_LENGTH
       }
     ],
     phoneNumber: [
-      standardValidationRules.required('Nomor WhatsApp wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.PHONE_REQUIRED),
       standardValidationRules.phone(),
       {
         validate: (value: string) => {
@@ -111,17 +119,17 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
       }
     ],
     email: [
-      standardValidationRules.required('Email wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.EMAIL_REQUIRED),
       {
         validate: validateEducationalEmail,
-        message: 'Format email tidak valid. Contoh: nama@sekolah.sch.id'
+        message: VALIDATION_MESSAGES.EMAIL_INVALID
       }
     ],
     address: [
-      standardValidationRules.required('Alamat lengkap wajib diisi'),
+      standardValidationRules.required(VALIDATION_MESSAGES.ADDRESS_REQUIRED),
       {
         validate: (value: string) => value.trim().length >= 20,
-        message: 'Alamat lengkap minimal 20 karakter'
+        message: VALIDATION_MESSAGES.ADDRESS_MIN_LENGTH
       }
     ]
   };
@@ -144,7 +152,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
         }
       },
       onError: () => {
-        onShowToast('Gagal menyimpan draft. Pastikan koneksi aktif.', 'error');
+        onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
       }
     }
   );
@@ -359,14 +367,14 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
     let timeoutId: number;
     
     if (isProcessingOCR) {
-      timeoutId = window.setTimeout(() => {
-        if (isProcessingOCR) {
-          onShowToast('Waktu pemrosesan habis. Silakan coba lagi.', 'error');
-          setIsProcessingOCR(false);
-          setOcrProgress({ status: 'Idle', progress: 0 });
-        }
-      }, 60000); // 60 second timeout
-    }
+        timeoutId = window.setTimeout(() => {
+          if (isProcessingOCR) {
+            onShowToast(ERROR_MESSAGES.TIMEOUT_ERROR, 'error');
+            setIsProcessingOCR(false);
+            setOcrProgress({ status: 'Idle', progress: 0 });
+          }
+        }, 60000); // 60 second timeout
+      }
     
     return () => {
       if (timeoutId) window.clearTimeout(timeoutId);
@@ -393,12 +401,12 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     if (!file) return;
 
     if (!file.type.match('image.*')) {
-      onShowToast('Mohon upload file gambar (JPG/PNG)', 'error');
+      onShowToast(FILE_ERROR_MESSAGES.INVALID_FILE_TYPE('JPG/PNG'), 'error');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      onShowToast('Ukuran file maksimal 5MB', 'error');
+      onShowToast(FILE_ERROR_MESSAGES.FILE_TOO_LARGE('5MB'), 'error');
       return;
     }
 
@@ -438,7 +446,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       }
     } catch (error) {
       logger.error('OCR processing error:', error);
-      onShowToast('Gagal memproses gambar. Silakan coba lagi atau input manual.', 'error');
+      onShowToast(ERROR_MESSAGES.OCR_ERROR, 'error');
     } finally {
       setIsProcessingOCR(false);
     }
@@ -469,23 +477,23 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     const validationErrors: string[] = [];
     
     if (!autoSaveState.data.fullName || autoSaveState.data.fullName.trim().length < 3) {
-      validationErrors.push('Nama lengkap wajib diisi dan minimal 3 karakter');
+      validationErrors.push(VALIDATION_MESSAGES.FULL_NAME_REQUIRED);
     }
-    
+
     if (!autoSaveState.data.nisn || !/^\d{10}$/.test(autoSaveState.data.nisn.replace(/\D/g, ''))) {
-      validationErrors.push('NISN wajib diisi dan harus 10 digit angka');
+      validationErrors.push(VALIDATION_MESSAGES.NISN_INVALID);
     }
-    
+
     if (!autoSaveState.data.originSchool || autoSaveState.data.originSchool.trim().length < 5) {
-      validationErrors.push('Asal sekolah wajib diisi dan minimal 5 karakter');
+      validationErrors.push(VALIDATION_MESSAGES.ORIGIN_SCHOOL_REQUIRED);
     }
-    
+
     if (!autoSaveState.data.parentName || autoSaveState.data.parentName.trim().length < 3) {
-      validationErrors.push('Nama orang tua/wali wajib diisi dan minimal 3 karakter');
+      validationErrors.push(VALIDATION_MESSAGES.PARENT_NAME_REQUIRED);
     }
-    
+
     if (!autoSaveState.data.phoneNumber) {
-      validationErrors.push('Nomor WhatsApp wajib diisi');
+      validationErrors.push(VALIDATION_MESSAGES.PHONE_REQUIRED);
     } else {
       const cleanPhone = autoSaveState.data.phoneNumber.replace(/\D/g, '');
       if (cleanPhone.length < 10 || cleanPhone.length > 13) {
@@ -494,17 +502,17 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
         validationErrors.push('Nomor WhatsApp harus diawali dengan 08 atau 628');
       }
     }
-    
+
     if (!autoSaveState.data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(autoSaveState.data.email.trim())) {
-      validationErrors.push('Format email tidak valid');
+      validationErrors.push(VALIDATION_MESSAGES.EMAIL_INVALID);
     }
-    
+
     if (!autoSaveState.data.address || autoSaveState.data.address.trim().length < 20) {
-      validationErrors.push('Alamat lengkap wajib diisi dan minimal 20 karakter');
+      validationErrors.push(VALIDATION_MESSAGES.ADDRESS_REQUIRED);
     }
     
     if (validationErrors.length > 0) {
-      onShowToast('Mohon lengkapi data dengan benar sebelum mengirim.', 'error');
+      onShowToast(ERROR_MESSAGES.VALIDATION_ERROR, 'error');
       logger.info('PPDB validation errors:', validationErrors);
       setIsSubmittingFinal(false);
       return;
@@ -546,7 +554,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
         });
 
         setIsSubmittingFinal(false);
-        onShowToast('Pendaftaran akan dikirim saat koneksi tersedia.', 'info');
+        onShowToast(USER_GUIDANCE.OFFLINE_MODE, 'info');
         logger.info('PPDB registration queued for offline sync', { actionId, nisn: ppdbData.nisn });
         return;
       }
@@ -556,7 +564,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
 
       if (response.success) {
         setIsSubmittingFinal(false);
-        onShowToast('Pendaftaran berhasil! Data Anda sedang diverifikasi.', 'success');
+        onShowToast(SUCCESS_MESSAGES.PPDB_REGISTRATION_SUCCESS, 'success');
 
         // Notify admins about new PPDB registration using event notifications hook
         await notifyPPDBStatus(1);
@@ -589,13 +597,13 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
         });
 
         setIsSubmittingFinal(false);
-        onShowToast('Koneksi terputus. Pendaftaran akan dikirim saat online.', 'info');
+        onShowToast(USER_GUIDANCE.OFFLINE_MODE, 'info');
         logger.info('PPDB registration auto-queued after network failure', { actionId, error });
         return;
       }
 
       setIsSubmittingFinal(false);
-      onShowToast('Gagal mendaftar. Silakan coba lagi.', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
       logger.error('PPDB submission error:', error);
     }
   };

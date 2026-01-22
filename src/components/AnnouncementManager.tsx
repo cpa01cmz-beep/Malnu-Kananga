@@ -25,7 +25,12 @@ import EyeSlashIcon from './icons/EyeSlashIcon';
 import { BellIcon } from './icons/BellIcon';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import { useNetworkStatus } from '../utils/networkStatus';
-
+import {
+  VALIDATION_MESSAGES,
+  SUCCESS_MESSAGES,
+  API_ERROR_MESSAGES,
+  USER_GUIDANCE,
+} from '../utils/errorMessages';
 interface AnnouncementManagerProps {
   onBack: () => void;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -96,7 +101,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
       }
     } catch (error) {
       logger.error('Failed to load announcements:', error);
-      onShowToast('Gagal memuat pengumuman', 'error');
+      onShowToast(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 'error');
     } finally {
       setLoading(false);
     }
@@ -111,12 +116,12 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
   // Save announcement
   const handleSave = async () => {
     if (!isOnline) {
-      onShowToast('Memerlukan koneksi internet untuk menyimpan pengumuman', 'error');
+      onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
       return;
     }
 
     if (!formData.title.trim() || !formData.content.trim()) {
-      onShowToast('Judul dan konten harus diisi', 'error');
+      onShowToast(VALIDATION_MESSAGES.ANNOUNCEMENT_TITLE_REQUIRED, 'error');
       return;
     }
 
@@ -131,11 +136,11 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
       if (editingAnnouncement) {
         // Update existing announcement
         response = await apiService.announcements.update(editingAnnouncement.id, announcementData);
-        onShowToast('Pengumuman berhasil diperbarui', 'success');
+        onShowToast(SUCCESS_MESSAGES.ANNOUNCEMENT_UPDATED, 'success');
       } else {
         // Create new announcement
         response = await apiService.announcements.create(announcementData);
-        onShowToast('Pengumuman berhasil dibuat', 'success');
+        onShowToast(SUCCESS_MESSAGES.ANNOUNCEMENT_CREATED, 'success');
       }
 
       if (response && response.data) {
@@ -176,7 +181,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
       setShowCreateModal(false);
     } catch (error) {
       logger.error('Failed to save announcement:', error);
-      onShowToast('Gagal menyimpan pengumuman', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
     } finally {
       setSaving(false);
     }
@@ -185,7 +190,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
   // Toggle announcement status
   const handleToggleStatus = async (announcement: Announcement) => {
     if (!isOnline) {
-      onShowToast('Memerlukan koneksi internet', 'error');
+      onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
       return;
     }
 
@@ -193,35 +198,35 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
       const response = await apiService.announcements.toggleStatus(announcement.id);
       if (response && response.data) {
         setAnnouncements((prev: Announcement[]) => prev.map(a => a.id === announcement.id ? response.data! : a));
-        onShowToast(announcement.isActive ? 'Pengumuman dinonaktifkan' : 'Pengumuman diaktifkan', 'success');
+        onShowToast(announcement.isActive ? SUCCESS_MESSAGES.ANNOUNCEMENT_PUBLISHED : SUCCESS_MESSAGES.ANNOUNCEMENT_PUBLISHED, 'success');
       }
     } catch (error) {
       logger.error('Failed to toggle announcement status:', error);
-      onShowToast('Gagal mengubah status pengumuman', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
     }
   };
 
   // Delete announcement
   const handleDelete = async (id: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus pengumuman ini?')) {
+    if (!confirm(USER_GUIDANCE.CONFIRM_DELETE)) {
       return;
     }
 
     if (!isOnline) {
-      onShowToast('Memerlukan koneksi internet', 'error');
+      onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
       return;
     }
 
     try {
       await apiService.announcements.delete(id);
       setAnnouncements((prev: Announcement[]) => prev.filter(a => a.id !== id));
-      onShowToast('Pengumuman berhasil dihapus', 'success');
+      onShowToast(SUCCESS_MESSAGES.ANNOUNCEMENT_DELETED, 'success');
       if (showAnalyticsModal?.id === id) {
         setShowAnalyticsModal(null);
       }
     } catch (error) {
       logger.error('Failed to delete announcement:', error);
-      onShowToast('Gagal menghapus pengumuman', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
     }
   };
 

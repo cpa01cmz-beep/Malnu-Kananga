@@ -85,7 +85,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
     return null;
   }, [STUDENT_ID]);
 
-  const loadStudyPlanHistory = useCallback((): StudyPlanHistory[] => {
+  const _loadStudyPlanHistory = useCallback((): StudyPlanHistory[] => {
     if (!STUDENT_ID) return [];
     try {
       const historyData = localStorage.getItem(STORAGE_KEYS.STUDY_PLAN_HISTORY(STUDENT_ID));
@@ -277,7 +277,6 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [STUDENT_ID, loadActiveStudyPlan, loadAnalytics, calculateAnalytics]);
 
   useEffect(() => {

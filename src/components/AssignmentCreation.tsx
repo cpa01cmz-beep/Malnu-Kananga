@@ -27,6 +27,12 @@ import AccessDenied from './AccessDenied';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
+import {
+  VALIDATION_MESSAGES,
+  SUCCESS_MESSAGES,
+  API_ERROR_MESSAGES,
+  ERROR_MESSAGES,
+} from '../utils/errorMessages';
 
 interface AssignmentCreationProps {
   onBack: () => void;
@@ -91,7 +97,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
       }
     } catch (err) {
       logger.error('Error fetching subjects:', err);
-      setError('Gagal memuat data mata pelajaran');
+      setError(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     } finally {
       setLoading(false);
     }
@@ -111,31 +117,31 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
 
   const validateForm = (): boolean => {
     const errors: string[] = [];
-    
-    if (!title.trim()) errors.push('Judul tugas harus diisi');
-    if (!description.trim()) errors.push('Deskripsi harus diisi');
-    if (!subjectId) errors.push('Mata pelajaran harus dipilih');
-    if (!classId) errors.push('Kelas harus dipilih');
-    if (maxScore <= 0) errors.push('Nilai maksimal harus lebih dari 0');
-    if (!dueDate) errors.push('Tanggal tenggat harus diisi');
+
+    if (!title.trim()) errors.push(VALIDATION_MESSAGES.TITLE_REQUIRED);
+    if (!description.trim()) errors.push(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED);
+    if (!subjectId) errors.push(VALIDATION_MESSAGES.SUBJECT_REQUIRED);
+    if (!classId) errors.push(VALIDATION_MESSAGES.CLASS_REQUIRED);
+    if (maxScore <= 0) errors.push(VALIDATION_MESSAGES.MAX_SCORE_INVALID);
+    if (!dueDate) errors.push(VALIDATION_MESSAGES.DUE_DATE_REQUIRED);
     
     if (useRubric) {
       let rubricTotal = 0;
       rubricCriteria.forEach((criteria, index) => {
         if (!criteria.name.trim()) {
-          errors.push(`Kriteria ${index + 1}: Nama harus diisi`);
+          errors.push(VALIDATION_MESSAGES.RUBRIC_NAME_REQUIRED(index));
         }
         if (criteria.maxScore <= 0) {
-          errors.push(`Kriteria ${index + 1}: Nilai maksimal harus lebih dari 0`);
+          errors.push(VALIDATION_MESSAGES.RUBRIC_MAX_SCORE_INVALID(index));
         }
         if (criteria.weight < 0 || criteria.weight > 100) {
-          errors.push(`Kriteria ${index + 1}: Bobot harus antara 0-100`);
+          errors.push(VALIDATION_MESSAGES.RUBRIC_WEIGHT_INVALID(index));
         }
         rubricTotal += criteria.weight;
       });
-      
+
       if (Math.abs(rubricTotal - 100) > 0.01) {
-        errors.push(`Total bobot rubrik harus 100% (saat ini: ${rubricTotal}%)`);
+        errors.push(VALIDATION_MESSAGES.RUBRIC_TOTAL_WEIGHT(rubricTotal));
       }
     }
 
@@ -145,7 +151,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
 
   const handleFileUpload = (fileResponse: FileUploadResponse) => {
     setAttachments([...attachments, fileResponse]);
-    onShowToast('File berhasil diunggah', 'success');
+    onShowToast(SUCCESS_MESSAGES.MATERIAL_UPLOADED, 'success');
   };
 
   const handleRemoveAttachment = (fileId: string) => {
@@ -171,7 +177,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
 
   const handleSubmit = async (action: 'draft' | 'publish' = 'draft') => {
     if (!validateForm()) {
-      onShowToast('Mohon perbaiki kesalahan pada formulir', 'error');
+      onShowToast(ERROR_MESSAGES.VALIDATION_ERROR, 'error');
       return;
     }
 
@@ -221,7 +227,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
       const result = await executeWithRetry({
         operation: () => assignmentsAPI.create(assignmentData),
         onError: (error) => {
-          onShowToast(`Gagal membuat tugas: ${error.message}`, 'error');
+          onShowToast(`${API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR}: ${error.message}`, 'error');
         }
       });
 
@@ -241,8 +247,8 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
 
         onShowToast(
           action === 'publish'
-            ? 'Tugas berhasil dipublikasikan'
-            : 'Draft tugas berhasil disimpan',
+            ? SUCCESS_MESSAGES.ASSIGNMENT_CREATED
+            : SUCCESS_MESSAGES.ASSIGNMENT_CREATED,
           'success'
         );
         onBack();
@@ -251,7 +257,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
       }
     } catch (err) {
       logger.error('Error creating assignment:', err);
-      onShowToast('Gagal membuat tugas. Silakan coba lagi.', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
     } finally {
       setSubmitting(false);
     }

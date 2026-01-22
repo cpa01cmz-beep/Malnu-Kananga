@@ -59,12 +59,12 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     }
   }, [isOpen]);
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateUser = useCallback((row: CSVRow, index: number): ParsedUser => {
+    const validateEmail = (email: string): boolean => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
 
-  const validateUser = (row: CSVRow, index: number): ParsedUser => {
     const errors: string[] = [];
     const name = row['name'] || row['Nama'] || row['NAMA'] || '';
     const email = row['email'] || row['Email'] || row['EMAIL'] || '';
@@ -106,7 +106,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       errors,
       rowIndex: index + 2,
     };
-  };
+  }, []);
 
   const parseCSV = useCallback((file: File): Promise<CSVRow[]> => {
     return new Promise((resolve, reject) => {
@@ -154,9 +154,8 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
         timestamp: Date.now(),
       });
       logError(classifiedError);
-      logger.error('Failed to parse CSV file. Please check the format and try again.');
+      logger.error('Failed to parse CSV file. Please check format and try again.');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parseCSV, validateUser]);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
