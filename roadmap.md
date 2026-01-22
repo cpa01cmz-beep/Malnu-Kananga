@@ -1,6 +1,6 @@
- # MA Malnu Kananga - Roadmap
+  # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-22 (Issue #1199 Fixed - Dynamic Coding compliance restored in aiEditorValidator)
+  **Last Updated**: 2026-01-22 (Issue #1193 Partially Fixed - Test suite timeout issue resolved with webSocketService.test.ts afterEach cleanup)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -547,6 +547,8 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 
 ### High Priority
 - [ ] Add comprehensive integration tests (target: 80% coverage)
+- [x] Fix test suite timeout issue - webSocketService.test.ts afterEach cleanup added (partially completed 2026-01-22)
+- [ ] Investigate full test suite optimization (114 test files causing 3-5 minute timeouts)
 - [ ] Implement bundle size monitoring
 - [ ] Add performance monitoring (e.g., Vercel Analytics)
 - [ ] Implement error tracking (e.g., Sentry)

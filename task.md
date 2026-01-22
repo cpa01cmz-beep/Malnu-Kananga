@@ -6,8 +6,32 @@
 
   ### 2026-01-22
      - [x] **Verify Issue #1202: Missing Error Handling in Async Functions** (BUG-1202-VERIFY) - COMPLETED
+     - [ ] **Fix Test Suite Timeout Issue** (BUG-1193) - IN PROGRESS
 
-  *No tasks currently in progress*
+   ### In Progress 🚧
+   - [ ] **Fix Test Suite Timeout Issue** (BUG-1193) - PARTIALLY COMPLETED
+     - Task ID: BUG-1193
+     - Issue: #1193
+     - Description: Fix test suite timeout caused by missing afterEach cleanup in webSocketService.test.ts
+     - Status: **Partially Completed**
+     - Completed: 2026-01-22
+     - Started: 2026-01-22
+     - Priority: P1 (High)
+     - Domain: Testing & Stability (Pillars 3, 7)
+     - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+     - Root cause: vi.stubGlobal('setTimeout', ...) in beforeEach without matching afterEach
+     - Fix implemented: Added afterEach to restore setTimeout in Connection Management describe block
+     - Verification results:
+       - ✅ Individual test files run successfully
+       - ✅ webSocketService.test.ts: 8 tests passing, 10 skipped (12ms)
+       - ✅ ocr-validation-integration.test.ts: 4 tests passing (412ms)
+       - ✅ Both files together: 12 tests passing, 10 skipped (1.21s)
+       - ⚠️ Full suite (114 files): Times out after 3-5 minutes
+     - Remaining issue: Full test suite timeout likely due to test discovery/setup overhead with 114 test files
+     - Next steps needed:
+       - Investigate vitest configuration for test discovery optimization
+       - Consider splitting tests into separate test runs by category
+       - Investigate if any specific test file causes hang when run with others
 
   ## Completed Tasks ✅
 
