@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
@@ -24,41 +24,7 @@ export function MessageList({
   const [filterType, setFilterType] = useState<'all' | 'direct' | 'group'>(externalFilter || 'all');
   const [showUnreadOnly, setShowUnreadOnly] = useState(false);
 
-  useEffect(() => {
-    loadConversations();
-  }, []);
-
-  useEffect(() => {
-    if (externalFilter) {
-      setFilterType(externalFilter);
-    }
-  }, [externalFilter]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (!externalFilter) {
-      loadConversations();
-    }
-  }, [filterType, showUnreadOnly]);
-
-  useEffect(() => {
-    loadConversations();
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const handleWebSocketMessage = (event: Event) => {
-      const customEvent = event as CustomEvent<Record<string, unknown>>;
-      const { entity } = customEvent.detail;
-      if (entity === 'message' || entity === 'conversation') {
-        loadConversations();
-      }
-    };
-
-    window.addEventListener('realtime-update', handleWebSocketMessage);
-    return () => window.removeEventListener('realtime-update', handleWebSocketMessage);
-  }, []);
-
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     try {
       setLoading(true);
       const filter: ConversationFilter = {
@@ -77,7 +43,36 @@ export function MessageList({
     } finally {
       setLoading(false);
     }
-  };
+  }, [filterType, showUnreadOnly, searchQuery]);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
+
+  useEffect(() => {
+    if (externalFilter) {
+      setFilterType(externalFilter);
+    }
+  }, [externalFilter]);
+
+  useEffect(() => {
+    if (!externalFilter) {
+      loadConversations();
+    }
+  }, [externalFilter, loadConversations]);
+
+  useEffect(() => {
+    const handleWebSocketMessage = (event: Event) => {
+      const customEvent = event as CustomEvent<Record<string, unknown>>;
+      const { entity } = customEvent.detail;
+      if (entity === 'message' || entity === 'conversation') {
+        loadConversations();
+      }
+    };
+
+    window.addEventListener('realtime-update', handleWebSocketMessage);
+    return () => window.removeEventListener('realtime-update', handleWebSocketMessage);
+  }, [loadConversations]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
