@@ -12,6 +12,7 @@ vi.mock('../../services/apiService', () => ({
     markAsRead: vi.fn(),
   },
   usersAPI: {
+    getAll: vi.fn(),
     getById: vi.fn(),
     list: vi.fn(),
   },

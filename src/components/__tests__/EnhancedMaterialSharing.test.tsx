@@ -21,7 +21,14 @@ vi.mock('../../services/materialPermissionService', () => ({
 
 vi.mock('../../hooks/useCanAccess', () => ({
   useCanAccess: () => ({
-    canAccess: () => ({ canAccess: true, permission: 'admin' }),
+    user: { id: 'user-1', role: 'teacher', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
   }),
 }));
 

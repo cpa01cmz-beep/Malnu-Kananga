@@ -55,9 +55,15 @@ vi.mock('../../utils/logger', () => ({
 
 vi.mock('../../hooks/useCanAccess', () => ({
   useCanAccess: () => ({
-    canAccess: () => ({ canAccess: true }),
-    user: { id: 'teacher-1', name: 'Test Teacher' },
-  }),
+    user: { id: 'teacher-1', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
+  })
 }));
 
 describe('MaterialUpload Offline Queue Integration', () => {

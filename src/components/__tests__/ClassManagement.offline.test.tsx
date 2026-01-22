@@ -64,8 +64,14 @@ vi.mock('../../utils/logger', () => ({
 
 vi.mock('../../hooks/useCanAccess', () => ({
   useCanAccess: () => ({
-    canAccess: () => ({ canAccess: true }),
     user: { id: 'teacher-1', name: 'Test Teacher' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
   }),
 }));
 

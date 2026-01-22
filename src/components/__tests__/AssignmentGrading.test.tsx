@@ -16,12 +16,6 @@ vi.mock('../../services/apiService', () => ({
   },
 }));
 
-vi.mock('../../services/offlineActionQueueService', () => ({
-  useOfflineActionQueue: vi.fn(() => ({
-    addAction: vi.fn(),
-  })),
-}));
-
 vi.mock('../../hooks/useEventNotifications', () => ({
   useEventNotifications: vi.fn(() => ({
     notifyGradeUpdate: vi.fn(),
@@ -43,9 +37,9 @@ vi.mock('../../hooks/useCanAccess', () => ({
     user: { id: 'teacher-1', role: 'teacher', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
     userRole: 'teacher',
     userExtraRole: null,
-    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
-    canAccessAny: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
-    canAccessResource: vi.fn(() => ({ canAccess: true, requiredPermission: '' })),
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
     userPermissions: [],
     userPermissionIds: [],
   })),

@@ -114,7 +114,14 @@ vi.mock('../../utils/networkStatus', () => ({
 
 vi.mock('../../hooks/useCanAccess', () => ({
   useCanAccess: () => ({
-    canAccess: () => ({ canAccess: true, requiredPermission: null })
+    user: { id: 'teacher-1', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
   })
 }));
 

@@ -60,7 +60,14 @@ vi.mock('../../hooks/useEventNotifications', () => ({
 
 vi.mock('../../hooks/useCanAccess', () => ({
   useCanAccess: () => ({
-    canAccess: vi.fn(() => true)
+    user: { id: 'teacher1', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
   })
 }));
 

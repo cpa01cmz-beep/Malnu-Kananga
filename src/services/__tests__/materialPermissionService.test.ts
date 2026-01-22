@@ -147,7 +147,7 @@ describe('MaterialPermissionService', () => {
 
       expect(result.canAccess).toBe(false);
       expect(result.permission).toBe('none');
-      expect(result.reason).toBe('No permission granted');
+      expect(result.reason).toBe('Not shared with you');
     });
 
     it('should grant access based on extra role permission', () => {

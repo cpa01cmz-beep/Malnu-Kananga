@@ -23,6 +23,18 @@ vi.mock('../../hooks/useEventNotifications', () => ({
     notifyNewAnnouncement: vi.fn()
   })
 }));
+vi.mock('../../hooks/useCanAccess', () => ({
+  useCanAccess: () => ({
+    user: { id: 'teacher-1', role: 'teacher', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
+    userRole: 'teacher',
+    userExtraRole: null,
+    canAccess: vi.fn(() => true),
+    canAccessAny: vi.fn(() => true),
+    canAccessResource: vi.fn(() => true),
+    userPermissions: [],
+    userPermissionIds: [],
+  })
+}));
 vi.mock('../../services/offlineActionQueueService', () => ({
   useOfflineActionQueue: () => ({
     addAction: vi.fn()
