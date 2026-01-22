@@ -49,19 +49,18 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
 
   const canSubmitAssignments = canAccess('academic.assignments.submit');
 
-  const getCurrentUser = (): Student | null => {
-    const userJson = localStorage.getItem(STORAGE_KEYS.USER);
-    return userJson ? JSON.parse(userJson) : null;
-  };
-
-  const currentUser = getCurrentUser();
-
   useEffect(() => {
     fetchAssignments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchAssignments = async () => {
+    const getCurrentUser = (): Student | null => {
+      const userJson = localStorage.getItem(STORAGE_KEYS.USER);
+      return userJson ? JSON.parse(userJson) : null;
+    };
+    const currentUser = getCurrentUser();
+
     try {
       setLoading(true);
       setError(null);
