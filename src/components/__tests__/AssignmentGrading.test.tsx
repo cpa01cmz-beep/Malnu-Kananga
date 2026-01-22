@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import AssignmentGrading from '../AssignmentGrading';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../../services/apiService';
 import * as useEventNotifications from '../../hooks/useEventNotifications';
