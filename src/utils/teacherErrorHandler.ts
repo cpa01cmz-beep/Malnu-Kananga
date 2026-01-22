@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { OperationResult } from './teacherValidation';
+import { API_ERROR_MESSAGES } from './errorMessages';
 
 export interface ErrorBoundaryState {
   hasError: boolean;
@@ -98,66 +99,66 @@ export const executeWithRetry = async <T>(asyncOp: AsyncOperation<T>): Promise<O
 
 /**
  * Handles API errors and provides user-friendly messages
+ * Uses centralized error messages from errorMessages.ts
  */
 export const handleApiError = (error: unknown): string => {
   if (!error) {
-    return 'Terjadi kesalahan yang tidak diketahui';
+    return API_ERROR_MESSAGES.UNKNOWN_ERROR;
   }
 
   const err = error as { name?: string; message?: string; status?: number };
 
   // Network errors
   if (err.name === 'TypeError' && err.message?.includes('fetch')) {
-    return 'Koneksi Internet gagal. Periksa koneksi Anda dan coba lagi.';
+    return API_ERROR_MESSAGES.NETWORK_ERROR;
   }
 
   if (err.name === 'AbortError') {
-    return 'Operasi dibatalkan karena terlalu lama. Coba lagi.';
+    return API_ERROR_MESSAGES.ABORT_ERROR;
   }
 
   // HTTP status errors
   if (err.status) {
     switch (err.status) {
       case 400:
-        return err.message || 'Data yang dikirim tidak valid. Periksa kembali input Anda.';
+        return err.message || API_ERROR_MESSAGES.BAD_REQUEST;
       case 401:
-        return 'Sesi Anda telah berakhir. Silakan login kembali.';
+        return API_ERROR_MESSAGES.UNAUTHORIZED;
       case 403:
-        return 'Anda tidak memiliki izin untuk melakukan operasi ini.';
+        return API_ERROR_MESSAGES.FORBIDDEN;
       case 404:
-        return 'Data tidak ditemukan. Mungkin telah dihapus atau dipindahkan.';
+        return API_ERROR_MESSAGES.NOT_FOUND;
       case 409:
-        return 'Konflik data. Mungkin ada perubahan yang dilakukan oleh pengguna lain.';
+        return API_ERROR_MESSAGES.CONFLICT;
       case 422:
-        return err.message || 'Validasi gagal. Periksa kembali input Anda.';
+        return err.message || API_ERROR_MESSAGES.UNPROCESSABLE_ENTITY;
       case 429:
-        return 'Terlalu banyak permintaan. Silakan tunggu beberapa saat dan coba lagi.';
+        return API_ERROR_MESSAGES.TOO_MANY_REQUESTS;
       case 500:
-        return 'Terjadi kesalahan pada server. Silakan coba lagi beberapa saat.';
+        return API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
       case 502:
-        return 'Server sedang dalam pemeliharaan. Silakan coba lagi nanti.';
+        return API_ERROR_MESSAGES.BAD_GATEWAY;
       case 503:
-        return 'Layanan tidak tersedia sementara. Silakan coba lagi nanti.';
+        return API_ERROR_MESSAGES.SERVICE_UNAVAILABLE;
       case 504:
-        return 'Server terlalu lama merespons. Silakan coba lagi.';
+        return API_ERROR_MESSAGES.GATEWAY_TIMEOUT;
       default:
-        return `Terjadi kesalahan (${err.status}). Silakan coba lagi.`;
+        return `Terjadi kesalahan (${err.status}). ${API_ERROR_MESSAGES.OPERATION_FAILED}`;
     }
   }
 
   // Generic error messages
   if (err.message) {
-    // Don't expose technical error details to users
     if (err.message.includes('JSON') ||
         err.message.includes('parse') ||
         err.message.includes('syntax')) {
-      return 'Format data tidak valid. Hubungi administrator jika masalah berlanjut.';
+      return API_ERROR_MESSAGES.JSON_PARSE_ERROR;
     }
 
     return err.message;
   }
 
-  return 'Terjadi kesalahan. Silakan coba lagi.';
+  return API_ERROR_MESSAGES.OPERATION_FAILED;
 };
 
 /**

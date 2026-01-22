@@ -5,6 +5,47 @@
 ## Active Tasks
 
 ### 2026-01-22
+   - [ ] **Migrate All Components to Centralized Error Messages** (GAP-107-2) - PENDING
+      - Task ID: GAP-107-2
+      - Description: Complete migration of all components to use centralized error message constants
+      - Status: **Pending**
+      - Priority: P3 (Medium)
+      - Domain: Code Quality & UX (Pillars 7, 8, 16)
+      - Dependencies: GAP-107 (Partially Complete)
+      - Migration checklist:
+        - Components needing migration (estimated 30+):
+          - ✅ errorHandler.ts - Migrated
+          - ✅ teacherErrorHandler.ts - Migrated
+          - ⏳ teacherValidation.ts - Partially migrated
+          - ⏳ AnnouncementManager.tsx - Needs migration
+          - ⏳ AssignmentCreation.tsx - Needs migration
+          - ⏳ PPDBRegistration.tsx - Needs migration
+          - ⏳ AcademicGrades.tsx - Needs migration
+          - ⏳ GradingManagement.tsx - Needs migration
+          - ⏳ MaterialUpload.tsx - Needs migration
+          - ⏳ UserManagement.tsx - Needs migration
+          - ⏳ All other components with error/success messages
+        - Priority components (user-facing, critical paths):
+          1. PPDBRegistration.tsx - Public-facing form validation
+          2. AssignmentCreation.tsx - Teacher workflow
+          3. GradingManagement.tsx - Critical academic feature
+          4. MaterialUpload.tsx - E-library feature
+          5. AnnouncementManager.tsx - System-wide notifications
+        - Migration approach:
+          - Import message constants from errorMessages.ts
+          - Replace inline error/success strings
+          - Replace inline validation strings
+          - Update typecheck and lint
+          - Run tests to verify
+      - Expected outcome:
+        - 100% error message consistency across application
+        - All error messages in Indonesian
+        - Type safety with autocomplete
+        - Maintainability with single source of truth
+
+   - [x] **Improve Error Message Consistency and User Guidance** (GAP-107) - PARTIALLY COMPLETED
+
+### 2026-01-22
    - [x] **Improve Admin Dashboard Error Recovery and Offline Support** (GAP-110) - COMPLETED
       - Task ID: GAP-110
       - Issue: #1051
@@ -103,8 +144,86 @@
       - Next logical tasks:
         - None (SAN-001 completed)
 
-  - [x] **Strengthen Student Portal Data Validation and Offline Support** (GAP-105) - COMPLETED
-     - Task ID: GAP-105
+   - [x] **Improve Error Message Consistency and User Guidance** (GAP-107) - PARTIALLY COMPLETED
+      - Task ID: GAP-107
+      - Issue: #1057
+      - Description: Standardize error messages across all components and create centralized error message constants
+      - Status: **Partially Completed**
+      - Completed: 2026-01-22
+      - Started: 2026-01-22
+      - Priority: P3 (Medium)
+      - Domain: Code Quality & UX (Pillars 7, 8, 16)
+      - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+      - Dependencies: None (unblocked)
+      - Implementation completed:
+        - ✅ Phase 1: Created centralized error message constants (errorMessages.ts)
+          - 8 message groups with 100+ constants
+          - Fully typed with TypeScript
+          - Parameterized messages for dynamic content
+          - Comprehensive test coverage (35 tests)
+        - ✅ Phase 2: Refactored errorHandler.ts to use centralized constants
+          - Imported ERROR_MESSAGES as CENTRALIZED_ERROR_MESSAGES
+          - Updated all error message references
+          - Maintains backward compatibility
+        - ✅ Phase 3: Refactored teacherErrorHandler.ts to use centralized constants
+          - Uses API_ERROR_MESSAGES
+          - Eliminated duplicate code
+        - ✅ Phase 4: Partially refactored teacherValidation.ts to use constants
+          - Updated validateGradeInput() and validateClassData()
+          - Remaining validation functions need migration
+        - ✅ Phase 5: Created migration guide documentation
+          - Comprehensive guide with examples
+          - Component migration checklist
+          - Best practices
+        - ✅ Phase 6: Created comprehensive test suite
+          - 35 tests covering all message groups
+          - All tests passing
+      - Files created:
+        - src/utils/errorMessages.ts (241 lines, 100+ message constants)
+        - src/utils/__tests__/errorMessages.test.ts (350+ lines, 35 tests)
+        - docs/ERROR_MESSAGE_MIGRATION_GUIDE.md (comprehensive migration guide)
+      - Files modified:
+        - src/utils/errorHandler.ts (imported centralized messages)
+        - src/utils/teacherErrorHandler.ts (uses API_ERROR_MESSAGES)
+        - src/utils/teacherValidation.ts (partial migration)
+      - Quality checks:
+        - ✅ Typecheck: Passed (0 errors)
+        - ✅ Lint: Passed (0 errors, 0 warnings)
+        - ✅ Tests: 35/35 passing
+      - Remaining work:
+        - ⏳ Migrate remaining validation functions in teacherValidation.ts
+        - ⏳ Update components to use centralized error messages (30+ components)
+        - ⏳ Remove English error messages (convert to Indonesian)
+        - ⏳ Update documentation for all migrated components
+      - Next logical tasks:
+        - Create follow-up task for full component migration (GAP-107-2)
+        - Prioritize critical user-facing components
+        - Add more validation message tests as needed
+      - Task ID: GAP-107
+      - Issue: #1057
+      - Description: Standardize error messages across all components and create centralized error message constants
+      - Status: **In Progress**
+      - Started: 2026-01-22
+      - Priority: P3 (Medium)
+      - Domain: Code Quality & UX (Pillars 7, 8, 16)
+      - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+      - Dependencies: None (unblocked)
+      - Issues identified:
+        - Multiple error message sources causing inconsistency
+        - Duplicate code between errorHandler.ts and teacherErrorHandler.ts
+        - Mixed language (Indonesian/English) in error messages
+        - Inconsistent validation messages across components
+      - Implementation plan:
+        - Phase 1: Create centralized error message constants
+        - Phase 2: Refactor errorHandler.ts to use new constants
+        - Phase 3: Refactor teacherValidation.ts to use constants
+        - Phase 4: Refactor teacherErrorHandler.ts (consolidate with errorHandler)
+        - Phase 5: Update components to use centralized messages
+        - Phase 6: Test and verify consistency
+      - Expected impact: 100% consistency in error messages, reduced code duplication, improved user experience
+
+   - [x] **Strengthen Student Portal Data Validation and Offline Support** (GAP-105) - COMPLETED
+      - Task ID: GAP-105
      - Issue: #1058
      - Description: Enhance data validation, error handling, and offline reliability in StudentPortal.tsx
      - Status: **Completed**
