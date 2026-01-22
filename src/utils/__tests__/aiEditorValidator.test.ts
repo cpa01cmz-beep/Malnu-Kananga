@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { validateAICommand, validateAIResponse } from '../aiEditorValidator';
+import { validateAICommand, validateAIResponse, type AuditLogEntry } from '../aiEditorValidator';
 import type { FeaturedProgram, LatestNews } from '../../types';
 
 // Mock localStorage for audit logging tests
@@ -157,11 +157,11 @@ describe('AI Editor Validator', () => {
       const cmd3 = validateAICommand('delete program yang tidak aktif', 'user');
       expect(cmd3.isValid).toBe(true);
 
-      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]');
+      const logs = JSON.parse(localStorageMock.getItem('malnu_ai_editor_audit_log') || '[]') as AuditLogEntry[];
       expect(logs.length).toBeGreaterThan(0);
-      expect(logs.some((l: any) => l.reason.includes('risiko: low'))).toBe(true);
-      expect(logs.some((l: any) => l.reason.includes('risiko: medium'))).toBe(true);
-      expect(logs.some((l: any) => l.reason.includes('risiko: high'))).toBe(true);
+      expect(logs.some((l: AuditLogEntry) => l.reason?.includes('risiko: low'))).toBe(true);
+      expect(logs.some((l: AuditLogEntry) => l.reason?.includes('risiko: medium'))).toBe(true);
+      expect(logs.some((l: AuditLogEntry) => l.reason?.includes('risiko: high'))).toBe(true);
     });
   });
 

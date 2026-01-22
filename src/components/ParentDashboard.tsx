@@ -12,7 +12,7 @@ import ParentPaymentsView from './ParentPaymentsView';
 import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
-import { parentsAPI, authAPI, gradesAPI, attendanceAPI } from '../services/apiService';
+import { parentsAPI, authAPI, gradesAPI, attendanceAPI, schedulesAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage } from '../utils/networkStatus';
 import { validateParentChildDataAccess, validateChildDataIsolation, validateGradeVisibilityRestriction, validateOfflineDataIntegrity } from '../utils/parentValidation';
@@ -111,6 +111,11 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
             const childrenData: Record<string, CachedStudentData> = {};
             const now = Date.now();
             const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
+            // Fetch schedules once for all children
+            const schedulesResponse = await schedulesAPI.getAll();
+            const allSchedules = schedulesResponse.success && schedulesResponse.data ? schedulesResponse.data : [];
+
             // Fetch data for each child
             await Promise.all(response.data.map(async (child: ParentChild) => {
               try {
@@ -137,6 +142,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     logger.warn('Grade visibility restrictions:', gradesVisibility.errors);
                   }
 
+                  // Filter schedules for child's class
+                  const classSchedule = allSchedules.filter(s => s.classId === (child.className || ''));
+
                   childrenData[child.studentId] = {
                     student: {
                       id: child.studentId,
@@ -154,7 +162,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     },
                     grades: gradesResponse.data || [],
                     attendance: attendanceResponse.data || [],
-                    schedule: [], // TODO: Fetch schedule when API is available
+                    schedule: classSchedule,
                     lastUpdated: now,
                     expiresAt: now + CACHE_DURATION,
                   };
