@@ -1,4 +1,5 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
+import { VALIDATION_MESSAGES } from './errorMessages';
 
 export interface StudentGrade {
   id: string;
@@ -74,52 +75,52 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
   // Validate assignment score
   if (grade.assignment !== undefined) {
     if (typeof grade.assignment !== 'number') {
-      errors.push('Nilai tugas harus berupa angka');
+      errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai tugas'));
     } else if (isNaN(grade.assignment)) {
-      errors.push('Nilai tugas tidak valid');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.assignment < 0) {
-      errors.push('Nilai tugas tidak boleh kurang dari 0');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.assignment > 100) {
-      errors.push('Nilai tugas tidak boleh lebih dari 100');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.assignment < 60 && grade.assignment > 0) {
-      warnings.push('Nilai tugas rendah, pertimbangkan remedial');
+      warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('tugas'));
     }
   }
 
   // Validate mid exam score
   if (grade.midExam !== undefined) {
     if (typeof grade.midExam !== 'number') {
-      errors.push('Nilai UTS harus berupa angka');
+      errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UTS'));
     } else if (isNaN(grade.midExam)) {
-      errors.push('Nilai UTS tidak valid');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.midExam < 0) {
-      errors.push('Nilai UTS tidak boleh kurang dari 0');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.midExam > 100) {
-      errors.push('Nilai UTS tidak boleh lebih dari 100');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.midExam < 60 && grade.midExam > 0) {
-      warnings.push('Nilai UTS rendah, pertimbangkan remedial');
+      warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('UTS'));
     }
   }
 
   // Validate final exam score
   if (grade.finalExam !== undefined) {
     if (typeof grade.finalExam !== 'number') {
-      errors.push('Nilai UAS harus berupa angka');
+      errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UAS'));
     } else if (isNaN(grade.finalExam)) {
-      errors.push('Nilai UAS tidak valid');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.finalExam < 0) {
-      errors.push('Nilai UAS tidak boleh kurang dari 0');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.finalExam > 100) {
-      errors.push('Nilai UAS tidak boleh lebih dari 100');
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
     } else if (grade.finalExam < 60 && grade.finalExam > 0) {
-      warnings.push('Nilai UAS rendah, pertimbangkan remedial');
+      warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('UAS'));
     }
   }
 
   // Check if at least one score is provided
   const hasAnyScore = grade.assignment !== undefined || grade.midExam !== undefined || grade.finalExam !== undefined;
   if (!hasAnyScore) {
-    errors.push('Setidaknya satu nilai harus diisi');
+    errors.push(VALIDATION_MESSAGES.GRADE_MUST_HAVE_ONE);
   }
 
   return {
@@ -138,13 +139,13 @@ export const validateClassData = (data: Partial<ClassFormData>): ValidationResul
 
   // Validate name
   if (!data.name || data.name.trim().length === 0) {
-    errors.push('Nama siswa tidak boleh kosong');
+    errors.push(VALIDATION_MESSAGES.STUDENT_NAME_REQUIRED);
   } else if (data.name.trim().length < 3) {
-    errors.push('Nama siswa minimal 3 karakter');
+    errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MIN_LENGTH);
   } else if (data.name.trim().length > 100) {
-    errors.push('Nama siswa maksimal 100 karakter');
+    errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MAX_LENGTH);
   } else if (!/^[a-zA-Z\s.'-]+$/.test(data.name.trim())) {
-    warnings.push('Nama siswa mengandung karakter tidak biasa');
+    warnings.push(VALIDATION_MESSAGES.STUDENT_NAME_UNUSUAL_CHARS);
   }
 
   // Validate NIS
