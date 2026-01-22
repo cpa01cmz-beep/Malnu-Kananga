@@ -38,6 +38,13 @@ import Input from './ui/Input';
 import Select from './ui/Select';
 import Textarea from './ui/Textarea';
 import FieldVoiceInput from './FieldVoiceInput';
+import {
+  ERROR_MESSAGES,
+  VALIDATION_MESSAGES,
+  SUCCESS_MESSAGES,
+  API_ERROR_MESSAGES,
+  USER_GUIDANCE,
+} from '../utils/errorMessages';
 
 interface MaterialUploadProps {
   onBack: () => void;
@@ -119,7 +126,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       }
     } catch (err) {
       logger.error('Error fetching subjects:', err);
-      onShowToast('Gagal memuat data mata pelajaran', 'error');
+      onShowToast(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 'error');
     } finally {
       setSubjectsLoading(false);
     }
@@ -133,10 +140,10 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       if (response.success && response.data) {
         setMaterials(response.data);
       } else {
-        setError(response.message || 'Gagal mengambil data materi');
+        setError(response.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       }
     } catch (err) {
-      setError('Terjadi kesalahan saat mengambil data materi');
+      setError(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       logger.error('Error fetching materials:', err);
     } finally {
       setLoading(false);
@@ -201,7 +208,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   const handleFileUploaded = (fileResponse: FileUploadResponse) => {
     setUploadedFile(fileResponse);
-    onShowToast('File berhasil diunggah', 'success');
+    onShowToast(SUCCESS_MESSAGES.MATERIAL_UPLOADED, 'success');
   };
 
   const handleFileDeleted = () => {
@@ -225,12 +232,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     
     const validation = validateMaterialData(materialData);
     if (!validation.isValid) {
-      toast.error('Perbaiki kesalahan validasi sebelum melanjutkan');
+      toast.error(ERROR_MESSAGES.VALIDATION_ERROR);
       return;
     }
-    
+
     if (!uploadedFile) {
-      setValidationErrors(['Mohon unggah file']);
+      setValidationErrors([VALIDATION_MESSAGES.MATERIAL_FILE_REQUIRED]);
       return;
     }
 
@@ -238,7 +245,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     const categoryValidation = CategoryValidator.validateSubjectName(newCategory, subjects, materials.map(m => m.category));
     if (!categoryValidation.valid) {
       setCategoryValidation(categoryValidation);
-      toast.error(categoryValidation.error || 'Kategori tidak valid');
+      toast.error(categoryValidation.error || VALIDATION_MESSAGES.CATEGORY_NAME_REQUIRED);
       return;
     }
 
@@ -301,8 +308,8 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         setNewDescription('');
         setUploadedFile(null);
         setCategoryValidation(null);
-        
-        toast.info('Materi akan diunggah saat koneksi tersedia.');
+
+        toast.info(USER_GUIDANCE.SYNCING);
         logger.info('Material upload queued for offline sync', { actionId, title: newTitle });
         return;
       }
@@ -327,7 +334,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           setNewDescription('');
           setUploadedFile(null);
           setCategoryValidation(null);
-          toast.success('Materi berhasil ditambahkan');
+          toast.success(SUCCESS_MESSAGES.MATERIAL_UPLOADED);
           
           categoryService.updateMaterialStats([...materials, uploadResult.data]);
           
@@ -352,10 +359,10 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             }
           });
         } else {
-          toast.error(uploadResult.message || 'Gagal menambahkan materi');
+          toast.error(uploadResult.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
         }
       } else {
-        toast.error(result.error || 'Gagal menambahkan materi');
+        toast.error(result.error || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       }
     } catch (err) {
       // Auto-queue on network failure
@@ -385,14 +392,14 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
         setNewDescription('');
         setUploadedFile(null);
         setCategoryValidation(null);
-        
-        toast.info('Koneksi terputus. Materi akan diunggah saat online.');
+
+        toast.info(USER_GUIDANCE.SYNCING);
         logger.info('Material upload auto-queued after network failure', { actionId, error: err });
         return;
       }
 
       logger.error('Error creating material:', err);
-      toast.error(err);
+      toast.error(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     } finally {
       setSubmitting(false);
     }
@@ -428,15 +435,15 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       if (result.success) {
         const updatedMaterials = materials.filter((m) => m.id !== material.id);
         setMaterials(updatedMaterials);
-        toast.info('Materi dihapus');
+        toast.info(SUCCESS_MESSAGES.MATERIAL_DELETED);
         
         categoryService.updateMaterialStats(updatedMaterials);
       } else {
-        toast.error(result.error || 'Gagal menghapus materi');
+        toast.error(result.error || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       }
     } catch (err) {
       logger.error('Error deleting material:', err);
-      toast.error(err);
+      toast.error(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   };
 
@@ -450,13 +457,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
   const handleSuggestCategory = async () => {
     if (!newCategory.trim() || !suggestionDescription.trim()) {
-      onShowToast('Lengkapi nama kategori dan deskripsi', 'error');
+      onShowToast(VALIDATION_MESSAGES.CATEGORY_NAME_REQUIRED, 'error');
       return;
     }
 
     const validation = CategoryValidator.validateNewCategorySuggestion(newCategory, suggestionDescription, subjects);
     if (!validation.valid) {
-      onShowToast(validation.error || 'Saran kategori tidak valid', 'error');
+      onShowToast(validation.error || VALIDATION_MESSAGES.CATEGORY_NAME_REQUIRED, 'error');
       return;
     }
 
@@ -467,13 +474,13 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
     });
 
     if (success) {
-      onShowToast('Kategori baru berhasil diusulkan. Admin akan meninjau usulan Anda.', 'success');
+      onShowToast(USER_GUIDANCE.SAVE_SUCCESS, 'success');
       setShowSuggestionForm(false);
       setSuggestionDescription('');
       setNewCategory('');
       setNewSubjectId('');
     } else {
-      onShowToast('Gagal mengusulkan kategori baru', 'error');
+      onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
     }
   };
 
