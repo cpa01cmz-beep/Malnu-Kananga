@@ -1,7 +1,7 @@
 // apiService.ts - Frontend API Service
 // Handles all backend API interactions
 
-import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole, Assignment, AssignmentStatus, AssignmentSubmission, DirectMessage, Conversation, ConversationFilter, MessageSendRequest, ConversationCreateRequest, MessageReadReceipt, TypingIndicator } from '../types';
+import type { User, PPDBRegistrant, InventoryItem, SchoolEvent, Subject, Class, Schedule, Grade, Attendance, ELibrary, Announcement, Student, Teacher, ParentChild, StudentParent, EventRegistration, EventBudget, EventPhoto, EventFeedback, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, UserRole, UserExtraRole, Assignment, AssignmentStatus, AssignmentSubmission, DirectMessage, Conversation, ConversationFilter, MessageSendRequest, ConversationCreateRequest, MessageReadReceipt, TypingIndicator } from '../types';
 import { logger } from '../utils/logger';
 import { permissionService } from './permissionService';
 import { STORAGE_KEYS } from '../constants';
@@ -696,6 +696,10 @@ export const studentsAPI = {
     return request<null>(`/api/students/${id}`, {
       method: 'DELETE',
     });
+  },
+
+  async getParents(studentId: string): Promise<ApiResponse<StudentParent[]>> {
+    return request<StudentParent[]>(`/api/students/${studentId}/parents`);
   },
 };
 

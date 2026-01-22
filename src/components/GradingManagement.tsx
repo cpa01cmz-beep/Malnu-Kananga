@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Papa from 'papaparse';
 import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
+import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
@@ -822,27 +823,57 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                 className: className
               }
             });
-            
-            // TODO: Also notify parents when parent API is available
-            // const parents = await parentsAPI.getByStudentId(save.studentId);
-            // for (const parent of parents) {
-            //   await unifiedNotificationManager.showNotification({
-            //     id: `parent-grade-${save.studentId}-${subjectId}-${Date.now()}`,
-            //     type: 'grade',
-            //     title: `Nilai ${grade.name}`,
-            //     body: `Nilai ${subjectId}: ${finalScore.toFixed(1)} (${gradeLetter})`,
-            //     icon: '📊',
-            //     timestamp: new Date().toISOString(),
-            //     read: false,
-            //     priority: 'normal',
-            //     targetUsers: [parent.userId],
-            //     data: {
-            //       action: 'view_child_grades',
-            //       studentId: save.studentId,
-            //       subjectId: subjectId
-            //     }
-            //   });
-            // }
+
+            // Notify parents of grade update
+            try {
+              if (save.studentId) {
+                const parentsResponse = await studentsAPI.getParents(save.studentId);
+                if (parentsResponse.success && parentsResponse.data) {
+                  // Get student data for parentChild object
+                  const studentResponse = await studentsAPI.getById(save.studentId);
+                  const studentData = studentResponse.success ? studentResponse.data : undefined;
+
+                  for (const parent of parentsResponse.data) {
+                    // Create parent child object for notification service
+                    const parentChild = {
+                      relationshipId: parent.relationshipId,
+                      relationshipType: parent.relationshipType,
+                      isPrimaryContact: parent.isPrimaryContact,
+                      studentId: save.studentId,
+                      nisn: studentData?.nisn || '',
+                      nis: studentData?.nis || '',
+                      class: studentData?.class || '',
+                      className: className,
+                      dateOfBirth: studentData?.dateOfBirth || '',
+                      studentName: grade.name,
+                      studentEmail: ''
+                    };
+
+                    // Create grade object for notification service
+                    const gradeObj = {
+                      id: `${save.studentId}-${subjectId}-${Date.now()}`,
+                      studentId: save.studentId,
+                      subjectId: subjectId,
+                      subjectName: subjectId,
+                      score: finalScore,
+                      maxScore: 100,
+                      assignmentType: 'Tugas',
+                      assignmentName: 'Nilai Semester',
+                      teacherId: '',
+                      classId: '',
+                      academicYear: '',
+                      semester: '',
+                      createdBy: '',
+                      createdAt: new Date().toISOString()
+                    };
+
+                    await parentGradeNotificationService.processGradeUpdate(parentChild, gradeObj);
+                  }
+                }
+              }
+            } catch (error) {
+              logger.warn('Failed to send parent notifications:', error);
+            }
           }
         }
       }

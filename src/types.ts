@@ -74,6 +74,18 @@ export interface Parent {
   children: ParentChild[];
 }
 
+export interface StudentParent {
+  relationshipId: string;
+  relationshipType: 'ayah' | 'ibu' | 'wali';
+  isPrimaryContact: boolean;
+  parentId: string;
+  userId: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  extraRole: UserExtraRole | null;
+}
+
 export interface ParentChild {
   relationshipId: string;
   relationshipType: 'ayah' | 'ibu' | 'wali';

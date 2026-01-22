@@ -509,15 +509,23 @@
    - Student analytics via `ProgressAnalytics.tsx`
    - Teacher analytics via `GradeAnalytics.tsx`
 
-- **Grade Validation Enhancements** (completed 2026-01-21, GAP-111):
-  - Inline validation errors displayed next to input fields with red border highlighting
-  - Real-time grade feedback (error/warning/info messages)
-  - Class-level validation (checks if all students have grades before final save)
-  - Grade history tracking with audit trail (localStorage: `malnu_grade_history`)
-  - Enhanced CSV import with detailed success/failure reporting and summary dialog
-  - Validation utilities: `validateClassCompletion`, `validateCSVImport`, `getInlineValidationMessage`
-  - Comprehensive test coverage (19 test cases in `teacherValidation.enhanced.test.ts`)
-  - Storage: Grade history persisted to localStorage with max 100 entries (FIFO)
+ - **Grade Validation Enhancements** (completed 2026-01-21, GAP-111):
+   - Inline validation errors displayed next to input fields with red border highlighting
+   - Real-time grade feedback (error/warning/info messages)
+   - Class-level validation (checks if all students have grades before final save)
+   - Grade history tracking with audit trail (localStorage: `malnu_grade_history`)
+   - Enhanced CSV import with detailed success/failure reporting and summary dialog
+   - Validation utilities: `validateClassCompletion`, `validateCSVImport`, `getInlineValidationMessage`
+   - Comprehensive test coverage (19 test cases in `teacherValidation.enhanced.test.ts`)
+   - Storage: Grade history persisted to localStorage with max 100 entries (FIFO)
+
+ - **Parent Grade Notification Integration** (completed 2026-01-22, Issue #1192):
+   - Backend endpoint: `GET /api/students/:id/parents` - Returns parents for a student
+   - API method: `studentsAPI.getParents(studentId)` - Fetches parents of a student
+   - GradingManagement integration: Calls `parentGradeNotificationService.processGradeUpdate()` after saving grades
+   - Parents receive notifications with grade details (student name, subject, score, etc.)
+   - Supports multiple parents per student with proper notification routing
+   - Type definition: `StudentParent` interface in types.ts
 
 - **Assignment Creation**: Full assignment creation UI (completed 2026-01-19)
    - `AssignmentCreation.tsx`: Comprehensive assignment creation interface

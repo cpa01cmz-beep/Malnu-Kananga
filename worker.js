@@ -2381,6 +2381,56 @@ async function handleGetChildSchedule(request, env, corsHeaders) {
   }
 }
 
+async function handleGetStudentParents(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const studentId = url.pathname.split('/').pop();
+
+    if (!studentId) {
+      return new Response(JSON.stringify(response.error('Student ID diperlukan')), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const parents = await env.DB.prepare(`
+      SELECT
+        psr.id as relationship_id,
+        psr.relationship_type,
+        psr.is_primary_contact,
+        psr.parent_id,
+        u.id as user_id,
+        u.name,
+        u.email,
+        u.role,
+        u.extra_role
+      FROM parent_student_relationship psr
+      JOIN users u ON psr.parent_id = u.id
+      WHERE psr.student_id = ?
+      ORDER BY psr.is_primary_contact DESC, u.name ASC
+    `).bind(studentId).all();
+
+    return new Response(JSON.stringify(response.success(parents, 'Data orang tua berhasil diambil')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (e) {
+    logger.error('Get student parents error:', e);
+    return new Response(JSON.stringify(response.error('Gagal mengambil data orang tua', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
 // ============================================
 // ASSIGNMENTS HANDLERS
 // ============================================
@@ -3733,6 +3783,7 @@ function mapTableToEventType(table, _row) {
       '/api/parent/grades': handleGetChildGrades,
       '/api/parent/attendance': handleGetChildAttendance,
       '/api/parent/schedule': handleGetChildSchedule,
+      '/api/students/*/parents': handleGetStudentParents,
     };
 
     for (const [path, handler] of Object.entries(routes)) {
