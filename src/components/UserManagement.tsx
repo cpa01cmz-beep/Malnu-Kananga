@@ -16,6 +16,11 @@ import { unifiedNotificationManager } from '../services/unifiedNotificationManag
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton } from './ui/Skeleton';
+import {
+  API_ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  USER_GUIDANCE
+} from '../utils/errorMessages';
 import AccessDenied from './AccessDenied';
 
 interface UserManagementProps {
@@ -47,7 +52,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       {
         operation: 'fetchUsers',
         component: 'UserManagement',
-        fallbackMessage: 'Gagal memuat data pengguna'
+        fallbackMessage: API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR
       }
     );
 
@@ -100,13 +105,13 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       {
         operation: 'deleteUser',
         component: 'UserManagement',
-        fallbackMessage: 'Gagal menghapus pengguna'
+        fallbackMessage: API_ERROR_MESSAGES.OPERATION_FAILED
       }
     );
 
     if (result && result.success) {
       setUsers(prev => prev.filter(u => u.id !== userToDelete));
-      onShowToast('Pengguna dihapus', 'success');
+      onShowToast(SUCCESS_MESSAGES.USER_DELETED, 'success');
     }
     setIsDeleteDialogOpen(false);
     setUserToDelete(null);
@@ -181,18 +186,18 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               }
           }
 
-          if (response && response.success && response.data) {
+           if (response && response.success && response.data) {
               await fetchUsers();
-              onShowToast(isEditing ? 'User diperbarui' : 'User ditambahkan', 'success');
+              onShowToast(isEditing ? SUCCESS_MESSAGES.USER_UPDATED : SUCCESS_MESSAGES.USER_CREATED, 'success');
               setIsModalOpen(false);
           }
-      } catch (err) {
+       } catch (err) {
           await handleAsyncError(
             async () => { throw err; },
             {
               operation: 'saveUser',
               component: 'UserManagement',
-              fallbackMessage: 'Gagal menyimpan pengguna'
+              fallbackMessage: API_ERROR_MESSAGES.OPERATION_FAILED
             }
           );
       } finally {
@@ -219,11 +224,11 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             )}
         </div>
 
-        {errorState.hasError && (
+         {errorState.hasError && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300">
                 {errorState.feedback?.message}
                 <Button onClick={fetchUsers} variant="ghost" size="sm" aria-label="Coba lagi">
-                    Coba lagi
+                    {USER_GUIDANCE.RETRY}
                 </Button>
             </div>
         )}
@@ -379,7 +384,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
         <ConfirmationDialog
           isOpen={isDeleteDialogOpen}
           title="Hapus Pengguna"
-          message="Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan."
+          message={USER_GUIDANCE.CONFIRM_DELETE}
           type="danger"
           confirmText="Hapus"
           cancelText="Batal"

@@ -15,6 +15,17 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { STORAGE_KEYS } from '../constants';
 import { pdfExportService } from '../services/pdfExportService';
+import {
+  API_ERROR_MESSAGES,
+  SYNC_MESSAGES,
+  CSV_MESSAGES,
+  AI_MESSAGES,
+  EXPORT_MESSAGES,
+  AUTO_SAVE_MESSAGES,
+  FILE_ERROR_MESSAGES,
+  DATA_MESSAGES,
+  VALIDATION_MESSAGES
+} from '../utils/errorMessages';
 import ProgressBar from './ui/ProgressBar';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { 
@@ -189,14 +200,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           const parsedGrades = JSON.parse(cachedGrades);
           setGrades(parsedGrades);
           setError(getOfflineMessage());
-          onShowToast('Data nilai dari cache. Perubahan akan disinkronkan saat online.', 'info');
+          onShowToast(SYNC_MESSAGES.OFFLINE_USING_CACHE('nilai'), 'info');
         } catch {
           setError(getOfflineMessage());
-          onShowToast('Tidak ada data nilai tersimpan di cache.', 'error');
+          onShowToast(DATA_MESSAGES.NO_DATA_AVAILABLE('nilai'), 'error');
         }
       } else {
         setError(getOfflineMessage());
-        onShowToast('Tidak ada data nilai tersimpan. Memerlukan koneksi internet.', 'error');
+        onShowToast(SYNC_MESSAGES.OFFLINE_NO_CACHE, 'error');
       }
       setLoading(false);
       return;
@@ -206,7 +217,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       // Fetch students for the class
       const studentsResponse = await studentsAPI.getByClass(className);
       if (!studentsResponse.success || !studentsResponse.data) {
-        throw new Error(studentsResponse.message || 'Failed to fetch students');
+        throw new Error(studentsResponse.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       }
 
       // Fetch existing grades for the class/subject
@@ -232,13 +243,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       
       // Process any queued updates that were made while offline
       if (queuedGradeUpdates.length > 0) {
-        onShowToast(`Memproses ${queuedGradeUpdates.length} perubahan yang tertunda...`, 'info');
+        onShowToast(SYNC_MESSAGES.PROCESSING_QUEUED_CHANGES(queuedGradeUpdates.length), 'info');
         // Process queued updates here
         setQueuedGradeUpdates([]);
       }
     } catch {
-      setError('Gagal memuat data nilai');
-      onShowToast('Gagal memuat data siswa', 'error');
+      setError(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
+      onShowToast(API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR, 'error');
       
       // Try to load cached data as fallback
       const cachedGrades = localStorage.getItem(STORAGE_KEYS.GRADES);
@@ -246,7 +257,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         try {
           const parsedGrades = JSON.parse(cachedGrades);
           setGrades(parsedGrades);
-          setError('Menampilkan data dari cache. ' + getOfflineMessage());
+          setError(SYNC_MESSAGES.OFFLINE_USING_CACHE('') + getOfflineMessage());
         } catch {
           logger.error('Failed to parse cached grades');
         }
@@ -270,7 +281,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   // Sync queued changes when connection is restored
   useEffect(() => {
     if (isOnline && queuedGradeUpdates.length > 0) {
-      onShowToast(`Menyinkronkan ${queuedGradeUpdates.length} perubahan nilai...`, 'success');
+      onShowToast(SYNC_MESSAGES.SYNC_CHANGES(queuedGradeUpdates.length), 'success');
       setQueuedGradeUpdates([]);
       setHasUnsavedChanges(false);
     }
@@ -284,7 +295,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
           // Filter for grade-related actions
           const gradeActions = result.actionsProcessed; // We'll assume actionsProcessed includes grade actions
           if (gradeActions > 0) {
-            onShowToast(`${gradeActions} nilai berhasil disinkronkan`, 'success');
+            onShowToast(SYNC_MESSAGES.SYNC_SUCCESS(gradeActions, 'nilai'), 'success');
             
             // Clear queued updates for synced actions
             setQueuedGradeUpdates(prev => 
@@ -294,7 +305,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         }
         
         if (result.actionsFailed > 0) {
-          onShowToast(`${result.actionsFailed} nilai gagal disinkronkan`, 'error');
+          onShowToast(SYNC_MESSAGES.SYNC_FAILED(result.actionsFailed, 'nilai'), 'error');
         }
       });
     }
@@ -448,9 +459,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         // Cache locally immediately for UI consistency
         localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
         
-        logger.info('Grade updates queued for offline sync', { count: queuedActions.length, status: isSlow ? 'slow_connection' : 'offline' });
-        onShowToast(`${isSlow ? 'Koneksi lambat' : 'Offline'}: ${queuedActions.length} nilai diantarkan untuk sinkronisasi`, 'info');
-        setHasUnsavedChanges(false);
+         logger.info('Grade updates queued for offline sync', { count: queuedActions.length, status: isSlow ? 'slow_connection' : 'offline' });
+         onShowToast(SYNC_MESSAGES.QUEUED_OFFLINE(queuedActions.length, 'nilai', isSlow ? 'Koneksi lambat' : 'Offline'), 'info');
+         setHasUnsavedChanges(false);
         
         // Trigger sync if on slow connection (might recover)
         if (isSlow) {
@@ -472,9 +483,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         })
       );
 
-      await Promise.all(savePromises);
-      logger.info('Auto-save completed successfully');
-      onShowToast('Nilai otomatis disimpan', 'success');
+       await Promise.all(savePromises);
+       logger.info('Auto-save completed successfully');
+       onShowToast(AUTO_SAVE_MESSAGES.SUCCESS, 'success');
       
       // Cache the updated grades for offline use
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
@@ -515,13 +526,13 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         });
 
         setQueuedGradeUpdates(prev => [...prev, ...queuedActions]);
-        localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
-        
-        logger.info('Grade updates auto-queued due to network error', { count: queuedActions.length });
-        onShowToast(`Koneksi gagal: ${queuedActions.length} nilai diantarkan untuk sinkronisasi`, 'info');
-        setHasUnsavedChanges(false);
-      } else {
-        onShowToast('Gagal menyimpan nilai otomatis', 'error');
+         localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify(grades));
+         
+         logger.info('Grade updates auto-queued due to network error', { count: queuedActions.length });
+         onShowToast(SYNC_MESSAGES.QUEUED_OFFLINE(queuedActions.length, 'nilai', 'Koneksi gagal'), 'info');
+         setHasUnsavedChanges(false);
+       } else {
+         onShowToast(AUTO_SAVE_MESSAGES.FAILED, 'error');
       }
     } finally {
       setIsAutoSaving(false);
@@ -590,36 +601,36 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
                       finalExam: successfulImport.finalExam
                     };
                   }
-                  return grade;
-                }));
-                setIsBatchMode(false);
-                onShowToast(`${importResult.successfulImports} nilai berhasil diimpor`, 'success');
-              }
-            });
-          } else {
-            setGrades(prev => prev.map(grade => {
-              const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
-              if (successfulImport) {
-                return {
-                  ...grade,
-                  assignment: successfulImport.assignment,
-                  midExam: successfulImport.midExam,
-                  finalExam: successfulImport.finalExam
-                };
-              }
-              return grade;
-            }));
-            setIsBatchMode(false);
-            onShowToast(`CSV import berhasil! ${importResult.successfulImports} nilai diperbarui.`, 'success');
-          }
+                   return grade;
+                 }));
+                 setIsBatchMode(false);
+                 onShowToast(CSV_MESSAGES.IMPORT_SUCCESS(importResult.successfulImports), 'success');
+               }
+             });
+           } else {
+             setGrades(prev => prev.map(grade => {
+               const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
+               if (successfulImport) {
+                 return {
+                   ...grade,
+                   assignment: successfulImport.assignment,
+                   midExam: successfulImport.midExam,
+                   finalExam: successfulImport.finalExam
+                 };
+               }
+               return grade;
+             }));
+             setIsBatchMode(false);
+             onShowToast(CSV_MESSAGES.IMPORT_BATCH_SUCCESS(importResult.successfulImports), 'success');
+           }
         } catch (err) {
           logger.error('CSV import error:', err);
-          onShowToast('Gagal impor CSV. Mohon periksa format file.', 'error');
+          onShowToast(CSV_MESSAGES.IMPORT_FAILED, 'error');
         }
       },
       error: (err) => {
         logger.error('CSV parsing error:', err);
-        onShowToast('Gagal parsing CSV. Mohon periksa format file.', 'error');
+        onShowToast(CSV_MESSAGES.PARSE_FAILED, 'error');
       }
     });
 
@@ -630,6 +641,10 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   };
   
   const handleCSVExport = () => {
+    if (grades.length === 0) {
+      onShowToast(EXPORT_MESSAGES.NO_DATA_AVAILABLE, 'error');
+      return;
+    }
     const csvData = grades.map(g => ({
       name: g.name,
       nis: g.nis,
@@ -653,7 +668,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     link.click();
     document.body.removeChild(link);
     
-    onShowToast('Grades exported to CSV successfully', 'success');
+    onShowToast(CSV_MESSAGES.EXPORT_SUCCESS, 'success');
   };
   
   const calculateGradeStatistics = () => {
@@ -715,12 +730,12 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       }
     });
     
-    if (hasErrors) {
-      setConfirmDialog({
-        isOpen: true,
-        title: 'Validasi Gagal',
-        message: `Terdapat kesalahan validasi:\n\n${validationErrors.join('\n')}\n\nPerbaiki kesalahan tersebut sebelum menyimpan.`,
-        type: 'danger',
+     if (hasErrors) {
+       setConfirmDialog({
+         isOpen: true,
+         title: 'Validasi Gagal',
+         message: `${VALIDATION_MESSAGES.CLASS_INCOMPLETE}\n\n${validationErrors.join('\n')}\n\nPerbaiki kesalahan tersebut sebelum menyimpan.`,
+         type: 'danger',
         onConfirm: () => {}
       });
       return;
@@ -878,16 +893,16 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Check file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 'image/heic'];
-    if (!allowedTypes.includes(file.type)) {
-      onShowToast('Format file tidak didukung. Gunakan PDF, JPG, PNG, atau HEIC', 'error');
-      return;
-    }
-
+     // Check file type
+     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 'image/heic'];
+     if (!allowedTypes.includes(file.type)) {
+       onShowToast(FILE_ERROR_MESSAGES.INVALID_FILE_TYPE('PDF, JPG, PNG, atau HEIC'), 'error');
+       return;
+     }
+    
     // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      onShowToast('File terlalu besar. Maksimal 10MB', 'error');
+     if (file.size > 10 * 1024 * 1024) {
+      onShowToast(FILE_ERROR_MESSAGES.FILE_TOO_LARGE('10MB'), 'error');
       return;
     }
 
@@ -909,16 +924,16 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
       setOcrResult(result);
       setOCRProgress({ status: 'Memproses hasil...', progress: 100 });
 
-      // Use Gemini AI to extract grades from OCR text
-      if (result.text && result.confidence > 50) {
-        await processOCRWithAI(result.text, result.confidence);
-      } else {
-        onShowToast('OCR gagal membaca dokumen. Coba dengan kualitas gambar yang lebih baik.', 'error');
-      }
-
+       // Use Gemini AI to extract grades from OCR text
+       if (result.text && result.confidence > 50) {
+         await processOCRWithAI(result.text, result.confidence);
+       } else {
+         onShowToast(AI_MESSAGES.OCR_FAILED, 'error');
+       }
+    
     } catch (error) {
       logger.error('OCR Processing Error:', error);
-      onShowToast('Gagal memproses dokumen. Silakan coba lagi.', 'error');
+      onShowToast(AI_MESSAGES.OCR_PROCESS_FAILED, 'error');
     } finally {
       setIsOCRProcessing(false);
       // Reset file input
@@ -1052,9 +1067,9 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
     setOcrResult(null);
   };
 
-  const handlePDFExport = async () => {
+   const handlePDFExport = async () => {
     if (filteredData.length === 0) {
-      onShowToast('Tidak ada data untuk diexport', 'error');
+      onShowToast(EXPORT_MESSAGES.NO_DATA_AVAILABLE, 'error');
       return;
     }
 
@@ -1069,12 +1084,12 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
         remarks: `Assignment: ${student.assignment}, Mid: ${student.midExam}, Final: ${student.finalExam}`
       }));
       
-      pdfExportService.createGradesReport(gradesData, { name: '', id: '' });
-      
-      onShowToast('Laporan nilai berhasil diexport ke PDF', 'success');
-    } catch (error) {
-      logger.error('Failed to export grades PDF:', error);
-      onShowToast('Gagal melakukan export PDF', 'error');
+       pdfExportService.createGradesReport(gradesData, { name: '', id: '' });
+       
+       onShowToast(EXPORT_MESSAGES.PDF_SUCCESS, 'success');
+     } catch (error) {
+       logger.error('Failed to export grades PDF:', error);
+       onShowToast(EXPORT_MESSAGES.PDF_FAILED, 'error');
     } finally {
       setIsExportingPDF(false);
     }

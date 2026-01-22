@@ -18,6 +18,13 @@ import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
+import {
+  API_ERROR_MESSAGES,
+  USER_GUIDANCE,
+  PDF_ERROR_MESSAGES,
+  DATA_MESSAGES,
+  ERROR_MESSAGES
+} from '../utils/errorMessages';
 import { EmptyState } from './ui/LoadingState';
 import { TableSkeleton, CardSkeleton } from './ui/Skeleton';
 import { GRADIENT_CLASSES } from '../config/gradients';
@@ -85,7 +92,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
 
   const fetchGrades = useCallback(async () => {
     if (!STUDENT_NIS) {
-      setError('User tidak ditemukan');
+      setError(API_ERROR_MESSAGES.NOT_FOUND);
       setLoading(false);
       return;
     }
@@ -109,12 +116,12 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
         const performance = generateSubjectPerformance(aggregatedGrades);
         setSubjectPerformance(performance);
         
-        
+         
       } else {
-        setError(gradesRes.message || 'Gagal mengambil data nilai');
+        setError(gradesRes.message || API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
       }
     } catch (err) {
-      setError('Terjadi kesalahan saat mengambil data nilai');
+      setError(ERROR_MESSAGES.UNKNOWN_ERROR);
       logger.error('Error fetching grades:', err);
     } finally {
       setLoading(false);
@@ -307,7 +314,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
       pdf.save(`laporan-akademik-${STUDENT_NAME}-${new Date().toISOString().split('T')[0]}.pdf`);
     } catch (error) {
       logger.error('Error generating PDF:', error);
-      onShowToast?.('Gagal menghasilkan PDF. Silakan coba lagi.', 'error');
+      onShowToast?.(PDF_ERROR_MESSAGES.GENERATION_FAILED, 'error');
     }
   };
 
@@ -375,13 +382,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
             message={error} 
             variant="card" 
           />
-          <Button
-            variant="red-solid"
-            size="md"
-            onClick={fetchGrades}
-          >
-            Coba Lagi
-          </Button>
+           <Button
+             variant="red-solid"
+             size="md"
+             onClick={fetchGrades}
+           >
+             {USER_GUIDANCE.RETRY}
+           </Button>
         </div>
       </div>
     );
@@ -532,13 +539,13 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan={6}>
-                      <EmptyState message="Belum ada data nilai tersedia" size="md" variant="minimal" />
-                    </td>
-                  </tr>
-                )}
+                 ) : (
+                   <tr>
+                     <td colSpan={6}>
+                       <EmptyState message={DATA_MESSAGES.NO_DATA_AVAILABLE('nilai')} size="md" variant="minimal" />
+                     </td>
+                   </tr>
+                 )}
               </tbody>
             </table>
           </div>

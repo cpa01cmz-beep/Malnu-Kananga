@@ -226,6 +226,55 @@ export const NOTIFICATION_ERROR_MESSAGES = {
   FAILED_TO_REGISTER: 'Gagal mendaftarkan notifikasi. Silakan coba lagi.',
 } as const;
 
+export const PDF_ERROR_MESSAGES = {
+  GENERATION_FAILED: 'Gagal menghasilkan PDF. Silakan coba lagi.',
+} as const;
+
+export const DATA_MESSAGES = {
+  NO_DATA_AVAILABLE: (dataType: string): string => `Belum ada data ${dataType} tersedia`,
+  DATA_FROM_CACHE: 'Data dari cache. Perubahan akan disinkronkan saat online.',
+  FETCH_FAILED: (dataType: string): string => `Gagal memuat data ${dataType}`,
+} as const;
+
+export const SYNC_MESSAGES = {
+  PROCESSING_QUEUED_CHANGES: (count: number): string => `Memproses ${count} perubahan yang tertunda...`,
+  SYNC_CHANGES: (count: number): string => `Menyinkronkan ${count} perubahan nilai...`,
+  SYNC_SUCCESS: (count: number, dataType: string): string => `${count} ${dataType} berhasil disinkronkan`,
+  SYNC_FAILED: (count: number, dataType: string): string => `${count} ${dataType} gagal disinkronkan`,
+  OFFLINE_NO_CACHE: 'Tidak ada data tersimpan di cache. Memerlukan koneksi internet.',
+  OFFLINE_USING_CACHE: (dataType: string): string => `Data ${dataType} dari cache. Perubahan akan disinkronkan saat online.`,
+  QUEUED_OFFLINE: (count: number, dataType: string, status: string): string => `${status}: ${count} ${dataType} diantarkan untuk sinkronisasi`,
+  SYNC_COMPLETE: 'Sinkronisasi selesai',
+} as const;
+
+export const CSV_MESSAGES = {
+  IMPORT_SUCCESS: (count: number): string => `${count} nilai berhasil diimpor`,
+  IMPORT_BATCH_SUCCESS: (count: number): string => `CSV import berhasil! ${count} nilai diperbarui.`,
+  IMPORT_FAILED: 'Gagal impor CSV. Mohon periksa format file.',
+  PARSE_FAILED: 'Gagal parsing CSV. Mohon periksa format file.',
+  EXPORT_SUCCESS: 'Grades exported to CSV successfully',
+  NO_DATA_TO_EXPORT: 'Tidak ada data untuk diexport',
+  VALIDATION_SUMMARY: 'Terdapat kesalahan validasi:\n\n{errors}\n\nPerbaiki kesalahan tersebut sebelum menyimpan.',
+} as const;
+
+export const AI_MESSAGES = {
+  OCR_FAILED: 'OCR gagal membaca dokumen. Coba dengan kualitas gambar yang lebih baik.',
+  OCR_PROCESS_FAILED: 'Gagal memproses dokumen. Silakan coba lagi.',
+  ANALYSIS_FAILED: 'Gagal menganalisis data. Silakan coba lagi.',
+  PROCESSING: 'Memproses dengan AI...',
+} as const;
+
+export const EXPORT_MESSAGES = {
+  PDF_SUCCESS: 'Laporan nilai berhasil diexport ke PDF',
+  PDF_FAILED: 'Gagal melakukan export PDF',
+  NO_DATA_AVAILABLE: 'Tidak ada data untuk diexport',
+} as const;
+
+export const AUTO_SAVE_MESSAGES = {
+  SUCCESS: 'Nilai otomatis disimpan',
+  FAILED: 'Gagal menyimpan nilai otomatis',
+} as const;
+
 // Type exports
 export type ErrorMessageType = typeof ERROR_MESSAGES[keyof typeof ERROR_MESSAGES];
 export type ValidationMessageType = typeof VALIDATION_MESSAGES[keyof typeof VALIDATION_MESSAGES];
