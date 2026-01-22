@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import StudyPlanGenerator from '../StudyPlanGenerator';
 import * as apiService from '../../services/apiService';
 import * as geminiService from '../../services/geminiService';
@@ -382,7 +382,9 @@ describe('StudyPlanGenerator', () => {
         expect(screen.getByText('Buat Rencana Belajar')).toBeInTheDocument();
       });
 
-      fireEvent.click(screen.getByText('Buat Rencana Belajar'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('Buat Rencana Belajar'));
+      });
 
       await waitFor(() => {
         const errorElements = screen.getAllByText(/gagal membuat rencana belajar/i);
@@ -717,7 +719,7 @@ describe('StudyPlanGenerator', () => {
   });
 
   describe('Navigation', () => {
-    it('should call onBack when back button is clicked', () => {
+    it('should call onBack when back button is clicked', async () => {
       (apiService.authAPI.getCurrentUser as ReturnType<typeof vi.fn>).mockReturnValue({
         id: 'student123',
         name: 'Test Student',
@@ -743,7 +745,9 @@ describe('StudyPlanGenerator', () => {
       render(<StudyPlanGenerator onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const backButton = screen.getAllByText('← Kembali')[0];
-      fireEvent.click(backButton);
+      await act(async () => {
+        fireEvent.click(backButton);
+      });
 
       expect(mockOnBack).toHaveBeenCalled();
     });

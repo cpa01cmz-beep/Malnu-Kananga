@@ -98,15 +98,19 @@ describe('QuizGenerator', () => {
   });
 
   describe('Initial State and Rendering', () => {
-    it('should render quiz generator component', () => {
+    it('should render quiz generator component', async () => {
       render(<QuizGenerator />);
-      expect(screen.getByText('Buat Kuis dengan AI')).toBeInTheDocument();
-      expect(screen.getByText('Gunakan kecerdasan buatan untuk membuat kuis dari materi pembelajaran')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Buat Kuis dengan AI')).toBeInTheDocument();
+        expect(screen.getByText('Gunakan kecerdasan buatan untuk membuat kuis dari materi pembelajaran')).toBeInTheDocument();
+      });
     });
 
-    it('should start in select materials step', () => {
+    it('should start in select materials step', async () => {
       render(<QuizGenerator />);
-      expect(screen.getByText('Pilih Materi Pembelajaran')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Pilih Materi Pembelajaran')).toBeInTheDocument();
+      });
     });
 
     it('should show loading state when materials are loading', () => {
@@ -584,13 +588,15 @@ describe('QuizGenerator', () => {
       expect(screen.getByText('Pilih Materi Pembelajaran')).toBeInTheDocument();
     });
 
-    it('should call onCancel when cancel is clicked', () => {
+    it('should call onCancel when cancel is clicked', async () => {
       const onCancel = vi.fn();
-      render(<QuizGenerator onCancel={onCancel} />);
-      
-      const cancelButton = screen.getByText('Batal');
-      fireEvent.click(cancelButton);
-      
+      render(<QuizGenerator />);
+
+      await waitFor(() => {
+        const cancelButton = screen.getByText('Batal');
+        fireEvent.click(cancelButton);
+      });
+
       expect(onCancel).toHaveBeenCalledTimes(1);
     });
 
