@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import GradeAnalytics from '../GradeAnalytics';
 import { gradesAPI, assignmentsAPI, assignmentSubmissionsAPI, subjectsAPI } from '../../services/apiService';
 import { authAPI } from '../../services/apiService';
@@ -68,7 +68,7 @@ describe('GradeAnalytics', () => {
     },
     {
       id: 'grade-3',
-      studentId: 'student-3',
+      studentId: 'student-4',
       subjectId: 'subject-1',
       classId: 'class-1',
       academicYear: '2024/2025',
@@ -156,18 +156,20 @@ describe('GradeAnalytics', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders loading state initially', () => {
+  it('renders loading state initially', async () => {
     (gradesAPI.getAll as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(() => {}));
 
-    render(
-      <GradeAnalytics 
-        onBack={mockOnBack} 
-        onShowToast={mockOnShowToast}
-      />
-    );
+    await act(async () => {
+      render(
+        <GradeAnalytics
+          onBack={mockOnBack}
+          onShowToast={mockOnShowToast}
+        />
+      );
 
-    expect(screen.getByText('Analitik Nilai Kelas')).toBeInTheDocument();
-    expect(screen.queryByText('Rata-rata Nilai')).not.toBeInTheDocument();
+      expect(screen.getByText('Analitik Nilai Kelas')).toBeInTheDocument();
+      expect(screen.queryByText('Rata-rata Nilai')).not.toBeInTheDocument();
+    });
   });
 
   it('renders analytics overview tab with data', async () => {
@@ -346,7 +348,10 @@ describe('GradeAnalytics', () => {
     });
 
     const subjectsTab = screen.getByText('Mata Pelajaran');
-    subjectsTab.click();
+
+    await act(async () => {
+      subjectsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Matematika')).toBeInTheDocument();
@@ -354,14 +359,20 @@ describe('GradeAnalytics', () => {
     });
 
     const studentsTab = screen.getByText('Siswa');
-    studentsTab.click();
+
+    await act(async () => {
+      studentsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Semua Siswa (3)')).toBeInTheDocument();
     });
 
     const assignmentsTab = screen.getByText('Tugas');
-    assignmentsTab.click();
+
+    await act(async () => {
+      assignmentsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Fitur analitik tugas akan segera tersedia')).toBeInTheDocument();

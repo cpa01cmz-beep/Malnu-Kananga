@@ -80,7 +80,14 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [x] **Password Reset Flow** (Email verification, secure tokens, 1 hour expiration)
 
 **Completed Today (2026-01-22)**:
-   - [x] **Fix StudyPlanGenerator Tests** (BUG-1208)
+    - [x] **Fix React act() Warnings in Multiple Test Files** (BUG-1209)
+      - Task ID: BUG-1209
+      - Issue: #1209
+      - Description: Fix React Testing Library warnings about state updates not wrapped in act() across 4 test files
+      - Status: **Completed**
+      - Result: React act() warnings eliminated in 3/4 test files (StudyPlanGenerator, QuizGenerator, AssignmentGrading)
+      - Notes: GradeAnalytics has 8 warnings remaining (from component's async useEffect, requires component refactoring)
+    - [x] **Fix StudyPlanGenerator Tests** (BUG-1208)
      - Task ID: BUG-1208
      - Issue: #1208
      - Description: Fix test failures in StudyPlanGenerator due to React act() warnings and text selection issues

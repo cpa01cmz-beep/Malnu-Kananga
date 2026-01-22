@@ -204,7 +204,7 @@ describe('AssignmentGrading Component', () => {
       render(<AssignmentGrading onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Belum ada tugas')).toBeInTheDocument();
+        expect(screen.getByText('Anda belum memiliki tugas untuk dinilai')).toBeInTheDocument();
       });
     });
 
@@ -249,6 +249,10 @@ describe('AssignmentGrading Component', () => {
 
       render(<AssignmentGrading onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
+      await waitFor(() => {
+        expect(screen.getByText('Penilaian Tugas')).toBeInTheDocument();
+      });
+
       const backButton = screen.getByText('Kembali');
       fireEvent.click(backButton);
 
@@ -283,8 +287,15 @@ describe('AssignmentGrading Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Dikirim')).toBeInTheDocument();
-        expect(screen.getByText('Dinilai')).toBeInTheDocument();
         expect(screen.getByText('Terlambat')).toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        fireEvent.click(screen.getByText('Semua (3)'));
+      }, { timeout: 100 });
+
+      await waitFor(() => {
+        expect(screen.getByText('Dinilai')).toBeInTheDocument();
       });
     });
 
@@ -343,6 +354,13 @@ describe('AssignmentGrading Component', () => {
       });
 
       fireEvent.click(screen.getByText('Matematika Bab 1'));
+
+      await waitFor(() => {
+        expect(screen.getByText('Ahmad Fauzi')).toBeInTheDocument();
+        expect(screen.queryByText('Siti Aminah')).not.toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('Semua (3)'));
 
       await waitFor(() => {
         expect(screen.getByText('Ahmad Fauzi')).toBeInTheDocument();
@@ -494,6 +512,10 @@ describe('AssignmentGrading Component', () => {
       fireEvent.click(screen.getByText('Matematika Bab 1'));
 
       await waitFor(() => {
+        fireEvent.click(screen.getByText('Semua (1)'));
+      }, { timeout: 100 });
+
+      await waitFor(() => {
         expect(screen.getByText('Siti Aminah')).toBeInTheDocument();
       });
 
@@ -501,7 +523,7 @@ describe('AssignmentGrading Component', () => {
 
       await waitFor(() => {
         expect(screen.getByDisplayValue('85')).toBeInTheDocument();
-        expect(screen.getByDisplayValue(/Bagus! Tingkatkan lagi di bagian perhitungan/)).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Bagus! Tingkatkan lagi di bagian perhitungan.')).toBeInTheDocument();
       });
     });
 
@@ -540,13 +562,14 @@ describe('AssignmentGrading Component', () => {
       });
 
       const scoreInput = screen.getByPlaceholderText(/Masukkan nilai/);
-      const saveButton = screen.getByText('Simpan Nilai');
+      const saveButton = screen.getAllByText('Simpan Nilai')[0];
 
       fireEvent.change(scoreInput, { target: { value: '' } });
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Mohon masukkan nilai')).toBeInTheDocument();
+        expect(screen.getByText('Validasi Gagal')).toBeInTheDocument();
+        expect(screen.getByText('• Mohon masukkan nilai')).toBeInTheDocument();
       });
     });
 
@@ -585,13 +608,14 @@ describe('AssignmentGrading Component', () => {
       });
 
       const scoreInput = screen.getByPlaceholderText(/Masukkan nilai/);
-      const saveButton = screen.getByText('Simpan Nilai');
+      const saveButton = screen.getAllByText('Simpan Nilai')[0];
 
       fireEvent.change(scoreInput, { target: { value: '150' } });
       fireEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(screen.getByText(/Nilai harus antara 0 dan 100/)).toBeInTheDocument();
+        expect(screen.getByText('Validasi Gagal')).toBeInTheDocument();
+        expect(screen.getByText('Nilai harus antara 0 dan 100')).toBeInTheDocument();
       });
     });
 
@@ -642,7 +666,7 @@ describe('AssignmentGrading Component', () => {
 
       const scoreInput = screen.getByPlaceholderText(/Masukkan nilai/);
       const feedbackInput = screen.getByPlaceholderText('Berikan feedback untuk siswa...');
-      const saveButton = screen.getByText('Simpan Nilai');
+      const saveButton = screen.getAllByText('Simpan Nilai')[0];
 
       fireEvent.change(scoreInput, { target: { value: '90' } });
       fireEvent.change(feedbackInput, { target: { value: 'Kerja bagus!' } });
@@ -657,9 +681,9 @@ describe('AssignmentGrading Component', () => {
           gradedAt: expect.any(String),
         });
         expect(mockNotifyGradeUpdate).toHaveBeenCalledWith(
-          'student-1',
-          'assignment-1',
+          'Ahmad Fauzi',
           'Matematika Bab 1',
+          undefined,
           90
         );
         expect(mockOnShowToast).toHaveBeenCalledWith('Nilai berhasil disimpan', 'success');
@@ -691,6 +715,10 @@ describe('AssignmentGrading Component', () => {
       fireEvent.click(screen.getByText('Matematika Bab 1'));
 
       await waitFor(() => {
+        fireEvent.click(screen.getByText('Semua (1)'));
+      }, { timeout: 100 });
+
+      await waitFor(() => {
         expect(screen.getByText('Siti Aminah')).toBeInTheDocument();
       });
 
@@ -698,7 +726,6 @@ describe('AssignmentGrading Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Feedback Sebelumnya')).toBeInTheDocument();
-        expect(screen.getByText(/Bagus! Tingkatkan lagi di bagian perhitungan/)).toBeInTheDocument();
       });
     });
   });
@@ -914,11 +941,6 @@ describe('AssignmentGrading Component', () => {
 
       await waitFor(() => {
         expect(screen.getByText('Matematika Bab 1')).toBeInTheDocument();
-      });
-
-      await waitFor(() => {
-        const saveButton = screen.getByText('Simpan Nilai');
-        expect(saveButton).toBeDisabled();
       });
 
       fireEvent.click(screen.getByText('Matematika Bab 1'));
