@@ -246,6 +246,11 @@ describe('WebSocketService', () => {
       });
     });
 
+    afterEach(() => {
+      // Restore setTimeout to prevent affecting other tests
+      vi.unstubAllGlobals();
+    });
+
     it.skip('should handle WebSocket open', async () => {
       // TODO: Fix WebSocket mock to properly test event handler setup
       // This test requires proper WebSocket constructor behavior
