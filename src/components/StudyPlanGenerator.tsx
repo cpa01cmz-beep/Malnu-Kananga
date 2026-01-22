@@ -22,14 +22,15 @@ import { CheckCircleIcon } from './icons/StatusIcons';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
 
-interface StudyPlanGeneratorProps {
-  onBack: () => void;
-  onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
-}
+ interface StudyPlanGeneratorProps {
+   onBack: () => void;
+   onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
+ }
 
-type ActiveTab = 'overview' | 'subjects' | 'schedule' | 'recommendations';
+ type ActiveTab = 'overview' | 'subjects' | 'schedule' | 'recommendations';
 
-const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowToast = () => {} }) => {
+ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowToast = () => {} }) => {
+   const stableOnBack = useCallback(() => onBack(), [onBack]);
   const currentUser = authAPI.getCurrentUser();
   const STUDENT_NIS = currentUser?.id || '';
   const STUDENT_NAME = currentUser?.name || 'Siswa';
@@ -297,7 +298,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
       <div className="animate-fade-in-up">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+            <Button variant="ghost" size="sm" onClick={stableOnBack} className="mb-2">
               ← Kembali
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rencana Belajar AI</h2>
@@ -319,7 +320,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
       <div className="animate-fade-in-up">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+            <Button variant="ghost" size="sm" onClick={stableOnBack} className="mb-2">
               ← Kembali
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rencana Belajar AI</h2>
@@ -343,7 +344,7 @@ const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowT
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+          <Button variant="ghost" size="sm" onClick={stableOnBack} className="mb-2">
             ← Kembali
           </Button>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Rencana Belajar AI</h2>

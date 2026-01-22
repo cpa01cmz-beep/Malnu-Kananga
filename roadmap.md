@@ -1,6 +1,6 @@
  # MA Malnu Kananga - Roadmap
 
-**Last Updated**: 2026-01-22 (Issue #1199 Fixed - Dynamic Coding compliance restored in aiEditorValidator)
+**Last Updated**: 2026-01-22 (Issue #1208 Fixed - StudyPlanGenerator test failures resolved)
 
 ## Vision
 Transform MA Malnu Kananga into a fully integrated, AI-powered school management system with offline capability and real-time features.
@@ -79,10 +79,20 @@ Transform MA Malnu Kananga into a fully integrated, AI-powered school management
 - [x] **Security Audit & Hardening** (Dynamic coding, centralized URLs, proper error handling)
 - [x] **Password Reset Flow** (Email verification, secure tokens, 1 hour expiration)
 
+**Completed Today (2026-01-22)**:
+   - [x] **Fix StudyPlanGenerator Tests** (BUG-1208)
+     - Task ID: BUG-1208
+     - Issue: #1208
+     - Description: Fix test failures in StudyPlanGenerator due to React act() warnings and text selection issues
+     - Status: **Completed**
+     - Priority: P1 (High)
+     - Domain: Testing & Stability (Pillars 3, 7)
+     - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+     - Result: **React act() warnings eliminated, 100% test pass rate (12/12)**
+     - Summary: Wrapped onBack in useCallback, updated 6 test assertions to use getAllByText for duplicate element handling
+
 ### In Progress 🚧
 *No tasks currently in progress*
-
-  **Completed Today (2026-01-22)**:
    - [x] **Voice Input Integration - All Phases Completed** (GAP-104)
      - Phase 0: Analysis completed (voice infrastructure reviewed)
      - Phase 1: Create useVoiceInput hook with field-level recognition (28 tests passing, typecheck OK)

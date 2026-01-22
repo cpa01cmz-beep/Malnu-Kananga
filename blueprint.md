@@ -1,6 +1,6 @@
  # MA Malnu Kananga - System Blueprint
 
-**Last Updated**: 2026-01-22 (Issue #1199 Fixed - Hardcoded localStorage key in aiEditorValidator replaced with STORAGE_KEYS constant)
+**Last Updated**: 2026-01-22 (Issue #1208 Fixed - StudyPlanGenerator React act() warnings and duplicate text element selection issues resolved)
 
 ## Architecture Overview
 

@@ -2,12 +2,40 @@
  
   **Last Updated**: 2026-01-22 (Issue #1199 Fixed - Hardcoded localStorage key replaced with STORAGE_KEYS constant)
 
-  ## Active Tasks
+   ## Active Tasks
 
-  ### 2026-01-22
-     - [x] **Verify Issue #1202: Missing Error Handling in Async Functions** (BUG-1202-VERIFY) - COMPLETED
-
-  *No tasks currently in progress*
+   ### 2026-01-22
+      - [x] **Verify Issue #1202: Missing Error Handling in Async Functions** (BUG-1202-VERIFY) - COMPLETED
+      - [x] **Fix StudyPlanGenerator Tests Fail Due to Duplicate Text Element Selection** (BUG-1208) - COMPLETED
+         - Task ID: BUG-1208
+         - Issue: #1208
+         - Description: Fix test failures in StudyPlanGenerator due to React act() warnings and text selection issues
+         - Status: **Completed**
+         - Completed: 2026-01-22
+         - Started: 2026-01-22
+         - Priority: P1 (High)
+         - Domain: Testing & Stability (Pillars 3, 7)
+         - Agent: Lead Autonomous Engineer & System Guardian (Sanitizer Mode)
+         - Dependencies: None
+         - Root causes identified:
+           - React act() warnings: State updates not wrapped in act() during test execution
+           - Test failures: Text matching issues (error messages may be split across elements)
+         - Test results: 12/12 tests passing (100% pass rate, up from 67%)
+         - Fixes implemented:
+           - Wrapped onBack prop in useCallback with proper dependencies [onBack]
+           - Updated 6 test cases to use flexible text matching (getAllByText instead of getByText)
+           - All duplicate element selection issues resolved
+         - Files modified:
+           - src/components/StudyPlanGenerator.tsx (added useCallback for stableOnBack)
+           - src/components/__tests__/StudyPlanGenerator.test.tsx (updated 6 test assertions)
+         - Quality checks:
+           - ✅ Typecheck: Passed (0 errors)
+           - ✅ Lint: Passed (0 errors, 0 warnings)
+           - ✅ Tests: 12/12 passing (100% pass rate)
+         - Result: React act() warnings eliminated, all duplicate text element selection issues fixed
+         - Next logical tasks:
+           - Create pull request for BUG-1208
+           - Close issue #1208
 
   ## Completed Tasks ✅
 

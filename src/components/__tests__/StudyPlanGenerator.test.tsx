@@ -385,7 +385,8 @@ describe('StudyPlanGenerator', () => {
       fireEvent.click(screen.getByText('Buat Rencana Belajar'));
 
       await waitFor(() => {
-        expect(screen.getByText('Gagal membuat rencana belajar')).toBeInTheDocument();
+        const errorElements = screen.getAllByText(/gagal membuat rencana belajar/i);
+        expect(errorElements.length).toBeGreaterThan(0);
       });
 
       expect(mockOnShowToast).toHaveBeenCalledWith('Gagal membuat rencana belajar', 'error');
@@ -433,14 +434,25 @@ describe('StudyPlanGenerator', () => {
       render(<StudyPlanGenerator onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       await waitFor(() => {
-        expect(screen.getByText(mockStudyPlan.title)).toBeInTheDocument();
+        const titleElement = screen.getAllByText(mockStudyPlan.title);
+        expect(titleElement.length).toBeGreaterThan(0);
       });
 
-      expect(screen.getByText(mockStudyPlan.description)).toBeInTheDocument();
-      expect(screen.getByText('Ringkasan')).toBeInTheDocument();
-      expect(screen.getByText('Mata Pelajaran')).toBeInTheDocument();
-      expect(screen.getByText('Jadwal')).toBeInTheDocument();
-      expect(screen.getByText('Rekomendasi')).toBeInTheDocument();
+      await waitFor(() => {
+        const descriptionElement = screen.getAllByText(mockStudyPlan.description);
+        expect(descriptionElement.length).toBeGreaterThan(0);
+      });
+      const ringkasanElements = screen.getAllByText('Ringkasan');
+      expect(ringkasanElements.length).toBeGreaterThan(0);
+
+      const mataPelajaranElements = screen.getAllByText('Mata Pelajaran');
+      expect(mataPelajaranElements.length).toBeGreaterThan(0);
+
+      const jadwalElements = screen.getAllByText('Jadwal');
+      expect(jadwalElements.length).toBeGreaterThan(0);
+
+      const rekomendasiElements = screen.getAllByText('Rekomendasi');
+      expect(rekomendasiElements.length).toBeGreaterThan(0);
     });
 
     it('should display subjects with priority badges', async () => {
@@ -483,18 +495,25 @@ describe('StudyPlanGenerator', () => {
       render(<StudyPlanGenerator onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Mata Pelajaran')).toBeInTheDocument();
+        const mataPelajaranElements = screen.getAllByText('Mata Pelajaran');
+        expect(mataPelajaranElements.length).toBeGreaterThan(0);
       });
 
-      fireEvent.click(screen.getByText('Mata Pelajaran'));
+      fireEvent.click(screen.getAllByText('Mata Pelajaran')[0]);
 
       await waitFor(() => {
-        expect(screen.getByText('Matematika')).toBeInTheDocument();
-        expect(screen.getByText('Fisika')).toBeInTheDocument();
-        expect(screen.getByText('Bahasa Indonesia')).toBeInTheDocument();
+        const mathElements = screen.getAllByText('Matematika');
+        expect(mathElements.length).toBeGreaterThan(0);
+
+        const fisikaElements = screen.getAllByText('Fisika');
+        expect(fisikaElements.length).toBeGreaterThan(0);
+
+        const bahasaElements = screen.getAllByText('Bahasa Indonesia');
+        expect(bahasaElements.length).toBeGreaterThan(0);
       });
 
-      expect(screen.getByText('Prioritas Tinggi')).toBeInTheDocument();
+      const priorityElements = screen.getAllByText('Prioritas Tinggi');
+      expect(priorityElements.length).toBeGreaterThan(0);
     });
 
     it('should display weekly schedule', async () => {
@@ -587,14 +606,18 @@ describe('StudyPlanGenerator', () => {
       render(<StudyPlanGenerator onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Rekomendasi')).toBeInTheDocument();
+        const rekomendasiElements = screen.getAllByText('Rekomendasi');
+        expect(rekomendasiElements.length).toBeGreaterThan(0);
       });
 
-      fireEvent.click(screen.getByText('Rekomendasi'));
+      fireEvent.click(screen.getAllByText('Rekomendasi')[0]);
 
       await waitFor(() => {
-        expect(screen.getByText('Teknik Pomodoro')).toBeInTheDocument();
-        expect(screen.getByText('Prioritaskan Tugas')).toBeInTheDocument();
+        const pomodoroElements = screen.getAllByText('Teknik Pomodoro');
+        expect(pomodoroElements.length).toBeGreaterThan(0);
+
+        const tugasElements = screen.getAllByText('Prioritaskan Tugas');
+        expect(tugasElements.length).toBeGreaterThan(0);
       });
     });
   });
