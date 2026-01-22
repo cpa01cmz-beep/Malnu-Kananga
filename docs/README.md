@@ -1,17 +1,20 @@
 # Documentation Index
 
  **Created**: 2026-01-05
-   **Last Updated**: 2026-01-17
-   **Version**: 3.3.0
-   **Status**: Active
+    **Last Updated**: 2026-01-22
+    **Version**: 3.2.0
+    **Status**: Active
 
 ## Overview
 
 This index provides a comprehensive overview of all documentation available for MA Malnu Kananga web application project. All documentation is centralized in `/docs` directory.
 
-**Important**: Project documentation has been consolidated (2026-01-17):
-- **Single Source of Truth**: `[ROADMAP.md](./ROADMAP.md)` - Complete system documentation (architecture, features, roadmap, tasks)
-- **Archived Documentation**: `archive/` directory contains previous BLUEPRINT.md, ROADMAP.md, and TASK.md for reference only
+**Important**: Project documentation has been consolidated (2026-01-22):
+ - **Single Source of Truth**: Core documentation files are now centralized in `/docs` directory
+   - `[BLUEPRINT.md](./blueprint.md)` - System architecture, tech stack, and implementation details
+   - `[ROADMAP.md](./roadmap.md)` - Complete system documentation (architecture, features, roadmap, tasks, status)
+   - `[TASK.md](./task.md)` - Active task tracking and progress
+ - **Archived Documentation**: `archive/` directory contains previous versions of these files for reference only
 
 **Note**: The following files are NOT part of documentation:
 - `AGENTS.md` (root) - AI agent configuration for OpenCode CLI tool
@@ -21,7 +24,9 @@ These files are operational instructions for AI agents and should not be conside
 ## Documentation Structure
 
 ### 📚 Core Documentation
-- **[ROADMAP.md](./ROADMAP.md)** - **Complete system documentation** (Single Source of Truth) - Architecture, features, roadmap, tasks, status
+- **[BLUEPRINT.md](./blueprint.md)** - System architecture, tech stack, module structure, data models, and design system
+- **[ROADMAP.md](./roadmap.md)** - Development roadmap, features, tasks, and project status
+- **[TASK.md](./task.md)** - Active task tracking, progress, and completion status
 - **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
@@ -38,7 +43,9 @@ These files are operational instructions for AI agents and should not be conside
 - **[HOW_TO.md](./HOW_TO.md)** - How-to guides for common tasks
 
 ### 🏗️ Project Management
-- **[ROADMAP.md](./ROADMAP.md)** - **Consolidated** - Roadmap, tasks, status (Single Source of Truth)
+- **[BLUEPRINT.md](./blueprint.md)** - System blueprint and architecture documentation
+- **[ROADMAP.md](./roadmap.md)** - Development roadmap, milestones, and features
+- **[TASK.md](./task.md)** - Active tasks, work in progress, and completed items
 - See archive/ directory for historical documentation
 
  ### 🚀 Deployment & Infrastructure
@@ -65,23 +72,27 @@ These files are operational instructions for AI agents and should not be conside
 
 ### For New Developers
  1. Start with [../README.md](../README.md) for project overview
- 2. Read [ROADMAP.md](./ROADMAP.md) - **Complete system documentation** (architecture, features, roadmap, tasks)
- 3. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
- 4. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
+ 2. Read [BLUEPRINT.md](./BLUEPRINT.md) for system architecture and tech stack
+ 3. Read [ROADMAP.md](./ROADMAP.md) for features and roadmap
+ 4. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
+ 5. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
 ### For Administrators
- 1. Review [ROADMAP.md](./ROADMAP.md) for complete system overview
- 2. Review [API Reference](./api-reference.md) for integration
- 3. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
+ 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
+ 2. Review [ROADMAP.md](./ROADMAP.md) for features and roadmap
+ 3. Review [API Reference](./api-reference.md) for integration
+ 4. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
- 1. Read [ROADMAP.md](./ROADMAP.md) for deployment and infrastructure overview
- 2. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
- 3. See [API Reference](./api-reference.md) for backend endpoints
+ 1. Read [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
+ 2. Read [ROADMAP.md](./ROADMAP.md) for deployment and infrastructure overview
+ 3. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
+ 4. See [API Reference](./api-reference.md) for backend endpoints
 
 ### For Project Managers
- 1. Review [ROADMAP.md](./ROADMAP.md) - **Complete project documentation** (specifications, roadmap, tasks, status)
- 2. Monitor "Current Status" and "Upcoming Tasks" sections in ROADMAP.md
+ 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
+ 2. Review [ROADMAP.md](./ROADMAP.md) for features, roadmap, and project status
+ 3. Monitor [TASK.md](./TASK.md) for active tasks and progress tracking
 
 ---
 
@@ -200,9 +211,18 @@ This index maintains relationships between documents:
 
 ---
 
-## Recent Changes (v3.3.0 - 2026-01-17)
+## Recent Changes (v3.2.0 - 2026-01-22)
 
-     - **Documentation Consolidation (2026-01-17 - Current)**:
+     - **Documentation Consolidation (2026-01-22 - Current)**:
+                - Consolidated core documentation to `/docs` directory
+                - Moved `blueprint.md`, `roadmap.md`, `task.md` from root to `/docs/`
+                - Updated documentation structure to reflect new location
+                - Fixed version inconsistency across documentation (all now v3.2.0)
+                - Updated docs/README.md to accurately reflect documentation structure
+                - Resolved Single Source of Truth confusion (issue #1213)
+                - Fixed version inconsistencies (issue #1211)
+
+     - **Documentation Consolidation (2026-01-17 - Previous)**:
                 - Created consolidated ROADMAP.md as Single Source of Truth (Point 8: Documentation)
                 - Combined BLUEPRINT.md (497 lines), ROADMAP.md (285 lines), TASK.md (761 lines) into one file (~850 lines)
                 - Eliminated redundant information across 3 files

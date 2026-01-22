@@ -1,9 +1,9 @@
 # Roadmap Sistem Informasi Manajemen Sekolah (Consolidated)
 
-**Created**: 2025-01-01
-**Last Updated**: 2026-01-17
-**Version**: 3.0.0
-**Status**: Active
+ **Created**: 2025-01-01
+ **Last Updated**: 2026-01-22
+ **Version**: 3.2.0
+ **Status**: Active
 
 **Single Source of Truth**: This document consolidates all project documentation (previously split across blueprint.md, task.md, and roadmap.md)
 

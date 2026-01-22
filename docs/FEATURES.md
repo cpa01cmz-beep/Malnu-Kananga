@@ -1,9 +1,9 @@
 # Feature Matrix
 
-**Created**: 2025-01-01
-**Last Updated**: 2026-01-10
-**Version**: 2.1.0
-**Status**: Active
+ **Created**: 2025-01-01
+ **Last Updated**: 2026-01-22
+ **Version**: 3.2.0
+ **Status**: Active
 
 Feature availability by user role.
 
