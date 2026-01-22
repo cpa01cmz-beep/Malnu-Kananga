@@ -24,7 +24,7 @@ vi.mock('../../hooks/useCanAccess', () => ({
     user: { id: 'user-1', role: 'teacher', name: 'Guru', email: 'guru@malnu.sch.id', status: 'active' },
     userRole: 'teacher',
     userExtraRole: null,
-    canAccess: vi.fn(() => true),
+    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: 'content.share' })),
     canAccessAny: vi.fn(() => true),
     canAccessResource: vi.fn(() => true),
     userPermissions: [],

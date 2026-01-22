@@ -12,7 +12,7 @@ vi.mock('../../hooks/useCanAccess', () => ({
     user: { id: 'user-1', role: 'student', name: 'Test User', email: 'test@example.com' },
     userRole: 'student',
     userExtraRole: null,
-    canAccess: vi.fn(() => true),
+    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: 'user.update' })),
     canAccessAny: vi.fn(() => true),
     canAccessResource: vi.fn(() => true),
     userPermissions: [],

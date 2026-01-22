@@ -67,7 +67,7 @@ vi.mock('../../hooks/useCanAccess', () => ({
     user: { id: 'teacher-1', name: 'Test Teacher' },
     userRole: 'teacher',
     userExtraRole: null,
-    canAccess: vi.fn(() => true),
+    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: 'attendance.create' })),
     canAccessAny: vi.fn(() => true),
     canAccessResource: vi.fn(() => true),
     userPermissions: [],
