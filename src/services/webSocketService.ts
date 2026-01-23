@@ -86,6 +86,7 @@ class WebSocketService {
   };
   private fallbackPollingInterval: number | null = null;
   private reconnectTimeout: number | null = null;
+  private visibilityChangeHandler: (() => void) | null = null;
 
   private constructor() {
     this.loadConnectionState();
@@ -659,28 +660,25 @@ private updateEventsData(event: RealTimeEvent): void {
    * Handle page visibility changes
    */
   private setupVisibilityChangeHandler(): void {
-    document.addEventListener('visibilitychange', () => {
+    this.visibilityChangeHandler = () => {
       if (document.hidden) {
-        // Page hidden, pause activities
         this.clearPingInterval();
       } else {
-        // Page visible, resume activities
         if (this.connectionState.connected) {
           this.startPingInterval();
-          // Re-sync if we've been away for a while
           const lastConnected = this.connectionState.lastConnected;
           if (lastConnected) {
             const timeAway = Date.now() - new Date(lastConnected).getTime();
-            if (timeAway > 60000) { // Been away for more than 1 minute
+            if (timeAway > 60000) {
               this.pollForUpdates().catch(() => {});
             }
           }
         } else if (!this.fallbackPollingInterval) {
-          // Try to reconnect if not connected and not polling
           this.initialize().catch(() => {});
         }
       }
-    });
+    };
+    document.addEventListener('visibilitychange', this.visibilityChangeHandler);
   }
 
   /**
@@ -726,6 +724,11 @@ private updateEventsData(event: RealTimeEvent): void {
     if (this.fallbackPollingInterval) {
       window.clearInterval(this.fallbackPollingInterval);
       this.fallbackPollingInterval = null;
+    }
+
+    if (this.visibilityChangeHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
+      this.visibilityChangeHandler = null;
     }
 
     if (this.ws?.readyState === 1) {

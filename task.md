@@ -57,17 +57,34 @@
 
 ---
 
-## In Progress
+## Completed
 
-*No tasks currently in progress*
+### [SANITIZER MODE] Fix Memory Leak in WebSocketService - visibilitychange Listener Not Removed ✅
+- **Issue**: #1223
+- **Priority**: P1
+- **Status**: Completed
+- **Started**: 2026-01-22
+- **Completed**: 2026-01-22
+- **Reason**: Memory leak when disconnect() is called multiple times without removing visibilitychange listener
+- **Files Modified**:
+  - src/services/webSocketService.ts:88 - Added visibilityChangeHandler property
+  - src/services/webSocketService.ts:661-684 - Refactored setupVisibilityChangeHandler to store handler
+  - src/services/webSocketService.ts:727-730 - Added cleanup in disconnect() method
+- **Fix Applied**:
+  - Stored visibilitychange handler as class property `visibilityChangeHandler: (() => void) | null`
+  - Modified `setupVisibilityChangeHandler()` to store handler reference
+  - Added cleanup logic in `disconnect()` to remove listener
+- **Verification**:
+  - ✅ TypeScript type checking passed
+  - ✅ ESLint linting passed
+  - ✅ 20 useWebSocket hook tests passed
+- **Impact**: Fixes P1 critical memory leak that accumulated visibilitychange listeners on each reconnect cycle
 
 ---
 
 ## Pending
 
 *Tasks will be added as needed*
-<<<<<<< Updated upstream
-=======
 
 ---
 
@@ -85,24 +102,3 @@
   - Optimize test execution
   - Ensure all tests pass with new timeout
 - **Impact**: Improves CI reliability and development workflow
-
----
-
-## Completed
-
-### [SCRIBE MODE] Fix Version Inconsistency in docs/ROADMAP.md ✅
-- **Issue**: #1228
-- **Priority**: P3
-- **Status**: Completed
-- **Started**: 2026-01-23
-- **Completed**: 2026-01-23
-- **Reason**: Version mismatch between package.json (v3.2.0) and documentation
-- **Files Modified**:
-  - docs/ROADMAP.md:31 - Changed `v2.1.7` to `v3.2.0` (Executive Summary)
-  - docs/ROADMAP.md:598 - Changed `3.0.0` to `3.2.0` (Document footer)
-  - Updated last modified date to 2026-01-22
-- **Verification**:
-  - ✅ No remaining v2.1.7 references found in repository
-  - ✅ All version references now show v3.2.0
-- **Impact**: Maintains Single Source of Truth for version information (Pillar 8: Documentation)
-
