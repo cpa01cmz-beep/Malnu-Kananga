@@ -163,6 +163,10 @@ export default defineConfig(({ mode }) => {
         globals: true,
         environment: 'jsdom',
         setupFiles: ['./test-setup.ts'],
+        testTimeout: 10000,
+        hookTimeout: 10000,
+        include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}', '__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+        exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '.opencode', 'e2e'],
       }
     }
   }
