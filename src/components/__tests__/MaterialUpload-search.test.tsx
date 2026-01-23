@@ -100,9 +100,21 @@ vi.mock('../../hooks/useEventNotifications', () => ({
 
 vi.mock('../../services/offlineActionQueueService', () => ({
   useOfflineActionQueue: () => ({
+    // Queue operations
     addAction: vi.fn(),
-    getPendingCount: vi.fn(() => 0)
-  })
+    removeAction: vi.fn(),
+    getQueue: vi.fn(() => []),
+    getPendingCount: vi.fn(() => 0),
+    getFailedCount: vi.fn(() => 0),
+    clearCompletedActions: vi.fn(),
+    // Sync operations
+    sync: vi.fn(() => Promise.resolve({ success: true, actionsProcessed: 0, actionsFailed: 0, conflicts: [], errors: [] })),
+    retryFailedActions: vi.fn(),
+    resolveConflict: vi.fn(),
+    onSyncComplete: vi.fn(() => vi.fn()),
+    // Status
+    isSyncing: false,
+  }),
 }));
 
 vi.mock('../../utils/networkStatus', () => ({

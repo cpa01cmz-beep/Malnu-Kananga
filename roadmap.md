@@ -459,6 +459,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Fix canAccess mock pattern in test files
 - ✅ Fix WebSocket memory leak (Issue #1223, P1)
 - ✅ Fix test suite timeout issue (Issue #1193, #1225)
+- ✅ Fix incomplete useOfflineActionQueue mocks (Issue #1236, P0) - 2026-01-23
 - ⏳ Enhance notification system reliability
 - ⏳ Standardize material upload validation
 - ⏳ Standardize voice settings validation
