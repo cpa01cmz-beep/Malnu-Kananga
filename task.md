@@ -112,6 +112,43 @@
 
 ---
 
+## Completed
+
+### [SANITIZER MODE] Test Files Should Use STORAGE_KEYS Constants Instead of Hardcoded Strings ✅
+- **Issue**: #1224
+- **Priority**: P3
+- **Status**: Completed
+- **Started**: 2026-01-23
+- **Completed**: 2026-01-23
+- **Reason**: Some test files use hardcoded localStorage keys instead of the centralized `STORAGE_KEYS` constants, violating the project's coding standards (Pillar 15: Dynamic Coding - Zero hardcoded values)
+- **Files Fixed**: 5 test files
+  1. src/services/__tests__/ocrNotificationIntegration.test.ts:229,230
+     - Uses hardcoded `'ocr_validation_events'`
+     - Replaced with `STORAGE_KEYS.OCR_VALIDATION_EVENTS`
+  2. src/components/__tests__/AssignmentGrading.test.tsx:171
+     - Uses hardcoded `'malnu_user'`
+     - Replaced with `STORAGE_KEYS.USER`
+  3. src/components/__tests__/ActivityFeed.test.tsx (multiple occurrences)
+     - Uses hardcoded `'malnu_activity_feed_test'`
+     - Replaced with `STORAGE_KEYS.ACTIVITY_FEED` (via mock)
+  4. src/components/__tests__/TeacherDashboard.offline.test.tsx:59
+     - Uses hardcoded `'malnu_teacher_dashboard_cache'`
+     - Replaced with `STORAGE_KEYS.TEACHER_DASHBOARD_CACHE`
+  5. src/components/__tests__/TeacherDashboard-activity-feed.test.tsx:41
+     - Uses hardcoded `'malnu_users'`
+     - Replaced with `STORAGE_KEYS.USERS`
+- **Fix Applied**:
+  - Added `import { STORAGE_KEYS } from '../../constants'` to affected test files
+  - Replaced all hardcoded localStorage key strings with STORAGE_KEYS constants
+  - For ActivityFeed.test.tsx, kept mock definition `'malnu_activity_feed_test'` but used `STORAGE_KEYS.ACTIVITY_FEED` in test code
+- **Verification**:
+  - ✅ TypeScript type checking passed
+  - ✅ ESLint linting passed
+  - ✅ All affected tests passing (ocrNotificationIntegration, AssignmentGrading, TeacherDashboard.offline, TeacherDashboard-activity-feed)
+- **Impact**: Ensures all test files follow the same pattern for storage keys (Pillar 15: Dynamic Coding - Zero hardcoded values)
+
+---
+
 ## Pending
 
 *Tasks will be added as needed*

@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
 import ActivityFeed, { ActivityType, Activity } from '../ActivityFeed';
+import { STORAGE_KEYS } from '../../constants';
 
 vi.unmock('react');
 
@@ -76,7 +77,7 @@ describe('ActivityFeed', () => {
   });
 
   it('should display activities grouped by time', async () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(mockActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -95,7 +96,7 @@ describe('ActivityFeed', () => {
 
   it('should show unread count badge', () => {
     const unreadActivities = mockActivities.filter((a) => !a.isRead);
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(unreadActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(unreadActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -138,7 +139,7 @@ describe('ActivityFeed', () => {
   });
 
   it('should filter activities by type', async () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(mockActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -166,7 +167,7 @@ describe('ActivityFeed', () => {
   });
 
   it('should show empty state when no activities', () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify([]));
 
     renderWithRouter(
       <ActivityFeed
@@ -194,7 +195,7 @@ describe('ActivityFeed', () => {
   });
 
   it('should mark activity as read when clicked', async () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(mockActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
 
     const { container } = renderWithRouter(
       <ActivityFeed
@@ -213,13 +214,13 @@ describe('ActivityFeed', () => {
     if (firstActivityItem) {
       fireEvent.click(firstActivityItem);
       await waitFor(() => {
-        expect(localStorage.getItem('malnu_activity_feed_test')).toContain('true');
+        expect(localStorage.getItem(STORAGE_KEYS.ACTIVITY_FEED)).toContain('true');
       });
     }
   });
 
   it('should mark all activities as read when button clicked', async () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(mockActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -233,7 +234,7 @@ describe('ActivityFeed', () => {
       const markAllButton = screen.queryByText('Tandai semua dibaca');
       if (markAllButton) {
         fireEvent.click(markAllButton);
-        expect(localStorage.getItem('malnu_activity_feed_test')).toContain('true');
+        expect(localStorage.getItem(STORAGE_KEYS.ACTIVITY_FEED)).toContain('true');
       }
     });
   });
@@ -251,7 +252,7 @@ describe('ActivityFeed', () => {
       isRead: false,
     }));
 
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(manyActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(manyActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -262,12 +263,12 @@ describe('ActivityFeed', () => {
       />
     );
 
-    const activities = JSON.parse(localStorage.getItem('malnu_activity_feed_test') || '[]');
+    const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACTIVITY_FEED) || '[]');
     expect(activities.length).toBeLessThanOrEqual(50);
   });
 
   it('should load cached activities from localStorage', () => {
-    localStorage.setItem('malnu_activity_feed_test', JSON.stringify(mockActivities));
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
 
     renderWithRouter(
       <ActivityFeed
@@ -277,11 +278,11 @@ describe('ActivityFeed', () => {
       />
     );
 
-    expect(localStorage.getItem('malnu_activity_feed_test')).toBe(JSON.stringify(mockActivities));
+    expect(localStorage.getItem(STORAGE_KEYS.ACTIVITY_FEED)).toBe(JSON.stringify(mockActivities));
   });
 
   it('should handle error when parsing cached activities', () => {
-    localStorage.setItem('malnu_activity_feed_test', 'invalid json');
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, 'invalid json');
 
     expect(() => {
       renderWithRouter(

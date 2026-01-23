@@ -5,6 +5,7 @@ import AssignmentGrading from '../AssignmentGrading';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../../services/apiService';
 import * as useEventNotifications from '../../hooks/useEventNotifications';
 import { AssignmentType, AssignmentStatus } from '../../types';
+import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService', () => ({
   assignmentsAPI: {
@@ -168,7 +169,7 @@ const mockSubmissions = [
 describe('AssignmentGrading Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.setItem('malnu_user', JSON.stringify(mockUser));
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(mockUser));
   });
 
   describe('Assignment List View', () => {

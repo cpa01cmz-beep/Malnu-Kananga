@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import TeacherDashboard from '../TeacherDashboard';
 import * as permissionService from '../../services/permissionService';
+import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');
 vi.mock('../../services/permissionService');
@@ -38,7 +39,7 @@ const mockOnShowToast = vi.fn();
 describe('TeacherDashboard with ActivityFeed Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.setItem('malnu_users', JSON.stringify({
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify({
       id: 'teacher-1',
       name: 'Test Teacher',
       email: 'teacher@test.com',
