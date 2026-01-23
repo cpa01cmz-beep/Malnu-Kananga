@@ -532,6 +532,13 @@ npm run test:e2e      # Run E2E tests
 npm run test:all      # Run all tests
 ```
 
+### Test Configuration
+- **Test Timeout**: 10 seconds per test (explicitly configured)
+- **Hook Timeout**: 10 seconds for setup/teardown hooks
+- **Test Discovery**: Excludes `.opencode` directory from test discovery
+- **Include Pattern**: `src/**/*.{test,spec}.{js,jsx,ts,tsx}`, `__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}`
+- **Exclude Pattern**: `node_modules`, `dist`, `.idea`, `.git`, `.cache`, `.opencode`, `e2e`
+
 ---
 
 ## Deployment

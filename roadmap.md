@@ -93,20 +93,20 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    - **Impact**: Improves accessibility and teacher productivity
 
 5. **[TEST] Test Suite Times Out When Running All Tests Together**
-    - **Status**: ✅ **COMPLETED**
-    - **Priority**: P2
-    - **Issue**: #1193, #1225
-    - **Effort**: 2-3 days
-    - **Target**: 2026-01-28
-    - **Completed**: 2026-01-23
-    - **Deliverables**:
-      - ✅ Identify timeout root cause
-      - ✅ Optimize test execution
-      - ✅ Add explicit timeout configuration to vitest
-      - ✅ Exclude `.opencode` directory from test discovery
-      - ⏳ Parallelize test execution (future optimization)
-      - ⏳ CI/CD improvements (future optimization)
-    - **Impact**: Improves development workflow and CI reliability
+     - **Status**: ✅ **COMPLETED**
+     - **Priority**: P2
+     - **Issue**: #1193, #1225 (Closed 2026-01-23)
+     - **Effort**: 2-3 days
+     - **Target**: 2026-01-28
+     - **Completed**: 2026-01-23
+     - **Deliverables**:
+       - ✅ Identify timeout root cause
+       - ✅ Optimize test execution
+       - ✅ Add explicit timeout configuration to vitest (testTimeout: 10000, hookTimeout: 10000)
+       - ✅ Exclude `.opencode` directory from test discovery
+       - ⏳ Parallelize test execution (future optimization)
+       - ⏳ CI/CD improvements (future optimization)
+     - **Impact**: Improves development workflow and CI reliability
 
 #### Low Priority (P3) - Nice-to-Have
 
@@ -458,10 +458,10 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Complete missing documentation (blueprint.md, roadmap.md)
 - ✅ Fix canAccess mock pattern in test files
 - ✅ Fix WebSocket memory leak (Issue #1223, P1)
+- ✅ Fix test suite timeout issue (Issue #1193, #1225)
 - ⏳ Enhance notification system reliability
 - ⏳ Standardize material upload validation
 - ⏳ Standardize voice settings validation
-- ⏳ Fix test suite timeout issue
 - ⏳ Expand voice commands for teachers
 
 #### Q2 2026 Targets

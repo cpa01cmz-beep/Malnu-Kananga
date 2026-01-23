@@ -2,6 +2,30 @@
 
 ## Completed
 
+### [SCRIBE MODE] Synchronize GitHub Issues with Task Tracking ✅
+- **Priority**: P2
+- **Status**: Completed
+- **Started**: 2026-01-23
+- **Completed**: 2026-01-23
+- **Reason**: GitHub issues #1225 and #1193 were marked "Completed" in task.md but remained OPEN, creating documentation inconsistency between Single Source of Truth sources
+- **Issues Closed**:
+  1. #1225 [CHORE] Add Explicit Test Timeout to Vitest Configuration
+     - Configuration added: testTimeout: 10000, hookTimeout: 10000
+     - Excluded .opencode directory from test discovery
+     - Tests now complete successfully within ~2-3 minutes
+  2. #1193 [TEST] Test Suite Times Out When Running All Tests Together
+     - Root cause: No explicit timeout configuration, .opencode tests included
+     - Solution: Explicit timeouts, proper include/exclude patterns
+     - Result: Full test suite completes successfully
+- **Documentation Updated**:
+  1. blueprint.md - Added test configuration section with timeout details
+  2. roadmap.md - Updated Q1 2026 targets to mark test timeout issue as completed
+- **Impact**: Ensures synchronization between GitHub issues, task.md, and roadmap.md (Pillar 8: Documentation)
+
+---
+
+## Completed
+
 ### [SANITIZER MODE] Fix canAccess Mock Pattern in Test Files ✅
 - **Issue**: #1220
 - **Priority**: P2
@@ -91,7 +115,7 @@
 ## Completed
 
 ### [SANITIZER MODE] Add Explicit Test Timeout to Vitest Configuration ✅
-- **Issue**: #1225, #1193
+- **Issue**: #1225, #1193 (Closed 2026-01-23)
 - **Priority**: P2
 - **Status**: Completed
 - **Started**: 2026-01-22
@@ -119,3 +143,4 @@
   - ✅ Full test suite completes successfully (tested with 300s timeout)
 - **Impact**: Improves CI reliability and development workflow by preventing indefinite test hangs
 
+---
