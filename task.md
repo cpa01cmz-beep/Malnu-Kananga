@@ -57,12 +57,48 @@
 
 ---
 
-## In Progress
+## Completed
 
-*No tasks currently in progress*
+### [SANITIZER MODE] Fix Memory Leak in WebSocketService - visibilitychange Listener Not Removed ✅
+- **Issue**: #1223
+- **Priority**: P1
+- **Status**: Completed
+- **Started**: 2026-01-22
+- **Completed**: 2026-01-22
+- **Reason**: Memory leak when disconnect() is called multiple times without removing visibilitychange listener
+- **Files Modified**:
+  - src/services/webSocketService.ts:88 - Added visibilityChangeHandler property
+  - src/services/webSocketService.ts:661-684 - Refactored setupVisibilityChangeHandler to store handler
+  - src/services/webSocketService.ts:727-730 - Added cleanup in disconnect() method
+- **Fix Applied**:
+  - Stored visibilitychange handler as class property `visibilityChangeHandler: (() => void) | null`
+  - Modified `setupVisibilityChangeHandler()` to store handler reference
+  - Added cleanup logic in `disconnect()` to remove listener
+- **Verification**:
+  - ✅ TypeScript type checking passed
+  - ✅ ESLint linting passed
+  - ✅ 20 useWebSocket hook tests passed
+- **Impact**: Fixes P1 critical memory leak that accumulated visibilitychange listeners on each reconnect cycle
 
 ---
 
 ## Pending
 
 *Tasks will be added as needed*
+
+---
+
+## In Progress
+
+### [SANITIZER MODE] Add Explicit Test Timeout to Vitest Configuration
+- **Issue**: #1225
+- **Priority**: P2
+- **Status**: In Progress
+- **Started**: 2026-01-22
+- **Reason**: Test suite times out when running all tests together (Issue #1193), need explicit timeout configuration
+- **Deliverables**:
+  - Add timeout configuration to vitest.config.ts
+  - Identify slow tests
+  - Optimize test execution
+  - Ensure all tests pass with new timeout
+- **Impact**: Improves CI reliability and development workflow

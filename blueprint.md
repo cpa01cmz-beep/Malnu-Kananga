@@ -60,13 +60,16 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
 
 ## Tech Stack
 
-### Frontend
-- **Framework**: React 19.2.3 with TypeScript 5.9.3
-- **Build Tool**: Vite 7.3.1
-- **Styling**: Tailwind CSS 4.1.18 (PostCSS)
-- **Charts**: Recharts 3.6.0
-- **Routing**: React Router DOM 7.12.0
-- **Icons**: Heroicons React 2.2.0
+ ### Frontend
+ - **Framework**: React 19.2.3 with TypeScript 5.9.3
+ - **Build Tool**: Vite 7.3.1
+ - **Styling**: Tailwind CSS 4.1.18 (PostCSS)
+ - **Charts**: Recharts 3.6.0
+ - **Routing**: React Router DOM 7.12.0
+ - **Icons**: Heroicons React 2.2.0
+
+### Bug Fixes (2026-01-22)
+ - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
 
 ### Backend (Cloudflare Workers)
 - **Runtime**: Serverless (Cloudflare Workers)

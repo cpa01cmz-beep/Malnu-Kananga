@@ -454,6 +454,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 #### Q1 2026 Targets
 - ✅ Complete missing documentation (blueprint.md, roadmap.md)
 - ✅ Fix canAccess mock pattern in test files
+- ✅ Fix WebSocket memory leak (Issue #1223, P1)
 - ⏳ Enhance notification system reliability
 - ⏳ Standardize material upload validation
 - ⏳ Standardize voice settings validation
