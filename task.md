@@ -66,3 +66,43 @@
 ## Pending
 
 *Tasks will be added as needed*
+<<<<<<< Updated upstream
+=======
+
+---
+
+## In Progress
+
+### [SANITIZER MODE] Add Explicit Test Timeout to Vitest Configuration
+- **Issue**: #1225
+- **Priority**: P2
+- **Status**: In Progress
+- **Started**: 2026-01-22
+- **Reason**: Test suite times out when running all tests together (Issue #1193), need explicit timeout configuration
+- **Deliverables**:
+  - Add timeout configuration to vitest.config.ts
+  - Identify slow tests
+  - Optimize test execution
+  - Ensure all tests pass with new timeout
+- **Impact**: Improves CI reliability and development workflow
+
+---
+
+## Completed
+
+### [SCRIBE MODE] Fix Version Inconsistency in docs/ROADMAP.md ✅
+- **Issue**: #1228
+- **Priority**: P3
+- **Status**: Completed
+- **Started**: 2026-01-23
+- **Completed**: 2026-01-23
+- **Reason**: Version mismatch between package.json (v3.2.0) and documentation
+- **Files Modified**:
+  - docs/ROADMAP.md:31 - Changed `v2.1.7` to `v3.2.0` (Executive Summary)
+  - docs/ROADMAP.md:598 - Changed `3.0.0` to `3.2.0` (Document footer)
+  - Updated last modified date to 2026-01-22
+- **Verification**:
+  - ✅ No remaining v2.1.7 references found in repository
+  - ✅ All version references now show v3.2.0
+- **Impact**: Maintains Single Source of Truth for version information (Pillar 8: Documentation)
+

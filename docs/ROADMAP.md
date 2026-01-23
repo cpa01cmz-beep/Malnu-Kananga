@@ -28,7 +28,7 @@
 
 MA Malnu Kananga School Management Information System (SMIS) is an integrated web platform connecting all school management aspects: academic, administrative, financial, and communication.
 
-**Current Version**: v2.1.7
+**Current Version**: v3.2.0
 **Architecture**: Serverless (Cloudflare Workers + D1 + R2)
 **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS 4
 **Status**: Production-Ready ✅
@@ -594,8 +594,8 @@ npm run build && wrangler pages deploy dist --project-name=malnu-kananga
 
 **End of Document**
 
-**Last Updated**: 2026-01-17
-**Version**: 3.0.0
+**Last Updated**: 2026-01-22
+**Version**: 3.2.0
 **Status**: Active
 **Next Review**: 2026-02-17
 
