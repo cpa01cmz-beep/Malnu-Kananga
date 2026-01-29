@@ -501,6 +501,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Fix GradeAnalytics test failures (8 tests) - 2026-01-29
 - ✅ Fix QuizGenerator test failures (6/7 tests fixed) - 2026-01-29
 - ✅ Synchronize GitHub issues with completed work - 2026-01-29
+- ✅ Fix duplicate key warning in GradeAnalytics (Issue #1251) - 2026-01-29
 
 #### Q2 2026 Targets
 - ⏳ Parent-teacher communication log
@@ -617,8 +618,10 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 3.2.2 | 2026-01-29 | Enhanced speech synthesis error recovery with retry logic and circuit breaker (GAP-111) |
-| 3.2.1 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107) |
+| 3.2.4 | 2026-01-29 | Fixed duplicate key warning in GradeAnalytics component (Issue #1251) |
+| 3.2.3 | 2026-01-29 | Enhanced speech synthesis error recovery with retry logic and circuit breaker (GAP-111) |
+| 3.2.2 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107) |
+| 3.2.1 | 2026-01-29 | Enhanced material upload validation and file management (GAP-108) |
 | 3.2.0 | 2026-01-22 | Created initial roadmap, completed missing documentation |
 | 3.1.0 | 2025-12-XX | Previous release (details in changelog) |
 | 3.0.0 | 2025-XX-XX | Major release (details in changelog) |

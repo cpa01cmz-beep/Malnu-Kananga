@@ -246,6 +246,10 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     { name: 'F', value: analytics.gradeDistribution.F }
   ].filter(d => d.value > 0) : [];
 
+  const uniqueStudents = analytics ? Array.from(
+    new Map([...analytics.topPerformers, ...analytics.needsAttention].map(student => [student.studentId, student])).values()
+  ) : [];
+
   if (loading) {
     return (
       <div className="animate-fade-in-up">
@@ -601,7 +605,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           <Card>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
-                Semua Siswa ({analytics.topPerformers.length})
+                Semua Siswa ({uniqueStudents.length})
               </h3>
             </div>
             <div className="overflow-x-auto">
@@ -617,7 +621,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
                   </tr>
                 </thead>
                 <tbody>
-                  {[...analytics.topPerformers, ...analytics.needsAttention].map((student) => (
+                  {uniqueStudents.map((student) => (
                     <tr key={student.studentId} className="border-b border-neutral-200 dark:border-neutral-700">
                       <td className="py-2 px-3 text-sm font-medium text-neutral-900 dark:text-white">
                         {student.studentName}
@@ -668,7 +672,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
                 </tbody>
               </table>
             </div>
-            {[...analytics.topPerformers, ...analytics.needsAttention].length === 0 && (
+            {uniqueStudents.length === 0 && (
               <div className="text-center py-8">
                 <EmptyState message="Tidak ada data siswa" size="lg" />
               </div>
