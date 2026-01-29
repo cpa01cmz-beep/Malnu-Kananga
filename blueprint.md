@@ -315,6 +315,24 @@ scripts/                    # Build and deployment scripts
 
 ### Validation & Error Recovery Utilities
 
+#### materialUploadValidation.ts
+- **Purpose**: Comprehensive validation for material uploads
+- **Features**:
+   - XSS sanitization for file names and metadata
+   - File type detection (DOCUMENT, IMAGE, VIDEO)
+   - File size validation with type-specific limits (50MB docs, 10MB images, 200MB videos)
+   - PPDB document validation with OCR quality assessment
+   - Malware pattern detection (double extensions, executables)
+   - Batch validation support
+   - Comprehensive error messages in Indonesian
+   - Type guards for runtime validation
+- **Components**:
+   - XSSSanitizer - Removes dangerous patterns from filenames and metadata
+   - FileTypeDetector - Detects file type by extension and MIME type
+   - FileNameValidator - Validates filenames (length, reserved names, invalid chars, path traversal)
+   - PPDBDocumentValidator - Validates PPDB documents for OCR (quality, document type detection)
+   - MaterialUploadValidator - Main validation class with all checks
+
 #### notificationValidation.ts
 - **Purpose**: Comprehensive input validation for notification services
 - **Features**:
@@ -328,26 +346,26 @@ scripts/                    # Build and deployment scripts
 #### voiceSettingsValidation.ts
 - **Purpose**: Comprehensive input validation for voice services
 - **Features**:
-   - VoiceSettings validation (recognition, synthesis, enabled flags)
-   - SpeechRecognitionConfig validation (language, continuous, maxAlternatives)
-   - SpeechSynthesisConfig validation (rate, pitch, volume)
-   - VoiceCommand validation (id, action, transcript, confidence, data)
-   - VoiceLanguage validation (enum values: id-ID, en-US)
-   - VoiceSettingsBackup validation (timestamp, settings structure)
-   - XSS sanitization for transcripts and command data
-   - Type guards for runtime validation
-   - Validation error reporting
-   - Sanitization of nested data objects (studentName, query, etc.)
+    - VoiceSettings validation (recognition, synthesis, enabled flags)
+    - SpeechRecognitionConfig validation (language, continuous, maxAlternatives)
+    - SpeechSynthesisConfig validation (rate, pitch, volume)
+    - VoiceCommand validation (id, action, transcript, confidence, data)
+    - VoiceLanguage validation (enum values: id-ID, en-US)
+    - VoiceSettingsBackup validation (timestamp, settings structure)
+    - XSS sanitization for transcripts and command data
+    - Type guards for runtime validation
+    - Validation error reporting
+    - Sanitization of nested data objects (studentName, query, etc.)
 
 #### errorRecovery.ts
 - **Purpose**: Error recovery patterns for resilient service operation
 - **Features**:
-   - Retry with exponential backoff
-   - Circuit breaker pattern for preventing cascading failures
-   - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
-   - Debounce utility
-   - Throttle utility
-   - Used by: speechRecognitionService, speechSynthesisService
+    - Retry with exponential backoff
+    - Circuit breaker pattern for preventing cascading failures
+    - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
+    - Debounce utility
+    - Throttle utility
+    - Used by: speechRecognitionService, speechSynthesisService
 
 ### Additional Services (30+ total)
 - **Material Services**: categoryService, materialPermissionService
