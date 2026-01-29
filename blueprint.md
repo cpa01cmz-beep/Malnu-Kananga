@@ -68,9 +68,10 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
  - **Routing**: React Router DOM 7.12.0
  - **Icons**: Heroicons React 2.2.0
 
- ### Bug Fixes (2026-01-22 - 2026-01-23)
-  - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
-  - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
+### Bug Fixes (2026-01-22 - 2026-01-29)
+   - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
+   - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
+   - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
 
 ### Backend (Cloudflare Workers)
 - **Runtime**: Serverless (Cloudflare Workers)

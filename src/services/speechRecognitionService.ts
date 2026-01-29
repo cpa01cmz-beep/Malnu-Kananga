@@ -16,10 +16,12 @@ import type {
 } from '../types';
 import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
-import { 
-  classifyError, 
+import {
+  classifyError,
   logError
 } from '../utils/errorHandler';
+import { validateSpeechRecognitionConfig } from '../utils/voiceSettingsValidation';
+import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
 
 class SpeechRecognitionService {
   private recognition: SpeechRecognition | null;
@@ -31,6 +33,9 @@ class SpeechRecognitionService {
   private isSupported: boolean;
   private permissionState: 'granted' | 'denied' | 'prompt' | 'unknown' = 'unknown';
   private permissionChangeListener: ((this: globalThis.PermissionStatus, ev: Event) => unknown) | null = null;
+  private errorRecovery: ErrorRecoveryStrategy;
+  private startAttempts: number = 0;
+  private readonly maxStartAttempts: number = 3;
 
   constructor(config?: Partial<SpeechRecognitionConfig>) {
     this.config = {
@@ -42,7 +47,34 @@ class SpeechRecognitionService {
 
     this.isSupported = this.checkSupport();
 
+    this.errorRecovery = new ErrorRecoveryStrategy(
+      {
+        maxAttempts: this.maxStartAttempts,
+        initialDelay: 1000,
+        maxDelay: 5000,
+        backoffFactor: 2,
+        shouldRetry: (error: Error, attempt: number) => {
+          const shouldRetry = this.shouldRetryStartError(error, attempt);
+          return shouldRetry;
+        },
+      },
+      {
+        failureThreshold: 5,
+        resetTimeout: 60000,
+        monitoringPeriod: 10000,
+      }
+    );
+
     if (this.isSupported && typeof window !== 'undefined') {
+      const validation = validateSpeechRecognitionConfig(this.config);
+      if (!validation.isValid) {
+        logger.error('Invalid speech recognition config:', validation.errors);
+        const error: SpeechRecognitionError = {
+          error: 'unknown',
+          message: `Konfigurasi speech recognition tidak valid: ${validation.errors.join(', ')}`,
+        };
+        throw new Error(error.message);
+      }
       this.checkPermissionState();
       this.initializeRecognition();
     }
@@ -154,12 +186,36 @@ class SpeechRecognitionService {
 
     if (isFinal) {
       logger.debug('Final transcript received:', transcript);
+
+      // Reset circuit breaker on successful recognition
+      if (this.errorRecovery.getCircuitBreakerState().failureCount > 0) {
+        this.errorRecovery.resetCircuitBreaker();
+        logger.debug('Circuit breaker reset after successful recognition');
+      }
     }
   }
 
   private handleError(event: SpeechRecognitionErrorEvent): void {
     const errorType = this.mapErrorType(event.error);
     let errorMessage = event.message || 'Speech recognition error occurred';
+
+    const errorObj = new Error(errorMessage);
+
+    // Track failures for circuit breaker (except no-speech, which is normal)
+    if (errorType !== 'no-speech' && errorType !== 'aborted') {
+      try {
+        this.errorRecovery.execute(
+          async () => {
+            throw errorObj;
+          },
+          'handleError'
+        ).catch(() => {
+          logger.debug('Error tracked in circuit breaker');
+        });
+      } catch (err) {
+        logger.warn('Failed to track error in circuit breaker:', err);
+      }
+    }
 
     // Provide specific, actionable error messages
     if (errorType === 'not-allowed') {
@@ -168,16 +224,21 @@ class SpeechRecognitionService {
       logger.warn('Microphone permission denied');
     } else if (errorType === 'no-speech') {
       errorMessage = ERROR_MESSAGES.NO_SPEECH_DETECTED;
+      logger.debug('No speech detected (this is normal, not an error)');
     } else if (errorType === 'audio-capture') {
       errorMessage = 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.';
+      logger.error('Audio capture error');
+    } else if (errorType === 'network') {
+      errorMessage = 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.';
+      logger.error('Network error in speech recognition');
+    } else {
+      logger.error('Unknown speech recognition error:', event.error);
     }
 
     const error: SpeechRecognitionError = {
       error: errorType,
       message: errorMessage,
     };
-
-    logger.error('Speech recognition error:', error);
 
     this.state = 'error';
     this.clearTimeout();
@@ -222,6 +283,32 @@ class SpeechRecognitionService {
     return errorMap[errorName] || 'unknown';
   }
 
+  private shouldRetryStartError(error: Error, attempt: number): boolean {
+    const errorMessage = error.message.toLowerCase();
+
+    if (attempt >= this.maxStartAttempts) {
+      logger.debug('Max retry attempts reached for speech recognition start');
+      return false;
+    }
+
+    if (errorMessage.includes('not-allowed') || errorMessage.includes('permission')) {
+      logger.debug('Permission denied error, not retrying');
+      return false;
+    }
+
+    if (errorMessage.includes('network') || errorMessage.includes('audio-capture')) {
+      logger.debug(`Retryable error detected (attempt ${attempt}):`, error.message);
+      return true;
+    }
+
+    if (errorMessage.includes('not-allowed') === false && errorMessage.includes('permission') === false) {
+      logger.debug(`Unknown error, will retry (attempt ${attempt}):`, error.message);
+      return true;
+    }
+
+    return false;
+  }
+
   private setupTimeout(): void {
     this.clearTimeout();
     this.timeoutId = setTimeout(() => {
@@ -253,6 +340,16 @@ class SpeechRecognitionService {
       return;
     }
 
+    if (this.errorRecovery.getCircuitBreakerState().isOpen) {
+      logger.warn('Circuit breaker is open, skipping start attempt');
+      const error: SpeechRecognitionError = {
+        error: 'network',
+        message: 'Speech recognition sementara tidak tersedia karena terlalu banyak kegagalan. Silakan coba lagi dalam beberapa saat.',
+      };
+      this.callbacks.onError?.(error);
+      return;
+    }
+
     // Check permission state before attempting to record
     if (this.permissionState === 'denied') {
       const error: SpeechRecognitionError = {
@@ -263,31 +360,61 @@ class SpeechRecognitionService {
       return;
     }
 
+    this.startAttempts = 0;
+
     try {
-      if (this.recognition) {
-        this.transcript = '';
-        this.recognition.start();
-        logger.debug('Speech recognition started');
-      }
+      await this.errorRecovery.execute(
+        async () => {
+          this.startAttempts++;
+          logger.debug(`Starting speech recognition (attempt ${this.startAttempts}/${this.maxStartAttempts})`);
+
+          if (!this.recognition) {
+            throw new Error('Speech recognition not initialized');
+          }
+
+          this.transcript = '';
+          this.recognition.start();
+          logger.debug('Speech recognition started successfully');
+        },
+        'startRecording'
+      );
     } catch (error) {
-      logger.error('Failed to start speech recognition:', error);
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to start speech recognition after retries:', err);
+
       let errorMessage = 'Gagal memulai perekaman suara';
-      
-      if (error instanceof Error) {
-        if (error.message.includes('not-allowed') || error.message.includes('Permission denied')) {
-          errorMessage = this.getPermissionDeniedMessage();
-          this.permissionState = 'denied';
-        } else {
-          errorMessage = error.message;
-        }
+
+      if (err.message.includes('not-allowed') || err.message.includes('Permission denied')) {
+        errorMessage = this.getPermissionDeniedMessage();
+        this.permissionState = 'denied';
+      } else if (err.message.includes('circuit breaker')) {
+        errorMessage = 'Speech recognition sementara tidak tersedia karena terlalu banyak kegagalan. Silakan coba lagi dalam beberapa saat.';
+      } else {
+        errorMessage = err.message;
       }
-      
+
       const speechError: SpeechRecognitionError = {
-        error: 'unknown',
+        error: this.mapErrorTypeFromMessage(errorMessage),
         message: errorMessage,
       };
       this.callbacks.onError?.(speechError);
     }
+  }
+
+  private mapErrorTypeFromMessage(message: string): SpeechRecognitionError['error'] {
+    const lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.includes('not-allowed') || lowerMessage.includes('permission')) {
+      return 'not-allowed';
+    } else if (lowerMessage.includes('network') || lowerMessage.includes('koneksi')) {
+      return 'network';
+    } else if (lowerMessage.includes('audio-capture') || lowerMessage.includes('mikrofon')) {
+      return 'audio-capture';
+    } else if (lowerMessage.includes('circuit breaker')) {
+      return 'network';
+    }
+
+    return 'unknown';
   }
 
   public stopRecording(): void {
@@ -428,7 +555,7 @@ class SpeechRecognitionService {
       // Try to access getUserMedia to trigger permission prompt
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach(track => track.stop());
-      
+
       // Re-check permission state
       await this.checkPermissionState();
       return this.permissionState === 'granted';
@@ -437,6 +564,25 @@ class SpeechRecognitionService {
       this.permissionState = 'denied';
       return false;
     }
+  }
+
+  public getCircuitBreakerState(): { isOpen: boolean; failureCount: number; lastFailureTime: number | null; lastSuccessTime: number | null } {
+    return this.errorRecovery.getCircuitBreakerState();
+  }
+
+  public resetCircuitBreaker(): void {
+    this.errorRecovery.resetCircuitBreaker();
+    logger.info('Circuit breaker reset');
+  }
+
+  public getErrorRecoveryState(): {
+    circuitBreaker: { isOpen: boolean; failureCount: number; lastFailureTime: number | null; lastSuccessTime: number | null };
+    startAttempts: number;
+  } {
+    return {
+      circuitBreaker: this.getCircuitBreakerState(),
+      startAttempts: this.startAttempts,
+    };
   }
 }
 
