@@ -1,5 +1,27 @@
 # Active Tasks Tracking
 
+## In Progress
+
+### Voice Commands Should Support All Teacher Operations
+- **Mode**: BUILDER
+- **Issue**: #1204
+- **Priority**: P2
+- **Status**: In Progress
+- **Started**: 2026-01-29
+- **Target**: 2026-02-10
+- **Reason**: Voice commands are partially implemented across teacher operations, creating inconsistent UX. Need to implement attendance management and grading operations with voice support
+- **Deliverables**:
+  - ⏳ Extend VOICE_COMMANDS constants with attendance commands (mark present/absent/late/permitted, batch commands, submission)
+  - ⏳ Extend VOICE_COMMANDS constants with grading commands (set grade, pass, mark absent, bulk operations)
+  - ⏳ Update voiceCommandParser.ts to extract and handle command data (student name, grade value, etc.)
+  - ⏳ Implement voice confirmation via TTS
+  - ⏳ Add permission-aware command routing
+  - ⏳ Create comprehensive tests for new commands
+  - ⏳ User documentation for voice commands
+- **Impact**: Improves accessibility and teacher productivity (Pillars 9: Feature Ops, 16: UX/DX)
+
+---
+
 ## Pending
 
 ### Enhance Notification System Validation and Reliability ✅

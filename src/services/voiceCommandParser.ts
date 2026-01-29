@@ -185,6 +185,113 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    // Attendance management commands
+    this.commands.set('mark_present', {
+      id: 'mark_present',
+      patterns: [...VOICE_COMMANDS.MARK_PRESENT],
+      action: 'MARK_PRESENT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('mark_absent', {
+      id: 'mark_absent',
+      patterns: [...VOICE_COMMANDS.MARK_ABSENT],
+      action: 'MARK_ABSENT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('mark_late', {
+      id: 'mark_late',
+      patterns: [...VOICE_COMMANDS.MARK_LATE],
+      action: 'MARK_LATE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('mark_permitted', {
+      id: 'mark_permitted',
+      patterns: [...VOICE_COMMANDS.MARK_PERMITTED],
+      action: 'MARK_PERMITTED',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('submit_attendance', {
+      id: 'submit_attendance',
+      patterns: [...VOICE_COMMANDS.SUBMIT_ATTENDANCE],
+      action: 'SUBMIT_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('show_attendance', {
+      id: 'show_attendance',
+      patterns: [...VOICE_COMMANDS.SHOW_ATTENDANCE],
+      action: 'SHOW_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('export_attendance', {
+      id: 'export_attendance',
+      patterns: [...VOICE_COMMANDS.EXPORT_ATTENDANCE],
+      action: 'EXPORT_ATTENDANCE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('mark_all_present', {
+      id: 'mark_all_present',
+      patterns: [...VOICE_COMMANDS.MARK_ALL_PRESENT],
+      action: 'MARK_ALL_PRESENT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    // Grading management commands
+    this.commands.set('set_grade', {
+      id: 'set_grade',
+      patterns: [...VOICE_COMMANDS.SET_GRADE],
+      action: 'SET_GRADE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('grade_next', {
+      id: 'grade_next',
+      patterns: [...VOICE_COMMANDS.GRADE_NEXT],
+      action: 'GRADE_NEXT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('grade_pass', {
+      id: 'grade_pass',
+      patterns: [...VOICE_COMMANDS.GRADE_PASS],
+      action: 'GRADE_PASS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('grade_fail', {
+      id: 'grade_fail',
+      patterns: [...VOICE_COMMANDS.GRADE_FAIL],
+      action: 'GRADE_FAIL',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('mark_grade_absent', {
+      id: 'mark_grade_absent',
+      patterns: [...VOICE_COMMANDS.MARK_GRADE_ABSENT],
+      action: 'MARK_GRADE_ABSENT',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('bulk_grade', {
+      id: 'bulk_grade',
+      patterns: [...VOICE_COMMANDS.BULK_GRADE],
+      action: 'BULK_GRADE',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('submit_grades', {
+      id: 'submit_grades',
+      patterns: [...VOICE_COMMANDS.SUBMIT_GRADES],
+      action: 'SUBMIT_GRADES',
+      language: VoiceLanguage.Indonesian,
+    });
+
     // Student dashboard commands
     this.commands.set('show_my_grades', {
       id: 'show_my_grades',
@@ -271,25 +378,74 @@ class VoiceCommandParser {
     const normalizedTranscript = this.normalizeText(transcript);
     logger.debug('Parsing transcript:', normalizedTranscript);
 
+    // Special handling for SET_GRADE - check this first before other grading-related commands
+    const setGradeCommand = this.commands.get('set_grade');
+    if (setGradeCommand) {
+      const normalizedTranscriptLower = normalizedTranscript.toLowerCase();
+      
+      // Check if transcript contains key SET_GRADE patterns
+      // Pattern: contains "set" + ("nilai" or "grade") OR "beri nilai" OR "give grade"
+      const isSetGradePattern = 
+        (normalizedTranscriptLower.includes('set') && 
+         (normalizedTranscriptLower.includes('nilai') || normalizedTranscriptLower.includes('grade'))) ||
+        (normalizedTranscriptLower.includes('beri') && normalizedTranscriptLower.includes('nilai')) ||
+        (normalizedTranscriptLower.includes('give') && normalizedTranscriptLower.includes('grade'));
+      
+      if (isSetGradePattern) {
+        // Extract grade data
+        const gradeData = this.extractGradeData(transcript);
+        if (gradeData) {
+          // Calculate confidence based on pattern match
+          const confidence = 1.0;
+          const result: VoiceCommand = {
+            id: setGradeCommand.id,
+            action: setGradeCommand.action,
+            transcript: transcript,
+            confidence: confidence,
+            data: { studentName: gradeData.studentName, gradeValue: gradeData.gradeValue },
+          };
+          logger.debug(`Found match: ${setGradeCommand.action} (confidence: ${confidence})`);
+          return result;
+        }
+      }
+    }
+
     let bestMatch: VoiceCommand | null = null;
     let highestScore = 0;
 
     for (const [, command] of this.commands) {
+      // Skip SET_GRADE as we already checked it
+      if (command.id === 'set_grade') continue;
+
       for (const pattern of command.patterns) {
         const similarity = this.calculateSimilarity(normalizedTranscript, pattern);
 
         if (similarity > highestScore && similarity >= 0.7) {
           highestScore = similarity;
           
+          // Extract data based on command type
+          let extractedData: Record<string, unknown> | undefined;
+          
           // Extract query for search commands
           const extractedQuery = this.extractSearchQuery(normalizedTranscript, pattern);
+          if (extractedQuery) {
+            extractedData = { query: extractedQuery };
+          }
+          
+          // Extract student name for attendance commands
+          if (command.id.startsWith('mark_') && !command.id.includes('all')) {
+            const studentName = this.extractStudentName(transcript);
+            if (studentName) {
+              extractedData = { ...extractedData, studentName };
+            }
+          }
           
           bestMatch = {
             id: command.id,
             action: command.action,
             transcript: transcript,
             confidence: similarity,
-            data: extractedQuery ? { query: extractedQuery } : undefined,
+            data: extractedData,
           };
 
           logger.debug(`Found match: ${command.action} (confidence: ${similarity})`);
@@ -330,6 +486,61 @@ class VoiceCommandParser {
       }
     }
     
+    return null;
+  }
+
+  private extractStudentName(transcript: string): string | null {
+    // Pattern: "hadir [nama]", "absen [nama]", "terlambat [nama]", "izin [nama]"
+    // Sort by length (longest first) to ensure proper matching
+    const attendancePrefixes = [
+      'set hadir', 'mark present', 'set present',
+      'set absen', 'mark absent', 'set absent',
+      'set terlambat', 'mark late', 'set late',
+      'set izin', 'mark permitted', 'permitted',
+      'hadir',
+      'absen',
+      'terlambat',
+      'izin'
+    ];
+
+    let name = transcript;
+    for (const prefix of attendancePrefixes) {
+      // Case-insensitive replacement - remove only from the beginning
+      const regex = new RegExp(`^${prefix}\\s*`, 'i');
+      name = name.replace(regex, '');
+      // If we matched and removed something, break
+      if (name !== transcript) break;
+    }
+
+    name = name.trim();
+    if (name.length > 2) {
+      return this.restoreOriginalCase(name, transcript);
+    }
+
+    return null;
+  }
+
+  private extractGradeData(transcript: string): { studentName: string; gradeValue: string } | null {
+    // Pattern: "set [nama] nilai [nilai]", "set [name] grade to [value]", "beri nilai [nilai] ke [nama]"
+    const gradePatterns = [
+      { regex: /set\s+(\S+)\s+nilai\s+(\S+)/i, nameIndex: 1, gradeIndex: 2 },
+      { regex: /set\s+(\S+)\s+grade\s+to\s+(\S+)/i, nameIndex: 1, gradeIndex: 2 },
+      { regex: /beri\s+nilai\s+(\S+)\s+ke\s+(\S+)/i, nameIndex: 2, gradeIndex: 1 },
+      { regex: /give\s+(\S+)\s+grade\s+(\S+)/i, nameIndex: 1, gradeIndex: 2 }
+    ];
+
+    for (const pattern of gradePatterns) {
+      const match = transcript.match(pattern.regex);
+      if (match) {
+        const studentName = this.restoreOriginalCase(match[pattern.nameIndex].trim(), transcript);
+        const gradeValue = match[pattern.gradeIndex].trim();
+        
+        if (studentName.length > 1 && gradeValue.length > 0) {
+          return { studentName, gradeValue };
+        }
+      }
+    }
+
     return null;
   }
 
