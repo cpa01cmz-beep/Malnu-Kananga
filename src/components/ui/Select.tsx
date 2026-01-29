@@ -104,6 +104,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
               {option.label}
             </option>
           ))}
+          {props.children}
         </select>
 
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 dark:text-neutral-500" aria-hidden="true">
