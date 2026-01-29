@@ -7,19 +7,59 @@ import {
   classifyError,
   logError,
   getUserFriendlyMessage,
-  withCircuitBreaker
+  withCircuitBreaker,
+  createError,
+  ErrorType
 } from '../utils/errorHandler';
 import { logger } from '../utils/logger';
 import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
 import { offlineActionQueueService } from './offlineActionQueueService';
 
-// Initialize the Google AI client
-const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
-
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
 const PRO_THINKING_MODEL = 'gemini-3-pro-preview';
+
+// Lazy initialization of AI client with error handling
+let aiInstance: GoogleGenAI | null = null;
+let aiInitializationError: Error | null = null;
+
+async function getAIInstance(): Promise<GoogleGenAI> {
+  if (aiInitializationError) {
+    throw aiInitializationError;
+  }
+
+  if (aiInstance) {
+    return aiInstance;
+  }
+
+  try {
+    const apiKey = (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+
+    if (!apiKey) {
+      const error = createError(
+        ErrorType.API_KEY_ERROR,
+        'geminiService.init',
+        'API Key Gemini tidak ditemukan. Silakan hubungi administrator.',
+        false
+      );
+      logError(error);
+      aiInitializationError = error;
+      throw error;
+    }
+
+    aiInstance = new GoogleGenAI({ apiKey });
+    return aiInstance;
+  } catch (error) {
+    const classifiedError = classifyError(error, {
+      operation: 'geminiService.init',
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    aiInitializationError = classifiedError;
+    throw classifiedError;
+  }
+}
 
 // Local Context Interface
 interface LocalContext {
@@ -117,7 +157,7 @@ ${message}
 
   try {
     const responseStream = await withCircuitBreaker(async () => {
-      return await ai.models.generateContentStream({
+      return await (await getAIInstance()).models.generateContentStream({
         model: model,
         contents,
         config
@@ -175,7 +215,7 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
 
     try {
         const response = await withCircuitBreaker(async () => {
-            return await ai.models.generateContent({
+            return await (await getAIInstance()).models.generateContent({
                 model: PRO_THINKING_MODEL,
                 contents: prompt,
                 config: {
@@ -288,7 +328,7 @@ Please provide the updated JSON content following the safety and content rules a
 
     try {
         const response = await withCircuitBreaker(async () => {
-            return await ai.models.generateContent({
+            return await (await getAIInstance()).models.generateContent({
                 model,
                 contents: fullPrompt,
                 config: {
@@ -414,7 +454,7 @@ export async function analyzeStudentPerformance(studentData: {
 
     try {
         const response = await withCircuitBreaker(async () => {
-            return await ai.models.generateContent({
+            return await (await getAIInstance()).models.generateContent({
                 model: PRO_THINKING_MODEL,
                 contents: prompt,
                 config: {
@@ -561,7 +601,7 @@ export async function generateAssignmentFeedback(
 
   try {
     const response = await withCircuitBreaker(async () => {
-      return await ai.models.generateContent({
+      return await (await getAIInstance()).models.generateContent({
         model: PRO_THINKING_MODEL,
         contents: prompt,
         config: {
@@ -737,7 +777,7 @@ export async function generateQuiz(
 
   try {
     const response = await withCircuitBreaker(async () => {
-      return await ai.models.generateContent({
+      return await (await getAIInstance()).models.generateContent({
         model: PRO_THINKING_MODEL,
         contents: prompt,
         config: {
@@ -952,7 +992,7 @@ export async function generateStudyPlan(
 
   try {
     const response = await withCircuitBreaker(async () => {
-      return await ai.models.generateContent({
+      return await (await getAIInstance()).models.generateContent({
         model: PRO_THINKING_MODEL,
         contents: prompt,
         config: {

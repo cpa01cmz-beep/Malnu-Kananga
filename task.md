@@ -1,5 +1,31 @@
 # Active Tasks Tracking
 
+## Completed
+
+### Add Error Handling to Async Functions (ocrEnhancementService, geminiService) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1243
+- **Priority**: P1 (Critical)
+- **Status**: Completed
+- **Started**: 2026-01-29
+- **Completed**: 2026-01-29
+- **Reason**: ocrEnhancementService.ts had top-level await without error handling, and both services initialized AI clients without proper error handling. This could cause runtime crashes.
+- **Deliverables**:
+  - ✅ Removed top-level import and implemented lazy initialization with error handling
+  - ✅ Added error handling for AI client initialization
+  - ✅ Services now handle missing/invalid API keys gracefully
+  - ✅ Added tests for error scenarios (10 tests for ocrEnhancementService, 9 tests for geminiService)
+- **Files Modified**:
+  - src/services/ocrEnhancementService.ts - Added lazy AI client initialization with error handling
+  - src/services/geminiService.ts - Added lazy AI client initialization with error handling
+- **Files Created**:
+  - src/services/__tests__/ocrEnhancementService.errorHandling.test.ts - 10 error handling tests
+  - src/services/__tests__/geminiService.errorHandling.test.ts - 9 error handling tests
+- **Impact**: Prevents runtime crashes and improves system stability (Pillars 3: Stability, 4: Security, 7: Debug)
+- **Verification**: TypeScript type checking passed, ESLint linting passed, 19 new tests passing (10 + 9)
+
+---
+
 ## Pending
 
 ### [GAP-109] Standardize Voice Settings Validation and Error Recovery ✅

@@ -2,17 +2,58 @@ import { logger } from '../utils/logger';
 import {
   classifyError,
   logError,
-  withCircuitBreaker
+  withCircuitBreaker,
+  createError,
+  ErrorType
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
 
-// Initialize the Google AI client
-const ai = new (await import("@google/genai")).GoogleGenAI({ 
-  apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' 
-});
-
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
+
+// Lazy initialization of AI client with error handling
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let aiInstance: any | null = null;
+let aiInitializationError: Error | null = null;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getAIInstance(): Promise<any> {
+  if (aiInitializationError) {
+    throw aiInitializationError;
+  }
+
+  if (aiInstance) {
+    return aiInstance;
+  }
+
+  try {
+    const { GoogleGenAI } = await import("@google/genai");
+    const apiKey = (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
+
+    if (!apiKey) {
+      const error = createError(
+        ErrorType.API_KEY_ERROR,
+        'ocrEnhancementService.init',
+        'API Key Gemini tidak ditemukan. Silakan hubungi administrator.',
+        false
+      );
+      logError(error);
+      aiInitializationError = error;
+      throw error;
+    }
+
+    aiInstance = new GoogleGenAI({ apiKey });
+    return aiInstance;
+  } catch (error) {
+    const classifiedError = classifyError(error, {
+      operation: 'ocrEnhancementService.init',
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    aiInitializationError = classifiedError;
+    throw classifiedError;
+  }
+}
 
 // Generate summary for OCR text
 export async function generateTextSummary(
@@ -24,23 +65,25 @@ export async function generateTextSummary(
   }
 
   try {
+    const ai = await getAIInstance();
+
     const prompt = `
     Buat ringkasan singkat dan jelas dari teks berikut dalam Bahasa Indonesia.
-    
+
     Ringkasan harus:
     - Maksimal ${maxLength} kata
     - Menangkap poin-poin utama
     - Mudah dipahami
     - Menggunakan bahasa formal yang sopan
-    
+
     Teks:
     ${text}
-    
+
     Ringkasan:
     `;
 
     const contents = [{ role: 'user', parts: [{ text: prompt }] }];
-    
+
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
         model: FLASH_MODEL,
@@ -55,7 +98,7 @@ export async function generateTextSummary(
     }
 
     const trimmedSummary = summary.trim();
-    
+
     // Cache the result
     if (trimmedSummary) {
       ocrCache.set({
@@ -93,27 +136,29 @@ export async function compareTextsForSimilarity(
   }
 
   try {
+    const ai = await getAIInstance();
+
     const prompt = `
     Analisis kemiripan dua teks berikut dalam Bahasa Indonesia.
-    
+
     Berikan output dalam format JSON:
     {
       "similarity": 0.0-1.0,
       "isPlagiarized": boolean,
       "details": "penjelasan singkat"
     }
-    
+
     Teks 1:
     ${text1}
-    
+
     Teks 2:
     ${text2}
-    
+
     Analisis:
     `;
 
     const contents = [{ role: 'user', parts: [{ text: prompt }] }];
-    
+
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
         model: FLASH_MODEL,
@@ -134,7 +179,7 @@ export async function compareTextsForSimilarity(
         isPlagiarized: (parsed.similarity || 0) >= threshold,
         details: parsed.details || 'Tidak ada detail'
       };
-      
+
       // Cache the result
       ocrCache.set({
         operation: 'similarity',
@@ -142,7 +187,7 @@ export async function compareTextsForSimilarity(
         context: `threshold:${threshold}`,
         thinkingMode: false
       }, result);
-      
+
       return result;
     } catch {
       // Fallback if JSON parsing fails
