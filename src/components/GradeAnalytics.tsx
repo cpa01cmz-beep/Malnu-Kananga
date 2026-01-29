@@ -61,7 +61,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     onShowToast(msg, type);
   }, [onShowToast]);
 
-  const calculateGradeDistribution = (scores: number[]): GradeDistribution => {
+  const calculateGradeDistribution = useCallback((scores: number[]): GradeDistribution => {
     const distribution: GradeDistribution = { A: 0, B: 0, C: 0, D: 0, F: 0 };
     scores.forEach(score => {
       if (score >= 85) distribution.A++;
@@ -71,7 +71,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       else distribution.F++;
     });
     return distribution;
-  };
+  }, []);
 
   const analyzeClassGrades = useCallback(async () => {
     if (!currentUser?.id) {
@@ -91,7 +91,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         subjectsAPI.getAll()
       ]);
 
-      if (!gradesRes.success || !gradesRes.data || 
+      if (!gradesRes.success || !gradesRes.data ||
           !assignmentsRes.success || !assignmentsRes.data ||
           !submissionsRes.success || !submissionsRes.data ||
           !subjectsRes.success || !subjectsRes.data) {
@@ -103,7 +103,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       const submissions = submissionsRes.data;
       const subjects = subjectsRes.data;
 
-      const classGrades = classId 
+      const classGrades = classId
         ? grades.filter(g => g.classId === classId)
         : grades;
 
@@ -145,7 +145,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         const studentAverage = scores.reduce((sum, score) => sum + score, 0) / scores.length;
         const studentSubmissions = submissions.filter(s => s.studentId === studentId);
         const studentAssignments = assignments.filter(a => a.classId === classId);
-        
+
         studentPerformances.push({
           studentId,
           studentName: submissions.find(s => s.studentId === studentId)?.studentName || `Student ${studentId}`,
@@ -155,7 +155,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           submissionRate: studentAssignments.length > 0 ? (studentSubmissions.length / studentAssignments.length) * 100 : 0,
           gradeDistribution: calculateGradeDistribution(scores),
           trend: 'stable',
-          lastSubmission: studentSubmissions.length > 0 ? 
+          lastSubmission: studentSubmissions.length > 0 ?
             studentSubmissions[studentSubmissions.length - 1].submittedAt : undefined
         });
       });
@@ -166,7 +166,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
 
       const subjectBreakdown: SubjectAnalytics[] = [];
       const uniqueSubjectIds = [...new Set(classGrades.map(g => g.subjectId))];
-      
+
       uniqueSubjectIds.forEach(subjectId => {
         const subjectGrades = classGrades.filter(g => g.subjectId === subjectId);
         const subjectAssignments = assignments.filter(a => a.subjectId === subjectId);
@@ -176,12 +176,12 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         });
 
         const subjectScores = subjectGrades.map(g => g.score);
-        const averageScore = subjectScores.reduce((sum, score) => sum + score, 0) / subjectScores.length;
-        
+        const subjectAverageScore = subjectScores.reduce((sum, score) => sum + score, 0) / subjectScores.length;
+
         subjectBreakdown.push({
           subjectId,
           subjectName: subjectGrades[0]?.subjectName || subjects.find(s => s.id === subjectId)?.name || `Subject ${subjectId}`,
-          averageScore,
+          averageScore: subjectAverageScore,
           totalAssignments: subjectAssignments.length,
           totalSubmissions: subjectSubmissions.length,
           submissionRate: subjectAssignments.length > 0 ? (subjectSubmissions.length / subjectAssignments.length) * 100 : 0,
@@ -214,7 +214,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     } finally {
       setLoading(false);
     }
-  }, [classId]);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [classId, currentUser?.id, calculateGradeDistribution]);
 
   useEffect(() => {
     analyzeClassGrades();
@@ -443,7 +443,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           {analytics.topPerformers.length > 0 && (
             <Card>
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
-                Top Performer ({analytics.topPerformers.length})
+                Top Performers ({analytics.topPerformers.length})
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
