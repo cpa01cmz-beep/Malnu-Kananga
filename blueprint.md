@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.2.0
-**Last Updated**: 2026-01-22
+**Version**: 3.2.1
+**Last Updated**: 2026-01-29
 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -262,7 +262,7 @@ scripts/                    # Build and deployment scripts
 ### Notification Services
 
 #### pushNotificationService.ts
-- **Purpose**: PWA push notifications
+- **Purpose**: PWA push notifications (deprecated wrapper for unified manager)
 - **Features**:
   - Subscription management
   - Permission handling
@@ -275,6 +275,38 @@ scripts/                    # Build and deployment scripts
   - Priority-based queuing
   - Quiet hours support
 
+#### unifiedNotificationManager.ts
+- **Purpose**: Unified notification management with voice integration
+- **Features**:
+  - Template management with variable substitution
+  - Batch notification support
+  - Analytics and history tracking
+  - Voice notification integration
+  - Event system for reactive updates
+  - Role-based filtering
+  - Quiet hours support
+
+### Validation & Error Recovery Utilities
+
+#### notificationValidation.ts
+- **Purpose**: Comprehensive input validation for notification services
+- **Features**:
+  - PushNotification validation (ID, type, title, body, timestamp, priority)
+  - NotificationSettings validation (enabled flags, quiet hours, categories)
+  - VoiceNotificationSettings validation (voice settings, categories, ranges)
+  - XSS sanitization for notification text
+  - Type guards for runtime validation
+  - Validation error reporting
+
+#### errorRecovery.ts
+- **Purpose**: Error recovery patterns for resilient service operation
+- **Features**:
+  - Retry with exponential backoff
+  - Circuit breaker pattern for preventing cascading failures
+  - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
+  - Debounce utility
+  - Throttle utility
+
 ### Additional Services (30+ total)
 - **Material Services**: categoryService, materialPermissionService
 - **Messaging Services**: emailService, emailQueueService
@@ -286,6 +318,7 @@ scripts/                    # Build and deployment scripts
 - **Cache Services**: aiCacheService
 - **Notification Services**: unifiedNotificationManager, notificationTemplates
 - **Parent Services**: parentGradeNotificationService
+- **Validation & Recovery**: notificationValidation, errorRecovery
 
 ---
 
