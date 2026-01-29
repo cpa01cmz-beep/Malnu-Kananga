@@ -243,6 +243,10 @@ scripts/                    # Build and deployment scripts
   - Customizable voice settings
   - Queue management
   - Play/pause/resume controls
+  - Retry logic with exponential backoff for synthesis failures
+  - Circuit breaker pattern for repeated failures
+  - Config validation on initialization
+  - Error recovery state management
 
 #### voiceCommandParser.ts
 - **Purpose**: Parse voice transcripts into structured commands
@@ -341,6 +345,7 @@ scripts/                    # Build and deployment scripts
    - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
    - Debounce utility
    - Throttle utility
+   - Used by: speechRecognitionService, speechSynthesisService
 
 ### Additional Services (30+ total)
 - **Material Services**: categoryService, materialPermissionService
