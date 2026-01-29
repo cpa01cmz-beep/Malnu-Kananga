@@ -205,8 +205,8 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
     setShowResetConfirmation(false);
   };
 
-  const handleBackup = () => {
-    if (backupVoiceSettings()) {
+  const handleBackup = async () => {
+    if (await backupVoiceSettings()) {
       setHasSettingsBackup(true);
       setBackupDate(getBackupDate());
       if (onShowToast) {
@@ -219,8 +219,8 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
     }
   };
 
-  const handleRestore = () => {
-    if (restoreVoiceSettings()) {
+  const handleRestore = async () => {
+    if (await restoreVoiceSettings()) {
       loadSettings();
       if (onShowToast) {
         onShowToast('Pengaturan suara berhasil dipulihkan', 'success');

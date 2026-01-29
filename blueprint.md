@@ -291,21 +291,35 @@ scripts/                    # Build and deployment scripts
 #### notificationValidation.ts
 - **Purpose**: Comprehensive input validation for notification services
 - **Features**:
-  - PushNotification validation (ID, type, title, body, timestamp, priority)
-  - NotificationSettings validation (enabled flags, quiet hours, categories)
-  - VoiceNotificationSettings validation (voice settings, categories, ranges)
-  - XSS sanitization for notification text
-  - Type guards for runtime validation
-  - Validation error reporting
+   - PushNotification validation (ID, type, title, body, timestamp, priority)
+   - NotificationSettings validation (enabled flags, quiet hours, categories)
+   - VoiceNotificationSettings validation (voice settings, categories, ranges)
+   - XSS sanitization for notification text
+   - Type guards for runtime validation
+   - Validation error reporting
+
+#### voiceSettingsValidation.ts
+- **Purpose**: Comprehensive input validation for voice services
+- **Features**:
+   - VoiceSettings validation (recognition, synthesis, enabled flags)
+   - SpeechRecognitionConfig validation (language, continuous, maxAlternatives)
+   - SpeechSynthesisConfig validation (rate, pitch, volume)
+   - VoiceCommand validation (id, action, transcript, confidence, data)
+   - VoiceLanguage validation (enum values: id-ID, en-US)
+   - VoiceSettingsBackup validation (timestamp, settings structure)
+   - XSS sanitization for transcripts and command data
+   - Type guards for runtime validation
+   - Validation error reporting
+   - Sanitization of nested data objects (studentName, query, etc.)
 
 #### errorRecovery.ts
 - **Purpose**: Error recovery patterns for resilient service operation
 - **Features**:
-  - Retry with exponential backoff
-  - Circuit breaker pattern for preventing cascading failures
-  - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
-  - Debounce utility
-  - Throttle utility
+   - Retry with exponential backoff
+   - Circuit breaker pattern for preventing cascading failures
+   - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
+   - Debounce utility
+   - Throttle utility
 
 ### Additional Services (30+ total)
 - **Material Services**: categoryService, materialPermissionService
@@ -318,7 +332,7 @@ scripts/                    # Build and deployment scripts
 - **Cache Services**: aiCacheService
 - **Notification Services**: unifiedNotificationManager, notificationTemplates
 - **Parent Services**: parentGradeNotificationService
-- **Validation & Recovery**: notificationValidation, errorRecovery
+ - **Validation & Recovery**: notificationValidation, voiceSettingsValidation, errorRecovery
 
 ---
 

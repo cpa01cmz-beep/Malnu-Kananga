@@ -425,4 +425,99 @@ describe('VoiceCommandParser', () => {
       expect(commands.length).toBe(0);
     });
   });
+
+  describe('Validation & Sanitization', () => {
+    it('should sanitize malicious content in transcript', () => {
+      const result = parser.parse('hadir <script>alert("xss")</script>John');
+      
+      expect(result).not.toBeNull();
+      expect(result?.transcript).toContain('&lt;script&gt;');
+      expect(result?.transcript).not.toContain('<script>');
+    });
+
+    it('should validate command structure', () => {
+      const result = parser.parse('hadir John');
+      
+      expect(result).not.toBeNull();
+      expect(result?.id).toBeTruthy();
+      expect(result?.action).toBeTruthy();
+      expect(result?.transcript).toBeTruthy();
+      expect(result?.confidence).toBeGreaterThanOrEqual(0);
+      expect(result?.confidence).toBeLessThanOrEqual(1);
+    });
+
+    it('should reject empty transcripts', () => {
+      const result = parser.parse('');
+      
+      expect(result).toBeNull();
+    });
+
+    it('should reject whitespace-only transcripts', () => {
+      const result = parser.parse('   ');
+      
+      expect(result).toBeNull();
+    });
+
+    it('should validate confidence score is within bounds', () => {
+      const results = [
+        parser.parse('hadir John'),
+        parser.parse('buka pengaturan'),
+        parser.parse('set John nilai 85'),
+      ];
+
+      results.forEach(result => {
+        if (result) {
+          expect(result.confidence).toBeGreaterThanOrEqual(0);
+          expect(result.confidence).toBeLessThanOrEqual(1);
+        }
+      });
+    });
+
+    it('should handle XSS in search queries', () => {
+      const result = parser.parse('cari materi <script>alert("xss")</script>matematika');
+      
+      if (result) {
+        expect(result.transcript).not.toContain('<script>');
+        expect(result.data?.query).not.toContain('<script>');
+      }
+    });
+
+    it('should sanitize student names in attendance commands', () => {
+      const result = parser.parse('hadir <script>alert("xss")</script>John');
+      
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.transcript).not.toContain('<script>');
+      }
+    });
+
+    it('should sanitize data in grade commands', () => {
+      const result = parser.parse('set <script>alert("xss")</script>John nilai 85');
+       
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.transcript).toContain('&lt;script&gt;');
+        expect(result.transcript).not.toContain('<script>');
+        expect(result.data?.studentName).not.toContain('<script>');
+      }
+    });
+
+    it('should handle special characters in transcripts', () => {
+      const result = parser.parse('hadir "John & Jane"');
+      
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.transcript).toContain('&quot;');
+      }
+    });
+
+    it('should handle apostrophes in transcripts', () => {
+      const result = parser.parse("hadir John's class");
+      
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.transcript).toContain('&#x27;');
+      }
+    });
+  });
 });

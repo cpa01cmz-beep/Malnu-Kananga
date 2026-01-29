@@ -1,8 +1,8 @@
- 
 import { VOICE_COMMANDS } from '../constants';
 import type { VoiceCommand } from '../types';
 import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
+import { validateAndSanitizeVoiceCommand } from '../utils/voiceSettingsValidation';
 
 interface CommandPattern {
   id: string;
@@ -378,6 +378,8 @@ class VoiceCommandParser {
     const normalizedTranscript = this.normalizeText(transcript);
     logger.debug('Parsing transcript:', normalizedTranscript);
 
+    let matchedCommand: VoiceCommand | null = null;
+
     // Special handling for SET_GRADE - check this first before other grading-related commands
     const setGradeCommand = this.commands.get('set_grade');
     if (setGradeCommand) {
@@ -397,7 +399,7 @@ class VoiceCommandParser {
         if (gradeData) {
           // Calculate confidence based on pattern match
           const confidence = 1.0;
-          const result: VoiceCommand = {
+          matchedCommand = {
             id: setGradeCommand.id,
             action: setGradeCommand.action,
             transcript: transcript,
@@ -405,61 +407,75 @@ class VoiceCommandParser {
             data: { studentName: gradeData.studentName, gradeValue: gradeData.gradeValue },
           };
           logger.debug(`Found match: ${setGradeCommand.action} (confidence: ${confidence})`);
-          return result;
         }
       }
     }
 
-    let bestMatch: VoiceCommand | null = null;
-    let highestScore = 0;
+    if (!matchedCommand) {
+      let bestMatch: VoiceCommand | null = null;
+      let highestScore = 0;
 
-    for (const [, command] of this.commands) {
-      // Skip SET_GRADE as we already checked it
-      if (command.id === 'set_grade') continue;
+      for (const [, command] of this.commands) {
+        // Skip SET_GRADE as we already checked it
+        if (command.id === 'set_grade') continue;
 
-      for (const pattern of command.patterns) {
-        const similarity = this.calculateSimilarity(normalizedTranscript, pattern);
+        for (const pattern of command.patterns) {
+          const similarity = this.calculateSimilarity(normalizedTranscript, pattern);
 
-        if (similarity > highestScore && similarity >= 0.7) {
-          highestScore = similarity;
-          
-          // Extract data based on command type
-          let extractedData: Record<string, unknown> | undefined;
-          
-          // Extract query for search commands
-          const extractedQuery = this.extractSearchQuery(normalizedTranscript, pattern);
-          if (extractedQuery) {
-            extractedData = { query: extractedQuery };
-          }
-          
-          // Extract student name for attendance commands
-          if (command.id.startsWith('mark_') && !command.id.includes('all')) {
-            const studentName = this.extractStudentName(transcript);
-            if (studentName) {
-              extractedData = { ...extractedData, studentName };
+          if (similarity > highestScore && similarity >= 0.7) {
+            highestScore = similarity;
+            
+            // Extract data based on command type
+            let extractedData: Record<string, unknown> | undefined;
+            
+            // Extract query for search commands
+            const extractedQuery = this.extractSearchQuery(normalizedTranscript, pattern);
+            if (extractedQuery) {
+              extractedData = { query: extractedQuery };
             }
-          }
-          
-          bestMatch = {
-            id: command.id,
-            action: command.action,
-            transcript: transcript,
-            confidence: similarity,
-            data: extractedData,
-          };
+            
+            // Extract student name for attendance commands
+            if (command.id.startsWith('mark_') && !command.id.includes('all')) {
+              const studentName = this.extractStudentName(transcript);
+              if (studentName) {
+                extractedData = { ...extractedData, studentName };
+              }
+            }
+            
+            bestMatch = {
+              id: command.id,
+              action: command.action,
+              transcript: transcript,
+              confidence: similarity,
+              data: extractedData,
+            };
 
-          logger.debug(`Found match: ${command.action} (confidence: ${similarity})`);
+            logger.debug(`Found match: ${command.action} (confidence: ${similarity})`);
+          }
         }
       }
+
+      matchedCommand = bestMatch;
     }
 
-    if (bestMatch) {
-      logger.debug('Command parsed:', bestMatch);
+    if (matchedCommand) {
+      // Validate the parsed command
+      const validation = validateAndSanitizeVoiceCommand(matchedCommand);
+      
+      if (!validation.isValid) {
+        logger.warn('Command validation failed:', validation.errors);
+        logger.debug('Invalid command:', matchedCommand);
+        return null;
+      }
+
+      // Return the sanitized command
+      logger.debug('Command parsed and validated:', validation.sanitized);
+      return validation.sanitized || null;
     } else {
       logger.debug('No command recognized');
     }
 
-    return bestMatch;
+    return null;
   }
 
   private extractSearchQuery(transcript: string, _pattern: string): string | null {
