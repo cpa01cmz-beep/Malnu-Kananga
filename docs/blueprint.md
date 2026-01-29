@@ -160,10 +160,11 @@
   - Child-specific data refresh (only refreshes selected child's data)
   - Cache updates on data refresh
   - Offline mode handling (real-time disabled when offline)
-- **`voiceSettingsBackup.ts`** - Voice settings persistence
+ - **`voiceSettingsBackup.ts`** - Voice settings persistence with error recovery (retry, circuit breaker, fallback)
+ - **`voiceSettingsValidation.ts`** - Comprehensive validation for voice services (settings, commands, backups)
 - **`voiceMessageQueue.ts`** - Queue for voice commands/messages
 - **`voiceNotificationService.ts`** - Voice notification alerts
-- **`voiceCommandParser.ts`** - Voice command parsing and validation
+ - **`voiceCommandParser.ts`** - Voice command parsing, validation, and XSS sanitization
 - **`ocrService.ts`** - OCR for PPDB documents
 - **`ocrEnhancementService.ts`** - OCR result enhancement and validation
 
