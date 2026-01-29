@@ -81,46 +81,47 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
        - ✅ Automatic error recovery (retry with exponential backoff, circuit breaker, fallback)
      - **Impact**: Improves voice feature reliability and security
 
-  4. **[GAP-110] Enhance Speech Recognition Service with Error Recovery**
-    - **Status**: ✅ **COMPLETED**
-    - **Priority**: P2
-    - **Effort**: 2-3 days
-    - **Target**: 2026-02-05
-    - **Completed**: 2026-01-29
-    - **Deliverables**:
-      - ✅ Retry logic for startRecording with exponential backoff
-      - ✅ Circuit breaker for repeated failures
-      - ✅ Validation for SpeechRecognitionConfig before initialization
-      - ✅ Comprehensive tests for error recovery scenarios (25 tests)
-    - **Impact**: Improves speech recognition reliability and user experience
+ 4. **[GAP-110] Enhance Speech Recognition Service with Error Recovery**
+   - **Status**: ✅ **COMPLETED**
+   - **Priority**: P2
+   - **Effort**: 2-3 days
+   - **Target**: 2026-02-05
+   - **Completed**: 2026-01-29
+   - **Deliverables**:
+     - ✅ Retry logic for startRecording with exponential backoff
+     - ✅ Circuit breaker for repeated failures
+     - ✅ Validation for SpeechRecognitionConfig before initialization
+     - ✅ Comprehensive tests for error recovery scenarios (25 tests)
+   - **Impact**: Improves speech recognition reliability and user experience
 
-  5. **[GAP-111] Enhance Speech Synthesis Service with Error Recovery**
-    - **Status**: ✅ **COMPLETED**
-    - **Priority**: P2
-    - **Effort**: 2-3 days
-    - **Target**: 2026-02-05
-    - **Completed**: 2026-01-29
-    - **Deliverables**:
-      - ✅ Retry logic for speak() with exponential backoff
-      - ✅ Circuit breaker for repeated synthesis failures
-      - ✅ Validation for SpeechSynthesisConfig before speaking
-      - ✅ Comprehensive tests for error recovery scenarios (20 tests)
-    - **Impact**: Improves text-to-speech reliability and user experience
+ 5. **[GAP-111] Enhance Speech Synthesis Service with Error Recovery**
+     - **Status**: ✅ **COMPLETED**
+     - **Priority**: P2
+     - **Effort**: 2-3 days
+     - **Target**: 2026-02-05
+     - **Completed**: 2026-01-29
+     - **Deliverables**:
+       - ✅ Retry logic for speak() with exponential backoff
+       - ✅ Circuit breaker for repeated synthesis failures
+       - ✅ Validation for SpeechSynthesisConfig before speaking
+       - ✅ Comprehensive tests for error recovery scenarios (20 tests)
+     - **Impact**: Improves text-to-speech reliability and user experience
 
-  6. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
-    - **Status**: 🔴 In Progress
-    - **Priority**: P2
-    - **Issue**: #1204
-    - **Effort**: 5-7 days
-    - **Target**: 2026-02-10
-    - **Deliverables**:
-      - ✅ Voice command parser service
-      - ⏳ Extended voice commands for all teacher operations
-      - ⏳ Permission-aware command routing
-      - ⏳ User documentation
-    - **Impact**: Improves accessibility and teacher productivity
+ 6. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
+     - **Status**: ✅ **COMPLETED**
+     - **Priority**: P2
+     - **Issue**: #1204
+     - **Effort**: 5-7 days
+     - **Target**: 2026-02-10
+     - **Completed**: 2026-01-29
+     - **Deliverables**:
+       - ✅ Voice command parser service
+       - ✅ Extended voice commands for all teacher operations (attendance, grading)
+       - ✅ Permission-aware command routing (uses existing permissionService)
+       - ✅ User documentation (docs/VOICE_COMMANDS_GUIDE.md)
+     - **Impact**: Improves accessibility and teacher productivity
 
-  7. **[TEST] Test Suite Times Out When Running All Tests Together**
+ 7. **[TEST] Test Suite Times Out When Running All Tests Together**
       - **Status**: ✅ **COMPLETED**
       - **Priority**: P2
       - **Issue**: #1193, #1225 (Closed 2026-01-23)
@@ -491,9 +492,9 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Enhance notification system reliability
 - ⏳ Standardize material upload validation
 - ✅ Standardize voice settings validation
-- ✅ Enhance speech recognition service error recovery
-- ✅ Enhance speech synthesis service error recovery
-- ⏳ Expand voice commands for teachers
+ - ✅ Enhance speech recognition service error recovery
+ - ✅ Enhance speech synthesis service error recovery
+ - ✅ Expand voice commands for teachers
 
 #### Q2 2026 Targets
 - ⏳ Parent-teacher communication log
