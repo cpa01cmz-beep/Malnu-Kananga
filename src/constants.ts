@@ -252,6 +252,25 @@ export const VOICE_COMMANDS = {
     VIEW_ATTENDANCE: ['absensi', 'lihat absensi', 'view attendance', 'attendance'],
     CREATE_ANNOUNCEMENT: ['buat pengumuman', 'pengumuman baru', 'create announcement', 'announcement'],
     VIEW_SCHEDULE: ['jadwal', 'lihat jadwal', 'view schedule', 'schedule'],
+
+    // Attendance management commands
+    MARK_PRESENT: ['hadir', 'set hadir', 'mark present', 'set present'],
+    MARK_ABSENT: ['absen', 'set absen', 'mark absent', 'set absent'],
+    MARK_LATE: ['terlambat', 'set terlambat', 'mark late', 'set late'],
+    MARK_PERMITTED: ['izin', 'set izin', 'mark permitted', 'permitted'],
+    SUBMIT_ATTENDANCE: ['kirim kehadiran', 'submit attendance', 'simpan absensi', 'save attendance'],
+    SHOW_ATTENDANCE: ['tampilkan kehadiran', 'show attendance', 'lihat kehadiran', 'view attendance list'],
+    EXPORT_ATTENDANCE: ['ekspor kehadiran', 'export attendance', 'ekspor absensi', 'export attendance list'],
+    MARK_ALL_PRESENT: ['semua hadir', 'all present', 'set semua hadir', 'set all present'],
+
+    // Grading management commands
+    SET_GRADE: ['set nilai', 'set grade', 'beri nilai', 'give grade'],
+    GRADE_NEXT: ['siswa berikutnya', 'next student', 'lanjut ke siswa', 'next student please'],
+    GRADE_PASS: ['lulus', 'pass', 'set lulus', 'set pass'],
+    GRADE_FAIL: ['gagal', 'fail', 'set gagal', 'set fail'],
+    MARK_GRADE_ABSENT: ['tidak ikut ujian', 'absent for exam', 'absen ujian', 'exam absent'],
+    BULK_GRADE: ['nilai semua', 'grade all', 'bulk grade', 'masukkan semua nilai'],
+    SUBMIT_GRADES: ['kirim nilai', 'submit grades', 'simpan nilai', 'save grades'],
     
     // Student dashboard commands
     SHOW_MY_GRADES: ['nilai saya', 'lihat nilai saya', 'show my grades', 'my grades'],
