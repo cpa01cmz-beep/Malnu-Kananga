@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.2.1
+**Version**: 3.2.2
 **Last Updated**: 2026-01-29
 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
@@ -68,10 +68,11 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
  - **Routing**: React Router DOM 7.12.0
  - **Icons**: Heroicons React 2.2.0
 
-### Bug Fixes (2026-01-22 - 2026-01-29)
-   - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
-   - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
-   - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
+ ### Bug Fixes (2026-01-22 - 2026-01-29)
+    - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
+    - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
+    - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
+    - **Speech Synthesis Error Recovery**: Added retry logic with exponential backoff and circuit breaker for synthesis failures (GAP-111, P2)
 
 ### Backend (Cloudflare Workers)
 - **Runtime**: Serverless (Cloudflare Workers)
@@ -242,6 +243,10 @@ scripts/                    # Build and deployment scripts
   - Customizable voice settings
   - Queue management
   - Play/pause/resume controls
+  - Retry logic with exponential backoff for synthesis failures
+  - Circuit breaker pattern for repeated failures
+  - Config validation on initialization
+  - Error recovery state management
 
 ### Data Services
 
@@ -321,6 +326,7 @@ scripts/                    # Build and deployment scripts
    - ErrorRecoveryStrategy class (retry + circuit breaker + fallback)
    - Debounce utility
    - Throttle utility
+   - Used by: speechRecognitionService, speechSynthesisService
 
 ### Additional Services (30+ total)
 - **Material Services**: categoryService, materialPermissionService

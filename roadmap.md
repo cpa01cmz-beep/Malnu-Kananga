@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.2.1
+**Version**: 3.2.2
 **Last Updated**: 2026-01-29
 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
@@ -81,33 +81,46 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
        - ✅ Automatic error recovery (retry with exponential backoff, circuit breaker, fallback)
      - **Impact**: Improves voice feature reliability and security
 
-4. **[GAP-110] Enhance Speech Recognition Service with Error Recovery**
-   - **Status**: ✅ **COMPLETED**
-   - **Priority**: P2
-   - **Effort**: 2-3 days
-   - **Target**: 2026-02-05
-   - **Completed**: 2026-01-29
-   - **Deliverables**:
-     - ✅ Retry logic for startRecording with exponential backoff
-     - ✅ Circuit breaker for repeated failures
-     - ✅ Validation for SpeechRecognitionConfig before initialization
-     - ✅ Comprehensive tests for error recovery scenarios (25 tests)
-   - **Impact**: Improves speech recognition reliability and user experience
+  4. **[GAP-110] Enhance Speech Recognition Service with Error Recovery**
+    - **Status**: ✅ **COMPLETED**
+    - **Priority**: P2
+    - **Effort**: 2-3 days
+    - **Target**: 2026-02-05
+    - **Completed**: 2026-01-29
+    - **Deliverables**:
+      - ✅ Retry logic for startRecording with exponential backoff
+      - ✅ Circuit breaker for repeated failures
+      - ✅ Validation for SpeechRecognitionConfig before initialization
+      - ✅ Comprehensive tests for error recovery scenarios (25 tests)
+    - **Impact**: Improves speech recognition reliability and user experience
 
-5. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
-   - **Status**: 🔴 In Progress
-   - **Priority**: P2
-   - **Issue**: #1204
-   - **Effort**: 5-7 days
-   - **Target**: 2026-02-10
-   - **Deliverables**:
-     - ✅ Voice command parser service
-     - ⏳ Extended voice commands for all teacher operations
-     - ⏳ Permission-aware command routing
-     - ⏳ User documentation
-   - **Impact**: Improves accessibility and teacher productivity
+  5. **[GAP-111] Enhance Speech Synthesis Service with Error Recovery**
+    - **Status**: ✅ **COMPLETED**
+    - **Priority**: P2
+    - **Effort**: 2-3 days
+    - **Target**: 2026-02-05
+    - **Completed**: 2026-01-29
+    - **Deliverables**:
+      - ✅ Retry logic for speak() with exponential backoff
+      - ✅ Circuit breaker for repeated synthesis failures
+      - ✅ Validation for SpeechSynthesisConfig before speaking
+      - ✅ Comprehensive tests for error recovery scenarios (20 tests)
+    - **Impact**: Improves text-to-speech reliability and user experience
 
-6. **[TEST] Test Suite Times Out When Running All Tests Together**
+  6. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
+    - **Status**: 🔴 In Progress
+    - **Priority**: P2
+    - **Issue**: #1204
+    - **Effort**: 5-7 days
+    - **Target**: 2026-02-10
+    - **Deliverables**:
+      - ✅ Voice command parser service
+      - ⏳ Extended voice commands for all teacher operations
+      - ⏳ Permission-aware command routing
+      - ⏳ User documentation
+    - **Impact**: Improves accessibility and teacher productivity
+
+  7. **[TEST] Test Suite Times Out When Running All Tests Together**
       - **Status**: ✅ **COMPLETED**
       - **Priority**: P2
       - **Issue**: #1193, #1225 (Closed 2026-01-23)
@@ -479,6 +492,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ⏳ Standardize material upload validation
 - ✅ Standardize voice settings validation
 - ✅ Enhance speech recognition service error recovery
+- ✅ Enhance speech synthesis service error recovery
 - ⏳ Expand voice commands for teachers
 
 #### Q2 2026 Targets
@@ -594,12 +608,12 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 3.2.1 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107) |
-| 3.2.0 | 2026-01-22 | Created initial roadmap, completed missing documentation |
-| 3.1.0 | 2025-12-XX | Previous release (details in changelog) |
-| 3.0.0 | 2025-XX-XX | Major release (details in changelog) |
+ | Version | Date | Changes |
+ |---------|------|---------|
+ | 3.2.1 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107), speech recognition error recovery (GAP-110), speech synthesis error recovery (GAP-111) |
+ | 3.2.0 | 2026-01-22 | Created initial roadmap, completed missing documentation |
+ | 3.1.0 | 2025-12-XX | Previous release (details in changelog) |
+ | 3.0.0 | 2025-XX-XX | Major release (details in changelog) |
 
 ---
 

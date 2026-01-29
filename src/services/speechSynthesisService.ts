@@ -13,6 +13,7 @@ import type {
 } from '../types';
 import { VOICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
 
 class SpeechSynthesisService {
   private synth: SpeechSynthesis | null;
@@ -23,21 +24,57 @@ class SpeechSynthesisService {
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
+  private errorRecovery: ErrorRecoveryStrategy;
+  private errorCount: number = 0;
+  private lastErrorTime: number | null = null;
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
-    this.config = {
+    const defaultConfig = {
       ...VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG,
       ...config,
       voice: config?.voice ?? null,
     };
 
+    this.config = defaultConfig;
+    this.validateConfig(defaultConfig);
+
     this.synth = null;
+
+    this.errorRecovery = new ErrorRecoveryStrategy(
+      {
+        maxAttempts: 3,
+        initialDelay: 1000,
+        maxDelay: 10000,
+        backoffFactor: 2,
+      },
+      {
+        failureThreshold: 5,
+        resetTimeout: 60000,
+        monitoringPeriod: 10000,
+      }
+    );
 
     this.isSupported = this.checkSupport();
 
     if (this.isSupported && typeof window !== 'undefined') {
       this.initializeSynthesis();
     }
+  }
+
+  private validateConfig(config: SpeechSynthesisConfig): void {
+    if (config.rate < 0.1 || config.rate > 10) {
+      throw new Error(`Invalid rate: ${config.rate}. Must be between 0.1 and 10`);
+    }
+
+    if (config.pitch < 0 || config.pitch > 2) {
+      throw new Error(`Invalid pitch: ${config.pitch}. Must be between 0 and 2`);
+    }
+
+    if (config.volume < 0 || config.volume > 1) {
+      throw new Error(`Invalid volume: ${config.volume}. Must be between 0 and 1`);
+    }
+
+    logger.debug('SpeechSynthesisConfig validated successfully');
   }
 
   private checkSupport(): boolean {
@@ -132,25 +169,6 @@ class SpeechSynthesisService {
       this.callbacks.onStart?.();
     };
 
-    utterance.onend = () => {
-      this.state = 'idle';
-      this.currentUtterance = null;
-      this.callbacks.onEnd?.();
-    };
-
-    utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
-      const error: SpeechSynthesisError = {
-        error: this.mapErrorType(event.error || 'unknown'),
-        message: (event as unknown as { message?: string }).message || 'Speech synthesis error occurred',
-      };
-
-      logger.error('Speech synthesis error:', error);
-
-      this.state = 'error';
-      this.currentUtterance = null;
-      this.callbacks.onError?.(error);
-    };
-
     utterance.onpause = () => {
       this.state = 'paused';
       this.callbacks.onPause?.();
@@ -192,6 +210,26 @@ class SpeechSynthesisService {
     this.voiceCache.set(text, utterance);
   }
 
+  private trackError(_error: SpeechSynthesisError): void {
+    this.errorCount++;
+    this.lastErrorTime = Date.now();
+
+    const circuitBreakerState = this.errorRecovery.getCircuitBreakerState();
+
+    if (circuitBreakerState.isOpen) {
+      logger.warn('Circuit breaker is open, speech synthesis may fail');
+    }
+
+    logger.debug(`Speech synthesis error count: ${this.errorCount}, Circuit breaker state: ${JSON.stringify(circuitBreakerState)}`);
+  }
+
+  private resetErrorTracking(): void {
+    this.errorCount = 0;
+    this.lastErrorTime = null;
+    this.errorRecovery.resetCircuitBreaker();
+    logger.debug('Speech synthesis error tracking reset');
+  }
+
   public speak(text: string): void {
     if (!this.isSupported) {
       const error: SpeechSynthesisError = {
@@ -207,28 +245,57 @@ class SpeechSynthesisService {
       return;
     }
 
+    this.speakWithRetry(text);
+  }
+
+  private async speakWithRetry(text: string): Promise<void> {
     if (this.state === 'speaking') {
       this.stop();
     }
 
     try {
-      const utterance = this.checkCache(text) || this.createUtterance(text);
-      this.setupUtteranceListeners(utterance);
+      await this.errorRecovery.execute(
+        async () => {
+          return new Promise<void>((resolve, reject) => {
+            const utterance = this.checkCache(text) || this.createUtterance(text);
 
-      if (!this.voiceCache.has(text)) {
-        this.addToCache(text, utterance);
-      }
+            this.setupUtteranceListeners(utterance);
 
-      this.currentUtterance = utterance;
-      this.synth?.speak(utterance);
-      logger.debug('Speaking:', text.substring(0, 50));
-    } catch (error) {
-      logger.error('Failed to speak:', error);
-      const speechError: SpeechSynthesisError = {
-        error: 'unknown',
-        message: error instanceof Error ? error.message : 'Failed to speak',
-      };
-      this.callbacks.onError?.(speechError);
+            if (!this.voiceCache.has(text)) {
+              this.addToCache(text, utterance);
+            }
+
+            utterance.onend = () => {
+              this.state = 'idle';
+              this.currentUtterance = null;
+              this.callbacks.onEnd?.();
+              resolve();
+            };
+
+            utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
+              const error: SpeechSynthesisError = {
+                error: this.mapErrorType(event.error || 'unknown'),
+                message: (event as unknown as { message?: string }).message || 'Speech synthesis error occurred',
+              };
+
+              this.trackError(error);
+              this.state = 'error';
+              this.currentUtterance = null;
+              this.callbacks.onError?.(error);
+              reject(new Error(error.message));
+            };
+
+            this.currentUtterance = utterance;
+            this.synth?.speak(utterance);
+            logger.debug('Speaking:', text.substring(0, 50));
+          });
+        },
+        'speech synthesis'
+      );
+
+      this.resetErrorTracking();
+    } catch (_error) {
+      logger.error('Failed to speak after retries');
     }
   }
 
@@ -367,6 +434,34 @@ class SpeechSynthesisService {
 
   public getIsSupported(): boolean {
     return this.isSupported;
+  }
+
+  public getErrorRecoveryState(): {
+    errorCount: number;
+    lastErrorTime: number | null;
+    circuitBreakerOpen: boolean;
+    circuitBreakerFailureCount: number;
+    circuitBreakerLastFailureTime: number | null;
+    circuitBreakerLastSuccessTime: number | null;
+  } {
+    const circuitBreakerState = this.errorRecovery.getCircuitBreakerState();
+
+    return {
+      errorCount: this.errorCount,
+      lastErrorTime: this.lastErrorTime,
+      circuitBreakerOpen: circuitBreakerState.isOpen,
+      circuitBreakerFailureCount: circuitBreakerState.failureCount,
+      circuitBreakerLastFailureTime: circuitBreakerState.lastFailureTime,
+      circuitBreakerLastSuccessTime: circuitBreakerState.lastSuccessTime,
+    };
+  }
+
+  public resetErrorRecovery(): void {
+    this.resetErrorTracking();
+  }
+
+  public isCircuitBreakerOpen(): boolean {
+    return this.errorRecovery.getCircuitBreakerState().isOpen;
   }
 }
 
