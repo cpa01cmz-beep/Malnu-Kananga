@@ -13,6 +13,8 @@ import type {
 } from '../types';
 import { VOICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+import { validateSpeechSynthesisConfig } from '../utils/voiceSettingsValidation';
+import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
 
 class SpeechSynthesisService {
   private synth: SpeechSynthesis | null;
@@ -23,17 +25,45 @@ class SpeechSynthesisService {
   private currentUtterance: SpeechSynthesisUtterance | null = null;
   private isSupported: boolean;
   private voices: SpeechSynthesisVoice[] = [];
+  private errorRecovery: ErrorRecoveryStrategy;
+  private speakAttempts: number = 0;
+  private readonly maxSpeakAttempts: number = 3;
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
-    this.config = {
+    const partialConfig = {
       ...VOICE_CONFIG.DEFAULT_SYNTHESIS_CONFIG,
       ...config,
       voice: config?.voice ?? null,
     };
 
+    const validation = validateSpeechSynthesisConfig(partialConfig);
+    if (!validation.isValid) {
+      logger.error('Invalid speech synthesis config:', validation.errors);
+      throw new Error(`Konfigurasi speech synthesis tidak valid: ${validation.errors.join(', ')}`);
+    }
+
+    this.config = partialConfig;
     this.synth = null;
 
     this.isSupported = this.checkSupport();
+
+    this.errorRecovery = new ErrorRecoveryStrategy(
+      {
+        maxAttempts: this.maxSpeakAttempts,
+        initialDelay: 1000,
+        maxDelay: 5000,
+        backoffFactor: 2,
+        shouldRetry: (error: Error, attempt: number) => {
+          const shouldRetry = this.shouldRetrySpeakError(error, attempt);
+          return shouldRetry;
+        },
+      },
+      {
+        failureThreshold: 5,
+        resetTimeout: 60000,
+        monitoringPeriod: 10000,
+      }
+    );
 
     if (this.isSupported && typeof window !== 'undefined') {
       this.initializeSynthesis();
@@ -46,6 +76,33 @@ class SpeechSynthesisService {
     }
 
     return 'speechSynthesis' in window;
+  }
+
+  private shouldRetrySpeakError(error: Error, attempt: number): boolean {
+    const errorMessage = error.message.toLowerCase();
+
+    if (attempt >= this.maxSpeakAttempts) {
+      logger.debug('Max retry attempts reached for speech synthesis speak');
+      return false;
+    }
+
+    if (errorMessage.includes('not-allowed') || errorMessage.includes('permission')) {
+      logger.debug('Permission denied error, not retrying');
+      return false;
+    }
+
+    if (errorMessage.includes('canceled') || errorMessage.includes('interrupted')) {
+      logger.debug('User-initiated cancellation, not retrying');
+      return false;
+    }
+
+    if (errorMessage.includes('network') || errorMessage.includes('audio-capture')) {
+      logger.debug(`Retryable error detected (attempt ${attempt}):`, error.message);
+      return true;
+    }
+
+    logger.debug(`Unknown error, will retry (attempt ${attempt}):`, error.message);
+    return true;
   }
 
   private initializeSynthesis(): void {
@@ -135,16 +192,42 @@ class SpeechSynthesisService {
     utterance.onend = () => {
       this.state = 'idle';
       this.currentUtterance = null;
+
+      this.speakAttempts = 0;
+
+      if (this.errorRecovery.getCircuitBreakerState().failureCount > 0) {
+        this.errorRecovery.resetCircuitBreaker();
+        logger.debug('Circuit breaker reset after successful synthesis');
+      }
+
       this.callbacks.onEnd?.();
     };
 
     utterance.onerror = (event: SpeechSynthesisErrorEvent) => {
+      const errorType = event.error || 'unknown';
       const error: SpeechSynthesisError = {
-        error: this.mapErrorType(event.error || 'unknown'),
+        error: this.mapErrorType(errorType),
         message: (event as unknown as { message?: string }).message || 'Speech synthesis error occurred',
       };
 
       logger.error('Speech synthesis error:', error);
+
+      const errorObj = new Error(error.message);
+
+      if (errorType !== 'canceled' && errorType !== 'interrupted') {
+        try {
+          this.errorRecovery.execute(
+            async () => {
+              throw errorObj;
+            },
+            'handleError'
+          ).catch(() => {
+            logger.debug('Error tracked in circuit breaker');
+          });
+        } catch (err) {
+          logger.warn('Failed to track error in circuit breaker:', err);
+        }
+      }
 
       this.state = 'error';
       this.currentUtterance = null;
@@ -177,6 +260,22 @@ class SpeechSynthesisService {
     return errorMap[errorName] || 'unknown';
   }
 
+  private mapErrorTypeFromMessage(message: string): SpeechSynthesisError['error'] {
+    const lowerMessage = message.toLowerCase();
+
+    if (lowerMessage.includes('not-allowed') || lowerMessage.includes('permission')) {
+      return 'not-allowed';
+    } else if (lowerMessage.includes('canceled') || lowerMessage.includes('cancel')) {
+      return 'canceled';
+    } else if (lowerMessage.includes('interrupted')) {
+      return 'interrupted';
+    } else if (lowerMessage.includes('circuit breaker') || lowerMessage.includes('network')) {
+      return 'unknown';
+    }
+
+    return 'unknown';
+  }
+
   private checkCache(text: string): SpeechSynthesisUtterance | null {
     return this.voiceCache.get(text) || null;
   }
@@ -192,7 +291,7 @@ class SpeechSynthesisService {
     this.voiceCache.set(text, utterance);
   }
 
-  public speak(text: string): void {
+  public async speak(text: string): Promise<void> {
     if (!this.isSupported) {
       const error: SpeechSynthesisError = {
         error: 'unknown',
@@ -211,22 +310,59 @@ class SpeechSynthesisService {
       this.stop();
     }
 
-    try {
-      const utterance = this.checkCache(text) || this.createUtterance(text);
-      this.setupUtteranceListeners(utterance);
+    if (this.errorRecovery.getCircuitBreakerState().isOpen) {
+      logger.warn('Circuit breaker is open, skipping speak attempt');
+      const error: SpeechSynthesisError = {
+        error: 'unknown',
+        message: 'Speech synthesis sementara tidak tersedia karena terlalu banyak kegagalan. Silakan coba lagi dalam beberapa saat.',
+      };
+      this.callbacks.onError?.(error);
+      return;
+    }
 
-      if (!this.voiceCache.has(text)) {
-        this.addToCache(text, utterance);
+    this.speakAttempts = 0;
+
+    try {
+      await this.errorRecovery.execute(
+        async () => {
+          this.speakAttempts++;
+          logger.debug(`Speaking text (attempt ${this.speakAttempts}/${this.maxSpeakAttempts}):`, text.substring(0, 50));
+
+          const utterance = this.checkCache(text) || this.createUtterance(text);
+          this.setupUtteranceListeners(utterance);
+
+          if (!this.voiceCache.has(text)) {
+            this.addToCache(text, utterance);
+          }
+
+          this.currentUtterance = utterance;
+
+          if (!this.synth) {
+            throw new Error('Speech synthesis not initialized');
+          }
+
+          this.synth.speak(utterance);
+          logger.debug('Speech synthesis started successfully');
+        },
+        'speak'
+      );
+    } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logger.error('Failed to speak after retries:', err);
+
+      let errorMessage = 'Gagal memproses sintesis suara';
+
+      if (err.message.includes('not-allowed') || err.message.includes('Permission denied')) {
+        errorMessage = 'Izin sintesis suara ditolak. Pastikan browser Anda mengizinkan sintesis suara.';
+      } else if (err.message.includes('circuit breaker')) {
+        errorMessage = 'Speech synthesis sementara tidak tersedia karena terlalu banyak kegagalan. Silakan coba lagi dalam beberapa saat.';
+      } else {
+        errorMessage = err.message;
       }
 
-      this.currentUtterance = utterance;
-      this.synth?.speak(utterance);
-      logger.debug('Speaking:', text.substring(0, 50));
-    } catch (error) {
-      logger.error('Failed to speak:', error);
       const speechError: SpeechSynthesisError = {
-        error: 'unknown',
-        message: error instanceof Error ? error.message : 'Failed to speak',
+        error: this.mapErrorTypeFromMessage(errorMessage),
+        message: errorMessage,
       };
       this.callbacks.onError?.(speechError);
     }
@@ -367,6 +503,25 @@ class SpeechSynthesisService {
 
   public getIsSupported(): boolean {
     return this.isSupported;
+  }
+
+  public getCircuitBreakerState(): { isOpen: boolean; failureCount: number; lastFailureTime: number | null; lastSuccessTime: number | null } {
+    return this.errorRecovery.getCircuitBreakerState();
+  }
+
+  public resetCircuitBreaker(): void {
+    this.errorRecovery.resetCircuitBreaker();
+    logger.info('Circuit breaker reset');
+  }
+
+  public getErrorRecoveryState(): {
+    circuitBreaker: { isOpen: boolean; failureCount: number; lastFailureTime: number | null; lastSuccessTime: number | null };
+    speakAttempts: number;
+  } {
+    return {
+      circuitBreaker: this.getCircuitBreakerState(),
+      speakAttempts: this.speakAttempts,
+    };
   }
 }
 
