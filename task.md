@@ -30,6 +30,36 @@
 
 ---
 
+### [GAP-110] Enhance Speech Recognition Service with Error Recovery
+- **Mode**: SANITIZER
+- **Priority**: P2
+- **Status**: Pending
+- **Target**: 2026-02-05
+- **Reason**: speechRecognitionService.ts needs error recovery for transient errors (network, microphone access, etc.)
+- **Deliverables**:
+  - Add retry logic for startRecording with exponential backoff
+  - Implement circuit breaker for repeated failures
+  - Add validation for SpeechRecognitionConfig before initialization
+  - Create comprehensive tests for error recovery scenarios
+- **Impact**: Improves speech recognition reliability and user experience (Pillars 3: Stability, 4: Security, 7: Debug)
+
+---
+
+### [GAP-111] Enhance Speech Synthesis Service with Error Recovery
+- **Mode**: SANITIZER
+- **Priority**: P2
+- **Status**: Pending
+- **Target**: 2026-02-05
+- **Reason**: speechSynthesisService.ts needs error recovery for synthesis failures and voice loading issues
+- **Deliverables**:
+  - Add retry logic for speak() with exponential backoff
+  - Implement circuit breaker for repeated synthesis failures
+  - Add validation for SpeechSynthesisConfig before speaking
+  - Create comprehensive tests for error recovery scenarios
+- **Impact**: Improves text-to-speech reliability and user experience (Pillars 3: Stability, 4: Security, 7: Debug)
+
+---
+
 ## In Progress
 
 ### Voice Commands Should Support All Teacher Operations
