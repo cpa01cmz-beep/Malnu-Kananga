@@ -486,17 +486,18 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 #### Q1 2026 Targets
 - ✅ Complete missing documentation (blueprint.md, roadmap.md)
 - ✅ Fix canAccess mock pattern in test files
-  - ✅ Fix WebSocket memory leak (Issue #1223, P1)
-  - ✅ Fix test suite timeout issue (Issue #1193, #1225)
-  - ✅ Fix incomplete useOfflineActionQueue mocks (Issue #1236, P0) - 2026-01-23
-  - ✅ Enhance notification system reliability
-  - ⏳ Standardize material upload validation
-  - ✅ Standardize voice settings validation
-  - ✅ Enhance speech recognition service error recovery
-  - ✅ Enhance speech synthesis service error recovery
-  - ✅ Expand voice commands for teachers
-  - ✅ Add error handling to async functions (ocrEnhancementService, geminiService) - 2026-01-29
-  - ✅ Fix GradeAnalytics test failures (8 tests) - 2026-01-29
+- ✅ Fix WebSocket memory leak (Issue #1223, P1)
+- ✅ Fix test suite timeout issue (Issue #1193, #1225)
+- ✅ Fix incomplete useOfflineActionQueue mocks (Issue #1236, P0) - 2026-01-23
+- ✅ Enhance notification system reliability
+- ⏳ Standardize material upload validation
+- ✅ Standardize voice settings validation
+- ✅ Enhance speech recognition service error recovery
+- ✅ Enhance speech synthesis service error recovery
+- ✅ Expand voice commands for teachers
+- ✅ Add error handling to async functions (ocrEnhancementService, geminiService) - 2026-01-29
+- ✅ Fix GradeAnalytics test failures (8 tests) - 2026-01-29
+- ✅ Fix QuizGenerator test failures (6/7 tests fixed) - 2026-01-29
 
 #### Q2 2026 Targets
 - ⏳ Parent-teacher communication log

@@ -342,21 +342,21 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         />
       </div>
 
-       <div>
-        <label htmlFor="focus-areas" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Topik Fokus (opsional)
-        </label>
-        <Textarea
-          id="focus-areas"
-          placeholder="Contoh: Hukum Newton, Energi Kinematik, dll. (pisahkan dengan koma)"
-          value={options.focusAreas.join(', ')}
-          onChange={(e) => {
-            const areas = e.target.value.split(',').map(a => a.trim()).filter(Boolean);
-            setOptions(prev => ({ ...prev, focusAreas: areas }));
-          }}
-          className="w-full"
-          rows={3}
-        />
+        <div>
+          <label htmlFor="focus-areas" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Topik Fokus (opsional)
+          </label>
+          <Textarea
+            id="focus-areas"
+            placeholder="Contoh: Hukum Newton, Energi Kinematik, dll. (pisahkan dengan koma)"
+            value={options.focusAreas.join(', ')}
+            onChange={(e) => {
+              const value = e.target.value;
+              setOptions(prev => ({ ...prev, focusAreas: value.split(',').filter(Boolean) }));
+            }}
+            className="w-full"
+            rows={3}
+          />
       </div>
 
       {error && (
