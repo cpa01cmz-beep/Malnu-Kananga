@@ -243,6 +243,25 @@ scripts/                    # Build and deployment scripts
   - Queue management
   - Play/pause/resume controls
 
+#### voiceCommandParser.ts
+- **Purpose**: Parse voice transcripts into structured commands
+- **Features**:
+  - Pattern matching for 40+ commands
+  - Data extraction (student names, grade values, queries)
+  - Validation and sanitization (XSS prevention)
+  - Similarity scoring (0.7 threshold)
+
+#### Voice Command Documentation
+- **File**: `docs/VOICE_COMMANDS_GUIDE.md`
+- **Purpose**: Comprehensive user guide for voice commands
+- **Content**:
+  - Attendance commands (mark present/absent/late/permitted, submit, export)
+  - Grading commands (set grade, pass/fail, submit, bulk operations)
+  - Navigation commands (open grading/attendance/library, go home, logout)
+  - Best practices and troubleshooting
+  - Complete command reference table
+- **Languages**: Indonesian (id-ID) & English (en-US) support
+
 ### Data Services
 
 #### ocrService.ts
