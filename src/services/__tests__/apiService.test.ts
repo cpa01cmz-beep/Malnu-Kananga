@@ -85,7 +85,6 @@ vi.mock('../../utils/errorHandler', () => ({
 }));
 
 // Mock window.performance
-// eslint-disable-next-line no-undef
 globalThis.performance = {
   now: vi.fn(() => Date.now())
 } as unknown as Performance;
@@ -100,7 +99,7 @@ Object.defineProperty(global, 'navigator', {
 // HELPERS
 // ============================================
 
-function createMockToken(payload: any): string {
+function createMockToken(payload?: any): string {
   const defaultPayload = {
     user_id: 'user-123',
     email: 'test@example.com',

@@ -95,7 +95,7 @@ describe('validation', () => {
     });
 
     it('should reject password with only whitespace', () => {
-      expect(passwordValidation.validate('     ')).toBe(true);
+      expect(passwordValidation.validate('     ')).toBe(false);
     });
 
     it('should have correct error message', () => {
@@ -371,20 +371,19 @@ describe('validation', () => {
     let removeChildSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-       
-      createElementSpy = vi.spyOn(document, 'createElement').mockReturnValue({
+
+      createElementSpy = vi.spyOn(document, 'createElement').mockImplementation(() => ({
         setAttribute: vi.fn(),
-         
+
         style: {} as any,
         textContent: '',
         remove: vi.fn()
-      } as any);
-      
-       
+      } as any));
+
       appendChildSpy = vi.spyOn(document.body, 'appendChild').mockReturnValue({} as any);
-       
+
       removeChildSpy = vi.spyOn(document.body, 'removeChild').mockReturnValue({} as any);
-      
+
       vi.useFakeTimers();
     });
 
@@ -439,10 +438,10 @@ describe('validation', () => {
     });
 
     it('should set correct positioning styles', () => {
-      const element = createElementSpy.mock.results[0].value;
-      
       announceValidation('Test message');
-      
+
+      const element = createElementSpy.mock.results[0].value;
+
       expect(element.style.position).toBe('absolute');
       expect(element.style.left).toBe('-10000px');
       expect(element.style.width).toBe('1px');

@@ -141,6 +141,7 @@ export default [
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
         HTMLSpanElement: 'readonly',
+        Performance: 'readonly',
       },
     },
     rules: {
