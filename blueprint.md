@@ -1,7 +1,7 @@
   # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-   **Version**: 3.2.6
-  **Last Updated**: 2026-01-30
+ **Version**: 3.2.7
+   **Last Updated**: 2026-01-30
  **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -68,7 +68,7 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
  - **Routing**: React Router DOM 7.12.0
  - **Icons**: Heroicons React 2.2.0
 
-### Bug Fixes (2026-01-22 - 2026-01-29)
+ ### Bug Fixes (2026-01-22 - 2026-01-30)
     - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
     - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
     - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
@@ -79,6 +79,7 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
      - **Duplicate Key Warning**: Fixed React duplicate key warning in GradeAnalytics by adding deduplication logic using Map-based filtering (Issue #1251, P2)
      - **GitHub Issues Synchronization**: Closed 3 P1/P2 issues (#1240, #1239, #1247) with proper references to resolving commits (SCRIBE MODE)
      - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2)
+     - **CI Workflow Deadlock**: Fixed turnstyle deadlock by changing same-branch-only to true (Issue #1258, P1)
 
 ### Backend (Cloudflare Workers)
 - **Runtime**: Serverless (Cloudflare Workers)
