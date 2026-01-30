@@ -636,7 +636,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
  | Version | Date | Changes |
  |---------|------|---------|
- | 3.2.5 | 2026-01-30 | Replaced hardcoded localStorage keys with STORAGE_KEYS constants (Issue #1244); Cleaned up 26 merged remote branches (Issue #1212) |
+ | 3.2.5 | 2026-01-30 | Replaced hardcoded localStorage keys with STORAGE_KEYS constants (Issue #1244); Cleaned up 26 merged remote branches (Issue #1212); Removed hardcoded WebSocket URL, centralized in config.ts (Pillar 15: Dynamic Coding) |
  | 3.2.4 | 2026-01-29 | Fixed duplicate key warning in GradeAnalytics component (Issue #1251) |
  | 3.2.3 | 2026-01-29 | Enhanced speech synthesis error recovery with retry logic and circuit breaker (GAP-111) |
  | 3.2.2 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107) |

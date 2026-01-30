@@ -1,5 +1,29 @@
 # Active Tasks Tracking
 
+## In Progress
+
+### Remove Hardcoded WebSocket URL in webSocketService ✅
+- **Mode**: SANITIZER
+- **Issue**: Pillar 15 - Dynamic Coding (Zero hardcoded values)
+- **Priority**: P3 (Low Priority - Code Quality)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: `src/services/webSocketService.ts:61` had hardcoded WebSocket URL `'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev'` as fallback value. This violated Pillar 15 (Dynamic Coding) which requires zero hardcoded values.
+- **Solution Implemented**:
+  1. ✅ Added `DEFAULT_WS_BASE_URL` constant to `src/config.ts` (derives from `DEFAULT_API_BASE_URL`)
+  2. ✅ Updated `webSocketService.ts` to import and use `DEFAULT_WS_BASE_URL`
+  3. ✅ Removed hardcoded URL from WS_CONFIG
+- **Files Modified** (2 files):
+  1. ✅ src/config.ts - Added `DEFAULT_WS_BASE_URL` constant (derived from DEFAULT_API_BASE_URL)
+  2. ✅ src/services/webSocketService.ts - Imported `DEFAULT_WS_BASE_URL`, updated WS_CONFIG to use constant
+- **Impact**: Ensures all URLs are centrally managed and not hardcoded (Pillars 3: Stability, 15: Dynamic Coding)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Hardcoded URL removed from webSocketService.ts
+  - ✅ Single source of truth maintained (DEFAULT_API_BASE_URL in config.ts)
+
 ## Completed
 
 ### Eliminate 'any' Type Usage in ocrEnhancementService ✅

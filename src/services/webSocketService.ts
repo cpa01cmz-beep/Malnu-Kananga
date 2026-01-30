@@ -1,12 +1,12 @@
   
-import { 
-  STORAGE_KEYS, 
-  type UserRole 
+import {
+  STORAGE_KEYS,
+  type UserRole
 } from '../constants';
 import { apiService } from './apiService';
 import type { AuthPayload } from './apiService';
 import { logger } from '../utils/logger';
-import { DEFAULT_API_BASE_URL } from '../config';
+import { DEFAULT_API_BASE_URL, DEFAULT_WS_BASE_URL } from '../config';
 import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, DirectMessage, Conversation } from '../types';
 
 /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
@@ -58,7 +58,7 @@ export interface RealTimeSubscription {
  */
 export const WS_CONFIG = {
   WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
-    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || 'wss://malnu-kananga-worker-prod.cpa01cmz.workers.dev') + '/ws',
+    (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || DEFAULT_WS_BASE_URL),
   MAX_RECONNECT_ATTEMPTS: 5,
   RECONNECT_DELAY: 5000,
   CONNECTION_TIMEOUT: 10000,

@@ -554,6 +554,7 @@ ANNOUNCEMENT_READ(announcementId, userId)
 ### Environment Variables
 - `VITE_GEMINI_API_KEY`: Google Gemini API key
 - `VITE_API_BASE_URL`: Backend API endpoint
+- `VITE_WS_BASE_URL`: WebSocket endpoint (optional, defaults to derived from API_BASE_URL)
 - Environment validation via `npm run env:validate`
 
 ---

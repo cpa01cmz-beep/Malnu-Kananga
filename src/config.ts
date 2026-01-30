@@ -10,6 +10,8 @@ export const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.
 
 export const API_BASE_URL = env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
+export const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
+
 // API Endpoints (Legacy - Use apiService.ts instead)
 export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
 export const WORKER_LOGIN_ENDPOINT = `${API_BASE_URL}/api/auth/login`;
