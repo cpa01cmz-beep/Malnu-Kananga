@@ -1,5 +1,3 @@
-const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development'
-
 export enum LogLevel {
   DEBUG = 'DEBUG',
   INFO = 'INFO',
@@ -13,6 +11,11 @@ class Logger {
     captureException?(error: Error, context?: { extra?: Record<string, unknown> }, severity?: string): void;
     captureMessage?(message: string, level: string, context?: { extra?: Record<string, unknown> }): void;
   } | null = null;
+
+  // Helper to check development mode dynamically for testability
+  private get isDevelopment(): boolean {
+    return import.meta.env.DEV || import.meta.env.MODE === 'development'
+  }
 
   /**
    * Set error monitoring service for integration
@@ -32,26 +35,26 @@ class Logger {
   }
 
   debug(message: string, ...args: unknown[]): void {
-    if (isDevelopment && import.meta.env.VITE_LOG_LEVEL === 'DEBUG') {
+    if (this.isDevelopment && import.meta.env.VITE_LOG_LEVEL === 'DEBUG') {
       console.log(this.formatMessage(LogLevel.DEBUG, message, ...args))
     }
   }
 
   info(message: string, ...args: unknown[]): void {
     const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'INFO';
-    if (isDevelopment && ['DEBUG', 'INFO'].indexOf(logLevel) !== -1) {
+    if (this.isDevelopment && ['DEBUG', 'INFO'].indexOf(logLevel) !== -1) {
       console.log(this.formatMessage(LogLevel.INFO, message, ...args))
     }
   }
 
   warn(message: string, ...args: unknown[]): void {
     const logLevel = import.meta.env.VITE_LOG_LEVEL as string || 'WARN';
-    if (isDevelopment && ['DEBUG', 'INFO', 'WARN'].indexOf(logLevel) !== -1) {
+    if (this.isDevelopment && ['DEBUG', 'INFO', 'WARN'].indexOf(logLevel) !== -1) {
       console.warn(this.formatMessage(LogLevel.WARN, message, ...args))
     }
-    
+
     // Send warnings to error monitoring in production
-    if (!isDevelopment && this.errorMonitoringService?.isEnabled()) {
+    if (!this.isDevelopment && this.errorMonitoringService?.isEnabled()) {
       this.errorMonitoringService.captureMessage?.(
         message,
         'warning',
@@ -61,12 +64,12 @@ class Logger {
   }
 
   error(message: string, ...args: unknown[]): void {
-    if (isDevelopment) {
+    if (this.isDevelopment) {
       console.error(this.formatMessage(LogLevel.ERROR, message, ...args))
     }
 
     // Send errors to error monitoring in production
-    if (!isDevelopment && this.errorMonitoringService?.isEnabled()) {
+    if (!this.isDevelopment && this.errorMonitoringService?.isEnabled()) {
       // Check if first arg is an Error object
       const errorArg = args[0] instanceof Error ? args[0] : new Error(message);
       this.errorMonitoringService.captureException?.(
