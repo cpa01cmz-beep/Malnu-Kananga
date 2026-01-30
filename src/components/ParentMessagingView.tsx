@@ -7,6 +7,7 @@ import type { ParentChild, ParentTeacher, ParentMessage } from '../types';
 import { parentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateAndSanitizeMessage, validateParentMessage } from '../utils/parentValidation';
+import { communicationLogService } from '../services/communicationLogService';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
@@ -90,7 +91,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
     try {
       const response = await parentsAPI.sendMessage(validation.sanitized!);
 
-      if (response.success && response.data) {
+        if (response.success && response.data) {
         const messageValidation = validateParentMessage(response.data);
         if (!messageValidation.isValid) {
           logger.error('Server returned invalid message data:', messageValidation.errors);
@@ -100,6 +101,21 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
         setNewMessage('');
         setMessageSubject('');
         onShowToast('Pesan terkirim', 'success');
+
+        communicationLogService.logMessage({
+          messageId: response.data.id,
+          parentId: messageInput.sender === 'parent' ? 'parent_1' : 'teacher_1',
+          parentName: messageInput.childName,
+          teacherId: messageInput.sender === 'parent' ? selectedTeacher.teacherId : 'teacher_1',
+          teacherName: messageInput.teacherName,
+          studentId: selectedChild.studentId,
+          studentName: selectedChild.studentName,
+          subject: messageInput.subject,
+          message: messageInput.message,
+          messageType: 'text',
+          sender: messageInput.sender,
+          timestamp: response.data.timestamp,
+        });
       } else {
         onShowToast('Gagal mengirim pesan', 'error');
       }

@@ -4,6 +4,37 @@
 
 ## Completed
 
+### Add Parent-Teacher Communication Log to Messaging (Issue #973) ✅
+- **Mode**: BUILDER
+- **Issue**: #973
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: Parent and teachers need audit trail of communications for compliance and reference. Issue #967 (direct messaging prerequisite) is closed.
+- **Deliverables**:
+  - ✅ Communication log service created (communicationLogService.ts with 589 lines)
+  - ✅ All messages tracked with metadata
+  - ✅ Meeting logs with outcomes
+  - ✅ Search and filter functionality (by type, participant, student, keyword, date range)
+  - ✅ Export to PDF/CSV
+  - ✅ Compliance-ready reporting with statistics
+  - ✅ Archive and clear old entries functionality
+  - ✅ Integrated into ParentMessagingView for automatic message logging
+- **Files Created**:
+  - src/services/communicationLogService.ts - Complete communication log service
+- **Files Modified**:
+  - src/constants.ts - Added COMMUNICATION_LOG and COMMUNICATION_LOG_FILTERS storage keys
+  - src/types.ts - Added CommunicationLogEntry, CommunicationLogFilter, CommunicationLogExportOptions, CommunicationLogStats, CommunicationLogType, CommunicationLogStatus
+  - src/components/ParentMessagingView.tsx - Integrated communicationLogService.logMessage() for automatic logging
+- **Impact**: Improves communication transparency, enables compliance tracking, enhances audit trail (Pillars 1: Flow, 3: Stability, 8: Documentation, 16: UX/DX)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Service integrated with ParentMessagingView
+
+## Completed
+
 ### Fix Stuck CI Workflow - turnstyle Deadlock (Issue #1258) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1258

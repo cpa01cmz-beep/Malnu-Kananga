@@ -1,8 +1,8 @@
   # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.2.7
-   **Last Updated**: 2026-01-30
- **Maintained By**: Lead Autonomous Engineer & System Guardian
+ **Version**: 3.2.8
+  **Last Updated**: 2026-01-30
+  **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -291,6 +291,18 @@ scripts/                    # Build and deployment scripts
   - Queue management
   - Conflict resolution
 
+#### communicationLogService.ts (NEW - 2026-01-30)
+- **Purpose**: Communication log and audit trail for parent-teacher interactions
+- **Features**:
+  - Log messages, meetings, calls, and notes
+  - Search and filter by type, participant, student, keyword, date range
+  - Statistics and analytics (counts by participant, status)
+  - Export to PDF/CSV with compliance-ready formatting
+  - Archive old entries (configurable days threshold)
+  - Clear archived entries functionality
+  - Pagination support for large logs
+  - Sorting by timestamp, sender, teacher, parent
+
 ### Notification Services
 
 #### pushNotificationService.ts
@@ -372,7 +384,8 @@ scripts/                    # Build and deployment scripts
     - Throttle utility
     - Used by: speechRecognitionService, speechSynthesisService
 
-### Additional Services (30+ total)
+ ### Additional Services (30+ total)
+- **Communication Services**: communicationLogService (NEW - 2026-01-30)
 - **Material Services**: categoryService, materialPermissionService
 - **Messaging Services**: emailService, emailQueueService
 - **Monitoring Services**: errorMonitoringService, performanceMonitor

@@ -1,8 +1,8 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.2.7
-  **Last Updated**: 2026-01-30
-**Maintained By**: Lead Autonomous Engineer & System Guardian
+ **Version**: 3.2.8
+   **Last Updated**: 2026-01-30
+ **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -40,6 +40,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 #### High Priority (P1) - Critical Blockers
 
 **Status**: ✅ **COMPLETED** - Missing documentation (blueprint.md, roadmap.md) created
+**Status**: ✅ **COMPLETED** - Parent-Teacher Communication Log (Issue #973)
 
 #### Medium Priority (P2) - Active Development
 
@@ -532,13 +533,13 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Synchronize GitHub issues with completed work - 2026-01-29
 - ✅ Fix duplicate key warning in GradeAnalytics (Issue #1251) - 2026-01-29
   - ✅ Synchronize GitHub issues with completed work (4 issues closed) - 2026-01-29
-  - ✅ Fix React act() warnings in GradeAnalytics tests (Issue #1250) - 2026-01-30 (fixed 6 user interactions wrapped in act())
-  - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
-  - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
-  - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
+   - ✅ Fix React act() warnings in GradeAnalytics tests (Issue #1250) - 2026-01-30 (fixed 6 user interactions wrapped in act())
+   - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
+   - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
+   - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
+   - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
 
 #### Q2 2026 Targets
-- ⏳ Parent-teacher communication log
 - ⏳ OCR for attendance management
 - ⏳ Enhanced AI quiz generation
 - ⏳ Real-time student insights
@@ -652,6 +653,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
  | Version | Date | Changes |
   |---------|------|---------|
+  | 3.2.8 | 2026-01-30 | Added Parent-Teacher Communication Log service with full audit trail, search/filter, export (PDF/CSV), and statistics (Issue #973); Integrated with ParentMessagingView for automatic message logging |
   | 3.2.7 | 2026-01-30 | Fixed CI workflow deadlock by changing turnstyle same-branch-only to true (Issue #1258); Prevents global workflow lock, improves CI/CD reliability |
    | 3.2.6 | 2026-01-30 | Replaced hardcoded localStorage keys with STORAGE_KEYS constants (Issue #1244); Cleaned up 26 merged remote branches (Issue #1212); Removed hardcoded WebSocket URL, centralized in config.ts (Pillar 15: Dynamic Coding); Fixed React act() warnings in GradeAnalytics tests (Issue #1250) |
    | 3.2.5 | 2026-01-29 | Fixed duplicate key warning in GradeAnalytics component (Issue #1251) |

@@ -143,6 +143,10 @@ export const STORAGE_KEYS = {
     MESSAGE_DRAFTS: (conversationId: string) => `malnu_message_draft_${conversationId}`,
     UNREAD_COUNTS: 'malnu_unread_counts',
     
+    // Communication Log (new for Issue #973)
+    COMMUNICATION_LOG: 'malnu_communication_log',
+    COMMUNICATION_LOG_FILTERS: 'malnu_communication_log_filters',
+    
     // Announcement System (new)
     ANNOUNCEMENT_DRAFT: 'malnu_announcement_draft',
     ANNOUNCEMENT_CACHE: 'malnu_announcement_cache',
