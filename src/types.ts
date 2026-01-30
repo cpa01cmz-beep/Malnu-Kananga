@@ -170,6 +170,17 @@ export interface User {
   dateOfBirth?: string;
 }
 
+export type PPDBPipelineStatus =
+  | 'registered'
+  | 'document_review'
+  | 'interview_scheduled'
+  | 'interview_completed'
+  | 'accepted'
+  | 'enrolled'
+  | 'rejected'
+  | 'pending'
+  | 'approved';
+
 export interface PPDBRegistrant {
   id: string;
   userId?: string;
@@ -181,7 +192,7 @@ export interface PPDBRegistrant {
   email: string;
   address: string;
   registrationDate: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: PPDBPipelineStatus;
   documentUrl?: string;
   score?: number;
   rubricScores?: Record<string, number>;
