@@ -1,7 +1,7 @@
   # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.3.1
-     **Last Updated**: 2026-01-30 (Integrated email service with notification system)
+  **Version**: 3.3.2
+     **Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
   **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -704,6 +704,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
   | Version | Date | Changes |
   |---------|------|---------|
+  | 3.3.2 | 2026-01-30 | Fix GradeAnalytics Test Failure (Issue #1267): Changed ambiguous test selector from `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })` to resolve false positive match with dropdown option; All 19 GradeAnalytics tests passing (100% pass rate); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
   | 3.3.1 | 2026-01-30 | Integrate Email Service with Notification System (Issue #1264): Added emailNotificationService with full integration to unifiedNotificationManager; Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR); User-controlled email notification preferences (per-type enable/disable); Digest mode (daily/weekly email digest); Quiet hours support for email notifications; Email delivery tracking and analytics; 20 tests (100% pass rate); Updated blueprint.md with new service documentation |
   | 3.3.0 | 2026-01-30 | Documentation Synchronization (SCRIBE MODE): Synchronized GitHub issues with completed work; Closed Issue #820 (OCR Integration for Attendance Management), Issue #1260 (Documentation Metrics Update), Issue #1265 (Untracked PDF Cleanup); Updated README.md metrics (version 3.3.0, 438 source files, 137 test files, 31.3% coverage); Updated blueprint.md metrics; Removed duplicate OCR entry from Q2 2026 Targets; All documentation synchronized across GitHub, task.md, roadmap.md (Pillar 8: Single Source of Truth) |
    | 3.4.1 | 2026-01-30 | Test Coverage for performanceMonitor Service: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate) covering initialization, request tracking, API response recording, statistics calculation, error rate calculation, threshold checks, metrics management, export functionality, and enable/disable monitoring; All TypeScript type checks and ESLint linting passed |
