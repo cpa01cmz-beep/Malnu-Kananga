@@ -20,6 +20,8 @@
 - **Verification**:
   - ✅ TypeScript type checking: Passed (0 errors)
   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+- **Pull Request**: #1253
+- **Issue Closed**: ✅ #1244 closed with reference to PR #1253
 - **Note**: Initial estimate of 90+ instances was incorrect; thorough search found only 5 genuine cases needing fixes. Other "hardcoded" strings are intentional (fallback values, migration cleanup, prefix checks, string manipulation logic).
 
 ## Completed
