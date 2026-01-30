@@ -2,6 +2,14 @@
 
 ## Completed
 
+### Test Coverage - apiService and authService (Already Completed) ✅
+- **Note**: Test coverage for apiService (56 tests) and authService (23 tests) was already completed on origin/main in commit 7620ff0.
+- **Status**: Completed (duplicate task - work already done)
+- **Reference**: Commit 7620ff0 test(optimizer): Add comprehensive test coverage for logger, validation, retry, and apiService utilities (v3.2.10)
+- **Files on origin/main**:
+  - src/services/__tests__/apiService.test.ts (56 tests)
+  - src/services/__tests__/authService.test.ts (23 tests)
+
 ### Integrate PPDB Registration with Student Management (Issue #1248) ✅
 - **Mode**: BUILDER
 - **Issue**: #1248
