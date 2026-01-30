@@ -1,7 +1,7 @@
-# MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+ # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.2.3
-**Last Updated**: 2026-01-29
+ **Version**: 3.2.5
+ **Last Updated**: 2026-01-30
 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -632,10 +632,11 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 3.2.4 | 2026-01-29 | Fixed duplicate key warning in GradeAnalytics component (Issue #1251) |
-| 3.2.3 | 2026-01-29 | Enhanced speech synthesis error recovery with retry logic and circuit breaker (GAP-111) |
+ | Version | Date | Changes |
+ |---------|------|---------|
+ | 3.2.5 | 2026-01-30 | Replaced hardcoded localStorage keys with STORAGE_KEYS constants (Issue #1244) |
+ | 3.2.4 | 2026-01-29 | Fixed duplicate key warning in GradeAnalytics component (Issue #1251) |
+ | 3.2.3 | 2026-01-29 | Enhanced speech synthesis error recovery with retry logic and circuit breaker (GAP-111) |
 | 3.2.2 | 2026-01-29 | Enhanced notification system validation and reliability (GAP-107) |
 | 3.2.1 | 2026-01-29 | Enhanced material upload validation and file management (GAP-108) |
 | 3.2.0 | 2026-01-22 | Created initial roadmap, completed missing documentation |
@@ -670,6 +671,6 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ---
 
-**Last Review**: 2026-01-29
-**Next Review**: 2026-02-22
+ **Last Review**: 2026-01-30
+ **Next Review**: 2026-02-23
 **Reviewed By**: Lead Autonomous Engineer & System Guardian
