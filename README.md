@@ -1,13 +1,13 @@
 
 # Website & Portal Pintar MA Malnu Kananga
 
-![Version](https://img.shields.io/badge/version-3.2.8-green)
+![Version](https://img.shields.io/badge/version-3.3.0-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
-![Test Coverage](https://img.shields.io/badge/coverage-42.2%25-yellow)
+![Test Coverage](https://img.shields.io/badge/coverage-31.3%25-yellow)
 
-**Version**: 3.2.8 | **Last Updated**: 2026-01-30 | **Status**: ✅ Production Ready
+**Version**: 3.3.0 | **Last Updated**: 2026-01-30 | **Status**: ✅ Production Ready
 
 Smart Portal MA Malnu Kananga - Modern school management system with AI integration.
 
@@ -18,23 +18,23 @@ Smart Portal MA Malnu Kananga - Modern school management system with AI integrat
 ### Codebase Statistics
 | Metric | Value |
 |--------|-------|
-| **Version** | 3.2.8 |
-| **Source Files** | 296 |
-| **Test Files** | 125 |
-| **Test Coverage** | 42.2% (125/296 files) |
-| **Services** | 33 (30+ with tests) |
-| **Components** | 195 (84 tested, 43.1%) |
-| **Utilities** | 26 (10 tested, 38.5%) |
+| **Version** | 3.3.0 |
+| **Source Files** | 438 |
+| **Test Files** | 137 |
+| **Test Coverage** | 31.3% (137/438 files) |
+| **Services** | 34 (18 with tests, 52.9%) |
+| **Components** | 195+ (84 tested, 43.1%) |
+| **Utilities** | 26+ (13 tested, 50%) |
 | **STORAGE_KEYS** | 60+ centralized keys |
-| **Lines of Code** | ~50,000+ |
+| **Lines of Code** | ~60,000+ |
 
 ### Test Coverage by Category
 | Category | Files | Tested | Coverage |
 |----------|-------|--------|----------|
-| Services | 33 | 14 | 42.4% |
-| Components | 195 | 84 | 43.1% |
-| Utils | 26 | 10 | 38.5% |
-| **Total** | **296** | **125** | **42.2%** |
+| Services | 34 | 18 | 52.9% |
+| Components | 195+ | 84 | 43.1% |
+| Utils | 26+ | 13 | 50% |
+| **Total** | **438** | **137** | **31.3%** |
 
 ### Code Quality
 - ✅ **TypeScript Strict Mode**: Enabled (0% `any` usage achieved)
