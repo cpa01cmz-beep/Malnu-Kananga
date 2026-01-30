@@ -2,6 +2,30 @@
 
 ## Completed
 
+### [SCRIBE MODE] Fix Duplicate OCR Entry in roadmap.md (Pillar 8) ✅
+- **Mode**: SCRIBE
+- **Priority**: P3 (Documentation)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: roadmap.md had duplicate/conflicting entry for OCR Integration for Attendance Management
+  - Line 247: Correctly marked as "✅ **COMPLETED**" (2026-01-30)
+  - Line 595: Incorrectly marked as "⏳ Planned" in Q2 2026 section
+  - This violated Pillar 8: Documentation (Single Source of Truth)
+- **Deliverables**:
+  - ✅ Removed duplicate "⏳ Planned" entry from Q2 2026 section
+  - ✅ Updated version 3.3.0 entry in roadmap.md version history
+  - ✅ Verified consistency across all documentation files
+- **Files Modified**:
+  - roadmap.md - Removed duplicate OCR entry from Q2 2026 Targets, updated version 3.3.0 entry
+- **Impact**: Ensures documentation accuracy and Single Source of Truth (Pillar 8)
+- **Verification**:
+  - ✅ Duplicate entry removed from Q2 2026 Targets
+  - ✅ Version history updated
+  - ✅ Documentation now consistent across roadmap.md, task.md, blueprint.md
+
+## Completed
+
 ### [SCRIBE MODE] Documentation Synchronization for Open Issues ✅
 - **Mode**: SCRIBE
 - **Issues**: #820, #1260, #1265

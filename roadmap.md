@@ -592,7 +592,6 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
       - ✅ Synchronize GitHub Issues with Completed Work (SCRIBE MODE) - 2026-01-30 (closed #820, #1260, #1265)
 
 #### Q2 2026 Targets
-- ⏳ OCR for attendance management
 - ⏳ Enhanced AI quiz generation
 - ⏳ Real-time student insights
 - ⏳ PWA enhancements
@@ -705,7 +704,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
   | Version | Date | Changes |
   |---------|------|---------|
-  | 3.3.0 | 2026-01-30 | Documentation Synchronization (SCRIBE MODE): Synchronized GitHub issues with completed work; Closed Issue #820 (OCR Integration for Attendance Management), Issue #1260 (Documentation Metrics Update), Issue #1265 (Untracked PDF Cleanup); Updated README.md metrics (version 3.3.0, 438 source files, 137 test files, 31.3% coverage); Updated blueprint.md metrics; All documentation synchronized across GitHub, task.md, roadmap.md (Pillar 8: Single Source of Truth) |
+   | 3.3.0 | 2026-01-30 | Documentation Synchronization (SCRIBE MODE): Synchronized GitHub issues with completed work; Closed Issue #820 (OCR Integration for Attendance Management), Issue #1260 (Documentation Metrics Update), Issue #1265 (Untracked PDF Cleanup); Updated README.md metrics (version 3.3.0, 438 source files, 137 test files, 31.3% coverage); Updated blueprint.md metrics; Removed duplicate OCR entry from Q2 2026 Targets; All documentation synchronized across GitHub, task.md, roadmap.md (Pillar 8: Single Source of Truth) |
   | 3.4.1 | 2026-01-30 | Test Coverage for performanceMonitor Service: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate) covering initialization, request tracking, API response recording, statistics calculation, error rate calculation, threshold checks, metrics management, export functionality, and enable/disable monitoring; All TypeScript type checks and ESLint linting passed |
   | 3.4.0 | 2026-01-30 | Add OCR Integration for Attendance Management (Issue #820): Added attendanceOCRService with AI-powered attendance extraction and AttendanceManagement component for automated attendance sheet processing; Features include pattern recognition for attendance statuses, student matching by NIS/name with confidence scoring, progress callbacks, validation indicators, and 11 tests (81.8% pass rate) |
    | 3.4.1 | 2026-01-30 | Test Coverage for High-Priority Services: Added comprehensive test coverage for offlineActionQueueService (35 tests), ocrService (8 tests), and offlineDataService (24 tests); Total 67 new tests (100% pass rate), 3 skipped due to React mocking complexity; TypeScript type checking passed, ESLint linting passed |
