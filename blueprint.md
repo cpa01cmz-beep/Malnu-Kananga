@@ -279,10 +279,38 @@ scripts/                    # Build and deployment scripts
 #### ocrService.ts
 - **Purpose**: OCR for PPDB documents
 - **Features**:
-  - Tesseract.js integration
-  - Image preprocessing
-  - Text extraction
-  - Validation queue
+   - Tesseract.js integration
+   - Image preprocessing
+   - Text extraction
+   - Validation queue
+
+#### attendanceOCRService.ts (NEW - 2026-01-30)
+- **Purpose**: OCR-based attendance sheet processing for automated data entry
+- **Features**:
+   - AI-powered attendance extraction (Gemini) with regex fallback
+   - Pattern recognition for attendance statuses (Hadir/Sakit/Izin/Alpa)
+   - Date extraction from multiple formats (DD-MM-YYYY, YYYY-MM-DD, DD Month YYYY)
+   - Student matching by NIS and name with confidence scoring
+   - Progress callbacks for real-time OCR status updates
+   - Validation and confidence indicators for manual review
+   - Batch processing for multiple students
+   - Attendance summary calculation
+- **Types**:
+   - AttendanceStudentInfo - Student info for OCR matching
+   - AttendanceSheetData - Parsed attendance sheet with date and student list
+   - AttendanceOCRProgress - Progress status with stage tracking
+   - AttendanceSheetValidation - Validation results with errors and warnings
+- **Recognition Patterns**:
+   - Present: ✓, √, ✔, "Hadir", "H", "P", "Present"
+   - Sick: "Sakit", "S", "Sick"
+   - Permission: "Izin", "I", "Permission"
+   - Absent: "Alpa", "A", "Absent", "✗", "✖", "X"
+- **Confidence Calculation**:
+   - Base confidence from OCR (70 default for regex, variable for AI)
+   - Boost for exact NIS match (+15)
+   - Boost for exact name match (+15)
+   - Penalty for partial name match (-20)
+- **Test Coverage**: 11 tests (9 passing, 81.8% pass rate)
 
 #### offlineDataService.ts
 - **Purpose**: Offline data management
@@ -876,15 +904,22 @@ npm run typecheck         # Run TypeScript compiler
 
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
-
+ 
  ### Recent Changes (2026-01-30)
  - **Quiz-Grade Integration**: Added quizGradeIntegrationService to convert QuizAttempt to Grade entries (Issue #1246)
-   - Automatic grade entry creation from quiz attempts
-   - Deduplication and batch processing support
-   - GradeAnalytics updated with assignment type filter (all/quiz/assignment/exam/project/etc.)
-   - Quiz grades now included in all analytics calculations
- - **PPDB-Student Management Integration**: Added ppdbIntegrationService with 8-stage pipeline automation (Issue #1248)
- - **README.md**: Updated with comprehensive metrics section including:
+    - Automatic grade entry creation from quiz attempts
+    - Deduplication and batch processing support
+    - GradeAnalytics updated with assignment type filter (all/quiz/assignment/exam/project/etc.)
+    - Quiz grades now included in all analytics calculations
+  - **PPDB-Student Management Integration**: Added ppdbIntegrationService with 8-stage pipeline automation (Issue #1248)
+  - **Attendance OCR Integration**: Added attendanceOCRService and AttendanceManagement component for automated attendance sheet processing (Issue #820)
+    - AI-powered attendance extraction (Gemini) with regex fallback
+    - Pattern recognition for attendance statuses (Hadir/Sakit/Izin/Alpa)
+    - Student matching by NIS and name with confidence scoring
+    - Progress callbacks for real-time OCR status updates
+    - Validation and confidence indicators for manual review
+    - Test coverage: 11 tests (9 passing, 81.8% pass rate)
+  - **README.md**: Updated with comprehensive metrics section including:
    - Codebase statistics (296 source files, 125 test files, 42.2% coverage)
    - Test coverage breakdown by category (services, components, utils)
    - Code quality metrics (0% `any` usage, ESLint status)
