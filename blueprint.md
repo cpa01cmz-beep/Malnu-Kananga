@@ -731,22 +731,24 @@ npm run test:all      # Run all tests
 ```
 
   ### Test Coverage Status (2026-01-30)
-   - **Total Source Files**: 438
-   - **Test Files**: 137
-   - **Test-to-Source Ratio**: 31.3% (137/438 files)
-   - **Services Coverage**: 18/34 tested (52.9%) (+1: performanceMonitor, updated counts)
- - **Utils Coverage**: 13/26 tested (50%)
- - **Components Coverage**: 84/195+ tested (43.1%)
+   - **Total TypeScript Files**: 439
+   - **Test Files**: 138 (+1: errorMonitoringService)
+   - **Source Files**: 301 (excluding tests)
+   - **Test-to-Source Ratio**: 45.8% (138/301 files)
+   - **Services Coverage**: 19/34 tested (55.9%) (+1: errorMonitoringService)
+  - **Utils Coverage**: 13/26 tested (50%)
+  - **Components Coverage**: 84/195+ tested (43.1%)
 
- ### Recently Added Tests
-- **logger.test.ts**: 25 tests (80.6% pass rate, covers logging levels, environment handling, error monitoring)
-- **validation.test.ts**: 66 tests (95.5% pass rate, covers form validation, error classification, accessibility)
-- **retry.test.ts**: 56 tests (82.1% pass rate, covers retry logic, exponential backoff, error classification)
-- **errorHandler.test.ts**: 43 tests (95.6% pass rate, 2 skipped for timer issues)
-- **authService.test.ts**: 23 tests (100% pass rate)
-- **offlineActionQueueService.test.ts**: 35 tests (97.2% pass rate, covers queue management, sync operations, conflict resolution, batch processing, event listeners)
-- **ocrService.test.ts**: 8 tests (100% pass rate, covers public API, cache management, storage integration)
-- **offlineDataService.test.ts**: 24 tests (100% pass rate, covers student/parent data operations, sync operations, event listeners, cleanup, hooks)
+  ### Recently Added Tests
+  - **logger.test.ts**: 25 tests (80.6% pass rate, covers logging levels, environment handling, error monitoring)
+  - **validation.test.ts**: 66 tests (95.5% pass rate, covers form validation, error classification, accessibility)
+  - **retry.test.ts**: 56 tests (82.1% pass rate, covers retry logic, exponential backoff, error classification)
+  - **errorHandler.test.ts**: 43 tests (95.6% pass rate, 2 skipped for timer issues)
+  - **authService.test.ts**: 23 tests (100% pass rate)
+  - **offlineActionQueueService.test.ts**: 35 tests (97.2% pass rate, covers queue management, sync operations, conflict resolution, batch processing, event listeners)
+  - **ocrService.test.ts**: 8 tests (100% pass rate, covers public API, cache management, storage integration)
+  - **offlineDataService.test.ts**: 24 tests (100% pass rate, covers student/parent data operations, sync operations, event listeners, cleanup, hooks)
+  - **errorMonitoringService.test.ts**: 40 tests (100% pass rate, covers initialization, user context, error/message capture, tags/extras, breadcrumbs, performance transactions, flush, integration)
 
 ### Known Issues
 - Test suite timeout persists despite explicit timeout configuration (Issue #1193, #1225)
