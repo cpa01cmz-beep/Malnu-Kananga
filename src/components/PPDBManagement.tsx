@@ -4,11 +4,11 @@ import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, 
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 import { emailService } from '../services/emailService';
 import { pdfExportService } from '../services/pdfExportService';
 import { ocrService, type OCRExtractionResult } from '../services/ocrService';
 import { logger } from '../utils/logger';
+import { ppdbIntegrationService } from '../services/ppdbIntegrationService';
 import Button from './ui/Button';
 import IconButton from './ui/IconButton';
 import AccessDenied from './AccessDenied';
@@ -100,15 +100,34 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   }
 
   const updateStatus = async (id: string, newStatus: PPDBRegistrant['status'], templateId?: string) => {
-    const updated = registrants.map(r => {
-      if (r.id === id) {
+    try {
+      // Convert legacy status to pipeline status
+      const pipelineStatus = convertLegacyStatusToPipelineStatus(newStatus);
+      
+      // Use PPDB Integration Service for pipeline transitions
+      await ppdbIntegrationService.transitionPipelineStatus(id, pipelineStatus);
+      
+      // Update local state
+      const updated = registrants.map(r => {
+        if (r.id === id) {
+          return { ...r, status: newStatus };
+        }
+        return r;
+      });
+      setRegistrants(updated);
+      
+      // Legacy template handling for 'approved' and 'rejected' (backward compatibility)
+      if ((newStatus === 'approved' || newStatus === 'rejected') && templateId) {
+        const r = registrants.find(reg => reg.id === id);
+        if (!r) return;
+        
         const template = templates.find(t => t.id === templateId);
-        if (template && template.type === (newStatus === 'approved' ? 'approval' : 'rejection')) {
+        if (template) {
           const body = template.body
             .replace('{fullName}', r.fullName)
             .replace('{registrationDate}', r.registrationDate);
 
-          // Send email
+          // Send email with template
           emailService.sendEmail({
             recipients: [{
               email: r.email,
@@ -133,33 +152,30 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
           }).catch((error) => {
             logger.error('Failed to send email:', error);
           });
-
-          // Send push notification to applicant
-          unifiedNotificationManager.showNotification({
-            id: `ppdb-status-${id}-${Date.now()}`,
-            type: 'ppdb',
-            title: newStatus === 'approved' ? 'Selamat! Anda Diterima' : 'Hasil Seleksi PPDB',
-            body: newStatus === 'approved'
-              ? `Selamat ${r.fullName}, Anda telah diterima di MA Malnu Kananga!`
-              : `Terima kasih ${r.fullName} telah mendaftar. Mohon maaf, Anda belum dapat diterima pada tahun ajaran ini.`,
-            icon: newStatus === 'approved' ? '✅' : '❌',
-            timestamp: new Date().toISOString(),
-            read: false,
-            priority: 'high',
-            targetUsers: [r.userId || r.nisn],
-            data: {
-              action: 'view_ppdb_status',
-              registrantId: r.id,
-              status: newStatus
-            }
-          });
         }
-        return { ...r, status: newStatus };
       }
-      return r;
-    });
-    setRegistrants(updated);
-    onShowToast(`Status pendaftar berhasil diubah menjadi ${newStatus === 'approved' ? 'Diterima' : 'Ditolak'}.`, newStatus === 'approved' ? 'success' : 'info');
+      
+      onShowToast(`Status pendaftar berhasil diubah menjadi ${newStatus === 'approved' ? 'Diterima' : newStatus === 'rejected' ? 'Ditolak' : newStatus}.`, newStatus === 'approved' ? 'success' : 'info');
+    } catch (error) {
+      logger.error('Failed to update status:', error);
+      onShowToast('Gagal memperbarui status pendaftar', 'error');
+    }
+  };
+
+  /**
+   * Convert legacy status to pipeline status for backward compatibility
+   */
+  const convertLegacyStatusToPipelineStatus = (status: PPDBRegistrant['status']): 'registered' | 'accepted' | 'rejected' => {
+    switch (status) {
+      case 'pending':
+        return 'registered';
+      case 'approved':
+        return 'accepted';
+      case 'rejected':
+        return 'rejected';
+      default:
+        return status as 'registered' | 'accepted' | 'rejected';
+    }
   };
 
   const updateScore = (id: string, rubricScores: Record<string, number>) => {
