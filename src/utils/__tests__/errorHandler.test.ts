@@ -18,7 +18,6 @@ import {
   getUIFeedback,
   type ErrorContext
 } from '../errorHandler';
-import type { CircuitBreaker as CircuitBreakerType } from '../errorHandler';
 
 describe('errorHandler', () => {
   beforeEach(() => {
