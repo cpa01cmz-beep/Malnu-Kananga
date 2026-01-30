@@ -11,17 +11,17 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { 
-  gradesAPI, 
-  assignmentsAPI, 
+import {
+  gradesAPI,
+  assignmentsAPI,
   assignmentSubmissionsAPI,
-  subjectsAPI 
+  subjectsAPI
 } from '../services/apiService';
 import {
   ClassGradeAnalytics,
   SubjectAnalytics,
   StudentPerformance,
-  GradeDistribution
+  GradeDistribution,
 } from '../types';
 import { logger } from '../utils/logger';
 import { authAPI } from '../services/apiService';
@@ -29,6 +29,7 @@ import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
+import Select from './ui/Select';
 import { EmptyState } from './ui/LoadingState';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
@@ -40,6 +41,20 @@ interface GradeAnalyticsProps {
   onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
   classId?: string;
 }
+
+type AssignmentTypeFilter = 'all' | 'quiz' | 'assignment' | 'exam' | 'project' | 'lab_work' | 'presentation' | 'homework' | 'other';
+
+const ASSIGNMENT_TYPE_LABELS: Record<AssignmentTypeFilter, string> = {
+  all: 'Semua',
+  quiz: 'Kuis',
+  assignment: 'Tugas',
+  exam: 'Ujian',
+  project: 'Proyek',
+  lab_work: 'Praktikum',
+  presentation: 'Presentasi',
+  homework: 'PR',
+  other: 'Lainnya',
+};
 
 const COLORS = [
   CHART_COLORS.green,
@@ -56,6 +71,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'students' | 'assignments'>('overview');
+  const [assignmentTypeFilter, setAssignmentTypeFilter] = useState<AssignmentTypeFilter>('all');
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);
@@ -107,7 +123,11 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         ? grades.filter(g => g.classId === classId)
         : grades;
 
-      if (classGrades.length === 0) {
+      const filteredGrades = assignmentTypeFilter === 'all'
+        ? classGrades
+        : classGrades.filter(g => g.assignmentType === assignmentTypeFilter);
+
+      if (filteredGrades.length === 0) {
         setAnalytics({
           classId: classId || 'all',
           className: classId ? 'Kelas ' + classId : 'Semua Kelas',
@@ -126,14 +146,14 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         return;
       }
 
-      const allScores = classGrades.map(g => g.score);
+      const allScores = filteredGrades.map(g => g.score);
       const averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
       const highestScore = Math.max(...allScores);
       const lowestScore = Math.min(...allScores);
       const gradeDistribution = calculateGradeDistribution(allScores);
 
       const studentGrades = new Map<string, number[]>();
-      classGrades.forEach(grade => {
+      filteredGrades.forEach(grade => {
         if (!studentGrades.has(grade.studentId)) {
           studentGrades.set(grade.studentId, []);
         }
@@ -165,10 +185,10 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       const needsAttention = sortedStudents.filter(s => s.averageScore < 60).slice(0, 5);
 
       const subjectBreakdown: SubjectAnalytics[] = [];
-      const uniqueSubjectIds = [...new Set(classGrades.map(g => g.subjectId))];
+      const uniqueSubjectIds = [...new Set(filteredGrades.map(g => g.subjectId))];
 
       uniqueSubjectIds.forEach(subjectId => {
-        const subjectGrades = classGrades.filter(g => g.subjectId === subjectId);
+        const subjectGrades = filteredGrades.filter(g => g.subjectId === subjectId);
         const subjectAssignments = assignments.filter(a => a.subjectId === subjectId);
         const subjectSubmissions = submissions.filter(s => {
           const assignment = assignments.find(a => a.id === s.assignmentId);
@@ -193,20 +213,20 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
 
       const submissionRate = assignments.length > 0 ? (submissions.length / assignments.length) * 100 : 0;
 
-      setAnalytics({
-        classId: classId || 'all',
-        className: classId ? 'Kelas ' + classId : 'Semua Kelas',
-        totalStudents: studentGrades.size,
-        averageScore,
-        highestScore,
-        lowestScore,
-        gradeDistribution,
-        submissionRate,
-        subjectBreakdown,
-        topPerformers,
-        needsAttention,
-        lastUpdated: new Date().toISOString()
-      });
+    setAnalytics({
+      classId: classId || 'all',
+      className: classId ? 'Kelas ' + classId : 'Semua Kelas',
+      totalStudents: studentGrades.size,
+      averageScore,
+      highestScore,
+      lowestScore,
+      gradeDistribution,
+      submissionRate,
+      subjectBreakdown,
+      topPerformers,
+      needsAttention,
+      lastUpdated: new Date().toISOString(),
+    });
 
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data analitik');
@@ -214,7 +234,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     } finally {
       setLoading(false);
     }
-  }, [classId, currentUser?.id, calculateGradeDistribution]);
+  }, [classId, currentUser?.id, calculateGradeDistribution, assignmentTypeFilter]);
 
   useEffect(() => {
     analyzeClassGrades();
@@ -355,8 +375,26 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         ]}
         activeTab={activeTab}
         onTabChange={(tabId: string) => setActiveTab(tabId as 'overview' | 'subjects' | 'students' | 'assignments')}
-        className="mb-6"
+        className="mb-4"
       />
+
+      <div className="flex items-center gap-4 mb-6">
+        <label htmlFor="assignment-type-filter" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+          Filter Jenis Tugas:
+        </label>
+        <Select
+          id="assignment-type-filter"
+          value={assignmentTypeFilter}
+          onChange={(e) => setAssignmentTypeFilter(e.target.value as AssignmentTypeFilter)}
+          className="w-48"
+        >
+          {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>
+              {label}
+            </option>
+          ))}
+        </Select>
+      </div>
 
       {activeTab === 'overview' && (
         <div className="space-y-6">

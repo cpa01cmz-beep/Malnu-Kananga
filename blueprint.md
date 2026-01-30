@@ -413,20 +413,20 @@ scripts/                    # Build and deployment scripts
     - Throttle utility
     - Used by: speechRecognitionService, speechSynthesisService
 
- ### Additional Services (30+ total)
-- **Communication Services**: communicationLogService (NEW - 2026-01-30)
-- **Integration Services**: ppdbIntegrationService (NEW - 2026-01-30)
-- **Material Services**: categoryService, materialPermissionService
-- **Messaging Services**: emailService, emailQueueService
-- **Monitoring Services**: errorMonitoringService, performanceMonitor
-- **Theme Services**: themeManager, voiceSettingsBackup
-- **Real-time Services**: webSocketService
-- **File Services**: pdfExportService
-- **Queue Services**: offlineActionQueueService, voiceMessageQueue
-- **Cache Services**: aiCacheService
-- **Notification Services**: unifiedNotificationManager, notificationTemplates
-- **Parent Services**: parentGradeNotificationService
- - **Validation & Recovery**: notificationValidation, voiceSettingsValidation, errorRecovery
+  ### Additional Services (30+ total)
+ - **Communication Services**: communicationLogService (NEW - 2026-01-30)
+ - **Integration Services**: ppdbIntegrationService (NEW - 2026-01-30), quizGradeIntegrationService (NEW - 2026-01-30)
+ - **Material Services**: categoryService, materialPermissionService
+ - **Messaging Services**: emailService, emailQueueService
+ - **Monitoring Services**: errorMonitoringService, performanceMonitor
+ - **Theme Services**: themeManager, voiceSettingsBackup
+ - **Real-time Services**: webSocketService
+ - **File Services**: pdfExportService
+ - **Queue Services**: offlineActionQueueService, voiceMessageQueue
+ - **Cache Services**: aiCacheService
+ - **Notification Services**: unifiedNotificationManager, notificationTemplates
+ - **Parent Services**: parentGradeNotificationService
+  - **Validation & Recovery**: notificationValidation, voiceSettingsValidation, errorRecovery
 
 ---
 
@@ -877,18 +877,22 @@ npm run typecheck         # Run TypeScript compiler
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
 
-### Recent Changes (2026-01-30)
-- **PPDB-Student Management Integration**: Added ppdbIntegrationService with 8-stage pipeline automation (Issue #1248)
-- **README.md**: Updated with comprehensive metrics section including:
-  - Codebase statistics (296 source files, 125 test files, 42.2% coverage)
-  - Test coverage breakdown by category (services, components, utils)
-  - Code quality metrics (0% `any` usage, ESLint status)
-  - Feature completion status (Q1 2026: P1 100%, P2 90%, P3 100%)
-  - Technical debt status with targets
-  - Tech stack with version numbers
-  - Development workflow with available scripts
-  - OpenCode CLI integration details
-  - Comprehensive feature list
-  - Contributing guidelines
- 
-
+ ### Recent Changes (2026-01-30)
+ - **Quiz-Grade Integration**: Added quizGradeIntegrationService to convert QuizAttempt to Grade entries (Issue #1246)
+   - Automatic grade entry creation from quiz attempts
+   - Deduplication and batch processing support
+   - GradeAnalytics updated with assignment type filter (all/quiz/assignment/exam/project/etc.)
+   - Quiz grades now included in all analytics calculations
+ - **PPDB-Student Management Integration**: Added ppdbIntegrationService with 8-stage pipeline automation (Issue #1248)
+ - **README.md**: Updated with comprehensive metrics section including:
+   - Codebase statistics (296 source files, 125 test files, 42.2% coverage)
+   - Test coverage breakdown by category (services, components, utils)
+   - Code quality metrics (0% `any` usage, ESLint status)
+   - Feature completion status (Q1 2026: P1 100%, P2 90%, P3 100%)
+   - Technical debt status with targets
+   - Tech stack with version numbers
+   - Development workflow with available scripts
+   - OpenCode CLI integration details
+   - Comprehensive feature list
+   - Contributing guidelines
+   

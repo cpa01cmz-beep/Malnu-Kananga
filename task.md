@@ -2,6 +2,34 @@
 
 ## Completed
 
+### Integrate Quiz Results with Grade Analytics (Issue #1246) ✅
+- **Mode**: BUILDER
+- **Issue**: #1246
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: QuizGenerator successfully generates and administers quizzes, but quiz scores are not integrated with the grade management system. This creates weak coupling between quiz performance and overall academic analytics.
+- **Deliverables**:
+  - ✅ Created quizGradeIntegrationService (422 lines)
+  - ✅ Automatic grade entry creation from QuizAttempt to Grade
+  - ✅ Deduplication support (prevents duplicate grade entries)
+  - ✅ Batch processing for multiple quiz attempts
+  - ✅ Grade removal capability for deleted quizzes
+  - ✅ Integration status tracking
+  - ✅ Updated GradeAnalytics to include quiz grades in calculations
+  - ✅ Added assignment type filter to GradeAnalytics UI (all/quiz/assignment/exam/project/etc.)
+- **Files Created**:
+  - src/services/quizGradeIntegrationService.ts - Full integration service with batch processing and deduplication
+- **Files Modified**:
+  - src/components/GradeAnalytics.tsx - Added assignment type filter, integrated quiz grades in calculations, updated all analytics calculations to respect filter
+- **Impact**: Teachers can analyze quiz performance alongside other assessments; students have complete grade visibility including quizzes; quiz grades now factor into GPA calculations and overall analytics (Pillars 1: Flow, 2: Standardization, 9: Feature Ops, 16: UX/DX)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+
+## Completed
+
 ### Test Coverage - apiService and authService (Already Completed) ✅
 - **Note**: Test coverage for apiService (56 tests) and authService (23 tests) was already completed on origin/main in commit 7620ff0.
 - **Status**: Completed (duplicate task - work already done)

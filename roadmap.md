@@ -679,6 +679,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
   | Version | Date | Changes |
   |---------|------|---------|
+  | 3.3.1 | 2026-01-30 | Integrate Quiz Results with Grade Analytics (Issue #1246): Added quizGradeIntegrationService for automatic grade entry creation from quiz attempts, added assignment type filter to GradeAnalytics component |
   | 3.3.0 | 2026-01-30 | Integrate PPDB Registration with Student Management (Issue #1248): Added ppdbIntegrationService with 8-stage pipeline, automatic NIS generation, parent account creation, student record creation, email notifications, and comprehensive test coverage (13 tests, 100% passing) |
   | 3.2.10 | 2026-01-30 | Added comprehensive test coverage for logger (25 tests), validation (66 tests), retry (56 tests), and apiService (56 tests) utilities; Improved overall test coverage from 42.2% to 47.3%; Fixed test failures in logger, validation, and retry utilities (PR #1257) |
   | 3.2.9 | 2026-01-30 | Updated README.md with comprehensive metrics section including codebase statistics, test coverage breakdown, code quality metrics, feature completion status, technical debt status, tech stack versions, development workflow, OpenCode CLI integration, comprehensive feature list, and contributing guidelines (Issue #1249) |
