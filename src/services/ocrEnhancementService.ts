@@ -7,17 +7,16 @@ import {
   ErrorType
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
+import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';
 
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
 
 // Lazy initialization of AI client with error handling
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let aiInstance: any | null = null;
+let aiInstance: GoogleGenAIType | null = null;
 let aiInitializationError: Error | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function getAIInstance(): Promise<any> {
+async function getAIInstance(): Promise<GoogleGenAIType> {
   if (aiInitializationError) {
     throw aiInitializationError;
   }
