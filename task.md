@@ -66,6 +66,69 @@
 - **Impact**: Significantly improves test coverage for critical utilities (138 new passing tests), reduces regressions, enables safer refactoring (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
 - **Pull Request**: #1257
 
+### Add Parent-Teacher Communication Log to Messaging (Issue #973) ✅
+- **Mode**: BUILDER
+- **Issue**: #973
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: Parent and teachers need audit trail of communications for compliance and reference. Issue #967 (direct messaging prerequisite) is closed.
+- **Deliverables**:
+  - ✅ Communication log service created (communicationLogService.ts with 589 lines)
+  - ✅ All messages tracked with metadata
+  - ✅ Meeting logs with outcomes
+  - ✅ Search and filter functionality (by type, participant, student, keyword, date range)
+  - ✅ Export to PDF/CSV
+  - ✅ Compliance-ready reporting with statistics
+  - ✅ Archive and clear old entries functionality
+  - ✅ Integrated into ParentMessagingView for automatic message logging
+- **Files Created**:
+  - src/services/communicationLogService.ts - Complete communication log service
+- **Files Modified**:
+  - src/constants.ts - Added COMMUNICATION_LOG and COMMUNICATION_LOG_FILTERS storage keys
+  - src/types.ts - Added CommunicationLogEntry, CommunicationLogFilter, CommunicationLogExportOptions, CommunicationLogStats, CommunicationLogType, CommunicationLogStatus
+  - src/components/ParentMessagingView.tsx - Integrated communicationLogService.logMessage() for automatic logging
+- **Impact**: Improves communication transparency, enables compliance tracking, enhances audit trail (Pillars 1: Flow, 3: Stability, 8: Documentation, 16: UX/DX)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Service integrated with ParentMessagingView
+
+## Completed
+
+### Fix Stuck CI Workflow - turnstyle Deadlock (Issue #1258) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1258
+- **Priority**: P1 (Critical)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: on-push CI workflow stuck for 56+ minutes due to turnstyle configuration with `same-branch-only: false`, causing global workflow lock and potential deadlock
+- **Root Cause Identified**:
+  1. Both on-push.yml and on-pull.yml use softprops/turnstyle@v2 with `same-branch-only: false`
+  2. This causes workflows to wait for ALL workflows globally, not just same branch
+  3. Creates potential deadlock when one workflow hangs or takes too long
+  4. Workflow 21519965933 got stuck at "Wait in Queue" for 56m22s before being cancelled
+- **Solution Implemented**:
+  1. ✅ Changed `same-branch-only: false` to `same-branch-only: true` in on-push.yml
+  2. ✅ Changed `same-branch-only: false` to `same-branch-only: true` in on-pull.yml
+  3. ✅ Added explanatory comments about Issue #1258 in both workflows
+  4. ✅ This ensures workflows only wait for workflows on the same branch
+  5. ✅ Prevents global deadlock scenarios
+- **Files Modified**:
+  1. ✅ .github/workflows/on-push.yml - Changed same-branch-only to true, added comment
+  2. ✅ .github/workflows/on-pull.yml - Changed same-branch-only to true, added comment
+- **Impact**: Fixes CI/CD deadlock, improves pipeline reliability, prevents workflows from hanging indefinitely (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Workflow syntax valid (YAML)
+- **Issue Closed**: ✅ #1258 closed with reference to this fix
+
+## Completed
+>>>>>>> origin/main
+
 ### Fix React act() Warnings in GradeAnalytics.test.tsx ✅
 - **Mode**: OPTIMIZER
 - **Priority**: P2 (Medium Priority - Code Quality)

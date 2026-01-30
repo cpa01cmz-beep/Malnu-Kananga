@@ -25,10 +25,11 @@ jobs:
 
     steps:
       - name: Wait in Queue
+        # Use same-branch-only: true to prevent global deadlock (Issue #1258)
         uses: softprops/turnstyle@v2
         with:
           poll-interval-seconds: 30
-          same-branch-only: false
+          same-branch-only: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 

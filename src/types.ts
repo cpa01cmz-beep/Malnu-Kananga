@@ -1587,6 +1587,103 @@ export interface TypingIndicator {
   timestamp: string;
 }
 
+export type CommunicationLogType = 'message' | 'meeting' | 'call' | 'note';
+
+export type CommunicationLogStatus = 'logged' | 'synced' | 'archived';
+
+export interface CommunicationLogEntry {
+  id: string;
+  type: CommunicationLogType;
+  status: CommunicationLogStatus;
+  
+  // Participants
+  parentId?: string;
+  parentName?: string;
+  teacherId?: string;
+  teacherName?: string;
+  studentId?: string;
+  studentName?: string;
+  
+  // Message-specific fields
+  subject?: string;
+  message?: string;
+  messageType?: MessageType;
+  sender?: 'parent' | 'teacher' | 'student';
+  
+  // Meeting-specific fields
+  meetingId?: string;
+  meetingDate?: string;
+  meetingStartTime?: string;
+  meetingEndTime?: string;
+  meetingAgenda?: string;
+  meetingOutcome?: string;
+  meetingNotes?: string;
+  meetingLocation?: string;
+  meetingStatus?: 'scheduled' | 'completed' | 'cancelled';
+  
+  // Metadata
+  timestamp: string;
+  readAt?: string;
+  deliveredAt?: string;
+  archivedAt?: string;
+  
+  // Compliance tracking
+  createdAt?: string;
+  createdBy?: string;
+  createdByName?: string;
+  modifiedAt?: string;
+  modifiedBy?: string;
+  
+  // Export/Reporting fields
+  exportCount?: number;
+  lastExportedAt?: string;
+  
+  // Additional metadata for extensibility
+  metadata?: Record<string, unknown>;
+}
+
+export interface CommunicationLogFilter {
+  type?: CommunicationLogType[];
+  status?: CommunicationLogStatus[];
+  parentId?: string;
+  teacherId?: string;
+  studentId?: string;
+  dateRange?: {
+    startDate: string;
+    endDate: string;
+  };
+  keyword?: string;
+  subject?: string;
+  meetingStatus?: 'scheduled' | 'completed' | 'cancelled';
+  limit?: number;
+  offset?: number;
+  sortBy?: 'timestamp' | 'date' | 'sender' | 'teacher' | 'parent';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface CommunicationLogExportOptions {
+  format: 'pdf' | 'csv';
+  includeMetadata?: boolean;
+  dateRange?: {
+    startDate: string;
+    endDate: string;
+  };
+  filters?: CommunicationLogFilter;
+}
+
+export interface CommunicationLogStats {
+  totalMessages: number;
+  totalMeetings: number;
+  totalCalls: number;
+  totalNotes: number;
+  messageCountByParent: Record<string, number>;
+  messageCountByTeacher: Record<string, number>;
+  meetingCountByStatus: Record<string, number>;
+  averageResponseTime?: number;
+  mostActiveTeachers: string[];
+  mostActiveParents: string[];
+}
+
 export interface StudyPlan {
   id: string;
   studentId: string;
