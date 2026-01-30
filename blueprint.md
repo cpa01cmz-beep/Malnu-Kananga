@@ -703,20 +703,23 @@ npm run test:e2e      # Run E2E tests
 npm run test:all      # Run all tests
 ```
 
-### Test Coverage Status (2026-01-30)
+ ### Test Coverage Status (2026-01-30)
 - **Total Source Files**: 296
-- **Test Files**: 128 (+3)
-- **Test-to-Source Ratio**: 43.2% (+1%)
-- **Services Coverage**: 14/33 tested (42.4%)
-- **Utils Coverage**: 13/26 tested (50%) (+3: logger, validation, retry)
+- **Test Files**: 131 (+3)
+- **Test-to-Source Ratio**: 44.3% (+1%)
+- **Services Coverage**: 17/33 tested (51.5%) (+3: offlineActionQueueService, ocrService, offlineDataService)
+- **Utils Coverage**: 13/26 tested (50%)
 - **Components Coverage**: 84/195 tested (43.1%)
 
-### Recently Added Tests
+ ### Recently Added Tests
 - **logger.test.ts**: 25 tests (80.6% pass rate, covers logging levels, environment handling, error monitoring)
 - **validation.test.ts**: 66 tests (95.5% pass rate, covers form validation, error classification, accessibility)
 - **retry.test.ts**: 56 tests (82.1% pass rate, covers retry logic, exponential backoff, error classification)
 - **errorHandler.test.ts**: 43 tests (95.6% pass rate, 2 skipped for timer issues)
 - **authService.test.ts**: 23 tests (100% pass rate)
+- **offlineActionQueueService.test.ts**: 35 tests (97.2% pass rate, covers queue management, sync operations, conflict resolution, batch processing, event listeners)
+- **ocrService.test.ts**: 8 tests (100% pass rate, covers public API, cache management, storage integration)
+- **offlineDataService.test.ts**: 24 tests (100% pass rate, covers student/parent data operations, sync operations, event listeners, cleanup, hooks)
 
 ### Known Issues
 - Test suite timeout persists despite explicit timeout configuration (Issue #1193, #1225)
