@@ -2,6 +2,27 @@
 
 ## Completed
 
+### Eliminate 'any' Type Usage in ocrEnhancementService ✅
+- **Mode**: ARCHITECT (Type Safety)
+- **Issue**: Roadmap Technical Debt - Type Safety
+- **Priority**: P2 (Medium Priority - Type Safety)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: ocrEnhancementService.ts had explicit `any` types (lines 16, 20) with eslint-disable comments, violating TypeScript strict mode requirement. Roadmap identifies Type Safety as technical debt with goal of 0% `any` usage by 2026-03-31.
+- **Files Fixed** (1 file):
+  1. ✅ src/services/ocrEnhancementService.ts - Replaced `any` with `GoogleGenAIType` (type-only import from `@google/genai`)
+  2. ✅ Removed 2 eslint-disable comments for `@typescript-eslint/no-explicit-any`
+- **Changes Made**:
+  - Added: `import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';` (type-only import)
+  - Changed: `let aiInstance: any | null = null;` → `let aiInstance: GoogleGenAIType | null = null;`
+  - Changed: `async function getAIInstance(): Promise<any>` → `async function getAIInstance(): Promise<GoogleGenAIType>`
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ No more `@typescript-eslint/no-explicit-any` in src/ (verified with grep)
+- **Impact**: Eliminates last remaining explicit `any` type usage in codebase, achieving 0% `any` goal (Pillars 3: Stability, 7: Debug, 15: Dynamic Coding)
+
 ### Use STORAGE_KEYS Constants Instead of Hardcoded localStorage Keys ✅
 - **Mode**: SANITIZER
 - **Issue**: #1244
