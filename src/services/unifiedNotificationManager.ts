@@ -21,6 +21,7 @@ import {
 import { logger } from '../utils/logger';
 import { handleNotificationError } from '../utils/serviceErrorHandlers';
 import SpeechSynthesisService from './speechSynthesisService';
+import { getEmailNotificationService } from './emailNotificationService';
 
 /* eslint-disable no-undef */
 declare global {
@@ -84,6 +85,7 @@ class UnifiedNotificationManager {
   private voiceHistory: VoiceNotification[] = [];
   private isProcessingVoice: boolean = false;
   private synthesisService: SpeechSynthesisService;
+  private emailNotificationService = getEmailNotificationService();
 
   constructor() {
     this.synthesisService = new SpeechSynthesisService();
@@ -527,7 +529,34 @@ class UnifiedNotificationManager {
   }
 
   public isCurrentlySpeaking(): boolean {
-    return this.isProcessingVoice && this.synthesisService.isSpeaking();
+    return this.isProcessingVoice;
+  }
+
+  private async sendEmailNotification(notification: PushNotification): Promise<void> {
+    try {
+      const currentUser = this.getCurrentUser();
+
+      if (!currentUser || !currentUser.email) {
+        return;
+      }
+
+      const preferences = this.emailNotificationService.getPreferences(currentUser.id);
+
+      if (!preferences || !preferences.enabled) {
+        return;
+      }
+
+      await this.emailNotificationService.sendNotificationEmail(
+        notification,
+        currentUser.email,
+        currentUser.name || currentUser.username,
+        currentUser.id
+      );
+
+      logger.info('Email notification queued for:', notification.id);
+    } catch (error) {
+      logger.error('Failed to send email notification:', error);
+    }
   }
 
   // Permission Management
@@ -645,10 +674,13 @@ class UnifiedNotificationManager {
 
       this.addToHistory(notification);
       this.recordAnalytics(notification.id, 'delivered');
-      
+
       // Trigger voice notification if enabled
       this.triggerVoiceNotification(notification);
-      
+
+      // Send email notification if enabled
+      await this.sendEmailNotification(notification);
+
       logger.info('Notification displayed:', notification.title);
     } catch (error) {
       logger.error('Failed to show notification:', error);

@@ -1,6 +1,6 @@
  # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.3.0
+  **Version**: 3.3.1
   **Last Updated**: 2026-01-30 (Updated metrics)
    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
@@ -377,15 +377,42 @@ scripts/                    # Build and deployment scripts
   - Quiet hours support
 
 #### unifiedNotificationManager.ts
-- **Purpose**: Unified notification management with voice integration
+- **Purpose**: Unified notification management with voice and email integration
 - **Features**:
-  - Template management with variable substitution
-  - Batch notification support
-  - Analytics and history tracking
-  - Voice notification integration
-  - Event system for reactive updates
-  - Role-based filtering
-  - Quiet hours support
+   - Template management with variable substitution
+   - Batch notification support
+   - Analytics and history tracking
+   - Voice notification integration
+   - Event system for reactive updates
+   - Role-based filtering
+   - Quiet hours support
+   - Email notification integration (NEW - 2026-01-30)
+
+#### emailNotificationService.ts (NEW - 2026-01-30)
+- **Purpose**: Email notification integration with unified notification manager
+- **Features**:
+   - Email notifications for all notification types (grades, announcements, events, materials, system, PPDB, OCR)
+   - User-controlled notification preferences (per-type enable/disable)
+   - Quiet hours support for email notifications
+   - Digest mode (daily/weekly email digest to reduce notification fatigue)
+   - Email delivery tracking and analytics
+   - Email fallback if push notifications fail
+   - Test email functionality for user verification
+- **Types**:
+   - EmailNotificationPreferences - User email notification settings
+   - EmailDigestItem - Digest queue item
+   - EmailNotificationDelivery - Email delivery status
+- **Templates**:
+   - announcement-notification - New announcements
+   - grade-update-notification - Grade updates (existing)
+   - ppdb-notification - PPDB status updates
+   - library-notification - New materials in e-library
+   - missing-grades-notification - Missing grades alerts
+   - system-notification - System notifications (existing)
+   - event-reminder - Event reminders (existing)
+   - attendance-report - Attendance reports (existing)
+   - progress-report - Progress reports (existing)
+- **Test Coverage**: 20 tests (100% pass rate)
 
 ### Validation & Error Recovery Utilities
 
@@ -908,8 +935,15 @@ npm run typecheck         # Run TypeScript compiler
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
  
-  ### Recent Changes (2026-01-30)
-  - **Test Coverage - performanceMonitor**: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate)
+   ### Recent Changes (2026-01-30)
+   - **Email Integration**: Added emailNotificationService with full integration to unifiedNotificationManager (Issue #1264)
+      - Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR)
+      - User-controlled email notification preferences (per-type enable/disable)
+      - Digest mode (daily/weekly email digest to reduce notification fatigue)
+      - Quiet hours support for email notifications
+      - Email delivery tracking and analytics
+      - 20 tests (100% pass rate)
+   - **Test Coverage - performanceMonitor**: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate)
      - Initialization with custom config
      - Request tracking (startRequest/endRequest)
      - API response recording and statistics calculation

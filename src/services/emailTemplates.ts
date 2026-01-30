@@ -384,6 +384,260 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
         isActive: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'announcement-notification',
+        name: 'Notifikasi Pengumuman',
+        description: 'Template untuk notifikasi pengumuman baru',
+        category: 'announcements',
+        subject: 'Pengumuman Baru: {{eventTitle}}',
+        htmlContent: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Pengumuman Baru</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #059669; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .announcement { background: #dcfce7; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Pengumuman Baru</h1>
+    </div>
+    <div class="content">
+      <p>Yth. {{recipientName}},</p>
+      <p>Ada pengumuman baru:</p>
+      <div class="announcement">
+        <p><strong>{{eventTitle}}</strong></p>
+        <p>{{message}}</p>
+      </div>
+      <p>Login ke sistem untuk melihat detail lengkap.</p>
+      <p>Terima kasih,</p>
+      <p><strong>{{schoolName}}</strong></p>
+    </div>
+    <div class="footer">
+      <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+    </div>
+  </div>
+</body>
+</html>
+        `,
+        textContent: `Yth. {{recipientName}},
+
+Ada pengumuman baru:
+
+{{eventTitle}}
+{{message}}
+
+Login ke sistem untuk melihat detail lengkap.
+
+Terima kasih,
+{{schoolName}}
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`,
+        variables: ['recipientName', 'eventTitle', 'message', 'schoolName'],
+        language: 'id',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'library-notification',
+        name: 'Notifikasi Materi Baru',
+        description: 'Template untuk notifikasi materi baru di e-library',
+        category: 'notifications',
+        subject: 'Materi Baru: {{subjectName}}',
+        htmlContent: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Materi Baru</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #7c3aed; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .material { background: #ede9fe; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Materi Baru</h1>
+    </div>
+    <div class="content">
+      <p>Yth. {{recipientName}},</p>
+      <p>Materi baru telah ditambahkan:</p>
+      <div class="material">
+        <p><strong>Mata Pelajaran:</strong> {{subjectName}}</p>
+        <p><strong>Judul:</strong> {{message}}</p>
+        <p><strong>Kelas:</strong> {{className}}</p>
+      </div>
+      <p>Login ke sistem untuk mengakses materi.</p>
+      <p>Terima kasih,</p>
+      <p><strong>{{schoolName}}</strong></p>
+    </div>
+    <div class="footer">
+      <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+    </div>
+  </div>
+</body>
+</html>
+        `,
+        textContent: `Yth. {{recipientName}},
+
+Materi baru telah ditambahkan:
+
+Mata Pelajaran: {{subjectName}}
+Judul: {{message}}
+Kelas: {{className}}
+
+Login ke sistem untuk mengakses materi.
+
+Terima kasih,
+{{schoolName}}
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`,
+        variables: ['recipientName', 'subjectName', 'message', 'className', 'schoolName'],
+        language: 'id',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'ppdb-notification',
+        name: 'Notifikasi PPDB',
+        description: 'Template untuk notifikasi PPDB',
+        category: 'notifications',
+        subject: 'Status PPDB: {{message}}',
+        htmlContent: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Notifikasi PPDB</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #ea580c; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .status { background: #ffedd5; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Notifikasi PPDB</h1>
+    </div>
+    <div class="content">
+      <p>Yth. {{recipientName}},</p>
+      <p>Status pendaftaran PPDB Anda:</p>
+      <div class="status">
+        <p><strong>{{message}}</strong></p>
+      </div>
+      <p>Login ke sistem untuk melihat detail lengkap.</p>
+      <p>Terima kasih,</p>
+      <p><strong>{{schoolName}}</strong></p>
+    </div>
+    <div class="footer">
+      <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+    </div>
+  </div>
+</body>
+</html>
+        `,
+        textContent: `Yth. {{recipientName}},
+
+Status pendaftaran PPDB Anda:
+
+{{message}}
+
+Login ke sistem untuk melihat detail lengkap.
+
+Terima kasih,
+{{schoolName}}
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`,
+        variables: ['recipientName', 'message', 'schoolName'],
+        language: 'id',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'missing-grades-notification',
+        name: 'Notifikasi Nilai Belum Ada',
+        description: 'Template untuk notifikasi nilai yang belum ada',
+        category: 'notifications',
+        subject: 'Nilai Belum Lengkap: {{studentName}}',
+        htmlContent: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Nilai Belum Lengkap</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .alert { background: #fee2e2; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Nilai Belum Lengkap</h1>
+    </div>
+    <div class="content">
+      <p>Yth. {{recipientName}},</p>
+      <p>Ada nilai yang belum lengkap:</p>
+      <div class="alert">
+        <p><strong>Siswa:</strong> {{studentName}}</p>
+        <p><strong>Kelas:</strong> {{className}}</p>
+        <p><strong>Mata Pelajaran:</strong> {{subjectName}}</p>
+      </div>
+      <p>Mohon segera lengkapi nilai tersebut.</p>
+      <p>Terima kasih,</p>
+      <p><strong>{{schoolName}}</strong></p>
+    </div>
+    <div class="footer">
+      <p>Email ini dikirim secara otomatis, jangan balas ke email ini.</p>
+    </div>
+  </div>
+</body>
+</html>
+        `,
+        textContent: `Yth. {{recipientName}},
+
+Ada nilai yang belum lengkap:
+
+Siswa: {{studentName}}
+Kelas: {{className}}
+Mata Pelajaran: {{subjectName}}
+
+Mohon segera lengkapi nilai tersebut.
+
+Terima kasih,
+{{schoolName}}
+
+Email ini dikirim secara otomatis, jangan balas ke email ini.`,
+        variables: ['recipientName', 'studentName', 'className', 'subjectName', 'schoolName'],
+        language: 'id',
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       }
     ];
 
