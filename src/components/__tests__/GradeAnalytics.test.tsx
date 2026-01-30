@@ -523,7 +523,9 @@ describe('GradeAnalytics', () => {
     });
 
     const exportButton = screen.getByText('Export Laporan');
-    exportButton.click();
+    await act(async () => {
+      exportButton.click();
+    });
 
     await waitFor(() => {
       expect(mockOnShowToast).toHaveBeenCalledWith(
@@ -550,7 +552,9 @@ describe('GradeAnalytics', () => {
     });
 
     const retryButton = screen.getByText('Coba Lagi');
-    retryButton.click();
+    await act(async () => {
+      retryButton.click();
+    });
 
     expect(gradesAPI.getAll).toHaveBeenCalledTimes(2);
   });
@@ -710,7 +714,9 @@ describe('GradeAnalytics', () => {
     });
 
     const backButton = screen.getByText('← Kembali ke Portal');
-    backButton.click();
+    await act(async () => {
+      backButton.click();
+    });
 
     expect(mockOnBack).toHaveBeenCalledTimes(1);
   });
@@ -748,7 +754,9 @@ describe('GradeAnalytics', () => {
     });
 
     const subjectsTab = screen.getByText('Mata Pelajaran');
-    subjectsTab.click();
+    await act(async () => {
+      subjectsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Matematika')).toBeInTheDocument();
@@ -869,7 +877,9 @@ describe('GradeAnalytics', () => {
     });
 
     const subjectsTab = screen.getByText('Mata Pelajaran');
-    subjectsTab.click();
+    await act(async () => {
+      subjectsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Tidak ada data mata pelajaran')).toBeInTheDocument();
@@ -909,7 +919,9 @@ describe('GradeAnalytics', () => {
     });
 
     const studentsTab = screen.getByText('Siswa');
-    studentsTab.click();
+    await act(async () => {
+      studentsTab.click();
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Tidak ada data siswa')).toBeInTheDocument();
