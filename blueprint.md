@@ -880,9 +880,6 @@ npm run typecheck         # Run TypeScript compiler
 ### Recent Changes (2026-01-30)
 - **PPDB-Student Management Integration**: Added ppdbIntegrationService with 8-stage pipeline automation (Issue #1248)
 - **README.md**: Updated with comprehensive metrics section including:
-=======
->>>>>>> origin/main
-- **README.md**: Updated with comprehensive metrics section including:
   - Codebase statistics (296 source files, 125 test files, 42.2% coverage)
   - Test coverage breakdown by category (services, components, utils)
   - Code quality metrics (0% `any` usage, ESLint status)

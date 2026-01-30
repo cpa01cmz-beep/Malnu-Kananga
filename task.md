@@ -197,7 +197,6 @@
 - **Issue Closed**: ✅ #1258 closed with reference to this fix
 
 ## Completed
->>>>>>> origin/main
 
 ### Fix React act() Warnings in GradeAnalytics.test.tsx ✅
 - **Mode**: OPTIMIZER

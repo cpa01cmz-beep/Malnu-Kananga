@@ -678,15 +678,10 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 ## Version History
 
   | Version | Date | Changes |
-<<<<<<< HEAD
   |---------|------|---------|
   | 3.3.0 | 2026-01-30 | Integrate PPDB Registration with Student Management (Issue #1248): Added ppdbIntegrationService with 8-stage pipeline, automatic NIS generation, parent account creation, student record creation, email notifications, and comprehensive test coverage (13 tests, 100% passing) |
+  | 3.2.10 | 2026-01-30 | Added comprehensive test coverage for logger (25 tests), validation (66 tests), retry (56 tests), and apiService (56 tests) utilities; Improved overall test coverage from 42.2% to 47.3%; Fixed test failures in logger, validation, and retry utilities (PR #1257) |
   | 3.2.9 | 2026-01-30 | Updated README.md with comprehensive metrics section including codebase statistics, test coverage breakdown, code quality metrics, feature completion status, technical debt status, tech stack versions, development workflow, OpenCode CLI integration, comprehensive feature list, and contributing guidelines (Issue #1249) |
-=======
-   |---------|------|---------|
-   | 3.2.10 | 2026-01-30 | Added comprehensive test coverage for logger (25 tests), validation (66 tests), retry (56 tests), and apiService (56 tests) utilities; Improved overall test coverage from 42.2% to 47.3%; Fixed test failures in logger, validation, and retry utilities (PR #1257) |
-   | 3.2.9 | 2026-01-30 | Updated README.md with comprehensive metrics section including codebase statistics, test coverage breakdown, code quality metrics, feature completion status, technical debt status, tech stack versions, development workflow, OpenCode CLI integration, comprehensive feature list, and contributing guidelines (Issue #1249) |
->>>>>>> origin/main
    | 3.2.8 | 2026-01-30 | Added Parent-Teacher Communication Log service with full audit trail, search/filter, export (PDF/CSV), and statistics (Issue #973); Integrated with ParentMessagingView for automatic message logging |
   | 3.2.7 | 2026-01-30 | Fixed CI workflow deadlock by changing turnstyle same-branch-only to true (Issue #1258); Prevents global workflow lock, improves CI/CD reliability |
    | 3.2.6 | 2026-01-30 | Replaced hardcoded localStorage keys with STORAGE_KEYS constants (Issue #1244); Cleaned up 26 merged remote branches (Issue #1212); Removed hardcoded WebSocket URL, centralized in config.ts (Pillar 15: Dynamic Coding); Fixed React act() warnings in GradeAnalytics tests (Issue #1250) |
