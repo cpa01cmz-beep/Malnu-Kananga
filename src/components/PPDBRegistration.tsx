@@ -343,7 +343,7 @@ const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).su
   }, [isOpen, hasDraftRecovered, autoSaveActions, onShowToast]);
 
   // Monitor PPDB localStorage for new registrations and notify admins
-  useMonitorLocalStorage('malnu_ppdb_registrants', (newValue, oldValue) => {
+  useMonitorLocalStorage(STORAGE_KEYS.PPDB_REGISTRANTS, (newValue, oldValue) => {
     // Check for new PPDB registrations
     if (oldValue && typeof oldValue === 'object' && newValue && typeof newValue === 'object') {
       const oldRegistrants = Array.isArray(oldValue) ? oldValue : [];

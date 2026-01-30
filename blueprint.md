@@ -1,6 +1,6 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.2.4
+ **Version**: 3.2.5
  **Last Updated**: 2026-01-29
 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
@@ -808,5 +808,5 @@ npm run typecheck         # Run TypeScript compiler
 
 ---
 
-**Last Review**: 2026-01-29
-**Next Review**: 2026-02-22
+ **Last Review**: 2026-01-29
+ **Next Review**: 2026-02-05

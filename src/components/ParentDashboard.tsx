@@ -24,6 +24,7 @@ import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
+import { STORAGE_KEYS } from '../constants';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -244,7 +245,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   }, [requestPermission, showNotification, createNotification]);
 
   // Initialize grade notification monitoring  
-  useMonitorLocalStorage('malnu_grades', (newValue: unknown, oldValue: unknown) => {
+  useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue: unknown, oldValue: unknown) => {
     // Check if any grades belong to this parent's children
     if (children.length > 0) {
       const childIds = children.map(child => child.studentId);

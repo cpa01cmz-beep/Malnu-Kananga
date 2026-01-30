@@ -14,6 +14,7 @@ import Tab from './ui/Tab';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { EmptyState } from './ui/LoadingState';
+import { STORAGE_KEYS } from '../constants';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   const [autoSaveState, autoSaveActions] = useAutoSave<NotificationSettingsType>(
     globalSettings,
     {
-      storageKey: 'malnu_notification_settings',
+      storageKey: STORAGE_KEYS.NOTIFICATION_SETTINGS_KEY,
       delay: 1500,
       enableOffline: true,
       onSave: async (settings) => {

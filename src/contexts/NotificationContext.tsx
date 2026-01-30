@@ -28,7 +28,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
   // Monitor grade updates for student/parent notifications
   eventNotificationHelpers.useMonitorLocalStorage(
-    'malnu_grades',
+    STORAGE_KEYS.GRADES,
     (newValue: unknown, oldValue: unknown) => {
       // This would be triggered when grades are updated
       // Implementation depends on the grade data structure
