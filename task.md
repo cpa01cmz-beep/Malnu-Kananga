@@ -28,7 +28,6 @@
 - **Issue Status**: Ready to close #1269 after PR creation
 
 ## Completed
-
 ### [SANITIZER] Fix GradeAnalytics Test Failure - 'switches between tabs' Finds Multiple 'Tugas' Elements ✅
 - **Mode**: SANITIZER
 - **Issue**: #1267
@@ -48,7 +47,6 @@
   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
 - **Impact**: Fixes test failure, improves CI/CD reliability, prevents false negatives (Pillars 3: Stability, 7: Debug)
 
-## Completed
 
 ### [SCRIBE MODE] Fix Duplicate OCR Entry in roadmap.md (Pillar 8) ✅
 - **Mode**: SCRIBE
