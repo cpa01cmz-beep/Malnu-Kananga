@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { AccessResult, UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
-import { authAPI } from '../services/apiService';
+import { useAuth } from './useAuth';
 
 export interface UseCanAccessResult {
   canAccess: boolean;
@@ -11,14 +11,17 @@ export interface UseCanAccessResult {
 
 /**
  * Hook for standardized permission checking with automatic user detection
+ * 
+ * Uses reactive auth state (useAuth) to ensure permission checks
+ * always use current user data, preventing stale permission states.
  */
 export const useCanAccess = (context?: {
   userId?: string;
   ip?: string;
   userAgent?: string;
 }) => {
-  // Get current user automatically
-  const user = useMemo(() => authAPI.getCurrentUser(), []);
+  // Get current user from reactive auth state
+  const { user } = useAuth();
   const userRole: UserRole = user?.role || 'student';
   const userExtraRole: UserExtraRole = (user?.extraRole as UserExtraRole) || null;
 
