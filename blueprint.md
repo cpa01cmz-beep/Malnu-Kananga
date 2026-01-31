@@ -1,7 +1,7 @@
   # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.5.9
-     **Last Updated**: 2026-01-31 (Issue #1315: Add Offline Data Service to Teacher and Admin Dashboards)
+**Version**: 3.6.0
+      **Last Updated**: 2026-01-31 (Issue #1314: Add Real-Time Updates to AdminDashboard)
        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -148,12 +148,13 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
         - Fixed Rollup build warning "Circular chunk: vendor-react -> vendor-charts -> vendor-react"
         - Combined React, React Router, and Charts (Recharts + D3) into single `vendor-core` chunk
         - Matches comment intent from line 135: "Keep Recharts and React in same chunk to avoid circular dependency"
-        - Removed separate vendor-react and vendor-charts chunks
-        - Build completed successfully with NO circular dependency warnings
-        - TypeScript type checking: Passed (0 errors)
-        - ESLint linting: Passed (0 errors, 0 warnings)
-        - Eliminates potential runtime issues from broken execution order
-        - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
+         - Removed separate vendor-react and vendor-charts chunks
+         - Build completed successfully with NO circular dependency warnings
+         - TypeScript type checking: Passed (0 errors)
+         - ESLint linting: Passed (0 errors, 0 warnings)
+         - Eliminates potential runtime issues from broken execution order
+         - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
+              - **Add Real-Time Updates to AdminDashboard** (Issue #1314, P2): Added WebSocketStatus import and component to header (compact mode, no reconnect button); Added `onEvent` callback to `useRealtimeEvents` hook with inline refresh logic for user and announcement events; User role/status changes trigger dashboard data refresh (updates lastSync timestamp); Announcement creation/updates trigger dashboard data refresh (updates lastSync timestamp); Notification creation events are logged; Real-time updates disabled when offline (controlled by `enabled: isOnline` in useRealtimeEvents); useCallback prevents duplicate subscriptions on re-render; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Completes real-time support across all dashboards (TeacherDashboard, ParentDashboard, StudentPortal, AdminDashboard) (Pillars 1: Flow, 2: Standardization, 9: Feature Ops, 16: UX/DX)
      - **Integrate Communication Log Service with Messaging Components** (Issue #1304, P2)
        - Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName)
        - Created CommunicationDashboard component with filtering, export, and statistics
