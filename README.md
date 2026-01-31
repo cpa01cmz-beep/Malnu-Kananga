@@ -1,13 +1,13 @@
 
 # Website & Portal Pintar MA Malnu Kananga
 
-![Version](https://img.shields.io/badge/version-3.4.6-green)
+![Version](https://img.shields.io/badge/version-3.5.6-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![Test Coverage](https://img.shields.io/badge/coverage-31.3%25-yellow)
 
-**Version**: 3.4.6 | **Last Updated**: 2026-01-31 | **Status**: ✅ Production Ready
+**Version**: 3.5.6 | **Last Updated**: 2026-01-31 | **Status**: ✅ Production Ready
 
 Smart Portal MA Malnu Kananga - Modern school management system with AI integration.
 
@@ -18,7 +18,7 @@ Smart Portal MA Malnu Kananga - Modern school management system with AI integrat
 ### Codebase Statistics
 | Metric | Value |
 |--------|-------|
-| **Version** | 3.3.0 |
+| **Version** | 3.5.6 |
 | **Source Files** | 438 |
 | **Test Files** | 137 |
 | **Test Coverage** | 31.3% (137/438 files) |
@@ -87,9 +87,9 @@ npm run build
 ## Documentation
 
 ### Core Documentation (Single Source of Truth)
-- **[Blueprint (Architecture)](./docs/blueprint.md)** - Complete system architecture, design principles, and technical specifications
-- **[Roadmap (Strategic Goals)](./docs/roadmap.md)** - Vision, mission, milestones, and feature planning
-- **[Task Tracking](./docs/task.md)** - Active and completed tasks with status
+- **[Blueprint (Architecture)](./blueprint.md)** - Complete system architecture, design principles, and technical specifications
+- **[Roadmap (Strategic Goals)](./roadmap.md)** - Vision, mission, milestones, and feature planning
+- **[Task Tracking](./task.md)** - Active and completed tasks with status
 
 ### User Guides
 - **[Documentation Index](./docs/README.md)** - Additional documentation guides
