@@ -25,7 +25,47 @@
   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
   - ✅ Grep search confirms no hardcoded localStorage keys remain
 - **Impact**: Ensures all localStorage keys follow centralized pattern (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding)
-- **Issue Status**: Ready to close #1269 after PR creation
+ - **Issue Status**: Closed via PR #1273
+
+## Completed
+
+### [SANITIZER] Remove Math.random() from StudyPlanAnalytics - Replace mock data with calculated/default values (Issue #1270, P1) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1270
+- **Priority**: P1 (Bug - Production Code Using Mock Data)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: StudyPlanAnalytics.tsx calculateAnalytics() function used Math.random() to generate mock data for production analytics. This violated Pillars 3 (Stability), 7 (Debug), and 15 (Dynamic Coding).
+- **Problem Details**:
+  - Lines 134-186 had 12+ instances of Math.random() generating fake data:
+    - sessionsCompleted, sessionsTotal, averageSessionDuration
+    - WeeklyActivity data (totalStudyHours, subjectsStudied, activitiesCompleted, adherenceRate)
+    - PerformanceImprovement data (averageGradeChange, subjectsImproved, subjectsDeclined, subjectsMaintained, topImprovements with previousGrade and improvement)
+  - No tracking infrastructure existed for study sessions, activities, or weekly progress
+  - Analytics showed random/fake values instead of real metrics
+- **Solution Applied**:
+  - Removed all Math.random() calls from calculateAnalytics function
+  - Replaced mock data with calculated/default values:
+    - Set untrackable fields to 0, null, or empty arrays
+    - Calculated derivable metrics from existing data (gradesAPI, plan.schedule)
+  - Added logger.warn() comment about limited analytics availability
+  - Fixed test mocking: authService.getCurrentUser → apiService.authAPI.getCurrentUser
+- **Files Fixed**:
+  1. ✅ src/components/StudyPlanAnalytics.tsx - Removed Math.random() calls (15 insertions, 26 deletions)
+     - Lines 134-186: Removed all Math.random() calls
+     - Lines 120-247: Replaced mock data with calculated/default values
+  2. ✅ src/components/__tests__/StudyPlanAnalytics.test.tsx - Fixed test mocking (2 insertions, 2 deletions)
+     - Line 7: Removed unused authService import
+     - Line 10: Removed unused authService mock
+     - Line 157-161: Changed mock to use apiService.authAPI.getCurrentUser instead of authService.getCurrentUser
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Grep confirms no Math.random() in StudyPlanAnalytics.tsx
+  - ✅ Component renders with calculated metrics (0 values for untrackable data)
+- **Impact**: Eliminates fake/random data from production analytics, improves data integrity and user trust (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding)
+- **Issue Status**: Closed via PR #1273
 
 ## Completed
 
