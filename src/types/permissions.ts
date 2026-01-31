@@ -1,3 +1,7 @@
+import type { UserRole, UserExtraRole } from './common';
+
+export type { UserRole, UserExtraRole };
+
 export interface Permission {
   id: string;
   name: string;
@@ -16,9 +20,6 @@ export interface Role {
 export interface PermissionMatrix {
   [roleId: string]: Permission['id'][];
 }
-
-export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
-export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
 
 export interface AccessResult {
   granted: boolean;
