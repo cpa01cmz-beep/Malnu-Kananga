@@ -2,6 +2,45 @@
 
 ## Completed
 
+### [BUILDER] Add Real-Time Updates to AdminDashboard (Issue #1314) ✅
+- **Mode**: BUILDER
+- **Issue**: #1314
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: AdminDashboard was the only dashboard without full real-time WebSocket integration. While ActivityFeed was added (Issue #1316), dashboard lacked automatic data refresh when real-time events occur.
+- **Implementation**:
+  - [x] Added WebSocketStatus import from './WebSocketStatus'
+  - [x] Added `onEvent` callback to `useRealtimeEvents` hook with inline refresh logic
+  - [x] Implemented real-time data refresh for user and announcement events
+  - [x] Added WebSocketStatus component in header (compact mode, no reconnect button)
+  - [x] TypeScript type checking: Passed (0 errors)
+  - [x] ESLint linting: Passed (0 errors, 0 warnings)
+  - [x] Build completed successfully
+- **Real-Time Event Handling**:
+  - user_role_changed, user_status_changed → Refreshes dashboard data (lastSync timestamp)
+  - announcement_created, announcement_updated → Refreshes dashboard data (lastSync timestamp)
+  - notification_created → Logs event (for future notification actions)
+  - grade_updated, attendance_updated, message_created, message_updated → Logged for potential future handling
+- **Acceptance Criteria**:
+  - ✅ AdminDashboard imports and uses `useRealtimeEvents` hook (already done via Issue #1316)
+  - ✅ WebSocket connection status is visible in header (using WebSocketStatus component, compact mode)
+  - ✅ User role/status changes trigger dashboard data refresh (updates lastSync timestamp)
+  - ✅ Announcement creation/updates trigger dashboard data refresh (updates lastSync timestamp)
+  - ✅ Real-time updates disabled when offline (controlled by `enabled: isOnline` in useRealtimeEvents)
+  - ✅ No duplicate subscriptions on re-render (useCallback prevents duplicate callbacks)
+  - ✅ All existing functionality preserved
+- **Files Modified**:
+  - src/components/AdminDashboard.tsx (added WebSocketStatus import, onEvent callback, WebSocketStatus component in header)
+- **Pillars Addressed**:
+  - Pillar 1 (Flow): Optimizes data flow for real-time updates across AdminDashboard
+  - Pillar 2 (Standardization): Consistent WebSocket integration pattern with other dashboards (Teacher, Parent, Student)
+  - Pillar 9 (Feature Ops): Completes real-time support across all dashboards
+  - Pillar 16 (UX/DX): Provides consistent real-time experience for admins
+
+## Completed
+
 ### [BUILDER] Add Offline Data Service to Teacher and Admin Dashboards (Issue #1315) ✅
 - **Mode**: BUILDER
 - **Issue**: #1315

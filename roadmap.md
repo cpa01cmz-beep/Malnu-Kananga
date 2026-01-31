@@ -1,8 +1,8 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.7.0
-       **Last Updated**: 2026-01-31 (Issue #1227: AI-Generated Learning Progress Reports for Parents)
-      **Maintained By**: Lead Autonomous Engineer & System Guardian
+**Version**: 3.6.0
+      **Last Updated**: 2026-01-31 (Issue #1314: Add Real-Time Updates to AdminDashboard)
+     **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -925,7 +925,8 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    | 3.4.1 | 2026-01-31 | Documentation Synchronization (Issues #1279, #1277, #1276, #1278): Closed Issue #1279 (Test suite timeout fixed on 2026-01-31); Closed Issue #1277 (Empty/low confidence OCR handling); Closed Issue #1276 (Indonesian date parser); Closed Issue #1278 (UnifiedNotificationManager state pollution); All 4 P2/P1 issues closed with proper commit references; All documentation synchronized across GitHub, task.md, roadmap.md (Pillar 8: Documentation) |
    | 3.4.1 | 2026-01-31 | Activity Feed Notification Integration (Issue #1232): Integrated ActivityFeed with unifiedNotificationManager to automatically trigger push notifications for important events; Added ACTIVITY_EVENT_PRIORITY and ACTIVITY_NOTIFICATION_CONFIG constants; Event priority-based notification filtering (HIGH/NORMAL/LOW); User notification preferences respected; Quiet hours respected; 21 tests covering notification triggering, filtering, content generation, and integration |
    | 3.4.1 | 2026-01-30 | Test Coverage for High-Priority Services: Added comprehensive test coverage for offlineActionQueueService (35 tests), ocrService (8 tests), and offlineDataService (24 tests); Total 67 new tests (100% pass rate), 3 skipped due to React mocking complexity; TypeScript type checking passed, ESLint linting passed |
-  | 3.3.1 | 2026-01-30 | Integrate Quiz Results with Grade Analytics (Issue #1246): Added quizGradeIntegrationService for automatic grade entry creation from quiz attempts, added assignment type filter to GradeAnalytics component |
+      | 3.3.1 | 2026-01-30 | Integrate Quiz Results with Grade Analytics (Issue #1246): Added quizGradeIntegrationService for automatic grade entry creation from quiz attempts, added assignment type filter to GradeAnalytics component |
+      | 3.6.0 | 2026-01-31 | Add Real-Time Updates to AdminDashboard (Issue #1314, P2): Added WebSocketStatus import and component to header (compact mode, no reconnect button); Added `onEvent` callback to `useRealtimeEvents` hook with inline refresh logic for user and announcement events; User role/status changes trigger dashboard data refresh (updates lastSync timestamp); Announcement creation/updates trigger dashboard data refresh (updates lastSync timestamp); Notification creation events are logged; Real-time updates disabled when offline (controlled by `enabled: isOnline`); useCallback prevents duplicate subscriptions on re-render; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Completes real-time support across all dashboards (TeacherDashboard, ParentDashboard, StudentPortal, AdminDashboard) (Pillars 1: Flow, 2: Standardization, 9: Feature Ops, 16: UX/DX) |
   | 3.3.0 | 2026-01-30 | Integrate PPDB Registration with Student Management (Issue #1248): Added ppdbIntegrationService with 8-stage pipeline, automatic NIS generation, parent account creation, student record creation, email notifications, and comprehensive test coverage (13 tests, 100% passing) |
   | 3.2.10 | 2026-01-30 | Added comprehensive test coverage for logger (25 tests), validation (66 tests), retry (56 tests), and apiService (56 tests) utilities; Improved overall test coverage from 42.2% to 47.3%; Fixed test failures in logger, validation, and retry utilities (PR #1257) |
   | 3.2.9 | 2026-01-30 | Updated README.md with comprehensive metrics section including codebase statistics, test coverage breakdown, code quality metrics, feature completion status, technical debt status, tech stack versions, development workflow, OpenCode CLI integration, comprehensive feature list, and contributing guidelines (Issue #1249) |
