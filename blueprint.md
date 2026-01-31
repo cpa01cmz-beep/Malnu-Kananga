@@ -78,7 +78,7 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
     - **QuizGenerator Test Failures**: Fixed 6/7 failing tests by improving checkbox testing, focus areas handling, and error state management (Issue #1239, P1) - 26/28 tests passing (92.9%)
      - **Duplicate Key Warning**: Fixed React duplicate key warning in GradeAnalytics by adding deduplication logic using Map-based filtering (Issue #1251, P2)
      - **GitHub Issues Synchronization**: Closed 3 P1/P2 issues (#1240, #1239, #1247) with proper references to resolving commits (SCRIBE MODE)
-     - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2)
+     - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2); Fixed remaining hardcoded keys in emailNotificationService (Issue #1269, P1)
      - **CI Workflow Deadlock**: Fixed turnstyle deadlock by changing same-branch-only to true (Issue #1258, P1)
 
 ### Backend (Cloudflare Workers)
@@ -937,8 +937,15 @@ npm run typecheck         # Run TypeScript compiler
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
  
-   ### Recent Changes (2026-01-30)
-    - **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)
+    ### Recent Changes (2026-01-31)
+     - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
+       - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+       - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
+       - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
+       - TypeScript type checking and ESLint linting passed
+
+    ### Recent Changes (2026-01-30)
+     - **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)
       - Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
       - Resolves ambiguous selector that matched both tab button and dropdown option
       - All 19 GradeAnalytics tests now passing (100% pass rate)
