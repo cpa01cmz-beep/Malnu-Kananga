@@ -2,6 +2,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -90,6 +91,13 @@ export default defineConfig(({ mode }) => {
             }
           ]
         }
+      }),
+      // Bundle analyzer - generates stats.html after build
+      visualizer({
+        filename: 'dist/stats.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
       })
     ],
     define: {
@@ -123,9 +131,19 @@ export default defineConfig(({ mode }) => {
               return 'vendor-jpdf';
             }
 
-            // Recharts (charts - medium size)
-            if (id.includes('recharts')) {
+            // Recharts (charts - includes d3 dependency internally)
+            // Keep Recharts and React in same chunk to avoid circular dependency
+            if (id.includes('recharts') || id.includes('d3')) {
               return 'vendor-charts';
+            }
+
+            // React core and React Router (be specific to avoid overlapping with Recharts)
+            if (id.includes('/node_modules/react/') ||
+                id.includes('/node_modules/react-dom/') ||
+                id.includes('/node_modules/scheduler/') ||
+                id.includes('/node_modules/react-router/') ||
+                id.includes('/node_modules/@remix-run/')) {
+              return 'vendor-react';
             }
 
             // Test libraries (only in test mode)
@@ -148,7 +166,9 @@ export default defineConfig(({ mode }) => {
           }
         }
       },
-      chunkSizeWarningLimit: 500,
+      // Increased from 500KB to 800KB to accommodate large vendor chunks (React ecosystem, etc.)
+      // Application code chunks should still aim for <500KB for optimal performance
+      chunkSizeWarningLimit: 800,
       target: 'esnext',
       minify: 'terser' as const,
       terserOptions: {

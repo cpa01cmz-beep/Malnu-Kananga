@@ -1,23 +1,26 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
 import { ArchiveBoxIcon } from './icons/ArchiveBoxIcon';
 import { ChartLineIcon } from './icons/ChartLineIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
-import GradingManagement from './GradingManagement';
-import ClassManagement from './ClassManagement';
-import MaterialUpload from './MaterialUpload';
-import SchoolInventory from './SchoolInventory';
-import AssignmentCreation from './AssignmentCreation';
-import AssignmentGrading from './AssignmentGrading';
-import GradeAnalytics from './GradeAnalytics';
-import { QuizGenerator } from './QuizGenerator';
-import QuizIntegrationDashboard from './QuizIntegrationDashboard';
-import CommunicationDashboard from './CommunicationDashboard';
-import { DirectMessage } from './DirectMessage';
-import { GroupChat } from './GroupChat';
+
+// Lazy load heavy dashboard components to reduce initial bundle size
+const GradingManagement = lazy(() => import('./GradingManagement'));
+const ClassManagement = lazy(() => import('./ClassManagement'));
+const MaterialUpload = lazy(() => import('./MaterialUpload'));
+const SchoolInventory = lazy(() => import('./SchoolInventory'));
+const AssignmentCreation = lazy(() => import('./AssignmentCreation'));
+const AssignmentGrading = lazy(() => import('./AssignmentGrading'));
+const GradeAnalytics = lazy(() => import('./GradeAnalytics'));
+const QuizGenerator = lazy(() => import('./QuizGenerator').then(m => ({ default: m.QuizGenerator })));
+const QuizIntegrationDashboard = lazy(() => import('./QuizIntegrationDashboard'));
+const CommunicationDashboard = lazy(() => import('./CommunicationDashboard'));
+const DirectMessage = lazy(() => import('./DirectMessage').then(m => ({ default: m.DirectMessage })));
+const GroupChat = lazy(() => import('./GroupChat').then(m => ({ default: m.GroupChat })));
+
 import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
@@ -30,6 +33,7 @@ import DashboardActionCard from './ui/DashboardActionCard';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
 import OfflineBanner from './ui/OfflineBanner';
+import SuspenseLoading from './ui/SuspenseLoading';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import type { VoiceCommand } from '../types';
 import VoiceInputButton from './VoiceInputButton';
@@ -637,15 +641,51 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
             </>
         )}
 
-        {currentView === 'grading' && <GradingManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'class' && <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'upload' && <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'inventory' && <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'assignments' && <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
-        {currentView === 'quiz-generator' && <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />}
-        {currentView === 'quiz-integration' && <QuizIntegrationDashboard onBack={() => setCurrentView('home')} onShowToast={handleToast} />}
+        {currentView === 'grading' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat manajemen nilai..." />}>
+            <GradingManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'class' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat manajemen kelas..." />}>
+            <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'upload' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat upload materi..." />}>
+            <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'inventory' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat inventaris..." />}>
+            <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'assignments' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat pembuatan tugas..." />}>
+            <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'assignment-grading' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat penilaian tugas..." />}>
+            <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'analytics' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat analisis nilai..." />}>
+            <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
+          </Suspense>
+        )}
+        {currentView === 'quiz-generator' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat generator kuis..." />}>
+            <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />
+          </Suspense>
+        )}
+        {currentView === 'quiz-integration' && (
+          <Suspense fallback={<SuspenseLoading message="Memuat integrasi kuis..." />}>
+            <QuizIntegrationDashboard onBack={() => setCurrentView('home')} onShowToast={handleToast} />
+          </Suspense>
+        )}
         {currentView === 'messages' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
@@ -661,15 +701,17 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
             </div>
-            <DirectMessage
-              currentUser={{
-                id: getCurrentUserId(),
-                name: getCurrentUserName(),
-                email: getCurrentUserEmail(),
-                role: 'teacher',
-                status: 'active',
-              }}
-            />
+            <Suspense fallback={<SuspenseLoading message="Memuat pesan..." />}>
+              <DirectMessage
+                currentUser={{
+                  id: getCurrentUserId(),
+                  name: getCurrentUserName(),
+                  email: getCurrentUserEmail(),
+                  role: 'teacher',
+                  status: 'active',
+                }}
+              />
+            </Suspense>
           </div>
         )}
 
@@ -688,15 +730,17 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grup Diskusi</h2>
             </div>
-            <GroupChat
-              currentUser={{
-                id: getCurrentUserId(),
-                name: getCurrentUserName(),
-                email: getCurrentUserEmail(),
-                role: 'teacher',
-                status: 'active',
-              }}
-            />
+            <Suspense fallback={<SuspenseLoading message="Memuat grup..." />}>
+              <GroupChat
+                currentUser={{
+                  id: getCurrentUserId(),
+                  name: getCurrentUserName(),
+                  email: getCurrentUserEmail(),
+                  role: 'teacher',
+                  status: 'active',
+                }}
+              />
+            </Suspense>
           </div>
         )}
 
@@ -715,13 +759,15 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Log Komunikasi</h2>
             </div>
-            <CommunicationDashboard
-              _currentUser={{
-                id: getCurrentUserId(),
-                name: getCurrentUserName(),
-                role: 'teacher',
-              }}
-            />
+            <Suspense fallback={<SuspenseLoading message="Memuat log komunikasi..." />}>
+              <CommunicationDashboard
+                _currentUser={{
+                  id: getCurrentUserId(),
+                  name: getCurrentUserName(),
+                  role: 'teacher',
+                }}
+              />
+            </Suspense>
           </div>
         )}
 
