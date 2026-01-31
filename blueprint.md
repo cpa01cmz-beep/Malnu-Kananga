@@ -1,7 +1,7 @@
- # MA Malnu Kananga - Blueprint (Architecture & Design)
+# MA Malnu Kananga - Blueprint (Architecture & Design)
 
-  **Version**: 3.3.1
-  **Last Updated**: 2026-01-30 (Updated metrics)
+**Version**: 3.3.2
+**Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -937,8 +937,12 @@ npm run typecheck         # Run TypeScript compiler
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
  
-   ### Recent Changes (2026-01-30)
-   - **Email Integration**: Added emailNotificationService with full integration to unifiedNotificationManager (Issue #1264)
+### Recent Changes (2026-01-30)
+- **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)
+  - Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
+  - Resolves ambiguous selector that matched both tab button and dropdown option
+  - All 19 GradeAnalytics tests now passing (100% pass rate)
+    - **Email Integration**: Added emailNotificationService with full integration to unifiedNotificationManager (Issue #1264)
       - Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR)
       - User-controlled email notification preferences (per-type enable/disable)
       - Digest mode (daily/weekly email digest to reduce notification fatigue)

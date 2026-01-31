@@ -2,6 +2,25 @@
 
 ## Completed
 
+### [SANITIZER] Fix GradeAnalytics Test Failure - 'switches between tabs' Finds Multiple 'Tugas' Elements ✅
+- **Mode**: SANITIZER
+- **Issue**: #1267
+- **Priority**: P2 (Bug - Test Failure)
+- **Status**: Completed
+- **Started**: 2026-01-30
+- **Completed**: 2026-01-30
+- **Reason**: Test 'switches between tabs' at line 471 fails because `screen.getByText('Tugas')` finds multiple elements:
+  1. Tab button: `<button role="tab">Tugas</button>` (intended target)
+  2. Dropdown option: `<option value="assignment">Tugas</option>` (unintended match)
+- **Solution Applied**: Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
+- **Files Modified**:
+  - src/components/__tests__/GradeAnalytics.test.tsx line 471
+- **Verification**:
+  - ✅ All 19 GradeAnalytics tests passing (100% pass rate)
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+- **Impact**: Fixes test failure, improves CI/CD reliability, prevents false negatives (Pillars 3: Stability, 7: Debug)
+
 ### [SCRIBE MODE] Fix Duplicate OCR Entry in roadmap.md (Pillar 8) ✅
 - **Mode**: SCRIBE
 - **Priority**: P3 (Documentation)

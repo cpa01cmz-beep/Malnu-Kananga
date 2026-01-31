@@ -468,7 +468,7 @@ describe('GradeAnalytics', () => {
       expect(screen.getByText('Semua Siswa (3)')).toBeInTheDocument();
     });
 
-    const assignmentsTab = screen.getByText('Tugas');
+    const assignmentsTab = screen.getByRole('tab', { name: 'Tugas' });
 
     await act(async () => {
       assignmentsTab.click();
