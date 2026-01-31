@@ -990,10 +990,31 @@ npm run typecheck         # Run TypeScript compiler
    - Resolved merge conflicts in PR #1281 by merging main into feature branch
    - Updated task.md with merge resolution and completion status
    - PR is now MERGEABLE and ready for approval (awaiting Cloudflare Pages CI check)
-   - All acceptance criteria from Issue #1231 met (8/8 complete)
-   - Documentation synchronized across blueprint.md, roadmap.md, task.md
-
-### Recent Changes (2026-01-30)
+    - All acceptance criteria from Issue #1231 met (8/8 complete)
+    - Documentation synchronized across blueprint.md, roadmap.md, task.md
+  
+  ### Recent Changes (2026-01-31)
+  - **Bug Fixes for attendanceOCRService** (Issue #1277, #1276, P2)
+    - Fixed low confidence/empty OCR handling to return empty result instead of throwing error (Issue #1277)
+    - Modified processAttendanceSheet to check `ocrResult.confidence < 50 || ocrResult.text.trim() === ''` and return empty result with zeroed summary
+    - Fixed Indonesian date parser to convert month names to numeric format (Issue #1276)
+    - Added indonesianMonths mapping (januari->01, februari->02, etc.) to convert Indonesian month names
+    - Modified extractDateFromText to detect month names and convert before formatting date string
+    - All 9 attendanceOCRService tests now passing (100% pass rate)
+    - TypeScript type checking and ESLint linting passed
+  - **Bug Fix for UnifiedNotificationManager Tests** (Issue #1278, P2)
+    - Fixed state pollution between tests by adding comprehensive cleanup in beforeEach hook
+    - Added calls to clearHistory(), clearAnalytics(), clearVoiceQueue(), clearVoiceHistory(), and resetSettings()
+    - Test suite now passes 42/43 tests (1 skipped for unimplemented feature)
+    - TypeScript type checking and ESLint linting passed
+  - **Documentation Synchronization** (Issues #1279, #1277, #1276, #1278)
+    - Closed Issue #1279: Test suite timeout was fixed on 2026-01-31 by adding vi.useRealTimers() to afterEach hooks
+    - Closed Issue #1277: Empty/low confidence OCR handling fixed
+    - Closed Issue #1276: Indonesian date parser conversion fixed
+    - Closed Issue #1278: UnifiedNotificationManager state pollution fixed
+    - All 4 P2/P1 issues closed with proper commit references
+  
+  ### Recent Changes (2026-01-30)
 - **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)
   - Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
   - Resolves ambiguous selector that matched both tab button and dropdown option

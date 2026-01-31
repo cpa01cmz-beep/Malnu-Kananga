@@ -82,9 +82,19 @@ class AttendanceOCRService {
         }
       );
 
-      // Check OCR confidence
-      if (ocrResult.confidence < 50) {
-        throw new Error('Confidence OCR terlalu rendah (< 50%). Mohon gunakan gambar yang lebih jelas.');
+      // Check OCR confidence - handle low confidence gracefully
+      if (ocrResult.confidence < 50 || ocrResult.text.trim() === '') {
+        logger.warn(`OCR confidence rendah atau teks kosong (${ocrResult.confidence}%), mengembalikan hasil kosong`);
+        return {
+          date: new Date().toISOString().split('T')[0],
+          studentAttendance: [],
+          summary: {
+            present: 0,
+            sick: 0,
+            permission: 0,
+            absent: 0
+          }
+        };
       }
 
       // Stage 3: Parse attendance patterns
@@ -346,6 +356,22 @@ class AttendanceOCRService {
    * Extract date from OCR text
    */
   private extractDateFromText(text: string): string {
+    // Indonesian month names to numeric mapping
+    const indonesianMonths: Record<string, string> = {
+      'januari': '01',
+      'februari': '02',
+      'maret': '03',
+      'april': '04',
+      'mei': '05',
+      'juni': '06',
+      'juli': '07',
+      'agustus': '08',
+      'september': '09',
+      'oktober': '10',
+      'november': '11',
+      'desember': '12'
+    };
+
     // Try common date formats
     const datePatterns = [
       /(\d{1,2})[-/](\d{1,2})[-/](\d{4})/, // DD-MM-YYYY or DD/MM/YYYY
@@ -359,9 +385,17 @@ class AttendanceOCRService {
         // Parse date based on pattern
         if (match.length === 4) {
           const [_, part1, part2, part3] = match;
-          if (part3.length === 4) {
+          
+          // Check if part2 is an Indonesian month name
+          const monthLower = part2.toLowerCase();
+          if (indonesianMonths[monthLower]) {
+            // Format: DD Month YYYY (e.g., "30 Januari 2026")
+            return `${part3}-${indonesianMonths[monthLower]}-${part1.padStart(2, '0')}`;
+          } else if (part3.length === 4) {
+            // Format: DD-MM-YYYY or DD/MM/YYYY
             return `${part3}-${part2.padStart(2, '0')}-${part1.padStart(2, '0')}`;
           } else {
+            // Format: YYYY-MM-DD
             return `${part1}-${part2.padStart(2, '0')}-${part3.padStart(2, '0')}`;
           }
         }
