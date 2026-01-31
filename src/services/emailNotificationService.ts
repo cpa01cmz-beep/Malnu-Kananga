@@ -76,16 +76,16 @@ class EmailNotificationService {
   private digestInterval: number | null = null;
 
   constructor(userId?: string) {
-    this.preferencesKey = userId 
-      ? `malnu_email_notification_prefs_${userId}`
+    this.preferencesKey = userId
+      ? STORAGE_KEYS.EMAIL_NOTIFICATION_PREFERENCES(userId)
       : STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS;
     this.deliveryHistoryKey = userId
-      ? `malnu_email_notification_delivery_${userId}`
-      : 'malnu_email_notification_delivery_history';
+      ? STORAGE_KEYS.EMAIL_DELIVERY_HISTORY_USER(userId)
+      : STORAGE_KEYS.EMAIL_DELIVERY_HISTORY;
     this.digestQueueKey = userId
-      ? `malnu_email_digest_queue_${userId}`
-      : 'malnu_email_digest_queue';
-    
+      ? STORAGE_KEYS.EMAIL_DIGEST_QUEUE_USER(userId)
+      : STORAGE_KEYS.EMAIL_DIGEST_QUEUE;
+
     this.loadDigestQueue();
     this.initializeDigestScheduler();
   }
@@ -134,7 +134,7 @@ class EmailNotificationService {
 
   public getPreferences(userId: string): EmailNotificationPreferences | null {
     try {
-      const key = `malnu_email_notification_prefs_${userId}`;
+      const key = STORAGE_KEYS.EMAIL_NOTIFICATION_PREFERENCES(userId);
       const stored = localStorage.getItem(key);
       if (stored) {
         return JSON.parse(stored);
@@ -180,7 +180,7 @@ class EmailNotificationService {
 
   public setPreferences(userId: string, preferences: EmailNotificationPreferences): void {
     try {
-      const key = `malnu_email_notification_prefs_${userId}`;
+      const key = STORAGE_KEYS.EMAIL_NOTIFICATION_PREFERENCES(userId);
       localStorage.setItem(key, JSON.stringify(preferences));
       logger.info(`Email preferences saved for user ${userId}`);
     } catch (error) {
@@ -506,9 +506,9 @@ class EmailNotificationService {
 
   public getDeliveryHistory(userId?: string): EmailNotificationDelivery[] {
     const key = userId
-      ? `malnu_email_notification_delivery_${userId}`
+      ? STORAGE_KEYS.EMAIL_DELIVERY_HISTORY_USER(userId)
       : this.deliveryHistoryKey;
-    
+
     try {
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : [];

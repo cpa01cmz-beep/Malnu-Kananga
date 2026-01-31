@@ -129,6 +129,10 @@ export const STORAGE_KEYS = {
     EMAIL_NOTIFICATION_SETTINGS: 'malnu_email_notification_settings',
     EMAIL_ANALYTICS: 'malnu_email_analytics',
     EMAIL_DELIVERY_HISTORY: 'malnu_email_delivery_history',
+    EMAIL_DIGEST_QUEUE: 'malnu_email_digest_queue',
+    EMAIL_NOTIFICATION_PREFERENCES: (userId: string) => `malnu_email_notification_prefs_${userId}`,
+    EMAIL_DELIVERY_HISTORY_USER: (userId: string) => `malnu_email_notification_delivery_${userId}`,
+    EMAIL_DIGEST_QUEUE_USER: (userId: string) => `malnu_email_digest_queue_${userId}`,
     
     // AI Quiz Generation (new)
     QUIZZES: 'malnu_quizzes',

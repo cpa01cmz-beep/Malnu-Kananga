@@ -1,7 +1,7 @@
-  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+# MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.3.2
-     **Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
+**Version**: 3.3.2
+**Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
   **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -582,8 +582,12 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    - ✅ Fix React act() warnings in GradeAnalytics tests (Issue #1250) - 2026-01-30 (fixed 6 user interactions wrapped in act())
    - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
    - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
-     - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
-      - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+    - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
+       - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+       - ✅ Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) - 2026-01-31
+         - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+         - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
+         - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
       - ✅ Update Documentation Metrics in README.md (Issue #1249) - 2026-01-30
       - ✅ Add OCR Integration for Attendance Management (Issue #820) - 2026-01-30 (attendanceOCRService, AttendanceManagement component, 11 tests)
       - ✅ Integrate Quiz Results with Grade Analytics (Issue #1246) - 2026-01-30 (quizGradeIntegrationService, assignment type filter)
@@ -702,9 +706,10 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ## Version History
 
-  | Version | Date | Changes |
-  |---------|------|---------|
-  | 3.3.2 | 2026-01-30 | Fix GradeAnalytics Test Failure (Issue #1267): Changed ambiguous test selector from `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })` to resolve false positive match with dropdown option; All 19 GradeAnalytics tests passing (100% pass rate); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
+| Version | Date | Changes |
+|---------|------|---------|
+| 3.3.3 | 2026-01-31 | Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269): Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS; Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants in emailNotificationService.ts; All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
+| 3.3.2 | 2026-01-30 | Fix GradeAnalytics Test Failure (Issue #1267): Changed ambiguous test selector from `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })` to resolve false positive match with dropdown option; All 19 GradeAnalytics tests passing (100% pass rate); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
   | 3.3.1 | 2026-01-30 | Integrate Email Service with Notification System (Issue #1264): Added emailNotificationService with full integration to unifiedNotificationManager; Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR); User-controlled email notification preferences (per-type enable/disable); Digest mode (daily/weekly email digest); Quiet hours support for email notifications; Email delivery tracking and analytics; 20 tests (100% pass rate); Updated blueprint.md with new service documentation |
   | 3.3.0 | 2026-01-30 | Documentation Synchronization (SCRIBE MODE): Synchronized GitHub issues with completed work; Closed Issue #820 (OCR Integration for Attendance Management), Issue #1260 (Documentation Metrics Update), Issue #1265 (Untracked PDF Cleanup); Updated README.md metrics (version 3.3.0, 438 source files, 137 test files, 31.3% coverage); Updated blueprint.md metrics; Removed duplicate OCR entry from Q2 2026 Targets; All documentation synchronized across GitHub, task.md, roadmap.md (Pillar 8: Single Source of Truth) |
    | 3.4.1 | 2026-01-30 | Test Coverage for performanceMonitor Service: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate) covering initialization, request tracking, API response recording, statistics calculation, error rate calculation, threshold checks, metrics management, export functionality, and enable/disable monitoring; All TypeScript type checks and ESLint linting passed |

@@ -2,6 +2,32 @@
 
 ## Completed
 
+### [SANITIZER] Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1269
+- **Priority**: P1 (Bug - Hardcoded Values)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Issue #1244 was closed by PR #1253, but emailNotificationService.ts still had hardcoded localStorage keys that weren't fixed
+- **Files Fixed**:
+  1. ✅ src/constants.ts - Added STORAGE_KEYS.EMAIL_DIGEST_QUEUE and factory functions:
+     - EMAIL_NOTIFICATION_PREFERENCES(userId)
+     - EMAIL_DELIVERY_HISTORY_USER(userId)
+     - EMAIL_DIGEST_QUEUE_USER(userId)
+  2. ✅ src/services/emailNotificationService.ts - Replaced all hardcoded localStorage keys with STORAGE_KEYS constants:
+     - Line 79-87: Constructor now uses STORAGE_KEYS for all key assignments
+     - Line 137: getPreferences() uses EMAIL_NOTIFICATION_PREFERENCES(userId)
+     - Line 183: setPreferences() uses EMAIL_NOTIFICATION_PREFERENCES(userId)
+     - Line 509: getDeliveryHistory() uses EMAIL_DELIVERY_HISTORY_USER(userId)
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Grep search confirms no hardcoded localStorage keys remain
+- **Impact**: Ensures all localStorage keys follow centralized pattern (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding)
+- **Issue Status**: Ready to close #1269 after PR creation
+
+## Completed
 ### [SANITIZER] Fix GradeAnalytics Test Failure - 'switches between tabs' Finds Multiple 'Tugas' Elements ✅
 - **Mode**: SANITIZER
 - **Issue**: #1267
@@ -20,6 +46,7 @@
   - ✅ TypeScript type checking: Passed (0 errors)
   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
 - **Impact**: Fixes test failure, improves CI/CD reliability, prevents false negatives (Pillars 3: Stability, 7: Debug)
+
 
 ### [SCRIBE MODE] Fix Duplicate OCR Entry in roadmap.md (Pillar 8) ✅
 - **Mode**: SCRIBE
