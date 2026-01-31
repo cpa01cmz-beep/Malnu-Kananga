@@ -19,6 +19,7 @@ describe('EmailNotificationService', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     emailNotificationService.destroy();
   });
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useWebSocket, useRealtimeEvent, useRealtimeGrades } from '../useWebSocket';
 import { webSocketService, type RealTimeEventType } from '../../services/webSocketService';
@@ -49,6 +49,10 @@ describe('useWebSocket Hook', () => {
       subscriptions: new Set(),
     });
     vi.mocked(webSocketService.subscribe).mockReturnValue(() => {});
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should initialize WebSocket on mount', () => {

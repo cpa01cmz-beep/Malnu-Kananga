@@ -554,6 +554,7 @@ describe('errorHandler', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     resetCircuitBreaker();
   });
 });
