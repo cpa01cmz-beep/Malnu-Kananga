@@ -1,7 +1,7 @@
-  # MA Malnu Kananga - Blueprint (Architecture & Design)
+# MA Malnu Kananga - Blueprint (Architecture & Design)
 
-   **Version**: 3.3.4
-   **Last Updated**: 2026-01-31 (Fixed P1 Bugs: Hardcoded localStorage Keys & Math.random() Mock Data)
+**Version**: 3.3.2
+**Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -937,30 +937,18 @@ npm run typecheck         # Run TypeScript compiler
 **Last Review**: 2026-01-30
   **Next Review**: 2026-02-23
  
-    ### Recent Changes (2026-01-31)
-     - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
-       - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
-       - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
-       - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
-       - TypeScript type checking and ESLint linting passed
+### Recent Changes (2026-01-31)
+- **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
+  - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+  - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
+  - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
+  - TypeScript type checking and ESLint linting passed
 
-     ### Recent Changes (2026-01-31)
-      - **Bug Fixes**: Fixed Two P1 Bugs (Issues #1269, #1270)
-         - Issue #1269: Remaining hardcoded localStorage keys in emailNotificationService
-           - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
-           - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants in emailNotificationService.ts
-           - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
-           - TypeScript type checking and ESLint linting passed
-         - Issue #1270: Math.random() used for mock data in StudyPlanAnalytics
-           - Removed all Math.random() calls from calculateAnalytics function
-           - Replaced mock data with calculated/default values (0, null, empty arrays)
-           - Fields requiring tracking infrastructure now show default values
-           - Only derivable metrics are calculated from existing data (grades, schedule)
-           - Fixed test mocking: authService.getCurrentUser → apiService.authAPI.getCurrentUser
-           - TypeScript type checking and ESLint linting passed
-      - Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
-      - Resolves ambiguous selector that matched both tab button and dropdown option
-      - All 19 GradeAnalytics tests now passing (100% pass rate)
+### Recent Changes (2026-01-30)
+- **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)
+  - Changed `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })`
+  - Resolves ambiguous selector that matched both tab button and dropdown option
+  - All 19 GradeAnalytics tests now passing (100% pass rate)
     - **Email Integration**: Added emailNotificationService with full integration to unifiedNotificationManager (Issue #1264)
       - Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR)
       - User-controlled email notification preferences (per-type enable/disable)
