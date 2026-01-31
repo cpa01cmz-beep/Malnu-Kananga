@@ -1,6 +1,6 @@
 // api/modules/messaging.ts - Parents and Messages APIs
 
-import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
+import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, ConversationCreateRequest, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
 import { request } from '../client';
 
 // ============================================
@@ -79,7 +79,7 @@ export const messagesAPI = {
     return request<Conversation>(`/api/messages/conversations/${conversationId}`);
   },
 
-  async createConversation(data: MessageSendRequest): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
+  async createConversation(data: ConversationCreateRequest): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
     return request<Conversation>('/api/messages/conversations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
