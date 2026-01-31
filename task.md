@@ -404,4 +404,55 @@
   - Eliminated 1,808-line monolithic file, activated 17 domain-specific modules (total 1,991 lines, average 117 lines per file)
 - **Notes**: Original 1808-line types.ts file has been successfully refactored into 17 domain-specific files. Old src/types.ts deleted to activate the new modular structure via src/types/index.ts. Pre-existing files (email.types.ts, permissions.ts, recharts.d.ts) were preserved and integrated into the new structure. This completes the types.ts portion of Issue #1293.
 
+## In Progress
+
+### [SCRIBE/BUILDER] Close Completed GitHub Issues & Implement E-Library Integration with Study Plans (Issue #1226)
+- **Mode**: SCRIBE → BUILDER
+- **Issues**: #1316, #1294, #1313, #1303, #1315, #1314, #1226
+- **Priority**: P1/P2 (Issue Synchronization + Feature Implementation)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Multiple completed tasks have open GitHub issues that need closure. Implement E-Library integration with study plans to make study plans more actionable.
+- **Tasks Completed**:
+  - [x] Close #1316 (ActivityFeed to AdminDashboard - COMPLETED)
+  - [x] Close #1294 (Build Optimization - COMPLETED)
+  - [x] Close #1314 (Real-Time Updates to AdminDashboard - COMPLETED)
+  - [x] Add MaterialRecommendation type to types/study.ts
+  - [x] Create studyPlanMaterialService.ts for AI-powered material matching
+  - [x] Add STUDY_PLAN_MATERIAL_RECOMMENDATIONS to STORAGE_KEYS
+  - [x] Implement subject keyword matching for 10 subjects (matematika, fisika, kimia, biologi, dll)
+  - [x] Implement focus area matching
+  - [x] Implement relevance scoring with rating bonus
+  - [x] Implement priority-based sorting (high/medium/low)
+  - [x] Add caching with 24-hour TTL
+  - [x] Add markAccessed, getAccessedMaterials, getProgress methods
+  - [x] Add comprehensive tests (17 tests, 100% pass rate)
+  - [x] Run typecheck: Passed (0 errors)
+  - [x] Run lint: Passed (0 errors, 0 warnings)
+- **Next Steps (Follow-up Task)**:
+  - [ ] Update StudyPlanGenerator to include material recommendations in recommendations tab
+  - [ ] Add material display component with subject/topic filtering
+  - [ ] Implement click-to-open in ELibrary viewer
+  - [ ] Track material access and completion in study plan analytics
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ All 17 tests passing (100% pass rate)
+  - ✅ Service handles API errors gracefully
+  - ✅ Caching works with 24-hour TTL
+  - ✅ Focus area matching implemented
+  - ✅ Subject keyword matching for 10 subjects
+- **Files Created**:
+  - src/services/studyPlanMaterialService.ts (381 lines)
+  - src/services/__tests__/studyPlanMaterialService.test.ts (405 lines, 17 tests)
+- **Files Modified**:
+  - src/types/study.ts (added MaterialRecommendation interface)
+  - src/constants.ts (added STUDY_PLAN_MATERIAL_RECOMMENDATIONS factory function)
+- **Pillars Addressed**:
+  - Pillar 1 (Flow): Material recommendations flow from E-Library to study plans
+  - Pillar 9 (Feature Ops): Makes study plans more actionable and useful
+  - Pillar 11 (Modularity): New service is modular and reusable
+  - Pillar 16 (UX/DX): Students can access relevant materials directly from study plans
+
 ## Completed

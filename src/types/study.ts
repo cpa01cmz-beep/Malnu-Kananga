@@ -37,6 +37,22 @@ export interface StudyPlanRecommendation {
   priority: number;
 }
 
+export interface MaterialRecommendation {
+  materialId: string;
+  title: string;
+  description: string;
+  category: string;
+  fileType: string;
+  subjectName: string;
+  priority: 'high' | 'medium' | 'low';
+  relevanceScore: number;
+  reason: string;
+  focusArea?: string;
+  week?: number;
+  accessed: boolean;
+  accessedAt?: string;
+}
+
 export interface StudyPlanAnalytics {
   planId: string;
   studentId: string;
