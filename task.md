@@ -4,6 +4,38 @@
 
 ## In Progress
 
+### [OPTIMIZER] Enhance Test Coverage for High-Priority Services - Issue #1294 (New)
+- **Mode**: OPTIMIZER
+- **Issue**: #1294
+- **Priority**: P2 (High Priority - Technical Debt)
+- **Status**: In Progress
+- **Started**: 2026-01-31
+- **Target Completion**: 2026-02-28
+- **Reason**: Current test-to-source ratio is 46.7% (141 test files / 302 source files). Many critical services lack comprehensive test coverage, creating stability and refactoring risks. This violates Pillar 3 (Stability) and Pillar 7 (Debug).
+- **Analysis Tasks**:
+  - [x] Identify high-priority services without tests
+  - [x] Prioritize based on usage frequency and criticality
+  - [x] Create test plans for top services
+  - [ ] Implement comprehensive test coverage for remaining services
+- **Completed Work** (2026-01-31):
+  - ✅ Created comprehensive tests for quizGradeIntegrationService.ts (35 tests, 100% pass rate)
+  - ✅ Tests cover all public functions: findExistingGrade, convertToGrade, integrateQuizAttempt, integrateQuizAttemptsBatch, getQuizAttempts, getQuiz, integrateAllQuizAttempts, integrateStudentQuizAttempts, integrateQuizAttempts, removeQuizGrades, getIntegrationStatus
+  - ✅ Tests include edge cases: empty results, malformed data, API failures, localStorage errors, filtering logic
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Test execution: 35/35 tests passing (100% pass rate, 20ms duration)
+- **Remaining Services** (No tests yet):
+  1. pushNotificationService.ts - Deprecated wrapper (will be removed, skip)
+  2. voiceMessageQueue.ts - Voice message queuing
+  3. communicationLogService.ts - Communication log management (540 lines)
+  4. storageMigration.ts - Storage migration utilities (157 lines)
+  5. notificationTemplates.ts - Notification templates (154 lines)
+- **Impact**:
+  - Improved code quality and reliability (Pillars 3: Stability, 7: Debug)
+  - Reduced regression risk when refactoring (Pillar 12: Scalability)
+  - Enables confident code improvements (Pillar 6: Optimization Ops)
+  - Target: 80%+ test coverage by 2026-02-28
+
 ### [ARCHITECT] Analyze and Refactor GradingManagement.tsx (1,904 lines) - Issue #1293 Continuation
 - **Mode**: ARCHITECT
 - **Issue**: #1293
