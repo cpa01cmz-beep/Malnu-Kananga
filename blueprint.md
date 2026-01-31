@@ -81,7 +81,8 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
         - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2); Fixed remaining hardcoded keys in emailNotificationService (Issue #1269, P1)
         - **CI Workflow Deadlock**: Fixed turnstyle deadlock by changing same-branch-only to true (Issue #1258, P1)
         - **Custom Analysis Tools Package Error**: Fixed ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin by creating automatic patch script that adds comprehensive exports and fixes ESM import extensions (Issue #1274, P1) - All 8 custom tools now execute successfully
-       - **Activity Feed Notification Integration**: Integrated ActivityFeed with unifiedNotificationManager to automatically trigger push notifications for important events (Issue #1232, P2) - 21 tests covering notification triggering, filtering, content generation, and integration
+        - **Activity Feed Notification Integration**: Integrated ActivityFeed with unifiedNotificationManager to automatically trigger push notifications for important events (Issue #1232, P2) - 21 tests covering notification triggering, filtering, content generation, and integration
+        - **Test Coverage for pdfExportService**: Added comprehensive tests for PDF export service (Roadmap Technical Debt - Test Coverage) - 31 tests (100% pass rate) covering initialization, createReport, createGradesReport, createAttendanceReport, createConsolidatedReport, calculateAverage, and edge cases (PR #1275)
         - **Test Coverage for pdfExportService**: Added comprehensive tests for PDF export service (Issue: Roadmap Technical Debt - Test Coverage) - 31 tests (100% pass rate) covering initialization, createReport, createGradesReport, createAttendanceReport, createConsolidatedReport, calculateAverage, and edge cases
 
 ### Backend (Cloudflare Workers)
