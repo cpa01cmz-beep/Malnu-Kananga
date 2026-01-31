@@ -2,62 +2,37 @@
 
 ## In Progress
 
-### [BUILDER] Integrate Quiz Results with Grade Analytics (Issue #1288) ✅
+## Completed
+
+### [BUILDER] Add QuizIntegrationDashboard to Teacher Navigation Menu/Routing (Follow-up to Issue #1288) ✅
 - **Mode**: BUILDER
-- **Issue**: #1288
-- **Priority**: P2 (Enhancement)
+- **Priority**: P2 (Feature Completion)
 - **Status**: Completed
 - **Started**: 2026-01-31
 - **Completed**: 2026-01-31
-- **Reason**: quizGradeIntegrationService exists (438 lines) but is not imported or used anywhere. Quiz results remain isolated without automatic conversion to grade entries.
-- **Acceptance Criteria** (from Issue #1288):
-  1. [✅] Quiz attempts automatically integrated with grades on completion (QuizIntegrationDashboard provides batch integration)
-  2. [✅] Grade entries created with assignmentType='quiz' (handled by quizGradeIntegrationService)
-  3. [✅] Quiz grades appear in AcademicGrades component (added quiz column and updated formula)
-  4. [✅] GradeAnalytics includes quiz data in analytics (already has assignment type filter)
-  5. [✅] Deduplication prevents duplicate grade entries (service handles this)
-  6. [✅] Batch integration button for pending quiz attempts (QuizIntegrationDashboard provides this)
-  7. [✅] Integration status dashboard showing pending/integrated counts (QuizIntegrationDashboard provides this)
-  8. [✅] Error handling and logging for integration failures (handled by service and dashboard)
-  9. [✅] Tests for integration (8 tests passing for QuizIntegrationDashboard)
-  10. [✅] Documentation updated with integration flow
-- **Deliverables**:
-  - ✅ Created QuizIntegrationDashboard.tsx component (292 lines) for teachers
-    - Integration status display (total/integrated/pending counts)
-    - Batch integration button with loading states
-    - Toast notifications for success/error/warning/info
-    - Error details display for failed integrations
-    - Progress bar showing integration completion percentage
-  - ✅ Updated AcademicGrades.tsx to support quiz grades
-    - Added `quiz` field to GradeItem interface
-    - Updated grade aggregation to include quiz type
-    - Updated final score formula: assignment*30% + mid*30% + final*40% + quiz*10%
-    - Added quiz column to grades table
-    - Updated table colSpan from 6 to 7
-  - ✅ Verified GradeAnalytics.tsx already has quiz support
-    - AssignmentTypeFilter includes 'quiz' type
-    - Assignment type filter UI includes quiz option
-    - Filtering logic includes quiz grades
-  - ✅ Added comprehensive tests for QuizIntegrationDashboard (8 tests passing)
-    - Initial State tests (3 tests)
-    - Integration Status Display tests (2 tests)
-    - Batch Integration tests (2 tests)
-    - Error Handling tests (1 test)
-    - User Interactions tests (2 tests)
-- **Files Created**:
-  - src/components/QuizIntegrationDashboard.tsx - Integration dashboard for teachers
-  - src/components/__tests__/QuizIntegrationDashboard.test.tsx - Comprehensive tests
+- **Reason**: QuizIntegrationDashboard component was created but is not accessible from teacher dashboard. Teachers need easy access to integrate quiz attempts into grades.
+- **Acceptance Criteria**:
+  1. [✅] Import QuizIntegrationDashboard component in TeacherDashboard
+  2. [✅] Add 'quiz-integration' to ViewState type
+  3. [✅] Add dashboard action card for QuizIntegrationDashboard on home view
+  4. [✅] Add conditional render for quiz-integration view
+  5. [✅] Update voice command navigation to include 'quiz-integration' view
+  6. [✅] Ensure proper permission checking for access
+  7. [✅] Run type checking and linting
 - **Files Modified**:
-  - src/components/AcademicGrades.tsx - Added quiz grade support (GradeItem interface, aggregation, table)
-- **Impact**: Teachers can now integrate quiz attempts into grades using QuizIntegrationDashboard; Students can view quiz grades in AcademicGrades alongside other assessment types; Quiz grades factor into GPA calculations with 10% weight (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX)
+  - src/components/TeacherDashboard.tsx
+- **Changes Made**:
+  1. Line 17: Added import `import QuizIntegrationDashboard from './QuizIntegrationDashboard';`
+  2. Line 49: Added 'quiz-integration' to ViewState type
+  3. Line 186: Added 'quiz-integration' to validViews array in voice command navigation
+  4. Lines 554-563: Added dashboard action card for QuizIntegrationDashboard (indigo colorTheme, placed after "Buat Kuis AI" card to keep quiz-related features together)
+  5. Line 633: Added conditional render `{currentView === 'quiz-integration' && <QuizIntegrationDashboard ... />}`
+- **Impact**: Teachers can now easily access QuizIntegrationDashboard from teacher dashboard to batch integrate quiz attempts into grades; Voice commands can navigate to quiz integration; Feature completion for Issue #1288 (Pillars 9: Feature Ops, 16: UX/DX)
 - **Verification**:
   - ✅ TypeScript type checking: Passed (0 errors)
   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
   - ✅ QuizIntegrationDashboard tests: 8/8 passing (100%)
-- **Next Steps**: Add QuizIntegrationDashboard to teacher navigation menu/routing for easy access
-
-
-## Completed
+- **Dependencies**: Issue #1288 completed
 
 ### [SCRIBE MODE] Fix Documentation Location Inconsistency (Issue #1285) ✅
 - **Mode**: SCRIBE

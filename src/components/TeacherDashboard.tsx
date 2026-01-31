@@ -14,6 +14,7 @@ import AssignmentCreation from './AssignmentCreation';
 import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
 import { QuizGenerator } from './QuizGenerator';
+import QuizIntegrationDashboard from './QuizIntegrationDashboard';
 import { DirectMessage } from './DirectMessage';
 import { GroupChat } from './GroupChat';
 import { ToastType } from './Toast';
@@ -45,7 +46,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'messages' | 'groups';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'quiz-integration' | 'messages' | 'groups';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -182,7 +183,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'messages', 'groups'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'quiz-integration', 'messages', 'groups'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -549,6 +550,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('academic.grades') && (
+                        <DashboardActionCard
+                            icon={<ClipboardDocumentCheckIcon />}
+                            title="Integrasi Kuis"
+                            description="Integrasikan hasil kuis ke dalam sistem penilaian."
+                            colorTheme="indigo"
+                            statusBadge="Integrasi"
+                            offlineBadge="Mode Tertunda"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('quiz-integration')}
+                            ariaLabel="Buka Dashboard Integrasi Kuis"
+                        />
+                    )}
+
                     {checkPermission('communication.messages') && (
                         <DashboardActionCard
                             icon={<ChatBubbleLeftRightIcon />}
@@ -615,6 +630,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'assignment-grading' && <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'analytics' && <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>}
         {currentView === 'quiz-generator' && <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />}
+        {currentView === 'quiz-integration' && <QuizIntegrationDashboard onBack={() => setCurrentView('home')} onShowToast={handleToast} />}
         {currentView === 'messages' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
