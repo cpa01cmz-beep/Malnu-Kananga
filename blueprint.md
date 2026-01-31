@@ -968,11 +968,20 @@ npm run typecheck         # Run TypeScript compiler
   - Added comprehensive exports to package.json (main field, default exports, wildcard exports, package.json export)
   - Fixed dist/index.js to include .js extension in ESM import
   - Added postinstall script to .opencode/package.json for automatic patching
-  - All 8 custom tools now execute successfully (check-console-logs, check-missing-error-handling, find-hardcoded-urls, find-untyped, check-storage-keys, etc.)
-  - Documentation added in .opencode/PATCH_README.md
-- **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
- - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
-   - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+   - All 8 custom tools now execute successfully (check-console-logs, check-missing-error-handling, find-hardcoded-urls, find-untyped, check-storage-keys, etc.)
+   - Documentation added in .opencode/PATCH_README.md
+- **Custom Analysis Tools False Positive Reduction**: Fixed false positives in check-missing-error-handling and check-storage-keys (Issue #1280, P1)
+   - Rewrote check-missing-error-handling to use context-based analysis instead of simplistic grep patterns
+   - Increased error detection context from 10 to 30 lines
+   - Added error recovery pattern exclusions (withCircuitBreaker, retryWithBackoff, CircuitBreaker)
+   - Improved error handling pattern matching (try {, catch, throw, .catch(), error callbacks)
+   - Rewrote check-storage-keys to use context-based analysis with 5-line before/after context
+   - Added variable assignment detection for STORAGE_KEYS (e.g., `const key = STORAGE_KEYS.X`)
+   - Added exclusion patterns for legitimate fallback values and documented cases
+    - Both tools now return filtered, relevant results instead of overwhelming false positives
+    - Significantly improves reliability of automated code analysis (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+  - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
+    - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
    - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
    - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
    - TypeScript type checking and ESLint linting passed
