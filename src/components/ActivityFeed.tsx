@@ -5,13 +5,14 @@ import Card from './ui/Card';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, ACTIVITY_NOTIFICATION_CONFIG } from '../constants';
 import { SparklesIcon } from './icons/SparklesIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
+import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
 
 export type ActivityType =
   | 'grade_updated'
@@ -123,6 +124,18 @@ const getGroupedActivities = (activities: Activity[]) => {
     .map(([label, activities]) => ({ label, activities }));
 };
 
+const generateNotificationTitle = (event: RealTimeEvent): string => {
+  const label = ACTIVITY_TYPE_LABELS[event.type as ActivityType];
+  return label?.label || 'Aktivitas Baru';
+};
+
+const generateNotificationBody = (event: RealTimeEvent): string => {
+  const activityInfo = ACTIVITY_TYPE_LABELS[event.type as ActivityType];
+  const entityLabel = activityInfo?.label || event.entity || 'Item';
+  const userLabel = event.userId === event.userRole ? 'Anda' : event.userRole;
+  return `${userLabel} - ${entityLabel}`;
+};
+
 const formatRelativeTime = (timestamp: string): string => {
   const now = new Date();
   const activityTime = new Date(timestamp);
@@ -195,6 +208,34 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
         localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(updated));
         return updated;
       });
+
+      const settings = unifiedNotificationManager.getUnifiedSettings();
+      if (settings.enabled) {
+        const notificationType = ACTIVITY_NOTIFICATION_CONFIG.getNotificationType(event.type);
+        const shouldTrigger = ACTIVITY_NOTIFICATION_CONFIG.shouldTriggerNotification(event.type, settings);
+
+        if (shouldTrigger) {
+          const priority = ACTIVITY_NOTIFICATION_CONFIG.getPriority(event.type);
+          const notification = {
+            id: `activity-${event.type}-${event.entityId}-${Date.now()}`,
+            type: notificationType,
+            title: generateNotificationTitle(event),
+            body: generateNotificationBody(event),
+            timestamp: new Date().toISOString(),
+            read: false,
+            priority: priority === 'high' ? 'high' : priority === 'normal' ? 'normal' : 'low' as 'high' | 'normal' | 'low',
+            targetRoles: undefined,
+            data: {
+              activityId: event.type,
+              entityType: event.entity,
+              entityId: event.entityId,
+              event,
+            },
+          };
+          unifiedNotificationManager.showNotification(notification);
+          logger.debug(`Notification triggered for event: ${event.type}`);
+        }
+      }
     },
   });
 

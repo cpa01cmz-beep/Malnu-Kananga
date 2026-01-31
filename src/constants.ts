@@ -381,6 +381,42 @@ export const VOICE_NOTIFICATION_CONFIG = {
     HIGH_PRIORITY_TYPES: ['grade', 'attendance', 'system'],
 } as const;
 
+const HIGH_PRIORITY_EVENTS: string[] = ['grade_created', 'grade_updated', 'attendance_updated', 'announcement_created', 'message_created'];
+const NORMAL_PRIORITY_EVENTS: string[] = ['library_material_added', 'event_created', 'event_updated'];
+const LOW_PRIORITY_EVENTS: string[] = ['library_material_updated', 'announcement_updated', 'message_updated', 'attendance_marked'];
+
+export const ACTIVITY_EVENT_PRIORITY = {
+    HIGH: HIGH_PRIORITY_EVENTS,
+    NORMAL: NORMAL_PRIORITY_EVENTS,
+    LOW: LOW_PRIORITY_EVENTS,
+} as const;
+
+export const ACTIVITY_NOTIFICATION_CONFIG = {
+    getPriority: (eventType: string): 'high' | 'normal' | 'low' => {
+        if (HIGH_PRIORITY_EVENTS.includes(eventType)) {
+            return 'high';
+        }
+        if (NORMAL_PRIORITY_EVENTS.includes(eventType)) {
+            return 'normal';
+        }
+        return 'low';
+    },
+    getNotificationType: (eventType: string): 'grade' | 'announcement' | 'event' | 'library' | 'system' => {
+        if (eventType.startsWith('grade')) return 'grade';
+        if (eventType.startsWith('attendance')) return 'system';
+        if (eventType.startsWith('library')) return 'library';
+        if (eventType.startsWith('announcement')) return 'announcement';
+        if (eventType.startsWith('event')) return 'event';
+        if (eventType.startsWith('message')) return 'system';
+        return 'system';
+    },
+    shouldTriggerNotification: (eventType: string, settings?: { grades?: boolean; announcements?: boolean; events?: boolean; library?: boolean; system?: boolean }): boolean => {
+        const type = ACTIVITY_NOTIFICATION_CONFIG.getNotificationType(eventType);
+        const settingKey = type === 'announcement' ? 'announcements' : type;
+        return settings?.[settingKey as keyof typeof settings] !== false;
+    },
+} as const;
+
 export const OPACITY_TOKENS = {
     WHITE_10: 'bg-white/10%',
     WHITE_20: 'bg-white/20%',

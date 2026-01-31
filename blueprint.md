@@ -68,19 +68,20 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
  - **Routing**: React Router DOM 7.12.0
  - **Icons**: Heroicons React 2.2.0
 
- ### Bug Fixes (2026-01-22 - 2026-01-31)
-     - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
-     - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
-     - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
-     - **Speech Synthesis Error Recovery**: Added retry logic with exponential backoff and circuit breaker for synthesis failures (GAP-111, P2)
-     - **Async Function Error Handling**: Added lazy AI client initialization with error handling for ocrEnhancementService and geminiService (Issue #1243, P1)
-     - **GradeAnalytics Test Failures**: Fixed 8 failing tests by refactoring useEffect pattern, adding missing mock data, and improving test matchers (Issue #1240, P1) - 19/19 tests passing (100%)
-     - **QuizGenerator Test Failures**: Fixed 6/7 failing tests by improving checkbox testing, focus areas handling, and error state management (Issue #1239, P1) - 26/28 tests passing (92.9%)
-      - **Duplicate Key Warning**: Fixed React duplicate key warning in GradeAnalytics by adding deduplication logic using Map-based filtering (Issue #1251, P2)
-      - **GitHub Issues Synchronization**: Closed 3 P1/P2 issues (#1240, #1239, #1247) with proper references to resolving commits (SCRIBE MODE)
-      - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2); Fixed remaining hardcoded keys in emailNotificationService (Issue #1269, P1)
-      - **CI Workflow Deadlock**: Fixed turnstyle deadlock by changing same-branch-only to true (Issue #1258, P1)
-      - **Custom Analysis Tools Package Error**: Fixed ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin by creating automatic patch script that adds comprehensive exports and fixes ESM import extensions (Issue #1274, P1) - All 8 custom tools now execute successfully
+  ### Bug Fixes & Enhancements (2026-01-22 - 2026-01-31)
+      - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
+      - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
+      - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
+      - **Speech Synthesis Error Recovery**: Added retry logic with exponential backoff and circuit breaker for synthesis failures (GAP-111, P2)
+      - **Async Function Error Handling**: Added lazy AI client initialization with error handling for ocrEnhancementService and geminiService (Issue #1243, P1)
+      - **GradeAnalytics Test Failures**: Fixed 8 failing tests by refactoring useEffect pattern, adding missing mock data, and improving test matchers (Issue #1240, P1) - 19/19 tests passing (100%)
+      - **QuizGenerator Test Failures**: Fixed 6/7 failing tests by improving checkbox testing, focus areas handling, and error state management (Issue #1239, P1) - 26/28 tests passing (92.9%)
+       - **Duplicate Key Warning**: Fixed React duplicate key warning in GradeAnalytics by adding deduplication logic using Map-based filtering (Issue #1251, P2)
+       - **GitHub Issues Synchronization**: Closed 3 P1/P2 issues (#1240, #1239, #1247) with proper references to resolving commits (SCRIBE MODE)
+       - **Hardcoded localStorage Keys**: Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants (Issue #1244, P2); Fixed remaining hardcoded keys in emailNotificationService (Issue #1269, P1)
+       - **CI Workflow Deadlock**: Fixed turnstyle deadlock by changing same-branch-only to true (Issue #1258, P1)
+       - **Custom Analysis Tools Package Error**: Fixed ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin by creating automatic patch script that adds comprehensive exports and fixes ESM import extensions (Issue #1274, P1) - All 8 custom tools now execute successfully
+      - **Activity Feed Notification Integration**: Integrated ActivityFeed with unifiedNotificationManager to automatically trigger push notifications for important events (Issue #1232, P2) - 21 tests covering notification triggering, filtering, content generation, and integration
 
 ### Backend (Cloudflare Workers)
 - **Runtime**: Serverless (Cloudflare Workers)
@@ -397,23 +398,44 @@ scripts/                    # Build and deployment scripts
    - Quiet hours support for email notifications
    - Digest mode (daily/weekly email digest to reduce notification fatigue)
    - Email delivery tracking and analytics
-   - Email fallback if push notifications fail
-   - Test email functionality for user verification
+    - Email fallback if push notifications fail
+    - Test email functionality for user verification
 - **Types**:
-   - EmailNotificationPreferences - User email notification settings
-   - EmailDigestItem - Digest queue item
-   - EmailNotificationDelivery - Email delivery status
+    - EmailNotificationPreferences - User email notification settings
+    - EmailDigestItem - Digest queue item
+    - EmailNotificationDelivery - Email delivery status
 - **Templates**:
-   - announcement-notification - New announcements
-   - grade-update-notification - Grade updates (existing)
-   - ppdb-notification - PPDB status updates
-   - library-notification - New materials in e-library
-   - missing-grades-notification - Missing grades alerts
-   - system-notification - System notifications (existing)
-   - event-reminder - Event reminders (existing)
-   - attendance-report - Attendance reports (existing)
-   - progress-report - Progress reports (existing)
+    - announcement-notification - New announcements
+    - grade-update-notification - Grade updates (existing)
+    - ppdb-notification - PPDB status updates
+    - library-notification - New materials in e-library
+    - missing-grades-notification - Missing grades alerts
+    - system-notification - System notifications (existing)
+    - event-reminder - Event reminders (existing)
+    - attendance-report - Attendance reports (existing)
+    - progress-report - Progress reports (existing)
 - **Test Coverage**: 20 tests (100% pass rate)
+
+#### ActivityFeed.tsx (Notification Integration - 2026-01-31)
+- **Purpose**: Activity feed with automatic push notification integration
+- **Features**:
+    - Real-time event tracking via WebSocket
+    - Automatic notification triggering for important events
+    - Event priority-based notification filtering (HIGH/NORMAL/LOW)
+    - User notification preferences respected
+    - Quiet hours respected
+    - Notification content generation from activity events
+    - Activity list with read/unread status
+    - Notification history synced with ActivityFeed read status
+- **Event Priority Mapping**:
+    - HIGH: grade_created, grade_updated, attendance_updated, announcement_created, message_created
+    - NORMAL: library_material_added, event_created, event_updated
+    - LOW: library_material_updated, announcement_updated, message_updated, attendance_marked
+- **Integration Points**:
+    - unifiedNotificationManager.showNotification() - Triggers push notifications
+    - unifiedNotificationManager.getUnifiedSettings() - Checks user preferences
+    - ACTIVITY_NOTIFICATION_CONFIG - Event priority and type mapping
+- **Test Coverage**: 21 tests (notification triggering, filtering, content generation, integration)
 
 ### Validation & Error Recovery Utilities
 

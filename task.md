@@ -2,6 +2,45 @@
 
 ## Completed
 
+### [BUILDER] Integrate Activity Feed with Notification System (Issue #1232) ✅
+- **Mode**: BUILDER
+- **Issue**: #1232
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: ActivityFeed tracks events via WebSocket but does not trigger push notifications for important events. Creates weak coupling between event tracking and notification delivery.
+- **Requirements**:
+  1. ActivityFeed integrates with unifiedNotificationManager ✅
+  2. Important events trigger push notifications automatically ✅
+  3. User notification preferences are respected ✅
+  4. Events are prioritized based on importance ✅
+  5. Batching option available to avoid notification spam ✅
+  6. Quiet hours respected ✅
+  7. Notifications link back to relevant view ✅
+  8. Notification history synced with ActivityFeed read status ✅
+- **Deliverables**:
+  - ✅ Add event priority constants to constants.ts (ACTIVITY_EVENT_PRIORITY, ACTIVITY_NOTIFICATION_CONFIG)
+  - ✅ Modify ActivityFeed.tsx to integrate with unifiedNotificationManager
+  - ✅ Create notification from activity events (generateNotificationTitle, generateNotificationBody)
+  - ✅ Check user preferences and quiet hours before sending
+  - ✅ Trigger notifications based on event priority
+  - ✅ Link notifications to appropriate views (data property with entityType, entityId)
+  - ✅ Add tests for notification integration
+- **Files Created**:
+  1. ✅ src/components/__tests__/ActivityFeed.notifications.test.tsx - Comprehensive tests for notification integration
+- **Files Modified**:
+  1. ✅ src/constants.ts - Added ACTIVITY_EVENT_PRIORITY, ACTIVITY_NOTIFICATION_CONFIG
+  2. ✅ src/components/ActivityFeed.tsx - Integrated notification triggering logic
+- **Test Coverage**: 21 tests covering notification triggering, filtering, content generation, and integration
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+- **Impact**: Improves user engagement by proactively informing users of important updates (Pillars 1: Flow, 5: Integrations, 16: UX/DX)
+- **Issue Status**: Ready to be closed with PR
+
+## Completed
+
 ### [SANITIZER] Fix Custom Analysis Tools Package Configuration Error (Issue #1274) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1274

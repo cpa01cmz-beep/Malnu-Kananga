@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.3.4
-**Last Updated**: 2026-01-31 (Fixed Custom Analysis Tools Package Configuration Error)
+**Version**: 3.4.2
+**Last Updated**: 2026-01-31 (Activity Feed Notification Integration)
    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -722,6 +722,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    | 3.4.1 | 2026-01-30 | Test Coverage for performanceMonitor Service: Added comprehensive tests for performanceMonitor service (57 tests, 100% pass rate) covering initialization, request tracking, API response recording, statistics calculation, error rate calculation, threshold checks, metrics management, export functionality, and enable/disable monitoring; All TypeScript type checks and ESLint linting passed |
    | 3.4.2 | 2026-01-30 | Test Coverage for errorMonitoringService: Added comprehensive tests for errorMonitoringService (40 tests, 100% pass rate) covering initialization, user context, error/message capture, tags/extras, breadcrumbs, performance transactions, flush, and integration; All TypeScript type checks and ESLint linting passed |
   | 3.4.0 | 2026-01-30 | Add OCR Integration for Attendance Management (Issue #820): Added attendanceOCRService with AI-powered attendance extraction and AttendanceManagement component for automated attendance sheet processing; Features include pattern recognition for attendance statuses, student matching by NIS/name with confidence scoring, progress callbacks, validation indicators, and 11 tests (81.8% pass rate) |
+| 3.4.1 | 2026-01-31 | Activity Feed Notification Integration (Issue #1232): Integrated ActivityFeed with unifiedNotificationManager to automatically trigger push notifications for important events; Added ACTIVITY_EVENT_PRIORITY and ACTIVITY_NOTIFICATION_CONFIG constants; Event priority-based notification filtering (HIGH/NORMAL/LOW); User notification preferences respected; Quiet hours respected; 21 tests covering notification triggering, filtering, content generation, and integration |
    | 3.4.1 | 2026-01-30 | Test Coverage for High-Priority Services: Added comprehensive test coverage for offlineActionQueueService (35 tests), ocrService (8 tests), and offlineDataService (24 tests); Total 67 new tests (100% pass rate), 3 skipped due to React mocking complexity; TypeScript type checking passed, ESLint linting passed |
   | 3.3.1 | 2026-01-30 | Integrate Quiz Results with Grade Analytics (Issue #1246): Added quizGradeIntegrationService for automatic grade entry creation from quiz attempts, added assignment type filter to GradeAnalytics component |
   | 3.3.0 | 2026-01-30 | Integrate PPDB Registration with Student Management (Issue #1248): Added ppdbIntegrationService with 8-stage pipeline, automatic NIS generation, parent account creation, student record creation, email notifications, and comprehensive test coverage (13 tests, 100% passing) |
