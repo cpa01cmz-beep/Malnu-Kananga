@@ -2,6 +2,39 @@
 
 ## In Progress
 
+### [SANITIZER] Fix Skipped Test in offlineActionQueueService.test.ts - Issue #1302 ✅
+- **Mode**: SANITIZER
+- **Issue**: #1302
+- **Priority**: P3 (Bug Fix)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Test is skipped due to `isNetworkError` implementation issue. `offlineActionQueueService.ts` imports `isNetworkError` from `networkStatus.ts` which checks for custom NetworkError type, but `createOfflineApiCall` catches standard Error objects from fetch(). Should use `isNetworkError` from `retry.ts` which checks error message patterns.
+- **Implementation Completed**:
+  1. ✅ Updated import in `offlineActionQueueService.ts` (line 13)
+     - Changed: `import { isNetworkError, useNetworkStatus } from '../utils/networkStatus';`
+     - To: `import { useNetworkStatus } from '../utils/networkStatus';` and `import { isNetworkError } from '../utils/retry';`
+  2. ✅ Fixed error handling in `createOfflineApiCall` (lines 785-804)
+     - Added: `const errorObj = error instanceof Error ? error : new Error(String(error));`
+     - Updated: `if (isNetworkError(errorObj) || !isOnline)` to use typed Error object
+  3. ✅ Enabled skipped test in `offlineActionQueueService.test.ts` (lines 717-741)
+     - Removed `it.skip` and implemented full test logic
+     - Tests queuing on network error when online
+     - Verifies proper error message handling and queue behavior
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Test suite: 35 passed, 1 skipped (React hook test, unrelated)
+  - ✅ Previously skipped test now passes
+- **Impact**:
+  - Fixes skipped test (Pillar 3: Stability)
+  - Ensures proper offline queue behavior on network errors (Pillar 7: Debug)
+  - Uses consistent error detection pattern (Pillar 2: Standardization)
+  - All network errors now properly trigger offline queuing (Pillar 1: Flow)
+- **Files Modified**:
+  - src/services/offlineActionQueueService.ts - Updated import and error handling
+  - src/services/__tests__/offlineActionQueueService.test.ts - Enabled previously skipped test
+
 ### [BUILDER] Integrate Communication Log Service with Messaging Components - Issue #1304 ✅
 - **Mode**: BUILDER
 - **Issue**: #1304
