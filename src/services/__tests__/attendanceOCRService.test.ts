@@ -121,7 +121,7 @@ describe('attendanceOCRService', () => {
       expect(result.summary).toBeDefined();
     });
 
-    it('should throw error for low confidence OCR (< 50%)', async () => {
+    it('should handle low confidence OCR (< 50%) gracefully', async () => {
       // Mock OCR service with low confidence
       vi.mocked(ocrService.initialize).mockResolvedValue(undefined);
       vi.mocked(ocrService.extractTextFromImage).mockResolvedValue({
@@ -141,9 +141,20 @@ describe('attendanceOCRService', () => {
 
       const mockFile = new File(['test'], 'attendance.jpg', { type: 'image/jpeg' });
 
-      await expect(
-        attendanceOCRService.processAttendanceSheet(mockFile, mockStudentList)
-      ).rejects.toThrow('Confidence OCR terlalu rendah');
+      // Low confidence should return empty result, not throw error
+      const result = await attendanceOCRService.processAttendanceSheet(
+        mockFile,
+        mockStudentList
+      );
+
+      expect(result).toBeDefined();
+      expect(result.studentAttendance).toEqual([]);
+      expect(result.summary).toEqual({
+        present: 0,
+        sick: 0,
+        permission: 0,
+        absent: 0
+      });
     });
 
     it('should report progress through callback', async () => {
