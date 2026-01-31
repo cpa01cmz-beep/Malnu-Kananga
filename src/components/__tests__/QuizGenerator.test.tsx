@@ -113,14 +113,16 @@ describe('QuizGenerator', () => {
       });
     });
 
-    it('should show loading state when materials are loading', () => {
+    it('should show loading state when materials are loading', async () => {
       vi.mocked(apiService.eLibraryAPI)?.getAll.mockImplementation(
         () => new Promise(() => {})
       );
 
       render(<QuizGenerator />);
-      
-      expect(screen.getByRole('status')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByRole('status')).toBeInTheDocument();
+      });
     });
 
     it('should display empty state when no materials available', async () => {
