@@ -127,6 +127,10 @@ export const STORAGE_KEYS = {
     OFFLINE_STUDENT_DATA: 'malnu_offline_student_data',
     OFFLINE_PARENT_DATA: 'malnu_offline_parent_data',
     
+    // Offline data service for teacher/admin dashboards (Issue #1315)
+    OFFLINE_TEACHER_DATA: 'malnu_offline_teacher_data',
+    OFFLINE_ADMIN_DATA: 'malnu_offline_admin_data',
+    
     // Email Service (new)
     EMAIL_TEMPLATES: 'malnu_email_templates',
     EMAIL_QUEUE: 'malnu_email_queue',
