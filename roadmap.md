@@ -441,11 +441,14 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 ### Current Technical Debt Items
 
 1. **Test Coverage**
-   - **Status**: 🔴 High Priority
-   - **Issue**: Incomplete test coverage for some services
-   - **Effort**: 2-3 weeks
-   - **Target**: 2026-02-28
-   - **Impact**: Improves code quality and reduces regressions
+    - **Status**: 🟡 In Progress
+    - **Issue**: Incomplete test coverage for some services
+    - **Effort**: 2-3 weeks
+    - **Target**: 2026-02-28
+    - **Impact**: Improves code quality and reduces regressions
+    - **Recent Progress** (2026-01-31):
+      - ✅ Added test coverage for pdfExportService (31 tests, 100% pass rate)
+      - Services with tests: 19/35 (54.3%)
 
 2. **Type Safety**
    - **Status**: 🟡 Medium Priority
