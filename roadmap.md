@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.5.2
-**Last Updated**: 2026-01-31 (Issue #1304: Communication Log Service Integration)
+ **Version**: 3.5.3
+**Last Updated**: 2026-01-31 (Issue #1302: Fix Skipped Test in offlineActionQueueService)
     **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -589,6 +589,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Fix WebSocket memory leak (Issue #1223, P1)
 - ✅ Fix test suite timeout issue (Issue #1193, #1225)
 - ✅ Fix incomplete useOfflineActionQueue mocks (Issue #1236, P0) - 2026-01-23
+- ✅ Fix skipped test in offlineActionQueueService.test.ts (Issue #1302, P3) - 2026-01-31
 - ✅ Enhance notification system reliability
 - ✅ Standardize material upload validation - 2026-01-29
 - ✅ Standardize voice settings validation
@@ -600,12 +601,22 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 - ✅ Fix QuizGenerator test failures (6/7 tests fixed) - 2026-01-29
 - ✅ Synchronize GitHub issues with completed work - 2026-01-29
 - ✅ Fix duplicate key warning in GradeAnalytics (Issue #1251) - 2026-01-29
-  - ✅ Synchronize GitHub issues with completed work (4 issues closed) - 2026-01-29
-   - ✅ Fix React act() warnings in GradeAnalytics tests (Issue #1250) - 2026-01-30 (fixed 6 user interactions wrapped in act())
-   - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
-   - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
-    - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
-     - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+            - ✅ Synchronize GitHub issues with completed work (4 issues closed) - 2026-01-29
+            - ✅ Fix React act() warnings in GradeAnalytics tests (Issue #1250) - 2026-01-30 (fixed 6 user interactions wrapped in act())
+            - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
+            - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
+             - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
+              - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+              - ✅ Fix useCanAccess Hook Stale User Data (Issue #1301, P2) - 2026-01-31
+                - Created useAuth hook (77 lines) with reactive auth state management
+                - Added storage event listener to detect auth token changes
+                - Added window focus listener to re-check auth state
+                - Added periodic check (5s interval) for token updates
+                - Updated useCanAccess to use reactive useAuth instead of memoized user
+                - Comprehensive tests: 23 tests (23 passed, 1 skipped)
+                - TypeScript type checking: Passed (0 errors)
+                - ESLint linting: Passed (0 errors, 0 warnings)
+                - Fixes security vulnerability where permission checks use stale user data (Pillars 3: Stability, 4: Security, 11: Modularity, 16: UX/DX)
         - ✅ Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) - 2026-01-31
           - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
           - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
@@ -804,6 +815,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
   | Version | Date | Changes |
   |---------|------|---------|
+  | 3.5.3 | 2026-01-31 | Fix Skipped Test in offlineActionQueueService.test.ts (Issue #1302, P3): Fixed network error detection by updating import to use `isNetworkError` from retry.ts instead of networkStatus.ts; Fixed error handling in createOfflineApiCall to properly type-check errors (const errorObj = error instanceof Error ? error : new Error(String(error))); Enabled previously skipped test "should queue on network error when online" with full implementation; Tests queuing on network error when online, verifying proper error message handling and queue behavior; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Test suite: 35 passed, 1 skipped (React hook test, unrelated); Ensures proper offline queue behavior on network errors; Uses consistent error detection pattern across codebase (Pillars 1: Flow, 2: Standardization, 3: Stability, 7: Debug) |
   | 3.5.2 | 2026-01-31 | Integrate Communication Log Service with Messaging Components (Issue #1304, P2): Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName); Created CommunicationDashboard component with filtering (type, status, keyword), export buttons (PDF/CSV), statistics cards (total messages, meetings, calls, notes), and delete functionality; Added CommunicationDashboard to TeacherDashboard navigation with DocumentTextIcon (green colorTheme); Added 'communication-log' to ViewState type and voice command validViews; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Provides audit trail for parent-teacher communications; Enables analytics and reporting; Improves communication tracking and compliance (Pillars 1: Flow, 5: Integrations, 6: Optimization Ops, 16: UX/DX) |
   | 3.5.1 | 2026-01-31 | Fix Circular Dependency Between apiService.ts and api/index.ts (Issue #1303, P1): Fixed Rollup build warnings showing circular dependency between apiService.ts (backward compatibility shim) and services/api/index.ts; Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk; Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`; Build completed successfully with NO circular dependency warnings; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates potential runtime issues from broken execution order; Improves build stability and reliability (Pillars 3: Stability, 7: Debug); No breaking changes - 84 files continue to use apiService.ts imports; Future enhancement: Consider migrating all imports to services/api/index.ts for cleaner architecture |
  | 3.4.9 | 2026-01-31 | QuizIntegrationDashboard Navigation Integration (Follow-up to Issue #1288): Added QuizIntegrationDashboard component import to TeacherDashboard.tsx; Added 'quiz-integration' to ViewState type; Added 'quiz-integration' to validViews array in voice command navigation; Added dashboard action card for QuizIntegrationDashboard with indigo colorTheme (placed after "Buat Kuis AI" card to keep quiz-related features together); Added conditional render for quiz-integration view with proper permission checking (academic.grades); Teachers can now easily access QuizIntegrationDashboard from teacher dashboard to batch integrate quiz attempts into grades; TypeScript type checking passed (0 errors); ESLint linting passed (0 errors); QuizIntegrationDashboard tests: 8/8 passing (100%); Completes Issue #1288 feature implementation (Pillars 9: Feature Ops, 16: UX/DX) |

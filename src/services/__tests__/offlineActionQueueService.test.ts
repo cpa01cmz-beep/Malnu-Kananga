@@ -714,13 +714,32 @@ describe('offlineActionQueueService', () => {
         expect(result.success).toBe(true);
       });
 
-      // Note: Skipping this test due to isNetworkError implementation issue
-      // offlineActionQueueService imports isNetworkError from networkStatus.ts
-      // which checks for custom NetworkError type, not string patterns
-      // TODO: Fix service to use retry.ts isNetworkError instead
-      it.skip('should queue on network error when online', async () => {
-        // Test would verify queuing on network error
-        expect(true).toBe(true);
+      it('should queue on network error when online', async () => {
+        Object.defineProperty(navigator, 'onLine', {
+          writable: true,
+          value: true,
+        });
+
+        const fetchError = new Error('Network Error');
+        global.fetch = vi.fn().mockRejectedValue(fetchError);
+
+        const apiCall = createOfflineApiCall(
+          '/api/grades',
+          'POST',
+          'create',
+          'grade',
+          { id: 'grade-1', score: 90 }
+        );
+
+        const result = await apiCall();
+
+        expect(result.success).toBe(false);
+        expect(result.message).toContain('Network error');
+        expect(result.message).toContain('queued');
+        expect(result.data).toHaveProperty('actionId');
+
+        const pendingCount = offlineActionQueueService.getPendingCount();
+        expect(pendingCount).toBe(1);
       });
     });
   });

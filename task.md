@@ -2,6 +2,39 @@
 
 ## In Progress
 
+### [SANITIZER] Fix Skipped Test in offlineActionQueueService.test.ts - Issue #1302 ✅
+- **Mode**: SANITIZER
+- **Issue**: #1302
+- **Priority**: P3 (Bug Fix)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Test is skipped due to `isNetworkError` implementation issue. `offlineActionQueueService.ts` imports `isNetworkError` from `networkStatus.ts` which checks for custom NetworkError type, but `createOfflineApiCall` catches standard Error objects from fetch(). Should use `isNetworkError` from `retry.ts` which checks error message patterns.
+- **Implementation Completed**:
+  1. ✅ Updated import in `offlineActionQueueService.ts` (line 13)
+     - Changed: `import { isNetworkError, useNetworkStatus } from '../utils/networkStatus';`
+     - To: `import { useNetworkStatus } from '../utils/networkStatus';` and `import { isNetworkError } from '../utils/retry';`
+  2. ✅ Fixed error handling in `createOfflineApiCall` (lines 785-804)
+     - Added: `const errorObj = error instanceof Error ? error : new Error(String(error));`
+     - Updated: `if (isNetworkError(errorObj) || !isOnline)` to use typed Error object
+  3. ✅ Enabled skipped test in `offlineActionQueueService.test.ts` (lines 717-741)
+     - Removed `it.skip` and implemented full test logic
+     - Tests queuing on network error when online
+     - Verifies proper error message handling and queue behavior
+- **Verification**:
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Test suite: 35 passed, 1 skipped (React hook test, unrelated)
+  - ✅ Previously skipped test now passes
+- **Impact**:
+  - Fixes skipped test (Pillar 3: Stability)
+  - Ensures proper offline queue behavior on network errors (Pillar 7: Debug)
+  - Uses consistent error detection pattern (Pillar 2: Standardization)
+  - All network errors now properly trigger offline queuing (Pillar 1: Flow)
+- **Files Modified**:
+  - src/services/offlineActionQueueService.ts - Updated import and error handling
+  - src/services/__tests__/offlineActionQueueService.test.ts - Enabled previously skipped test
+
 ### [BUILDER] Integrate Communication Log Service with Messaging Components - Issue #1304 ✅
 - **Mode**: BUILDER
 - **Issue**: #1304
@@ -43,6 +76,52 @@
 - **Verification**:
   - TypeScript type checking: Passed (0 errors)
   - ESLint linting: Passed (0 errors, 0 warnings)
+
+### [SANITIZER] Fix useCanAccess Hook Stale User Data - Issue #1301 ✅
+- **Mode**: SANITIZER
+- **Issue**: #1301
+- **Priority**: P2 (Security & Functionality)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: useCanAccess hook uses useMemo(() => authAPI.getCurrentUser(), []) with empty dependency array, causing user data to be captured only once on mount and never updated. This is a security issue where permission checks use stale data after login/logout/role changes. Violates Pillar 3 (Stability) and Pillar 4 (Security).
+- **Problem**:
+  - Line 21: `const user = useMemo(() => authAPI.getCurrentUser(), []);` - user data memoized with empty deps
+  - authAPI.getCurrentUser() reads JWT token from localStorage synchronously
+  - When user logs out, hook still returns old user
+  - When user's role changes, hook doesn't detect it
+  - Permission checks use stale data
+- **Implementation Completed**:
+  1. ✅ Created src/hooks/useAuth.ts (77 lines) - New reactive auth hook with state management
+     - useState for user and isAuthenticated
+     - useEffect with storage event listener to detect auth token changes
+     - Window focus listener to check auth state
+     - Periodic check (5s interval) for token updates
+     - refreshAuth function for manual auth state refresh
+  2. ✅ Updated src/hooks/useCanAccess.ts - Use new useAuth hook instead of memoized user
+     - Removed useMemo(() => authAPI.getCurrentUser(), []) at line 21
+     - Now uses const { user } = useAuth() for reactive auth state
+  3. ✅ Added comprehensive tests:
+     - src/hooks/__tests__/useAuth.test.ts (9 tests, 8 passed, 1 skipped)
+     - src/hooks/__tests__/useCanAccess.test.ts (15 tests, all passed)
+     - Tests cover initialization, auth state changes, refreshAuth function, cleanup, and role changes
+  4. ✅ Code quality verification:
+     - TypeScript type checking: Passed (0 errors)
+     - ESLint linting: Passed (0 errors, 0 warnings)
+- **Impact**:
+  - ✅ Fixes security vulnerability (Pillar 4: Security)
+  - ✅ Ensures permission checks use current user data (Pillar 3: Stability)
+  - ✅ Creates reusable auth state management (Pillar 11: Modularity)
+  - ✅ Improves developer experience with reactive auth (Pillar 16: UX/DX)
+- **Files Modified**:
+  - src/hooks/useAuth.ts - NEW (77 lines)
+  - src/hooks/useCanAccess.ts - Modified (removed stale useMemo)
+  - src/hooks/__tests__/useAuth.test.ts - NEW (236 lines)
+  - src/hooks/__tests__/useCanAccess.test.ts - NEW (252 lines)
+- **Verification**:
+  - TypeScript type checking: Passed (0 errors)
+  - ESLint linting: Passed (0 errors, 0 warnings)
+  - Tests: 23 passed, 1 skipped
 
 ### [OPTIMIZER] Enhance Test Coverage for High-Priority Services - Issue #1294 (New)
 - **Mode**: OPTIMIZER

@@ -10,7 +10,8 @@
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-import { isNetworkError, useNetworkStatus } from '../utils/networkStatus';
+import { useNetworkStatus } from '../utils/networkStatus';
+import { isNetworkError } from '../utils/retry';
 import type { ApiResponse } from './apiService';
 import { webSocketService, type RealTimeEvent } from './webSocketService';
 
@@ -783,21 +784,22 @@ export function createOfflineApiCall<T>(
       };
     } catch (error) {
       // Auto-queue on network failure
-      if (isNetworkError(error) || !isOnline) {
-          const actionId = offlineActionQueueService.addAction({
-            type: actionType,
-            entity: entityType,
-            entityId: String(data?.id || 'unknown'),
-            data,
-            endpoint,
-            method,
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      if (isNetworkError(errorObj) || !isOnline) {
+        const actionId = offlineActionQueueService.addAction({
+          type: actionType,
+          entity: entityType,
+          entityId: String(data?.id || 'unknown'),
+          data,
+          endpoint,
+          method,
         });
 
-return {
-        success: false,
-        message: `Network error. Action queued: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        data: { actionId, queued: true } as T,
-      };
+        return {
+          success: false,
+          message: `Network error. Action queued: ${errorObj.message}`,
+          data: { actionId, queued: true } as T,
+        };
       }
 
       throw error;
