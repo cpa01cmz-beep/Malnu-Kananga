@@ -131,19 +131,15 @@ export default defineConfig(({ mode }) => {
               return 'vendor-jpdf';
             }
 
-            // Recharts (charts - includes d3 dependency internally)
-            // Keep Recharts and React in same chunk to avoid circular dependency
-            if (id.includes('recharts') || id.includes('d3')) {
-              return 'vendor-charts';
-            }
-
-            // React core and React Router (be specific to avoid overlapping with Recharts)
+            // React core, React Router, and Charts together (avoid circular dependency)
             if (id.includes('/node_modules/react/') ||
                 id.includes('/node_modules/react-dom/') ||
                 id.includes('/node_modules/scheduler/') ||
                 id.includes('/node_modules/react-router/') ||
-                id.includes('/node_modules/@remix-run/')) {
-              return 'vendor-react';
+                id.includes('/node_modules/@remix-run/') ||
+                id.includes('recharts') ||
+                id.includes('d3')) {
+              return 'vendor-core';
             }
 
             // Test libraries (only in test mode)

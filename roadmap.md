@@ -1,7 +1,7 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.5.6
-    **Last Updated**: 2026-01-31 (Issue #1297: Fix README.md Version and Documentation Link Inconsistency)
+ **Version**: 3.5.7
+     **Last Updated**: 2026-01-31 (Issue #1313: Fix Circular Dependency in Build Chunks)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -859,11 +859,12 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ---
 
-## Version History
-
-   | Version | Date | Changes |
-   |---------|------|---------|
-   | 3.5.6 | 2026-01-31 | Fix README.md Version and Documentation Link Inconsistency (Issue #1297, P3): Updated README.md version from 3.4.6 to 3.5.6 to match blueprint.md (latest); Updated README.md documentation links to root directory (./blueprint.md, ./roadmap.md, ./task.md instead of ./docs/); Updated version badge from 3.4.6 to 3.5.6; Updated metrics table version from 3.3.0 to 3.5.6; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors); Ensures Single Source of Truth principle (Pillar 8: Documentation); Improves documentation accuracy and eliminates confusion (Pillars 7: Debug, 16: UX/DX) |
+ ## Version History
+ 
+    | Version | Date | Changes |
+    |---------|------|---------|
+    | 3.5.7 | 2026-01-31 | Fix Circular Dependency Between vendor-react and vendor-charts Chunks (Issue #1313, P1): Fixed Rollup build warning "Circular chunk: vendor-react -> vendor-charts -> vendor-react"; Combined React, React Router, and Charts (Recharts + D3) into single vendor-core chunk; Matches comment intent from line 135: "Keep Recharts and React in same chunk to avoid circular dependency"; Removed separate vendor-react and vendor-charts chunks; Build completed successfully with NO circular dependency warnings; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates potential runtime issues from broken execution order; Improves build stability and reliability (Pillars 3: Stability, 7: Debug) |
+    | 3.5.6 | 2026-01-31 | Fix README.md Version and Documentation Link Inconsistency (Issue #1297, P3): Updated README.md version from 3.4.6 to 3.5.6 to match blueprint.md (latest); Updated README.md documentation links to root directory (./blueprint.md, ./roadmap.md, ./task.md instead of ./docs/); Updated version badge from 3.4.6 to 3.5.6; Updated metrics table version from 3.3.0 to 3.5.6; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors); Ensures Single Source of Truth principle (Pillar 8: Documentation); Improves documentation accuracy and eliminates confusion (Pillars 7: Debug, 16: UX/DX) |
    | 3.5.5 | 2026-01-31 | Test Suite Performance Degradation Fix (Issue #1292, P3): Analyzed test suite performance and identified that tests run efficiently (~5.5s for 150 files, 454 tests) when using --bail=1; Individual test batches complete quickly (1-14s for UI components, 1-2s for services); Fixed QuizGenerator.test.tsx loading state test (added async/await for waitFor); Documented CI/CD best practices: use --bail=1 for PR checks (fail fast on first error), run full suite only on main/nightly builds, consider test batching for parallel execution (unit tests, component tests, integration tests), cache node_modules and .vitest directory; Test performance breakdown with --bail=1: Transform 2.13s, Setup 1.01s, Import 3.53s, Tests 2.89s, Environment 5.60s; The "timeout" appears to be CI/CD environment limitation, not actual test slowness; Improves CI/CD reliability and provides actionable recommendations (Pillars 3: Stability, 6: Optimization Ops, 7: Debug) |
    | 3.5.3 | 2026-01-31 | Fix Skipped Test in offlineActionQueueService.test.ts (Issue #1302, P3): Fixed network error detection by updating import to use `isNetworkError` from retry.ts instead of networkStatus.ts; Fixed error handling in createOfflineApiCall to properly type-check errors (const errorObj = error instanceof Error ? error : new Error(String(error))); Enabled previously skipped test "should queue on network error when online" with full implementation; Tests queuing on network error when online, verifying proper error message handling and queue behavior; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Test suite: 35 passed, 1 skipped (React hook test, unrelated); Ensures proper offline queue behavior on network errors; Uses consistent error detection pattern across codebase (Pillars 1: Flow, 2: Standardization, 3: Stability, 7: Debug) |
   | 3.5.2 | 2026-01-31 | Integrate Communication Log Service with Messaging Components (Issue #1304, P2): Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName); Created CommunicationDashboard component with filtering (type, status, keyword), export buttons (PDF/CSV), statistics cards (total messages, meetings, calls, notes), and delete functionality; Added CommunicationDashboard to TeacherDashboard navigation with DocumentTextIcon (green colorTheme); Added 'communication-log' to ViewState type and voice command validViews; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Provides audit trail for parent-teacher communications; Enables analytics and reporting; Improves communication tracking and compliance (Pillars 1: Flow, 5: Integrations, 6: Optimization Ops, 16: UX/DX) |

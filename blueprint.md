@@ -1,7 +1,7 @@
   # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-      **Version**: 3.5.6
-    **Last Updated**: 2026-01-31 (Issue #1292: Test Suite Performance Degradation - Times Out After 120 Seconds)
+**Version**: 3.5.7
+     **Last Updated**: 2026-01-31 (Issue #1313: Fix Circular Dependency in Build Chunks)
        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -133,15 +133,25 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
        - TypeScript type checking: Passed (0 errors)
        - ESLint linting: Passed (0 errors, 0 warnings)
        - Provides audit trail for parent-teacher communications (Pillars 1, 5, 6, 16)
-      - **Circular Dependency Fix - Build Warnings Resolved** (Issue #1303, P1)
-       - Fixed Rollup build warnings showing circular dependency between apiService.ts and services/api/index.ts
-       - Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk
-       - Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`
-       - Build completed successfully with NO circular dependency warnings
-       - TypeScript type checking: Passed (0 errors)
-       - ESLint linting: Passed (0 errors, 0 warnings)
-       - Eliminates potential runtime issues from broken execution order
-       - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
+        - **Circular Dependency Fix - Build Warnings Resolved** (Issue #1303, P1)
+        - Fixed Rollup build warnings showing circular dependency between apiService.ts and services/api/index.ts
+        - Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk
+        - Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`
+        - Build completed successfully with NO circular dependency warnings
+        - TypeScript type checking: Passed (0 errors)
+        - ESLint linting: Passed (0 errors, 0 warnings)
+        - Eliminates potential runtime issues from broken execution order
+        - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
+        - **Circular Dependency Fix Between vendor-react and vendor-charts Chunks** (Issue #1313, P1)
+        - Fixed Rollup build warning "Circular chunk: vendor-react -> vendor-charts -> vendor-react"
+        - Combined React, React Router, and Charts (Recharts + D3) into single `vendor-core` chunk
+        - Matches comment intent from line 135: "Keep Recharts and React in same chunk to avoid circular dependency"
+        - Removed separate vendor-react and vendor-charts chunks
+        - Build completed successfully with NO circular dependency warnings
+        - TypeScript type checking: Passed (0 errors)
+        - ESLint linting: Passed (0 errors, 0 warnings)
+        - Eliminates potential runtime issues from broken execution order
+        - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
      - **Integrate Communication Log Service with Messaging Components** (Issue #1304, P2)
        - Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName)
        - Created CommunicationDashboard component with filtering, export, and statistics
