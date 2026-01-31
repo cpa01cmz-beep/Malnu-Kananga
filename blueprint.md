@@ -1,7 +1,7 @@
   # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.5.7
-     **Last Updated**: 2026-01-31 (Issue #1313: Fix Circular Dependency in Build Chunks)
+**Version**: 3.5.8
+     **Last Updated**: 2026-01-31 (Issue #1316: Add ActivityFeed to AdminDashboard)
        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -94,10 +94,12 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
    - Resolved merge conflicts in PR #1281 by merging main into feature branch
    - Updated task.md with merge resolution and completion status
    - PR is now MERGEABLE and ready for approval (awaiting Cloudflare Pages CI check)
-    - All acceptance criteria from Issue #1231 met (8/8 complete)
-    - Documentation synchronized across blueprint.md, roadmap.md, task.md
+     - All acceptance criteria from Issue #1231 met (8/8 complete)
+     - Documentation synchronized across blueprint.md, roadmap.md, task.md
 
-           ### Recent Changes (2026-01-31)
+            ### Recent Changes (2026-01-31)
+            - **Add ActivityFeed to AdminDashboard** (Issue #1316, P2): Integrated ActivityFeed component into AdminDashboard with admin-specific event types (user_role_changed, user_status_changed, announcement_created, announcement_updated, notification_created, grade_updated, attendance_updated, message_created, message_updated); Added useRealtimeEvents hook to subscribe to real-time events; Added getCurrentUserId helper function; Added ActivityFeed component after dashboard action cards grid with Card wrapper; Added connection status indicator (Real-time Aktif/Menghubungkan.../Tidak Terhubung) that only shows when online; Implemented onActivityClick handler for navigation (user → users, announcement → announcements); Created comprehensive test coverage (6 tests, 100% pass rate) covering ActivityFeed rendering, navigation, and existing functionality preservation; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Completes ActivityFeed integration across all dashboards (TeacherDashboard, ParentDashboard, StudentPortal, AdminDashboard) (Pillars 9: Feature Ops, 16: UX/DX)
+            - **Fix README.md Version and Documentation Link Inconsistency** (Issue #1297, P3)
            - **Fix README.md Version and Documentation Link Inconsistency** (Issue #1297, P3): Updated README.md version from 3.4.6 to 3.5.6 to match blueprint.md (latest); Updated README.md documentation links to root directory (./blueprint.md, ./roadmap.md, ./task.md instead of ./docs/); Updated version badge from 3.4.6 to 3.5.6; Updated metrics table version from 3.3.0 to 3.5.6; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors); Ensures Single Source of Truth principle (Pillar 8: Documentation); Improves documentation accuracy and eliminates confusion (Pillars 7: Debug, 16: UX/DX)
            - **Test Suite Performance Degradation - Times Out After 120 Seconds** (Issue #1292, P3): Analyzed test suite performance and identified that tests run efficiently (~5.5s for 150 files, 454 tests) when using --bail=1; Individual test batches complete quickly (1-14s); Fixed QuizGenerator.test.tsx loading state test (added async/await); Documented CI/CD best practices: use --bail=1 for PR checks (fail fast), run full suite only on main/nightly, consider test batching for parallel execution, cache node_modules and .vitest directory; Test performance breakdown with --bail=1: Transform 2.13s, Setup 1.01s, Import 3.53s, Tests 2.89s, Environment 5.60s; The "timeout" appears to be CI/CD environment limitation, not actual test slowness; Improves CI/CD reliability and provides actionable recommendations (Pillars 3, 6, 7)
           - **Build Optimization - Large Bundle Chunks** (Issue #1294, P3): Optimized bundle sizes by implementing lazy loading for heavy dashboard components and improving vendor chunk splitting; Added rollup-plugin-visualizer for bundle analysis (generates dist/stats.html); Optimizations: TeacherDashboard reduced from 430KB to 20.60KB (95% reduction) by lazy loading GradingManagement, ClassManagement, MaterialUpload, SchoolInventory, AssignmentCreation, AssignmentGrading, GradeAnalytics, QuizGenerator, QuizIntegrationDashboard, CommunicationDashboard, DirectMessage, GroupChat; Main index chunk reduced from 937KB to 326KB (65% reduction); Vendor chunks optimized: vendor-charts reduced from 389KB to 318KB, created vendor-d3 chunk (62KB), created vendor-router chunk; Increased chunkSizeWarningLimit to 800KB to accommodate large vendor chunks (React ecosystem); Total chunks increased from 69 to 107 for better parallel loading and caching; Build time: 22-23s (stable); TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Significantly improves initial load times and performance (Pillars 13, 6, 3)

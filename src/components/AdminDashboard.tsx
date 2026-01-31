@@ -20,6 +20,7 @@ import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '.
 import { getGradientClass } from '../config/gradients';
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
+import Card from './ui/Card';
 import { CardSkeleton } from './ui/Skeleton';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
@@ -30,6 +31,8 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import SmallActionButton from './ui/SmallActionButton';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
+import ActivityFeed, { type Activity } from './ActivityFeed';
+import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -63,11 +66,35 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const { isOnline, isSlow } = useNetworkStatus();
   
   const {
-    getPendingCount,
-    getFailedCount,
-    sync,
-    isSyncing: isActionQueueSyncing
-  } = useOfflineActionQueue();
+     getPendingCount,
+     getFailedCount,
+     sync,
+     isSyncing: isActionQueueSyncing
+   } = useOfflineActionQueue();
+
+  const { isConnected, isConnecting } = useRealtimeEvents({
+    eventTypes: [
+      'user_role_changed',
+      'user_status_changed',
+      'announcement_created',
+      'announcement_updated',
+      'notification_created',
+      'grade_updated',
+      'attendance_updated',
+      'message_created',
+      'message_updated',
+    ],
+    enabled: isOnline,
+  });
+
+  const getCurrentUserId = (): string => {
+    const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+    if (userJSON) {
+      const user = JSON.parse(userJSON);
+      return user.id || '';
+    }
+    return '';
+  };
 
   // Load dashboard data with offline support and automatic retry
   useEffect(() => {
@@ -503,6 +530,44 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </button>
                     )}
                 </div>
+
+                {/* Activity Feed */}
+                <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
+                  <ActivityFeed
+                    userId={getCurrentUserId()}
+                    userRole="admin"
+                    eventTypes={[
+                      'user_role_changed',
+                      'user_status_changed',
+                      'announcement_created',
+                      'announcement_updated',
+                      'notification_created',
+                      'grade_updated',
+                      'attendance_updated',
+                      'message_created',
+                      'message_updated',
+                    ]}
+                    showFilter
+                    maxActivities={50}
+                    onActivityClick={(activity: Activity) => {
+                      if (activity.entity === 'user') {
+                        setCurrentView('users');
+                        onShowToast('Navigasi ke manajemen user', 'success');
+                      } else if (activity.entity === 'announcement') {
+                        setCurrentView('announcements');
+                        onShowToast('Navigasi ke pengelolaan pengumuman', 'success');
+                      }
+                    }}
+                  />
+                  {isOnline && (
+                      <div className="mt-4 flex items-center gap-2 text-sm">
+                          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-yellow-500'} ${isConnecting ? 'animate-pulse' : ''}`}></div>
+                          <span className="text-neutral-600 dark:text-neutral-400">
+                              {isConnected ? 'Real-time Aktif' : isConnecting ? 'Menghubungkan...' : 'Tidak Terhubung'}
+                          </span>
+                      </div>
+                  )}
+                </Card>
             </>
         )}
 

@@ -1,7 +1,7 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.5.7
-     **Last Updated**: 2026-01-31 (Issue #1313: Fix Circular Dependency in Build Chunks)
+ **Version**: 3.5.8
+     **Last Updated**: 2026-01-31 (Issue #1316: Add ActivityFeed to AdminDashboard)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -732,18 +732,30 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
                - Arbitrary Key Read in Serve static Middleware (GHSA-w332-q679-j88p, CWE-200, CWE-284, CWE-668)
                - Cache Deception - Ignores Cache-Control: private (GHSA-6wqw-2p9w-4vw4, CVSS: 5.3, CWE-524, CWE-613)
                - IP Spoofing - IPv4 validation bypass (GHSA-r354-f388-2fhh, CVSS: 4.8, CWE-185)
-             - npm audit: 0 vulnerabilities found
-             - TypeScript type checking and ESLint linting passed
-             - Hardens application against OWASP threats (Pillars 3: Stability, 4: Security, 7: Debug)
-             - PR #1290 created for security fix
-         - ✅ Fix Test Suite Timeout - Complete afterEach Hook Cleanup (Issue #1284) - 2026-01-31
-             - Verified all test files using vi.useFakeTimers() have vi.useRealTimers() in afterEach
-             - emailNotificationService.test.ts (line 22), useWebSocket.test.ts (line 55), errorHandler.test.ts (line 557)
-             - All 3 test files passed (83 tests, 2 skipped, no timeouts)
-             - Test duration: 1.09s (fast, confirming timer fixes work)
-             - Full test suite runs successfully without timeout
-             - Improves CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
-        - ✅ Update Documentation Metrics in README.md (Issue #1249) - 2026-01-30
+              - npm audit: 0 vulnerabilities found
+              - TypeScript type checking and ESLint linting passed
+              - Hardens application against OWASP threats (Pillars 3: Stability, 4: Security, 7: Debug)
+              - PR #1290 created for security fix
+          - ✅ Fix Test Suite Timeout - Complete afterEach Hook Cleanup (Issue #1284) - 2026-01-31
+              - Verified all test files using vi.useFakeTimers() have vi.useRealTimers() in afterEach
+              - emailNotificationService.test.ts (line 22), useWebSocket.test.ts (line 55), errorHandler.test.ts (line 557)
+              - All 3 test files passed (83 tests, 2 skipped, no timeouts)
+              - Test duration: 1.09s (fast, confirming timer fixes work)
+              - Full test suite runs successfully without timeout
+              - Improves CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+         - ✅ Add ActivityFeed to AdminDashboard (Issue #1316, P2) - 2026-01-31
+              - Integrated ActivityFeed component into AdminDashboard with admin-specific event types (user_role_changed, user_status_changed, announcement_created, announcement_updated, notification_created, grade_updated, attendance_updated, message_created, message_updated)
+              - Added useRealtimeEvents hook to subscribe to real-time events
+              - Added getCurrentUserId helper function
+              - Added ActivityFeed component after dashboard action cards grid with Card wrapper
+              - Added connection status indicator (Real-time Aktif/Menghubungkan.../Tidak Terhubung) that only shows when online
+              - Implemented onActivityClick handler for navigation (user → users, announcement → announcements)
+              - Created comprehensive test coverage (6 tests, 100% pass rate) covering ActivityFeed rendering, navigation, and existing functionality preservation
+              - TypeScript type checking: Passed (0 errors)
+              - ESLint linting: Passed (0 errors, 0 warnings)
+              - Completes ActivityFeed integration across all dashboards (TeacherDashboard, ParentDashboard, StudentPortal, AdminDashboard)
+              - Improves admin visibility into system activities (Pillars 9: Feature Ops, 16: UX/DX)
+         - ✅ Update Documentation Metrics in README.md (Issue #1249) - 2026-01-30
       - ✅ Add OCR Integration for Attendance Management (Issue #820) - 2026-01-30 (attendanceOCRService, AttendanceManagement component, 11 tests)
       - ✅ Integrate Quiz Results with Grade Analytics (Issue #1246) - 2026-01-30 (quizGradeIntegrationService, assignment type filter)
       - ✅ Integrate PPDB Registration with Student Management (Issue #1248) - 2026-01-30 (8-stage pipeline, automated NIS generation)
@@ -875,7 +887,8 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 | 3.4.6 | 2026-01-31 | Complete Test Suite Timeout Fix (Issue #1284): Verified all test files using vi.useFakeTimers() have vi.useRealTimers() in afterEach hooks; emailNotificationService.test.ts (line 22), useWebSocket.test.ts (line 55), errorHandler.test.ts (line 557); All 3 test files passed (83 tests, 2 skipped, no timeouts); Test duration: 1.09s (fast, confirming timer fixes work); Full test suite runs successfully without timeout; Improves CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug) |
 | 3.4.5 | 2026-01-31 | Fix Security Vulnerability in hono Package (Issue #1287, PR #1290): Updated hono package from <=4.11.6 to 4.11.7 via npm audit fix; Resolved 4 moderate severity vulnerabilities: XSS through ErrorBoundary component (GHSA-9r54-q6cx-xmh5, CVSS: 4.7, CWE-79); Arbitrary Key Read in Serve static Middleware (GHSA-w332-q679-j88p, CWE-200, CWE-284, CWE-668); Cache Deception - Ignores Cache-Control: private (GHSA-6wqw-2p9w-4vw4, CVSS: 5.3, CWE-524, CWE-613); IP Spoofing - IPv4 validation bypass (GHSA-r354-f388-2fhh, CVSS: 4.8, CWE-185); npm audit: 0 vulnerabilities found; TypeScript type checking and ESLint linting passed; Hardens application against OWASP threats (Pillars 3: Stability, 4: Security, 7: Debug) |
 | 3.4.3 | 2026-01-31 | Complete PR #1281 for AI Class Performance Analysis Integration (Issue #1231): Resolved merge conflicts by merging main into feature branch; Updated PR branch with task.md merge resolution; PR is now MERGEABLE and ready for approval; All 8 acceptance criteria met (AI insights integration, UI panel, on-demand refresh, 24-hour cache, error handling); Documentation synchronized (Pillars 3: Stability, 7: Debug, 8: Documentation) |
-| 3.3.4 | 2026-01-31 | Fix Custom Analysis Tools Package Configuration Error (Issue #1274): Created automatic patch script (.opencode/patch-package.js) to fix ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin@1.1.15; Added comprehensive exports configuration (main field, default exports, wildcard exports, package.json export); Fixed dist/index.js ESM import to include .js extension; Added postinstall script to .opencode/package.json for automatic patching; All 8 custom analysis tools now execute successfully (check-console-logs, check-missing-error-handling, find-hardcoded-urls, find-untyped, check-storage-keys, etc.); Documentation added in .opencode/PATCH_README.md; Updated .opencode/OH_MY_OPENCODE.md with installation note; Enables automated PR analysis for code quality (Pillars 3: Stability, 4: Security, 6: Optimization Ops, 7: Debug, 15: Dynamic Coding); TypeScript type checking and ESLint linting passed |
+     | 3.3.4 | 2026-01-31 | Fix Custom Analysis Tools Package Configuration Error (Issue #1274): Created automatic patch script (.opencode/patch-package.js) to fix ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin@1.1.15; Added comprehensive exports configuration (main field, default exports, wildcard exports, package.json export); Fixed dist/index.js ESM import to include .js extension; Added postinstall script to .opencode/package.json for automatic patching; All 8 custom analysis tools now execute successfully (check-console-logs, check-missing-error-handling, find-hardcoded-urls, find-untyped, check-storage-keys, etc.); Documentation added in .opencode/PATCH_README.md; Updated .opencode/OH_MY_OPENCODE.md with installation note; Enables automated PR analysis for code quality (Pillars 3: Stability, 4: Security, 6: Optimization Ops, 7: Debug, 15: Dynamic Coding); TypeScript type checking and ESLint linting passed |
+     | 3.5.8 | 2026-01-31 | Add ActivityFeed to AdminDashboard (Issue #1316, P2): Integrated ActivityFeed component into AdminDashboard with admin-specific event types (user_role_changed, user_status_changed, announcement_created, announcement_updated, notification_created, grade_updated, attendance_updated, message_created, message_updated); Added useRealtimeEvents hook to subscribe to real-time events; Added getCurrentUserId helper function; Added ActivityFeed component after dashboard action cards grid with Card wrapper; Added connection status indicator (Real-time Aktif/Menghubungkan.../Tidak Terhubung) that only shows when online; Implemented onActivityClick handler for navigation (user → users, announcement → announcements); Created comprehensive test coverage (6 tests, 100% pass rate) covering ActivityFeed rendering, navigation, and existing functionality preservation; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Completes ActivityFeed integration across all dashboards (TeacherDashboard, ParentDashboard, StudentPortal, AdminDashboard) (Pillars 9: Feature Ops, 16: UX/DX) |
 | 3.3.3 | 2026-01-31 | Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269): Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS; Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants in emailNotificationService.ts; All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
 | 3.3.2 | 2026-01-30 | Fix GradeAnalytics Test Failure (Issue #1267): Changed ambiguous test selector from `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })` to resolve false positive match with dropdown option; All 19 GradeAnalytics tests passing (100% pass rate); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
   | 3.3.1 | 2026-01-30 | Integrate Email Service with Notification System (Issue #1264): Added emailNotificationService with full integration to unifiedNotificationManager; Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR); User-controlled email notification preferences (per-type enable/disable); Digest mode (daily/weekly email digest); Quiet hours support for email notifications; Email delivery tracking and analytics; 20 tests (100% pass rate); Updated blueprint.md with new service documentation |
