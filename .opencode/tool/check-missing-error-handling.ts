@@ -22,26 +22,26 @@ export default tool({
       
       // Filter out blocks that have error handling
       const problematicBlocks = blocks.filter(block => {
-        // Check for error handling patterns
-        const hasTry = /try\s*\{/.test(block);
-        const hasCatch = /catch\s*\(/.test(block);
-        const hasThrow = /\bthrow\s+/.test(block);
-        const hasCatchMethod = /\.catch\s*\(/.test(block);
-        const hasCircuitBreaker = /withCircuitBreaker\s*\(/.test(block);
-        const hasRetryWithBackoff = /retryWithBackoff\s*\(/.test(block);
-        const hasRetry = /\bretry\s*\(/.test(block);
-        const hasCircuitBreakerClass = /\bCircuitBreaker\b/.test(block);
-        const hasErrorHandlingComment = /\/\/.*no error handling|\/\/ NO ERROR HANDLING|\/\/.*errors handled by/i.test(block);
-        const hasExpectedError = /expected.*error/i.test(block);
+        const errorHandlingPatterns = [
+          /try\s*\{/,
+          /catch\s*\(/,
+          /\bthrow\s+/,
+          /\.catch\s*\(/,
+          /\.catchError\s*\(/,
+          /withCircuitBreaker\s*\(/,
+          /retryWithBackoff\s*\(/,
+          /\bretry\s*\(/,
+          /\bCircuitBreaker\b/,
+          /(error|err|onError)\s*:/,
+          /\/\/.*no error handling|\/\/ NO ERROR HANDLING|\/\/.*errors handled by/i,
+          /expected.*error/i,
+        ];
 
-        // If any error handling pattern exists, this function is OK
-        if (hasTry || hasCatch || hasThrow || hasCatchMethod || 
-            hasCircuitBreaker || hasRetryWithBackoff || hasRetry || 
-            hasCircuitBreakerClass || hasErrorHandlingComment || hasExpectedError) {
-          return false; // This function has error handling, exclude it
+        if (errorHandlingPatterns.some(pattern => pattern.test(block))) {
+          return false;
         }
 
-        return true; // This function has no error handling, keep it
+        return true;
       });
 
       if (problematicBlocks.length === 0) {
