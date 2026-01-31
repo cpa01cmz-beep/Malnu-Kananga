@@ -35,6 +35,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
 import ProgressBar from './ui/ProgressBar';
 import { CHART_COLORS } from '../config/chartColors';
+import { analyzeClassPerformance } from '../services/geminiService';
 
 interface GradeAnalyticsProps {
   onBack: () => void;
@@ -72,6 +73,9 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'subjects' | 'students' | 'assignments'>('overview');
   const [assignmentTypeFilter, setAssignmentTypeFilter] = useState<AssignmentTypeFilter>('all');
+  const [aiInsights, setAiInsights] = useState<string | null>(null);
+  const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
+  const [aiInsightsError, setAiInsightsError] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);
@@ -88,6 +92,69 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     });
     return distribution;
   }, []);
+
+  const generateAIInsights = useCallback(async () => {
+    if (!analytics || !classId || !currentUser?.id) return;
+
+    setAiInsightsLoading(true);
+    setAiInsightsError(null);
+
+    try {
+      const classGradesData = analytics.subjectBreakdown.map(subject => ({
+        studentName: `${subject.subjectName} (Average)`,
+        subject: subject.subjectName,
+        grade: subject.averageScore.toFixed(1),
+        semester: 'Current'
+      }));
+
+      const insights = await analyzeClassPerformance(classGradesData);
+      setAiInsights(insights);
+
+      const cacheKey = STORAGE_KEYS.CLASS_INSIGHTS(classId);
+      const timestampKey = STORAGE_KEYS.CLASS_INSIGHTS_TIMESTAMP(classId);
+      
+      localStorage.setItem(cacheKey, insights);
+      localStorage.setItem(timestampKey, Date.now().toString());
+      
+      showToast('AI Analisis kelas berhasil dihasilkan', 'success');
+      logger.info('AI class insights generated for class:', classId);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Gagal menghasilkan analisis AI';
+      setAiInsightsError(errorMessage);
+      showToast(errorMessage, 'error');
+      logger.error('Error generating AI class insights:', err);
+    } finally {
+      setAiInsightsLoading(false);
+    }
+  }, [analytics, classId, currentUser?.id, showToast]);
+
+  const loadCachedAIInsights = useCallback(() => {
+    if (!classId) return;
+
+    try {
+      const cacheKey = STORAGE_KEYS.CLASS_INSIGHTS(classId);
+      const timestampKey = STORAGE_KEYS.CLASS_INSIGHTS_TIMESTAMP(classId);
+      
+      const cachedInsights = localStorage.getItem(cacheKey);
+      const cachedTimestamp = localStorage.getItem(timestampKey);
+      
+      if (cachedInsights && cachedTimestamp) {
+        const timestamp = parseInt(cachedTimestamp, 10);
+        const cacheAge = Date.now() - timestamp;
+        const oneDay = 24 * 60 * 60 * 1000;
+        
+        if (cacheAge < oneDay) {
+          setAiInsights(cachedInsights);
+          logger.debug('Loaded cached AI insights for class:', classId);
+        } else {
+          localStorage.removeItem(cacheKey);
+          localStorage.removeItem(timestampKey);
+        }
+      }
+    } catch (err) {
+      logger.warn('Error loading cached AI insights:', err);
+    }
+  }, [classId]);
 
   const analyzeClassGrades = useCallback(async () => {
     if (!currentUser?.id) {
@@ -235,6 +302,12 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       setLoading(false);
     }
   }, [classId, currentUser?.id, calculateGradeDistribution, assignmentTypeFilter]);
+
+  useEffect(() => {
+    if (analytics) {
+      loadCachedAIInsights();
+    }
+  }, [analytics, loadCachedAIInsights]);
 
   useEffect(() => {
     analyzeClassGrades();
@@ -398,6 +471,73 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
 
       {activeTab === 'overview' && (
         <div className="space-y-6">
+          <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border-indigo-200 dark:border-indigo-800">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="text-3xl">🤖</div>
+                <div>
+                  <h3 className="text-lg font-bold text-neutral-900 dark:text-white">AI Insights</h3>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400">Analisis performa kelas yang dipandu AI</p>
+                </div>
+              </div>
+              <Button
+                onClick={generateAIInsights}
+                disabled={aiInsightsLoading}
+                variant="blue-solid"
+                size="sm"
+              >
+                {aiInsightsLoading ? 'Generating...' : 'Generate AI Insights'}
+              </Button>
+            </div>
+            
+            {aiInsightsLoading && (
+              <div className="text-center py-6">
+                <div className="animate-spin text-4xl mb-3">🤖</div>
+                <p className="text-neutral-600 dark:text-neutral-400">Menganalisis performa kelas dengan AI...</p>
+              </div>
+            )}
+            
+            {aiInsightsError && (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⚠️</span>
+                  <div>
+                    <p className="font-semibold text-red-900 dark:text-red-400 mb-1">Error</p>
+                    <p className="text-sm text-red-700 dark:text-red-300">{aiInsightsError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {aiInsights && !aiInsightsLoading && (
+              <div className="bg-white dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700">
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  {aiInsights.split('\n').map((line, index) => (
+                    <p key={index} className="mb-2 last:mb-0 text-neutral-700 dark:text-neutral-300">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {!aiInsights && !aiInsightsLoading && !aiInsightsError && (
+              <div className="text-center py-6 bg-white dark:bg-neutral-800 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-600">
+                <div className="text-4xl mb-3">🤖</div>
+                <p className="text-neutral-600 dark:text-neutral-400 mb-3">
+                  Belum ada analisis AI untuk kelas ini
+                </p>
+                <Button
+                  onClick={generateAIInsights}
+                  variant="blue-solid"
+                  size="sm"
+                >
+                  Generate AI Insights
+                </Button>
+              </div>
+            )}
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
               <div className="flex items-center justify-between">

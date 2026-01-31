@@ -119,6 +119,10 @@ export const STORAGE_KEYS = {
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
     
+    // Class AI Insights for teacher analytics (new - Issue #1231)
+    CLASS_INSIGHTS: (classId: string) => `malnu_class_insights_${classId}`,
+    CLASS_INSIGHTS_TIMESTAMP: (classId: string) => `malnu_class_insights_timestamp_${classId}`,
+    
     // Offline data service for student/parent portals
     OFFLINE_STUDENT_DATA: 'malnu_offline_student_data',
     OFFLINE_PARENT_DATA: 'malnu_offline_parent_data',
