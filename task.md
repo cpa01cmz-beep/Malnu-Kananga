@@ -498,6 +498,32 @@
    - Create comprehensive tests for new cleanup methods
    - Add cleanup integration with AuthService logout flow
 
+## Follow-up Tasks
+
+### [BUILDER] Integrate Cleanup Methods with Logout Flow (Follow-up to #1286)
+- **Issue**: #1286 (Follow-up)
+- **Priority**: P3 (Enhancement)
+- **Status**: Pending
+- **Started**: TBD
+- **Reason**: Cleanup methods have been added to singleton services but are not being called during logout. Services like geminiService, offlineActionQueueService, performanceMonitor, and unifiedNotificationManager need their cleanup methods invoked when user logs out.
+- **Implementation**:
+   - [ ] Analyze AuthService logout flow
+   - [ ] Add cleanupGeminiService() call to authService.logout()
+   - [ ] Add offlineActionQueueService.cleanup() call to authService.logout()
+   - [ ] Add performanceMonitor.cleanup() call to authService.logout()
+   - [ ] Add unifiedNotificationManager.cleanup() call to authService.logout()
+   - [ ] Verify webSocketService.disconnect() is called during logout
+   - [ ] Verify speechRecognitionService.cleanup() is called during logout
+   - [ ] Verify speechSynthesisService.cleanup() is called during logout
+   - [ ] Verify voiceNotificationService.cleanup() is called during logout
+   - [ ] Add cleanup calls to other component unmount scenarios
+   - [ ] Create tests for logout cleanup integration
+   - [ ] Run typecheck and lint
+- **Pillars Addressed**:
+   - Pillar 3 (Stability): Ensures services are cleaned up on logout
+   - Pillar 7 (Debug): Reduces state pollution across sessions
+
+
 
 - **Mode**: BUILDER
 - **Issue**: #1227
