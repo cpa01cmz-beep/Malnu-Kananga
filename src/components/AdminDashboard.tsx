@@ -58,7 +58,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [_offlineData, setOfflineData] = useState<CachedAdminData | null>(null);
-  const [_offlineSyncInProgress, _setOfflineSyncInProgress] = useState(false);
 
   const {
     showNotification,
@@ -99,6 +98,17 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     return '';
   };
 
+  const applyCachedData = useCallback((cachedData: CachedAdminData, isFallback: boolean = false) => {
+    setOfflineData(cachedData);
+    setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString(), stats: cachedData.systemStats });
+    setPendingPPDB(cachedData.pendingPPDB.filter(p => p.status === 'pending').length);
+    if (isFallback) {
+      onShowToast?.('Data terakhir dari cache', 'warning');
+    } else {
+      onShowToast?.('Menggunakan data offline', 'info');
+    }
+  }, [onShowToast]);
+
   // Initialize offline services (Issue #1315)
   const offlineDataService = useOfflineDataService();
   useOfflineData('admin', getCurrentUserId());
@@ -112,11 +122,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
       if (!isOnline) {
         const cachedData = offlineDataService.getCachedAdminData(adminId);
         if (cachedData) {
-          setOfflineData(cachedData);
-          setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString(), stats: cachedData.systemStats });
-          setPendingPPDB(cachedData.pendingPPDB.filter(p => p.status === 'pending').length);
+          applyCachedData(cachedData);
           setError({ type: ErrorType.OFFLINE_ERROR, message: getOfflineMessage() });
-          onShowToast?.('Menggunakan data offline', 'info');
         } else {
           setError({ type: ErrorType.OFFLINE_ERROR, message: 'Data cache tidak tersedia. ' + getOfflineMessage() });
         }
@@ -175,14 +182,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
         // Try to load cached data as fallback
         const cachedData = offlineDataService.getCachedAdminData(adminId);
         if (cachedData) {
-          setOfflineData(cachedData);
-          setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString(), stats: cachedData.systemStats });
-          setPendingPPDB(cachedData.pendingPPDB.filter(p => p.status === 'pending').length);
+          applyCachedData(cachedData, true);
           setError({
             type: appError.type,
             message: `Data terakhir dari cache. ${appError.type === ErrorType.NETWORK_ERROR ? getOfflineMessage() : 'Silakan cek koneksi atau coba lagi nanti.'}`
           });
-          onShowToast?.('Data terakhir dari cache', 'warning');
         }
         setSyncStatus('failed');
       } finally {
@@ -191,7 +195,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     };
 
     loadDashboardData();
-  }, [isOnline, onShowToast, offlineDataService]);
+  }, [isOnline, onShowToast, offlineDataService, applyCachedData]);
 
   // Show slow connection warning
   useEffect(() => {

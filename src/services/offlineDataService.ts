@@ -44,7 +44,7 @@ export interface CachedAdminData {
   systemStats: Record<string, unknown>;
   ppdbStats: Record<string, unknown>;
   recentUsers: User[];
-  pendingPPDB: Array<{ status: string }>;
+  pendingPPDB: Array<{ status: 'pending' | 'approved' | 'rejected' }>;
   announcements: Announcement[];
   lastUpdated: number;
   expiresAt: number;
@@ -297,36 +297,12 @@ class OfflineDataService {
    * Get cached teacher data
    */
   public getCachedTeacherData(teacherId: string): CachedTeacherData | null {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA);
-      if (!stored) return null;
-
-      const data = JSON.parse(stored);
-
-      // Check if data belongs to this teacher
-      if (data.teacherId !== teacherId) {
-        return null;
-      }
-
-      // Check version compatibility
-      if (data.version !== CACHE_VERSION) {
-        logger.info('Teacher data cache version mismatch, clearing cache');
-        localStorage.removeItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA);
-        return null;
-      }
-
-      // Check if cache is expired
-      if (Date.now() > data.expiresAt) {
-        logger.info('Teacher data cache expired', { teacherId });
-        localStorage.removeItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA);
-        return null;
-      }
-
-      return data;
-    } catch (error) {
-      logger.error('Failed to get cached teacher data', error);
-      return null;
-    }
+    return this.getCachedData<CachedTeacherData>(
+      STORAGE_KEYS.OFFLINE_TEACHER_DATA,
+      teacherId,
+      'teacherId',
+      'Teacher'
+    );
   }
 
   /**
@@ -372,36 +348,12 @@ class OfflineDataService {
    * Get cached admin data
    */
   public getCachedAdminData(adminId: string): CachedAdminData | null {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA);
-      if (!stored) return null;
-
-      const data = JSON.parse(stored);
-
-      // Check if data belongs to this admin
-      if (data.adminId !== adminId) {
-        return null;
-      }
-
-      // Check version compatibility
-      if (data.version !== CACHE_VERSION) {
-        logger.info('Admin data cache version mismatch, clearing cache');
-        localStorage.removeItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA);
-        return null;
-      }
-
-      // Check if cache is expired
-      if (Date.now() > data.expiresAt) {
-        logger.info('Admin data cache expired', { adminId });
-        localStorage.removeItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA);
-        return null;
-      }
-
-      return data;
-    } catch (error) {
-      logger.error('Failed to get cached admin data', error);
-      return null;
-    }
+    return this.getCachedData<CachedAdminData>(
+      STORAGE_KEYS.OFFLINE_ADMIN_DATA,
+      adminId,
+      'adminId',
+      'Admin'
+    );
   }
 
   /**
@@ -519,6 +471,42 @@ class OfflineDataService {
       logger.error('Failed to get current user ID', error);
     }
     return '';
+  }
+
+  private getCachedData<T extends { lastUpdated: number; expiresAt: number; version?: string }>(
+    storageKey: string,
+    userId: string,
+    userIdKey: string,
+    entityType: string
+  ): T | null {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return null;
+
+      const data = JSON.parse(stored) as T;
+
+      if (data.version !== CACHE_VERSION) {
+        logger.info(`${entityType} data cache version mismatch, clearing cache`);
+        localStorage.removeItem(storageKey);
+        return null;
+      }
+
+      if (Date.now() > data.expiresAt) {
+        logger.info(`${entityType} data cache expired`, { [userIdKey]: userId });
+        localStorage.removeItem(storageKey);
+        return null;
+      }
+
+      const typedData = data as T & Record<string, unknown>;
+      if (typedData[userIdKey] !== userId) {
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      logger.error(`Failed to get cached ${entityType} data`, error);
+      return null;
+    }
   }
 
   private getStudentCache(): Record<string, CachedStudentData> {

@@ -28,6 +28,7 @@ import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedTeacherData } from '../services/offlineDataService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { classifyError } from '../utils/errorHandler';
 import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
@@ -63,7 +64,6 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [isExportingConsolidated, setIsExportingConsolidated] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
   const [_offlineData, setOfflineData] = useState<CachedTeacherData | null>(null);
-  const [_syncInProgress, _setSyncInProgress] = useState(false);
 
   // Initialize push notifications
   const {
@@ -86,6 +86,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     }
     return '';
   };
+
+  const applyCachedData = useCallback((cachedData: CachedTeacherData, isFallback: boolean = false) => {
+    setOfflineData(cachedData);
+    setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString() });
+    if (isFallback) {
+      onShowToast?.('Data terakhir dari cache', 'warning');
+    } else {
+      onShowToast?.('Menggunakan data offline', 'info');
+    }
+  }, [onShowToast]);
 
   const getCurrentUserName = (): string => {
     const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
@@ -118,9 +128,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
       if (!isOnline) {
         const cachedData = offlineDataService.getCachedTeacherData(teacherId);
         if (cachedData) {
-          setOfflineData(cachedData);
-          setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString() });
-          onShowToast?.('Menggunakan data offline', 'info');
+          applyCachedData(cachedData);
         } else {
           setError(getOfflineMessage());
         }
@@ -160,14 +168,13 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         });
       } catch (err) {
         logger.error('Failed to load dashboard data:', err);
-        setError('Gagal memuat data dashboard. Silakan coba lagi.');
+        const appError = classifyError(err, { operation: 'loadDashboardData', timestamp: Date.now() });
+        setError(appError.message);
 
         // Try to load cached data as fallback
         const cachedData = offlineDataService.getCachedTeacherData(teacherId);
         if (cachedData) {
-          setOfflineData(cachedData);
-          setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString() });
-          onShowToast?.('Data terakhir dari cache', 'warning');
+          applyCachedData(cachedData, true);
         }
       } finally {
         setLoading(false);
@@ -175,7 +182,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     };
 
     loadDashboardData();
-  }, [isOnline, onShowToast, offlineDataService]);
+  }, [isOnline, onShowToast, offlineDataService, applyCachedData]);
 
   // Show slow connection warning
   useEffect(() => {
