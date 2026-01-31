@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   retryWithBackoff,
   CircuitBreaker,
@@ -11,6 +11,10 @@ describe('errorRecovery', () => {
   beforeEach(() => {
     vi.clearAllTimers();
     vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe('retryWithBackoff', () => {
