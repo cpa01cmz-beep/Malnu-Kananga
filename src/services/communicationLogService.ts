@@ -365,66 +365,77 @@ class CommunicationLogService {
   }
 
   async exportToPDF(options: CommunicationLogExportOptions): Promise<void> {
-    const logs = this.getCommunicationHistory(options.filters);
-    
-    const exportData = logs.map(log => this.formatLogForExport(log));
+    try {
+      const logs = this.getCommunicationHistory(options.filters);
 
-    const tableData = exportData.map(row => [
-      row.type,
-      row.date,
-      row.participants,
-      row.subject || row.agenda || '-',
-      row.details || '-',
-      row.status,
-    ]);
+      const exportData = logs.map(log => this.formatLogForExport(log));
 
-    const dateStr = options.dateRange 
-      ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
-      : new Date().toLocaleDateString('id-ID');
+      const tableData = exportData.map(row => [
+        row.type,
+        row.date,
+        row.participants,
+        row.subject || row.agenda || '-',
+        row.details || '-',
+        row.status,
+      ]);
 
-    pdfExportService.createReport({
-      title: 'Parent-Teacher Communication Log',
-      date: dateStr,
-      headers: ['Type', 'Date', 'Participants', 'Subject/Agenda', 'Details', 'Status'],
-      data: tableData,
-      summary: {
-        'Total Entries': logs.length.toString(),
-        'Messages': this.getStatistics(options.filters).totalMessages.toString(),
-        'Meetings': this.getStatistics(options.filters).totalMeetings.toString(),
-        'Calls': this.getStatistics(options.filters).totalCalls.toString(),
-      },
-    });
+      const dateStr = options.dateRange
+        ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
+        : new Date().toLocaleDateString('id-ID');
 
-    logger.info('Communication log exported to PDF:', {
-      entryCount: logs.length,
-      exportDate: dateStr,
-    });
+      pdfExportService.createReport({
+        title: 'Parent-Teacher Communication Log',
+        date: dateStr,
+        headers: ['Type', 'Date', 'Participants', 'Subject/Agenda', 'Details', 'Status'],
+        data: tableData,
+        summary: {
+          'Total Entries': logs.length.toString(),
+          'Messages': this.getStatistics(options.filters).totalMessages.toString(),
+          'Meetings': this.getStatistics(options.filters).totalMeetings.toString(),
+          'Calls': this.getStatistics(options.filters).totalCalls.toString(),
+        },
+      });
+
+      logger.info('Communication log exported to PDF:', {
+        entryCount: logs.length,
+        exportDate: dateStr,
+      });
+    } catch (error) {
+      logger.error('Failed to export communication log to PDF:', error);
+      throw error;
+    }
   }
 
   async exportToCSV(options: CommunicationLogExportOptions): Promise<void> {
-    const logs = this.getCommunicationHistory(options.filters);
-    
-    const exportData = logs.map(log => this.formatLogForExport(log));
+    try {
+      const logs = this.getCommunicationHistory(options.filters);
 
-    const csv = Papa.unparse(exportData, {
-      quotes: true,
-      delimiter: ',',
-      header: true,
-    });
+      const exportData = logs.map(log => this.formatLogForExport(log));
 
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `communication_log_${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(link.href);
+      const csv = Papa.unparse(exportData, {
+        quotes: true,
+        delimiter: ',',
+        header: true,
+      });
 
-    logger.info('Communication log exported to CSV:', {
-      entryCount: logs.length,
-      exportDate: options.dateRange 
-        ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
-        : new Date().toLocaleDateString('id-ID'),
-    });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `communication_log_${Date.now()}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      logger.info('Communication log exported to CSV:', {
+        entryCount: logs.length,
+        exportDate: options.dateRange
+          ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
+          : new Date().toLocaleDateString('id-ID'),
+      });
+    } catch (error) {
+      logger.error('Failed to export communication log to CSV:', error);
+      throw error;
+    }
   }
 
   private formatLogForExport(log: CommunicationLogEntry): Record<string, string> {
