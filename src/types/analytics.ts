@@ -1,3 +1,5 @@
+import type { UserRole } from './common';
+
 export interface Goal {
   id: string;
   studentId: string;
@@ -97,8 +99,6 @@ export interface AssignmentAnalytics {
   averageFeedbackLength: number;
   lateSubmissions: number;
 }
-
-import type { UserRole } from './common';
 
 export interface OCRValidationEvent {
   id: string;
