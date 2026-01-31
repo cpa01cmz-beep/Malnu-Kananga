@@ -2,8 +2,6 @@
 
 ## In Progress
 
-## In Progress
-
 ### [OPTIMIZER] Enhance Test Coverage for High-Priority Services - Issue #1294 (New)
 - **Mode**: OPTIMIZER
 - **Issue**: #1294
@@ -67,7 +65,42 @@
   - Reduced bundle size through better code splitting (Pillar 13: Performance)
   - Follows clean architecture principles (Pillar 2: Standardization)
 
-## Completed### [OPTIMIZER] Large File Refactoring - Split types.ts into Domain-Specific Modules (Issue #1293) ✅
+## Completed
+
+### [SANITIZER] Fix Circular Dependency Between apiService.ts and api/index.ts (Issue #1303) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1303
+- **Priority**: P1 (Critical Blocker)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Rollup build warnings showing circular dependency between apiService.ts (shim) and services/api/index.ts. This caused modules to be split into different chunks, leading to potential broken execution order. Violates Pillar 3 (Stability).
+- **Problem**:
+  - `src/services/apiService.ts` is a backward compatibility shim that re-exports from `./api` (services/api/index.ts)
+  - Rollup's manualChunks configuration split these into different chunks
+  - Build warnings: "Export 'api' of module 'src/services/api/index.ts' was reexported through module 'src/services/apiService.ts' while both modules are dependencies of each other and will end up in different chunks"
+- **Solution Implemented**:
+  - Added manualChunk configuration to vite.config.ts to keep apiService.ts and services/api in same chunk
+  - Added vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`
+  - This ensures both modules remain in the same chunk, eliminating the circular dependency warning
+- **Verification**:
+  - ✅ Build completed successfully with NO circular dependency warnings
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - ✅ Build time: 23.77s (stable)
+- **Impact**:
+  - Resolved critical build warnings affecting build stability (Pillar 3: Stability)
+  - Improved build reliability and eliminated potential runtime issues (Pillar 7: Debug)
+  - Maintains backward compatibility while fixing the circular dependency
+  - No breaking changes required - 84 files continue to use apiService.ts imports
+- **Future Enhancement**:
+  - Consider migrating all 84 imports from apiService.ts to services/api/index.ts for cleaner architecture
+  - This would eliminate the need for the backward compatibility shim
+- **Related Files**:
+  - Modified: vite.config.ts (added vendor-api chunk)
+  - Related: src/services/apiService.ts (shim file, no changes needed)
+
+### [OPTIMIZER] Large File Refactoring - Split types.ts into Domain-Specific Modules (Issue #1293) ✅
 - **Mode**: OPTIMIZER
 - **Issue**: #1293
 - **Priority**: P2 (High Priority - Technical Debt)

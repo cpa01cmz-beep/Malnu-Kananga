@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.5.0
-**Last Updated**: 2026-01-31 (Issue #1294: Test Coverage Enhancement - quizGradeIntegrationService Tests Added)
+  **Version**: 3.5.1
+**Last Updated**: 2026-01-31 (Issue #1303: Circular Dependency Fix - Build Warnings Resolved)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -95,8 +95,17 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
     - All acceptance criteria from Issue #1231 met (8/8 complete)
     - Documentation synchronized across blueprint.md, roadmap.md, task.md
   
-     ### Recent Changes (2026-01-31)
-    - **Large File Refactoring - types.ts Module Activation** (Issue #1293, P2)
+      ### Recent Changes (2026-01-31)
+     - **Circular Dependency Fix - Build Warnings Resolved** (Issue #1303, P1)
+       - Fixed Rollup build warnings showing circular dependency between apiService.ts and services/api/index.ts
+       - Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk
+       - Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`
+       - Build completed successfully with NO circular dependency warnings
+       - TypeScript type checking: Passed (0 errors)
+       - ESLint linting: Passed (0 errors, 0 warnings)
+       - Eliminates potential runtime issues from broken execution order
+       - Improves build stability and reliability (Pillars 3: Stability, 7: Debug)
+     - **Large File Refactoring - types.ts Module Activation** (Issue #1293, P2)
       - Deleted old monolithic src/types.ts (1,808 lines) to activate modular structure
       - Confirmed all imports now resolve to src/types/index.ts (verified via typecheck)
       - All TypeScript compilation and linting passed (0 errors, 0 warnings)
