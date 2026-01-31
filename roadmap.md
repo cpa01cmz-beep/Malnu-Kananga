@@ -1,8 +1,8 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.3.2
-**Last Updated**: 2026-01-30 (Fixed GradeAnalytics test failure)
-  **Maintained By**: Lead Autonomous Engineer & System Guardian
+**Version**: 3.3.4
+**Last Updated**: 2026-01-31 (Fixed Custom Analysis Tools Package Configuration Error)
+   **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -583,11 +583,17 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
    - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
     - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
-       - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
-       - ✅ Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) - 2026-01-31
-         - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
-         - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
-         - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
+     - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+        - ✅ Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) - 2026-01-31
+          - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+          - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
+          - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
+        - ✅ Fix Custom Analysis Tools Package Configuration Error (Issue #1274) - 2026-01-31
+          - Created automatic patch script (.opencode/patch-package.js) for @opencode-ai/plugin
+          - Added comprehensive exports configuration (main field, default exports, wildcard exports)
+          - Fixed dist/index.js ESM import to include .js extension
+          - All 8 custom analysis tools now execute successfully without ERR_PACKAGE_PATH_NOT_EXPORTED error
+          - Enables automated PR analysis for code quality (Pillars 3: Stability, 4: Security, 6: Optimization Ops, 7: Debug, 15: Dynamic Coding)
       - ✅ Update Documentation Metrics in README.md (Issue #1249) - 2026-01-30
       - ✅ Add OCR Integration for Attendance Management (Issue #820) - 2026-01-30 (attendanceOCRService, AttendanceManagement component, 11 tests)
       - ✅ Integrate Quiz Results with Grade Analytics (Issue #1246) - 2026-01-30 (quizGradeIntegrationService, assignment type filter)
@@ -708,6 +714,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.3.4 | 2026-01-31 | Fix Custom Analysis Tools Package Configuration Error (Issue #1274): Created automatic patch script (.opencode/patch-package.js) to fix ERR_PACKAGE_PATH_NOT_EXPORTED error in @opencode-ai/plugin@1.1.15; Added comprehensive exports configuration (main field, default exports, wildcard exports, package.json export); Fixed dist/index.js ESM import to include .js extension; Added postinstall script to .opencode/package.json for automatic patching; All 8 custom analysis tools now execute successfully (check-console-logs, check-missing-error-handling, find-hardcoded-urls, find-untyped, check-storage-keys, etc.); Documentation added in .opencode/PATCH_README.md; Updated .opencode/OH_MY_OPENCODE.md with installation note; Enables automated PR analysis for code quality (Pillars 3: Stability, 4: Security, 6: Optimization Ops, 7: Debug, 15: Dynamic Coding); TypeScript type checking and ESLint linting passed |
 | 3.3.3 | 2026-01-31 | Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269): Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS; Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants in emailNotificationService.ts; All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
 | 3.3.2 | 2026-01-30 | Fix GradeAnalytics Test Failure (Issue #1267): Changed ambiguous test selector from `screen.getByText('Tugas')` to `screen.getByRole('tab', { name: 'Tugas' })` to resolve false positive match with dropdown option; All 19 GradeAnalytics tests passing (100% pass rate); TypeScript type checking and ESLint linting passed; Updated blueprint.md, roadmap.md, task.md |
   | 3.3.1 | 2026-01-30 | Integrate Email Service with Notification System (Issue #1264): Added emailNotificationService with full integration to unifiedNotificationManager; Email templates for all notification types (grades, announcements, events, materials, system, PPDB, OCR); User-controlled email notification preferences (per-type enable/disable); Digest mode (daily/weekly email digest); Quiet hours support for email notifications; Email delivery tracking and analytics; 20 tests (100% pass rate); Updated blueprint.md with new service documentation |

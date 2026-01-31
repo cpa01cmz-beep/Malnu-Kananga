@@ -12,7 +12,9 @@ Oh My OpenCode provides:
 
 ## Installation
 
-Oh My OpenCode is pre-configured in the `.opencode/` directory. No additional installation needed!
+Oh My OpenCode is pre-configured in `.opencode/` directory. No additional installation needed!
+
+**Note**: The `postinstall` script in `.opencode/package.json` automatically patches the `@opencode-ai/plugin` package to fix module resolution issues (Issue #1274). This patch is applied automatically when dependencies are installed.
 
 ## Quick Start
 

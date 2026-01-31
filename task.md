@@ -2,6 +2,57 @@
 
 ## Completed
 
+### [SANITIZER] Fix Custom Analysis Tools Package Configuration Error (Issue #1274) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1274
+- **Priority**: P1 (Bug - Tools Cannot Run)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Custom analysis tools in `.opencode/tool/` directory could not be executed due to package configuration errors in `@opencode-ai/plugin@1.1.15`. All tools failed with `ERR_PACKAGE_PATH_NOT_EXPORTED` error, blocking automated PR analysis.
+- **Root Cause Identified**:
+  1. Package.json missing `main` field - Some tools require this for compatibility
+  2. Incomplete exports configuration - Missing default exports for fallback resolution
+  3. Missing conditional exports - Node.js module resolution needed additional paths
+  4. dist/index.js importing without .js extension - ESM requirement (line: `export * from "./tool"` should be `export * from "./tool.js"`)
+- **Solution Implemented**:
+  1. ✅ Created `patch-package.js` script that automatically applies fixes after npm install
+  2. ✅ Added postinstall script to `.opencode/package.json` to run patch automatically
+  3. ✅ Patch script adds comprehensive exports to package.json:
+     - Added `main: "./dist/index.js"` field for compatibility
+     - Added `default` exports for both "." and "./tool" paths
+     - Added wildcard exports for "./dist/*"
+     - Added explicit "./package.json" export
+  4. ✅ Patch script fixes dist/index.js import to include .js extension
+  5. ✅ Added documentation in PATCH_README.md explaining the fix
+  6. ✅ Updated OH_MY_OPENCODE.md to mention the automatic patching
+  7. ✅ Set .opencode/package.json type to "module" to eliminate warnings
+- **Files Created**:
+  1. ✅ .opencode/patch-package.js - Automatic patch script (89 lines)
+  2. ✅ .opencode/PATCH_README.md - Comprehensive documentation
+  3. ✅ .opencode/package.json.backup - Backup of original (created by patch script)
+- **Files Modified**:
+  1. ✅ .opencode/package.json - Added `"type": "module"` and `"postinstall": "node patch-package.js"`
+  2. ✅ .opencode/OH_MY_OPENCODE.md - Added installation note about automatic patching
+  3. ✅ .opencode/node_modules/@opencode-ai/plugin/package.json - Patched with comprehensive exports
+  4. ✅ .opencode/node_modules/@opencode-ai/plugin/dist/index.js - Fixed import to include .js extension
+- **Verification**:
+  - ✅ All 8 custom tools execute successfully without errors:
+     - check-console-logs.ts ✓
+     - check-missing-error-handling.ts ✓
+     - check-missing-tests.ts ✓
+     - check-storage-keys.ts ✓
+     - find-hardcoded-urls.ts ✓
+     - find-untyped.ts ✓
+     - generate-deployment-checklist.ts ✓
+     - generate-types.ts ✓
+  - ✅ Patch script runs automatically via npm install postinstall
+  - ✅ No ERR_PACKAGE_PATH_NOT_EXPORTED errors
+  - ✅ TypeScript type checking: Passed (0 errors)
+  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+- **Impact**: Enables automated PR analysis using custom tools, improves code quality checking workflow, eliminates manual verification of hardcoded values and error handling (Pillars 3: Stability, 4: Security, 6: Optimization Ops, 7: Debug, 15: Dynamic Coding)
+- **Issue Status**: To be closed with PR after documentation updates
+
 ### [SANITIZER] Fix Hardcoded localStorage Keys in emailNotificationService (Issue #1269) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1269
