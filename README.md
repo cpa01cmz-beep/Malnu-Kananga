@@ -1,13 +1,13 @@
 
 # Website & Portal Pintar MA Malnu Kananga
 
-![Version](https://img.shields.io/badge/version-3.3.1-green)
+![Version](https://img.shields.io/badge/version-3.4.6-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)
 ![React](https://img.shields.io/badge/React-19.2.3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![Test Coverage](https://img.shields.io/badge/coverage-31.3%25-yellow)
 
-**Version**: 3.3.1 | **Last Updated**: 2026-01-30 | **Status**: ✅ Production Ready
+**Version**: 3.4.6 | **Last Updated**: 2026-01-31 | **Status**: ✅ Production Ready
 
 Smart Portal MA Malnu Kananga - Modern school management system with AI integration.
 

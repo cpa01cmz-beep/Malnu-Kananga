@@ -1,20 +1,20 @@
 # Documentation Index
 
  **Created**: 2026-01-05
-    **Last Updated**: 2026-01-22
-    **Version**: 3.2.0
-    **Status**: Active
+     **Last Updated**: 2026-01-31
+     **Version**: 3.4.6
+     **Status**: Active
 
 ## Overview
 
-This index provides a comprehensive overview of all documentation available for MA Malnu Kananga web application project. All documentation is centralized in `/docs` directory.
+This index provides a comprehensive overview of all documentation available for MA Malnu Kananga web application project.
 
-**Important**: Project documentation has been consolidated (2026-01-22):
- - **Single Source of Truth**: Core documentation files are now centralized in `/docs` directory
-   - `[BLUEPRINT.md](./blueprint.md)` - System architecture, tech stack, and implementation details
-   - `[ROADMAP.md](./roadmap.md)` - Complete system documentation (architecture, features, roadmap, tasks, status)
-   - `[TASK.md](./task.md)` - Active task tracking and progress
- - **Archived Documentation**: `archive/` directory contains previous versions of these files for reference only
+**Important**: Documentation location clarified (2026-01-31):
+ - **Single Source of Truth**: Core documentation files are in **root directory** (canonical location)
+    - `[BLUEPRINT.md](../blueprint.md)` - System architecture, tech stack, and implementation details
+    - `[ROADMAP.md](../roadmap.md)` - Complete system documentation (architecture, features, roadmap, tasks, status)
+    - `[TASK.md](../task.md)` - Active task tracking and progress
+  - **Archived Documentation**: `archive/` directory contains previous versions of these files for reference only
 
 **Note**: The following files are NOT part of documentation:
 - `AGENTS.md` (root) - AI agent configuration for OpenCode CLI tool
@@ -24,9 +24,9 @@ These files are operational instructions for AI agents and should not be conside
 ## Documentation Structure
 
 ### 📚 Core Documentation
-- **[BLUEPRINT.md](./blueprint.md)** - System architecture, tech stack, module structure, data models, and design system
-- **[ROADMAP.md](./roadmap.md)** - Development roadmap, features, tasks, and project status
-- **[TASK.md](./task.md)** - Active task tracking, progress, and completion status
+- **[BLUEPRINT.md](../blueprint.md)** - System architecture, tech stack, module structure, data models, and design system
+- **[ROADMAP.md](../roadmap.md)** - Development roadmap, features, tasks, and project status
+- **[TASK.md](../task.md)** - Active task tracking, progress, and completion status
 - **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
@@ -211,9 +211,23 @@ This index maintains relationships between documents:
 
 ---
 
+## Recent Changes (v3.4.6 - 2026-01-31)
+
+     - **Documentation Location Inconsistency Fix (2026-01-31 - Current)**:
+                - Fixed Issue #1285: Documentation location inconsistency (Pillar 8: Single Source of Truth)
+                - Updated README.md version from 3.3.1 to 3.4.6
+                - Removed redundant documentation copies in docs/ directory (blueprint.md, roadmap.md, task.md)
+                - Established root directory as canonical location for core documentation files
+                - Updated docs/README.md to reflect root directory as Single Source of Truth
+                - Updated all links from ./docs/ to ../ for root-based references
+                - Eliminates confusion about which documentation location is authoritative
+                - Improves documentation maintainability by centralizing updates in one location
+
+---
+
 ## Recent Changes (v3.2.0 - 2026-01-22)
 
-     - **Documentation Consolidation (2026-01-22 - Current)**:
+     - **Documentation Consolidation (2026-01-22)**:
                 - Consolidated core documentation to `/docs` directory
                 - Moved `blueprint.md`, `roadmap.md`, `task.md` from root to `/docs/`
                 - Updated documentation structure to reflect new location
