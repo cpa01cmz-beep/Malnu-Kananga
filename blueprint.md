@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.4.6
-**Last Updated**: 2026-01-31 (Documentation location inconsistency fix - Issue #1285)
+**Version**: 3.4.7
+**Last Updated**: 2026-01-31 (Quiz-Grade Integration - Issue #1288)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -139,6 +139,16 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
       - Test duration: 1.09s (fast, confirming timer fixes work)
       - Full test suite runs successfully without timeout
       - Improves CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+   
+   - **Quiz-Grade Integration** (Issue #1288, P2)
+     - Created QuizIntegrationDashboard.tsx component (292 lines) for teachers to batch integrate quiz attempts
+     - Added integration status display (total/integrated/pending counts), progress bar, and error details
+     - Updated AcademicGrades.tsx to support quiz grades with new formula (30% assignment + 30% mid + 40% final + 10% quiz)
+     - Added quiz column to grades table UI
+     - Verified GradeAnalytics.tsx already has quiz assignment type filter and integration
+     - Added comprehensive tests for QuizIntegrationDashboard (8 tests, 100% pass rate)
+     - TypeScript type checking and ESLint linting passed
+     - Strengthens coupling between quiz results and grade analytics (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX)
    
    ### Recent Changes (2026-01-30)
 - **Bug Fixes**: Fixed GradeAnalytics test failure 'switches between tabs' (Issue #1267)

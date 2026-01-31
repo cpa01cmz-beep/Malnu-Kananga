@@ -37,6 +37,7 @@ interface GradeItem {
   assignment: number;
   midExam: number;
   finalExam: number;
+  quiz: number;
   finalScore: number;
   grade: string;
 }
@@ -141,14 +142,14 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
   }, [fetchGrades, loadGoals]);
 
   const aggregateGradesBySubject = (gradeData: Grade[], subjectData: Subject[]): GradeItem[] => {
-    const gradeMap = new Map<string, { assignment: number; midExam: number; finalExam: number; count: number }>();
+    const gradeMap = new Map<string, { assignment: number; midExam: number; finalExam: number; quiz: number; count: number }>();
 
     gradeData.forEach((grade) => {
       const assignmentType = grade.assignmentType.toLowerCase();
       const key = grade.subjectId;
 
       if (!gradeMap.has(key)) {
-        gradeMap.set(key, { assignment: 0, midExam: 0, finalExam: 0, count: 0 });
+        gradeMap.set(key, { assignment: 0, midExam: 0, finalExam: 0, quiz: 0, count: 0 });
       }
 
       const aggregated = gradeMap.get(key)!;
@@ -159,6 +160,8 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
         aggregated.midExam = (aggregated.midExam * aggregated.count + grade.score) / (aggregated.count + 1);
       } else if (assignmentType === 'uas' || assignmentType === 'final') {
         aggregated.finalExam = (aggregated.finalExam * aggregated.count + grade.score) / (aggregated.count + 1);
+      } else if (assignmentType === 'quiz') {
+        aggregated.quiz = (aggregated.quiz * aggregated.count + grade.score) / (aggregated.count + 1);
       }
 
       aggregated.count += 1;
@@ -169,7 +172,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
     gradeMap.forEach((values, subjectId) => {
       const subject = subjectData.find((s) => s.id === subjectId);
       if (subject) {
-        const finalScore = values.assignment * 0.3 + values.midExam * 0.3 + values.finalExam * 0.4;
+        const finalScore = values.assignment * 0.3 + values.midExam * 0.3 + values.finalExam * 0.4 + values.quiz * 0.1;
         let letter = 'D';
         if (finalScore >= 85) letter = 'A';
         else if (finalScore >= 75) letter = 'B';
@@ -180,6 +183,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
           assignment: Math.round(values.assignment),
           midExam: Math.round(values.midExam),
           finalExam: Math.round(values.finalExam),
+          quiz: Math.round(values.quiz),
           finalScore: Math.round(finalScore * 10) / 10,
           grade: letter,
         });
@@ -504,6 +508,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                   <th className="px-4 py-4 text-center">Tugas</th>
                   <th className="px-4 py-4 text-center">UTS</th>
                   <th className="px-4 py-4 text-center">UAS</th>
+                  <th className="px-4 py-4 text-center">Kuis</th>
                   <th className="px-6 py-4 text-center font-bold">Nilai Akhir</th>
                   <th className="px-6 py-4 text-center">Predikat</th>
                 </tr>
@@ -519,6 +524,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                       <td className="px-4 py-4 text-center">{item.assignment}</td>
                       <td className="px-4 py-4 text-center">{item.midExam}</td>
                       <td className="px-4 py-4 text-center">{item.finalExam}</td>
+                      <td className="px-4 py-4 text-center">{item.quiz}</td>
                       <td className="px-6 py-4 text-center font-bold text-neutral-900 dark:text-white">
                         {item.finalScore.toFixed(1)}
                       </td>
@@ -539,9 +545,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                       </td>
                     </tr>
                   ))
-                 ) : (
-                   <tr>
-                     <td colSpan={6}>
+                  ) : (
+                    <tr>
+                      <td colSpan={7}>
                        <EmptyState message={DATA_MESSAGES.NO_DATA_AVAILABLE('nilai')} size="md" variant="minimal" />
                      </td>
                    </tr>

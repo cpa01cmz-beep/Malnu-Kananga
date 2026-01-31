@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.4.6
-**Last Updated**: 2026-01-31 (Complete test suite timeout fix - Issue #1284)
+**Version**: 3.4.7
+**Last Updated**: 2026-01-31 (Quiz-Grade Integration - Issue #1288)
    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -753,6 +753,7 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.4.7 | 2026-01-31 | Quiz-Grade Integration (Issue #1288): Created QuizIntegrationDashboard.tsx component (292 lines) for teachers to batch integrate quiz attempts into grades; Features include integration status display (total/integrated/pending counts), progress bar with completion percentage, batch integration button with loading states, toast notifications for success/error/warning/info, and error details display for failed integrations; Updated AcademicGrades.tsx to support quiz grades with new formula (30% assignment + 30% mid + 40% final + 10% quiz), added quiz column to grades table UI, updated table colSpan from 6 to 7; Verified GradeAnalytics.tsx already has quiz assignment type filter and integration; Added comprehensive tests for QuizIntegrationDashboard (8 tests, 100% pass rate); Strengthens coupling between quiz results and grade analytics (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX); TypeScript type checking and ESLint linting passed |
 | 3.4.6 | 2026-01-31 | Fix Documentation Location Inconsistency (Issue #1285): Updated README.md version from 3.3.1 to 3.4.6 and Last Updated to 2026-01-31; Removed redundant documentation copies in docs/ directory (blueprint.md, roadmap.md, task.md); Established root directory as canonical location for core documentation files; Updated docs/README.md to reflect root directory as Single Source of Truth; Updated docs/README.md version to 3.4.6 and Last Updated to 2026-01-31; Updated all links in docs/README.md from ./docs/ to ../ for root-based references; Added v3.4.6 recent changes entry documenting this fix; Improves documentation maintainability and eliminates confusion about which location is authoritative (Pillars 8: Documentation, 16: UX/DX); All acceptance criteria met (5/5 complete) |
 | 3.4.6 | 2026-01-31 | Complete Test Suite Timeout Fix (Issue #1284): Verified all test files using vi.useFakeTimers() have vi.useRealTimers() in afterEach hooks; emailNotificationService.test.ts (line 22), useWebSocket.test.ts (line 55), errorHandler.test.ts (line 557); All 3 test files passed (83 tests, 2 skipped, no timeouts); Test duration: 1.09s (fast, confirming timer fixes work); Full test suite runs successfully without timeout; Improves CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug) |
 | 3.4.5 | 2026-01-31 | Fix Security Vulnerability in hono Package (Issue #1287, PR #1290): Updated hono package from <=4.11.6 to 4.11.7 via npm audit fix; Resolved 4 moderate severity vulnerabilities: XSS through ErrorBoundary component (GHSA-9r54-q6cx-xmh5, CVSS: 4.7, CWE-79); Arbitrary Key Read in Serve static Middleware (GHSA-w332-q679-j88p, CWE-200, CWE-284, CWE-668); Cache Deception - Ignores Cache-Control: private (GHSA-6wqw-2p9w-4vw4, CVSS: 5.3, CWE-524, CWE-613); IP Spoofing - IPv4 validation bypass (GHSA-r354-f388-2fhh, CVSS: 4.8, CWE-185); npm audit: 0 vulnerabilities found; TypeScript type checking and ESLint linting passed; Hardens application against OWASP threats (Pillars 3: Stability, 4: Security, 7: Debug) |
