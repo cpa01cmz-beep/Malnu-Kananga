@@ -34,6 +34,7 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { WebSocketStatus } from './WebSocketStatus';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -74,7 +75,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
      isSyncing: isActionQueueSyncing
    } = useOfflineActionQueue();
 
-  const { isConnected, isConnecting } = useRealtimeEvents({
+   const { isConnected, isConnecting } = useRealtimeEvents({
     eventTypes: [
       'user_role_changed',
       'user_status_changed',
@@ -87,6 +88,19 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
       'message_updated',
     ],
     enabled: isOnline,
+    onEvent: useCallback((event: unknown) => {
+      const typedEvent = event as { entity: string; type: string; data?: Record<string, unknown> };
+
+      if (typedEvent.entity === 'user') {
+        logger.info('Real-time event: user updated');
+        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+      } else if (typedEvent.entity === 'announcement') {
+        logger.info('Real-time event: announcement updated');
+        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+      } else if (typedEvent.type === 'notification_created') {
+        logger.info('Real-time event: notification created');
+      }
+    }, []),
   });
 
   const getCurrentUserId = (): string => {
@@ -417,7 +431,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                     </span>
                                 </div>
                             )}
-                            
+
+                            {/* WebSocket Connection Status */}
+                            {isOnline && (
+                                <WebSocketStatus compact showReconnectButton={false} className="text-xs" />
+                            )}
+
                             {/* Manual Sync Button */}
                             <SmallActionButton
                                 onClick={handleManualSync}
