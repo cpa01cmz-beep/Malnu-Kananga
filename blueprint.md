@@ -69,7 +69,8 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
  - **Icons**: Heroicons React 2.2.0
 
    ### Bug Fixes & Enhancements (2026-01-22 - 2026-01-31)
-       - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
+        - **Test Suite Timeout (Issue #1284)**: Added vi.useRealTimers() to afterEach hooks in emailNotificationService.test.ts, useWebSocket.test.ts, and errorHandler.test.ts - Previous fix (Issue #1279) only addressed errorRecovery.test.ts and retry.test.ts, but 3 other test files also used fake timers without proper cleanup - Test suite now completes in ~90s instead of hanging indefinitely (P1)
+        - **WebSocket Memory Leak**: Fixed visibilitychange listener cleanup in disconnect() (Issue #1223, P1)
        - **Incomplete useOfflineActionQueue Mocks**: Fixed incomplete mocks causing 300+ test failures (Issue #1236, P0)
        - **Speech Recognition Error Recovery**: Added retry logic with exponential backoff and circuit breaker for transient errors (GAP-110, P2)
        - **Speech Synthesis Error Recovery**: Added retry logic with exponential backoff and circuit breaker for synthesis failures (GAP-111, P2)
