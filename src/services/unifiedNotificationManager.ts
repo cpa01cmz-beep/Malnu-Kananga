@@ -1518,6 +1518,35 @@ class UnifiedNotificationManager {
     logger.info('Unified notification settings reset to default');
   }
 
+  /**
+   * Cleanup unified notification manager - clear all resources and subscriptions
+   * Call this on logout or when service needs to be reset
+   */
+  async cleanup(): Promise<void> {
+    this.batches.clear();
+    this.templates.clear();
+    this.analytics.clear();
+    this.eventListeners.clear();
+    this.voiceQueue = [];
+    this.voiceHistory = [];
+    this.isProcessingVoice = false;
+
+    this.synthesisService.cleanup();
+
+    if (this.subscription) {
+      try {
+        await this.subscription.unsubscribe();
+      } catch (error) {
+        logger.error('Failed to unsubscribe from push notifications:', error);
+      }
+      this.subscription = null;
+    }
+
+    this.swRegistration = null;
+
+    logger.info('Unified notification manager cleaned up');
+  }
+
   // Compatibility with existing API
   async showLocalNotification(notification: PushNotification): Promise<void> {
     return this.showNotification(notification);

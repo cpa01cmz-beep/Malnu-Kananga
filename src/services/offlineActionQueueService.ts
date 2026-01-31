@@ -685,6 +685,19 @@ class OfflineActionQueueService {
   }
 
   /**
+   * General cleanup method - clear queue state and all listeners
+   * Call this on logout or when service needs to be reset
+   */
+  public cleanup(): void {
+    this.cleanupWebSocketIntegration();
+    this.queue = [];
+    this.isSyncing = false;
+    this.syncCallbacks.clear();
+    this.saveQueue();
+    logger.info('OfflineActionQueue service cleaned up');
+  }
+
+  /**
    * Register callback for sync completion
    */
   public onSyncComplete(callback: (result: SyncResult) => void): () => void {

@@ -284,10 +284,21 @@ class PerformanceMonitor {
    * Clear all metrics
    */
   clearMetrics(): void {
-    this.metrics = [];
-    this.consecutiveFailures = 0;
-    logger.info('Performance metrics cleared');
-  }
+     this.metrics = [];
+     this.consecutiveFailures = 0;
+     logger.info('Performance metrics cleared');
+   }
+
+  /**
+   * Cleanup performance monitor - reset all state
+   * Call this on logout or when monitoring needs to be reset
+   */
+  cleanup(): void {
+     this.metrics = [];
+     this.consecutiveFailures = 0;
+     this.monitoringEnabled = false;
+     logger.info('Performance monitor cleaned up');
+   }
 
   /**
    * Get recent metrics (last N requests)

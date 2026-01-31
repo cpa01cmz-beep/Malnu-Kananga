@@ -1035,3 +1035,14 @@ export async function generateStudyPlan(
       : message);
   }
 }
+
+
+/**
+ * Cleanup gemini service - clear AI instance state and reset error state
+ * Call this on logout or when service needs to be reset
+ */
+export function cleanupGeminiService(): void {
+  aiInstance = null;
+  aiInitializationError = null;
+  logger.info('Gemini service cleaned up - AI instance cleared');
+}

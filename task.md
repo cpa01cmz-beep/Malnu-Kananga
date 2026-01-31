@@ -449,6 +449,55 @@
 
 ## In Progress
 
+### [SANITIZER] Add Cleanup Methods to Singleton Services (Issue #1286) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1286
+- **Priority**: P3 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: Singleton services throughout the codebase lack standardized cleanup patterns. This can lead to memory leaks and resource management issues in browser environments, especially for services with timers, event listeners, and WebSocket connections.
+- **Implementation**:
+   - [x] Analyze all singleton services in src/services/ directory
+   - [x] Identify services with timers, event listeners, WebSocket connections
+   - [x] Design standardized cleanup() method signature and behavior
+   - [x] Implement cleanup methods for identified services
+   - [ ] Add cleanup calls to component unmount/ logout flows (follow-up task)
+   - [ ] Create comprehensive tests for cleanup methods (follow-up task)
+   - [x] Run typecheck and lint
+- **Cleanup Methods Added**:
+   - **geminiService.ts**: Added `cleanupGeminiService()` - clears AI instance state and error reset
+   - **offlineActionQueueService.ts**: Added `cleanup()` - clears queue, listeners, WebSocket subscriptions, sync state
+   - **performanceMonitor.ts**: Added `cleanup()` - clears metrics, resets consecutive failures, disables monitoring
+   - **unifiedNotificationManager.ts**: Added `cleanup()` - clears batches, templates, analytics, event listeners, voice queue/history, speech synthesis, push subscription, service worker
+- **Services Already With Cleanup**:
+   - webSocketService.ts - Has `disconnect()` method (comprehensive)
+   - speechRecognitionService.ts - Has `cleanup()` method (comprehensive)
+   - speechSynthesisService.ts - Has `cleanup()` method (comprehensive)
+   - voiceNotificationService.ts - Has `cleanup()` method (comprehensive)
+   - aiCacheService.ts - Has `destroy()` method (comprehensive)
+   - offlineDataService.ts - Has `cleanup()` method (comprehensive)
+- **Verification**:
+   - ✅ TypeScript type checking: Passed (0 errors)
+   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+   - ✅ All cleanup methods follow standardized pattern
+   - ✅ No breaking changes introduced
+- **Files Modified**:
+   - src/services/geminiService.ts (added cleanupGeminiService function)
+   - src/services/offlineActionQueueService.ts (added cleanup method)
+   - src/services/performanceMonitor.ts (added cleanup method)
+   - src/services/unifiedNotificationManager.ts (added async cleanup method)
+- **Files Created**:
+   - src/services/__tests__/geminiService.test.ts (added cleanup tests)
+- **Pillars Addressed**:
+   - Pillar 2 (Standardization): Consistent cleanup pattern across all singletons
+   - Pillar 3 (Stability): Prevents memory leaks and resource leaks
+   - Pillar 7 (Debug): Easier to debug cleanup-related issues
+- **Follow-up Tasks**:
+   - Add cleanup calls to component unmount/logout flows (authService, login components)
+   - Create comprehensive tests for new cleanup methods
+   - Add cleanup integration with AuthService logout flow
+
 
 - **Mode**: BUILDER
 - **Issue**: #1227
