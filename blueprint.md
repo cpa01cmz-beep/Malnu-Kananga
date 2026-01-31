@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Blueprint (Architecture & Design)
 
 **Version**: 3.4.6
-**Last Updated**: 2026-01-31 (Complete test suite timeout fix - Issue #1284)
+**Last Updated**: 2026-01-31 (Documentation location inconsistency fix - Issue #1285)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -96,6 +96,15 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
     - Documentation synchronized across blueprint.md, roadmap.md, task.md
   
   ### Recent Changes (2026-01-31)
+  - **Documentation Location Inconsistency Fix** (Issue #1285, P1)
+    - Updated README.md version from 3.3.1 to 3.4.6 and Last Updated to 2026-01-31
+    - Removed redundant documentation copies in docs/ directory (blueprint.md, roadmap.md, task.md)
+    - Established root directory as canonical location for core documentation files
+    - Updated docs/README.md to reflect root directory as Single Source of Truth
+    - Updated docs/README.md version to 3.4.6 and Last Updated to 2026-01-31
+    - Updated all links in docs/README.md from ./docs/ to ../ for root-based references
+    - Eliminates confusion about which documentation location is authoritative
+    - Improves developer onboarding experience (Pillars 8: Documentation, 16: UX/DX)
   - **Bug Fixes for attendanceOCRService** (Issue #1277, #1276, P2)
     - Fixed low confidence/empty OCR handling to return empty result instead of throwing error (Issue #1277)
     - Modified processAttendanceSheet to check `ocrResult.confidence < 50 || ocrResult.text.trim() === ''` and return empty result with zeroed summary

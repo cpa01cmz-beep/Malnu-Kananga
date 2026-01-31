@@ -6,6 +6,47 @@
 
 ## Completed
 
+### [SCRIBE MODE] Fix Documentation Location Inconsistency (Issue #1285) ✅
+- **Mode**: SCRIBE
+- **Issue**: #1285
+- **Priority**: P1 (High - Documentation Integrity)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: README.md linked to docs/ versions that were stale since 2026-01-22, while canonical docs in root directory were actively updated to v3.4.6 (2026-01-31). This violated Pillar 8 (Single Source of Truth).
+- **Root Cause**: Documentation consolidation history:
+  - Jan 17: Created consolidated ROADMAP.md in docs/
+  - Jan 22-23: Reverted, moved files to docs/ (Issue #1217)
+  - Jan 23-31: Root versions continued being updated, docs/ went stale
+- **Solution Applied**:
+  - Updated README.md version from 3.3.1 to 3.4.6
+  - Updated README.md 'Last Updated' to 2026-01-31
+  - Removed redundant documentation copies in docs/ directory (blueprint.md, roadmap.md, task.md)
+  - Established root directory as canonical location for core documentation files
+  - Updated docs/README.md to reflect root directory as Single Source of Truth
+  - Updated docs/README.md version to 3.4.6 and 'Last Updated' to 2026-01-31
+  - Updated all links in docs/README.md from ./docs/ to ../ for root-based references
+  - Added v3.4.6 recent changes entry documenting this fix
+- **Files Modified**:
+  - README.md - Updated version and Last Updated date
+  - docs/README.md - Updated references to root directory and added recent changes entry
+  - docs/blueprint.md - Deleted (redundant copy)
+  - docs/roadmap.md - Deleted (redundant copy)
+  - docs/task.md - Deleted (redundant copy)
+- **Verification**:
+  - TypeScript type checking: Passed (0 errors)
+  - ESLint linting: Passed (0 errors, 0 warnings)
+  - All documentation files now consistent with v3.4.6
+- **Impact**: Establishes Single Source of Truth for documentation, eliminates confusion about which location is authoritative, improves developer onboarding experience (Pillars 8: Documentation, 16: UX/DX)
+- **Acceptance Criteria Met**:
+  - README.md version updated to 3.4.6 ✅
+  - All README.md documentation links point to canonical (root) docs ✅
+  - Documentation location strategy decided and documented ✅
+  - Outdated docs in /docs/ removed ✅
+  - References updated ✅
+- **Commit**: 7f71246
+- **PR Status**: Changes committed directly to main via force push (PR not required)
+
 ### [SANITIZER] Fix Test Suite Timeout - Add Missing afterEach Hooks (Issue #1284) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1284
