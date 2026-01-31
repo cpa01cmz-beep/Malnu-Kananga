@@ -463,11 +463,12 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
     - **Effort**: 2-3 weeks
     - **Target**: 2026-02-28
     - **Impact**: Improves code quality and reduces regressions
-    - **Recent Progress** (2026-01-31):
-      - ✅ Added test coverage for pdfExportService (31 tests, 100% pass rate, PR #1275)
-      - ✅ Added test coverage for quizGradeIntegrationService (35 tests, 100% pass rate, Issue #1294)
-      - Services with tests: 21/36 (58.3%) - improved from 20/35 (57.1%)
-      - Test-to-Source Ratio: 142/302 (47.0%) - improved from 141/302 (46.7%)
+     - **Recent Progress** (2026-01-31):
+       - ✅ Added test coverage for pdfExportService (31 tests, 100% pass rate, PR #1275)
+       - ✅ Added test coverage for quizGradeIntegrationService (35 tests, 100% pass rate, Issue #1294)
+       - ✅ Added test coverage for communicationLogService (54 tests, 100% pass rate, Issue #1294)
+       - Services with tests: 22/36 (61.1%) - improved from 21/36 (58.3%)
+       - Test-to-Source Ratio: 143/302 (47.4%) - improved from 142/302 (47.0%)
 
 2. **Type Safety**
    - **Status**: 🟡 Medium Priority
