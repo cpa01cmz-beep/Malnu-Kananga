@@ -1333,6 +1333,7 @@ export interface ClassGradeAnalytics {
   subjectBreakdown: SubjectAnalytics[];
   topPerformers: StudentPerformance[];
   needsAttention: StudentPerformance[];
+  studentPerformances: StudentPerformance[];
   lastUpdated: string;
 }
 

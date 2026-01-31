@@ -36,6 +36,8 @@ import { CardSkeleton } from './ui/Skeleton';
 import ProgressBar from './ui/ProgressBar';
 import { CHART_COLORS } from '../config/chartColors';
 import { analyzeClassPerformance } from '../services/geminiService';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface GradeAnalyticsProps {
   onBack: () => void;
@@ -100,10 +102,10 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     setAiInsightsError(null);
 
     try {
-      const classGradesData = analytics.subjectBreakdown.map(subject => ({
-        studentName: `${subject.subjectName} (Average)`,
-        subject: subject.subjectName,
-        grade: subject.averageScore.toFixed(1),
+      const classGradesData = analytics.studentPerformances.map(student => ({
+        studentName: student.studentName,
+        subject: 'Overall',
+        grade: student.averageScore.toFixed(1),
         semester: 'Current'
       }));
 
@@ -112,10 +114,10 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
 
       const cacheKey = STORAGE_KEYS.CLASS_INSIGHTS(classId);
       const timestampKey = STORAGE_KEYS.CLASS_INSIGHTS_TIMESTAMP(classId);
-      
+
       localStorage.setItem(cacheKey, insights);
       localStorage.setItem(timestampKey, Date.now().toString());
-      
+
       showToast('AI Analisis kelas berhasil dihasilkan', 'success');
       logger.info('AI class insights generated for class:', classId);
     } catch (err) {
@@ -207,6 +209,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           subjectBreakdown: [],
           topPerformers: [],
           needsAttention: [],
+          studentPerformances: [],
           lastUpdated: new Date().toISOString()
         });
         setLoading(false);
@@ -292,6 +295,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       subjectBreakdown,
       topPerformers,
       needsAttention,
+      studentPerformances,
       lastUpdated: new Date().toISOString(),
     });
 
@@ -512,11 +516,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
             {aiInsights && !aiInsightsLoading && (
               <div className="bg-white dark:bg-neutral-800 rounded-lg p-4 border border-neutral-200 dark:border-neutral-700">
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  {aiInsights.split('\n').map((line, index) => (
-                    <p key={index} className="mb-2 last:mb-0 text-neutral-700 dark:text-neutral-300">
-                      {line}
-                    </p>
-                  ))}
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{aiInsights}</ReactMarkdown>
                 </div>
               </div>
             )}
@@ -524,16 +524,9 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
             {!aiInsights && !aiInsightsLoading && !aiInsightsError && (
               <div className="text-center py-6 bg-white dark:bg-neutral-800 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-600">
                 <div className="text-4xl mb-3">🤖</div>
-                <p className="text-neutral-600 dark:text-neutral-400 mb-3">
+                <p className="text-neutral-600 dark:text-neutral-400">
                   Belum ada analisis AI untuk kelas ini
                 </p>
-                <Button
-                  onClick={generateAIInsights}
-                  variant="blue-solid"
-                  size="sm"
-                >
-                  Generate AI Insights
-                </Button>
               </div>
             )}
           </Card>
