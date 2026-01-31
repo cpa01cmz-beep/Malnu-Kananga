@@ -1,7 +1,40 @@
 # Active Tasks Tracking
 
 ## In Progress
-(No tasks currently in progress)
+
+### [SANITIZER] Fix False Positives in Custom Analysis Tools (Issue #1280) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1280
+- **Priority**: P1 (Critical)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: check-missing-error-handling and check-storage-keys tools produce false positives using simplistic grep patterns, reducing trust in automated analysis.
+- **Root Cause Analysis**:
+  - **check-missing-error-handling.ts**: Uses `grep -A 10` to check for try/catch, but error handling might be beyond 10 lines or delegated to caller/wrapper
+  - **check-storage-keys.ts**: Uses grep to check if STORAGE_KEYS appears on same line, but proper usage might have STORAGE_KEYS on different line (e.g., `const key = STORAGE_KEYS.X; localStorage.setItem(key, ...)`)
+- **Solution Implemented**:
+  - **check-missing-error-handling.ts**: Rewrote to use context-based analysis with JavaScript filtering instead of simplistic grep pipeline
+    - Increased context from 10 to 30 lines
+    - Added error recovery pattern exclusions (withCircuitBreaker, retryWithBackoff, CircuitBreaker, retry)
+    - Improved error handling pattern matching (try {, catch, throw, .catch(), .catchError, error callbacks, onError)
+    - Added exclusion for "no error handling" comments and expected error cases
+    - Filters output to first 15 problematic blocks to avoid overwhelming results
+  - **check-storage-keys.ts**: Rewrote to use context-based analysis with JavaScript filtering
+    - Uses 5-line before and after context for localStorage calls
+    - Added variable assignment detection (e.g., `const key = STORAGE_KEYS.MY_KEY; localStorage.setItem(key, ...)`)
+    - Added exclusions for legitimate fallback values and intentionally documented hardcoded cases
+    - Filters comments and non-relevant matches
+    - Filters output to first 10 problematic blocks for manageable results
+- **Files Modified**:
+  - ✅ .opencode/tool/check-missing-error-handling.ts - Complete rewrite (53 lines, from 18 lines)
+  - ✅ .opencode/tool/check-storage-keys.ts - Complete rewrite (57 lines, from 18 lines)
+- **Impact**: Significantly improves reliability of automated code analysis tools, reduces false positives, enables developers to trust automated code quality checks (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+- **Files Updated**:
+  - ✅ blueprint.md - Added recent changes entry
+  - ✅ roadmap.md - Added Q1 2026 target completion
+  - ✅ task.md - Marked task as completed
+- **Next Steps**: Issue #1280 ready to be closed with PR
 
 ## Completed
 
