@@ -94,9 +94,19 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
    - PR is now MERGEABLE and ready for approval (awaiting Cloudflare Pages CI check)
     - All acceptance criteria from Issue #1231 met (8/8 complete)
     - Documentation synchronized across blueprint.md, roadmap.md, task.md
-  
-       ### Recent Changes (2026-01-31)
-      - **Integrate Communication Log Service with Messaging Components** (Issue #1304, P2)
+
+        ### Recent Changes (2026-01-31)
+       - **Fix useCanAccess Hook Stale User Data - Security & Stability** (Issue #1301, P2)
+        - Created useAuth hook (77 lines) with reactive auth state management
+        - Added storage event listener to detect auth token changes from other windows/tabs
+        - Added window focus listener to re-check auth state when window regains focus
+        - Added periodic check (5s interval) for token updates
+        - Updated useCanAccess to use reactive useAuth instead of memoized user
+        - Comprehensive tests: 23 tests (23 passed, 1 skipped) covering initialization, auth state changes, refreshAuth function, cleanup, and role changes
+        - TypeScript type checking: Passed (0 errors)
+        - ESLint linting: Passed (0 errors, 0 warnings)
+        - Fixes security vulnerability where permission checks use stale user data (Pillars 3: Stability, 4: Security, 11: Modularity, 16: UX/DX)
+       - **Integrate Communication Log Service with Messaging Components** (Issue #1304, P2)
        - Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName)
        - Created CommunicationDashboard component (258 lines) with filtering (type, status, keyword)
        - Added export functionality (PDF/CSV) via communicationLogService
