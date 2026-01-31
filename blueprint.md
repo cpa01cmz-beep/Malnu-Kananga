@@ -293,3 +293,6 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
     - Comprehensive feature list
     - Contributing guidelines
     
+
+
+              - **Add Cleanup Methods to Singleton Services** (Issue #1286, P3): Added standardized cleanup methods to singleton services to prevent memory leaks and resource management issues; Implemented `cleanupGeminiService()` in geminiService.ts to clear AI instance state and error reset; Added `cleanup()` method in offlineActionQueueService.ts to clear queue, listeners, WebSocket subscriptions, and sync state; Added `cleanup()` method in performanceMonitor.ts to clear metrics, reset consecutive failures, and disable monitoring; Added async `cleanup()` method in unifiedNotificationManager.ts to clear batches, templates, analytics, event listeners, voice queue/history, speech synthesis, push subscription, and service worker; All services now follow standardized cleanup pattern; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Added tests for cleanupGeminiService(); Improves stability and prevents memory leaks (Pillars 2: Standardization, 3: Stability, 7: Debug)
