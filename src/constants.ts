@@ -96,7 +96,8 @@ export const STORAGE_KEYS = {
     STUDY_PLAN_ANALYTICS: (studentId: string) => `malnu_study_plan_analytics_${studentId}`,
     STUDY_PLAN_HISTORY: (studentId: string) => `malnu_study_plan_history_${studentId}`,
     WEEKLY_PROGRESS: (studentId: string, weekNumber: number) => `malnu_weekly_progress_${studentId}_${weekNumber}`,
-    
+    STUDY_PLAN_MATERIAL_RECOMMENDATIONS: (studyPlanId: string) => `malnu_study_plan_material_recommendations_${studyPlanId}`,
+
     // Voice Notifications
     VOICE_NOTIFICATIONS_QUEUE: 'malnu_voice_notifications_queue',
     VOICE_NOTIFICATIONS_HISTORY: 'malnu_voice_notifications_history',

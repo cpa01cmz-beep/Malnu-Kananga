@@ -1,8 +1,8 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.5.9
-     **Last Updated**: 2026-01-31 (Issue #1315: Add Offline Data Service to Teacher and Admin Dashboards)
-     **Maintained By**: Lead Autonomous Engineer & System Guardian
+ **Version**: 3.6.0
+      **Last Updated**: 2026-01-31 (Issue #1226: Integrate E-Library Materials with Study Plans)
+      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
