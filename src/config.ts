@@ -17,7 +17,7 @@ export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
 export const WORKER_LOGIN_ENDPOINT = `${API_BASE_URL}/api/auth/login`;
 
 // New API Service - Import and use this for all backend interactions
-export { api, authAPI, usersAPI, ppdbAPI, inventoryAPI, eventsAPI, chatAPI } from './services/apiService';
+export { api, authAPI, usersAPI, ppdbAPI, inventoryAPI, eventsAPI, chatAPI } from './services/api';
 
 // Feature Flags
 export const ENABLE_BACKEND_API = true; // Set to true to use real backend instead of localStorage
