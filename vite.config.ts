@@ -138,6 +138,11 @@ export default defineConfig(({ mode }) => {
               return 'vendor-icons';
             }
 
+            // Fix circular dependency: Keep apiService.ts and services/api in same chunk
+            if (id.includes('/services/api') || id.includes('/services/apiService')) {
+              return 'vendor-api';
+            }
+
             // Don't split application code
             return undefined;
           }
