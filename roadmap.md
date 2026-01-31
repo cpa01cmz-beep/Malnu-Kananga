@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.5.1
-**Last Updated**: 2026-01-31 (Issue #1303: Circular Dependency Fix - Build Warnings Resolved)
+ **Version**: 3.5.2
+**Last Updated**: 2026-01-31 (Issue #1304: Communication Log Service Integration)
     **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -266,7 +266,22 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 #### Medium Priority (P2)
 
-3. **Enhanced AI Quiz Generation**
+1. **[ENHANCEMENT] Integrate Communication Log Service with Messaging Components** ✅
+    - **Status**: ✅ **COMPLETED**
+    - **Priority**: P2
+    - **Issue**: #1304
+    - **Effort**: 5-7 days
+    - **Target**: 2026-02-05
+    - **Completed**: 2026-01-31
+    - **Deliverables**:
+      - ✅ Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName)
+      - ✅ Created CommunicationDashboard component with filtering, export, and statistics
+      - ✅ Added CommunicationDashboard to TeacherDashboard navigation
+      - ✅ TypeScript type checking: Passed (0 errors)
+      - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+    - **Impact**: Provides audit trail for parent-teacher communications, enables analytics and reporting, improves communication tracking and compliance
+
+2. **Enhanced AI Quiz Generation**
    - **Status**: 🟡 Planned
    - **Priority**: P2
    - **Effort**: 7-10 days
@@ -787,9 +802,10 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ## Version History
 
- | Version | Date | Changes |
- |---------|------|---------|
- | 3.5.1 | 2026-01-31 | Fix Circular Dependency Between apiService.ts and api/index.ts (Issue #1303, P1): Fixed Rollup build warnings showing circular dependency between apiService.ts (backward compatibility shim) and services/api/index.ts; Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk; Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`; Build completed successfully with NO circular dependency warnings; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates potential runtime issues from broken execution order; Improves build stability and reliability (Pillars 3: Stability, 7: Debug); No breaking changes - 84 files continue to use apiService.ts imports; Future enhancement: Consider migrating all imports to services/api/index.ts for cleaner architecture |
+  | Version | Date | Changes |
+  |---------|------|---------|
+  | 3.5.2 | 2026-01-31 | Integrate Communication Log Service with Messaging Components (Issue #1304, P2): Fixed bugs in ParentMessagingView.tsx integration (hardcoded IDs, wrong parentName); Created CommunicationDashboard component with filtering (type, status, keyword), export buttons (PDF/CSV), statistics cards (total messages, meetings, calls, notes), and delete functionality; Added CommunicationDashboard to TeacherDashboard navigation with DocumentTextIcon (green colorTheme); Added 'communication-log' to ViewState type and voice command validViews; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Provides audit trail for parent-teacher communications; Enables analytics and reporting; Improves communication tracking and compliance (Pillars 1: Flow, 5: Integrations, 6: Optimization Ops, 16: UX/DX) |
+  | 3.5.1 | 2026-01-31 | Fix Circular Dependency Between apiService.ts and api/index.ts (Issue #1303, P1): Fixed Rollup build warnings showing circular dependency between apiService.ts (backward compatibility shim) and services/api/index.ts; Added manualChunk configuration to vite.config.ts to keep api-related modules in same chunk; Created vendor-api chunk grouping: `if (id.includes('/services/api') || id.includes('/services/apiService')) { return 'vendor-api'; }`; Build completed successfully with NO circular dependency warnings; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates potential runtime issues from broken execution order; Improves build stability and reliability (Pillars 3: Stability, 7: Debug); No breaking changes - 84 files continue to use apiService.ts imports; Future enhancement: Consider migrating all imports to services/api/index.ts for cleaner architecture |
  | 3.4.9 | 2026-01-31 | QuizIntegrationDashboard Navigation Integration (Follow-up to Issue #1288): Added QuizIntegrationDashboard component import to TeacherDashboard.tsx; Added 'quiz-integration' to ViewState type; Added 'quiz-integration' to validViews array in voice command navigation; Added dashboard action card for QuizIntegrationDashboard with indigo colorTheme (placed after "Buat Kuis AI" card to keep quiz-related features together); Added conditional render for quiz-integration view with proper permission checking (academic.grades); Teachers can now easily access QuizIntegrationDashboard from teacher dashboard to batch integrate quiz attempts into grades; TypeScript type checking passed (0 errors); ESLint linting passed (0 errors); QuizIntegrationDashboard tests: 8/8 passing (100%); Completes Issue #1288 feature implementation (Pillars 9: Feature Ops, 16: UX/DX) |
 | 3.4.7 | 2026-01-31 | Quiz-Grade Integration (Issue #1288): Created QuizIntegrationDashboard.tsx component (292 lines) for teachers to batch integrate quiz attempts into grades; Features include integration status display (total/integrated/pending counts), progress bar with completion percentage, batch integration button with loading states, toast notifications for success/error/warning/info, and error details display for failed integrations; Updated AcademicGrades.tsx to support quiz grades with new formula (30% assignment + 30% mid + 40% final + 10% quiz), added quiz column to grades table UI, updated table colSpan from 6 to 7; Verified GradeAnalytics.tsx already has quiz assignment type filter and integration; Added comprehensive tests for QuizIntegrationDashboard (8 tests, 100% pass rate); Strengthens coupling between quiz results and grade analytics (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX); TypeScript type checking and ESLint linting passed |
 | 3.4.6 | 2026-01-31 | Fix Documentation Location Inconsistency (Issue #1285): Updated README.md version from 3.3.1 to 3.4.6 and Last Updated to 2026-01-31; Removed redundant documentation copies in docs/ directory (blueprint.md, roadmap.md, task.md); Established root directory as canonical location for core documentation files; Updated docs/README.md to reflect root directory as Single Source of Truth; Updated docs/README.md version to 3.4.6 and Last Updated to 2026-01-31; Updated all links in docs/README.md from ./docs/ to ../ for root-based references; Added v3.4.6 recent changes entry documenting this fix; Improves documentation maintainability and eliminates confusion about which location is authoritative (Pillars 8: Documentation, 16: UX/DX); All acceptance criteria met (5/5 complete) |

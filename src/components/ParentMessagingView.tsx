@@ -104,9 +104,9 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
 
         communicationLogService.logMessage({
           messageId: response.data.id,
-          parentId: messageInput.sender === 'parent' ? 'parent_1' : 'teacher_1',
-          parentName: messageInput.childName,
-          teacherId: messageInput.sender === 'parent' ? selectedTeacher.teacherId : 'teacher_1',
+          parentId: messageInput.sender === 'parent' ? selectedChild.relationshipId : selectedTeacher.teacherId,
+          parentName: messageInput.sender === 'parent' ? 'Current Parent' : messageInput.teacherName,
+          teacherId: selectedTeacher.teacherId,
           teacherName: messageInput.teacherName,
           studentId: selectedChild.studentId,
           studentName: selectedChild.studentName,

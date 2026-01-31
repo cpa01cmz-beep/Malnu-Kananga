@@ -15,6 +15,7 @@ import AssignmentGrading from './AssignmentGrading';
 import GradeAnalytics from './GradeAnalytics';
 import { QuizGenerator } from './QuizGenerator';
 import QuizIntegrationDashboard from './QuizIntegrationDashboard';
+import CommunicationDashboard from './CommunicationDashboard';
 import { DirectMessage } from './DirectMessage';
 import { GroupChat } from './GroupChat';
 import { ToastType } from './Toast';
@@ -46,7 +47,7 @@ interface TeacherDashboardProps {
     extraRole: UserExtraRole;
 }
 
-type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'quiz-integration' | 'messages' | 'groups';
+type ViewState = 'home' | 'grading' | 'class' | 'upload' | 'inventory' | 'assignments' | 'assignment-grading' | 'analytics' | 'quiz-generator' | 'quiz-integration' | 'messages' | 'groups' | 'communication-log';
 
 const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<ViewState>('home');
@@ -183,7 +184,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     userRole: 'teacher',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'quiz-integration', 'messages', 'groups'];
+      const validViews: ViewState[] = ['grading', 'class', 'upload', 'inventory', 'analytics', 'quiz-generator', 'quiz-integration', 'messages', 'groups', 'communication-log'];
       if (validViews.includes(view as ViewState)) {
         setCurrentView(view as ViewState);
         handleToast(`Navigasi ke ${view}`, 'success');
@@ -592,6 +593,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         />
                     )}
 
+                    {checkPermission('communication.messages') && (
+                        <DashboardActionCard
+                            icon={<DocumentTextIcon />}
+                            title="Log Komunikasi"
+                            description="Lihat riwayat dan analitik komunikasi orang tua-guru."
+                            colorTheme="green"
+                            statusBadge="Audit"
+                            offlineBadge="Offline"
+                            isOnline={isOnline}
+                            onClick={() => setCurrentView('communication-log')}
+                            ariaLabel="Buka Log Komunikasi"
+                        />
+                    )}
+
                     {extraRole === 'staff' && checkPermission('inventory.manage') && (
                         <DashboardActionCard
                             icon={<ArchiveBoxIcon />}
@@ -680,6 +695,31 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                 email: getCurrentUserEmail(),
                 role: 'teacher',
                 status: 'active',
+              }}
+            />
+          </div>
+        )}
+
+        {currentView === 'communication-log' && (
+          <div className="animate-fade-in-up">
+            <div className="mb-4 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => setCurrentView('home')}
+                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Kembali ke Dashboard
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Log Komunikasi</h2>
+            </div>
+            <CommunicationDashboard
+              _currentUser={{
+                id: getCurrentUserId(),
+                name: getCurrentUserName(),
+                role: 'teacher',
               }}
             />
           </div>
