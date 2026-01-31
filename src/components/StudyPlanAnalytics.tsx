@@ -131,8 +131,6 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
         const subjectInfo = subjects.find(s => s.name === subject.subjectName);
         const currentGrade = currentGrades.find(g => g.subjectId === subjectInfo?.id)?.score || 0;
         const progress = currentGrade > 0 ? (currentGrade / parseFloat(subject.targetGrade)) * 100 : 0;
-        const sessionsCompleted = Math.floor(Math.random() * 10);
-        const sessionsTotal = Math.floor(Math.random() * 5) + 10;
 
         return {
           subjectName: subject.subjectName,
@@ -140,9 +138,9 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
           currentGrade,
           progress: Math.min(progress, 100),
           priority: subject.priority,
-          sessionsCompleted,
-          sessionsTotal,
-          averageSessionDuration: 45 + Math.floor(Math.random() * 30),
+          sessionsCompleted: 0,
+          sessionsTotal: 0,
+          averageSessionDuration: 0,
         };
       });
 
@@ -156,35 +154,26 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
         endDate.setDate(endDate.getDate() + 7);
 
         const scheduledHours = plan.schedule.filter(s => s.dayOfWeek !== undefined).length * 1.5;
-        const totalStudyHours = scheduledHours * (0.7 + Math.random() * 0.3);
 
         weeklyActivity.push({
           weekNumber: i,
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
-          totalStudyHours: Math.round(totalStudyHours * 10) / 10,
+          totalStudyHours: 0,
           scheduledHours: Math.round(scheduledHours * 10) / 10,
-          adherenceRate: Math.round((totalStudyHours / scheduledHours) * 100),
-          subjectsStudied: plan.subjects.map(s => s.subjectName).slice(0, Math.ceil(Math.random() * plan.subjects.length)),
-          activitiesCompleted: Math.floor(Math.random() * 20) + 10,
-          activitiesTotal: 25,
+          adherenceRate: 0,
+          subjectsStudied: [],
+          activitiesCompleted: 0,
+          activitiesTotal: 0,
         });
       }
 
       const performanceImprovement: PerformanceImprovement = {
-        averageGradeChange: 2.5 + Math.random() * 5,
-        subjectsImproved: Math.floor(Math.random() * 3) + 1,
-        subjectsDeclined: Math.floor(Math.random() * 1),
-        subjectsMaintained: plan.subjects.length - Math.floor(Math.random() * 3) - 1,
-        topImprovements: subjectProgress
-          .filter(s => s.progress > 50)
-          .slice(0, 3)
-          .map(s => ({
-            subjectName: s.subjectName,
-            previousGrade: s.targetGrade - (5 + Math.random() * 10),
-            currentGrade: s.currentGrade,
-            improvement: s.currentGrade - (s.targetGrade - (5 + Math.random() * 10)),
-          })),
+        averageGradeChange: 0,
+        subjectsImproved: 0,
+        subjectsDeclined: 0,
+        subjectsMaintained: 0,
+        topImprovements: [],
       };
 
       const overallProgress = subjectProgress.reduce((sum, s) => sum + s.progress, 0) / subjectProgress.length;
