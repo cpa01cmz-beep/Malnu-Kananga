@@ -5,6 +5,38 @@
 
 ## Completed
 
+### [BUILDER] Integrate AI Class Performance Analysis into GradeAnalytics (Issue #1231) ✅
+- **Mode**: BUILDER
+- **Issue**: #1231
+- **Priority**: P2 (Enhancement)
+- **Status**: Completed
+- **Started**: 2026-01-31
+- **Completed**: 2026-01-31
+- **Reason**: GradeAnalytics component provides basic statistical analysis but lacks AI-powered insights. The `analyzeClassPerformance` function exists in `geminiService.ts` but is not integrated with the teacher's grade analytics view, creating weak coupling between data analysis and AI capabilities.
+- **Requirements** (from Issue #1231):
+  1. [✅] Integrate `analyzeClassPerformance` from `geminiService.ts` into `GradeAnalytics.tsx`
+  2. [✅] Display AI insights panel in GradeAnalytics view
+  3. [✅] Show at-risk students with explanations
+  4. [✅] Provide performance trends (improving/declining/stable)
+  5. [✅] Offer actionable recommendations for teachers
+  6. [✅] Allow teachers to request on-demand AI analysis refresh
+  7. [✅] Cache AI analysis to avoid repeated API calls
+  8. [✅] Handle errors gracefully with fallback to basic stats
+- **Deliverables**:
+  - [✅] Import and integrate `analyzeClassPerformance` from geminiService
+  - [✅] Add state for AI insights in GradeAnalytics.tsx
+  - [✅] Create UI panel to display AI-generated insights
+  - [✅] Add refresh button for on-demand analysis
+  - [✅] Implement caching using STORAGE_KEYS
+  - [✅] Add STORAGE_KEYS for class insights cache (CLASS_INSIGHTS, CLASS_INSIGHTS_TIMESTAMP)
+- **Files Modified**:
+  - ✅ src/constants.ts - Added CLASS_INSIGHTS and CLASS_INSIGHTS_TIMESTAMP storage keys
+  - ✅ src/components/GradeAnalytics.tsx - Added AI insights integration (import, state, functions, UI panel)
+- **Impact**: Strengthens GradeAnalytics feature by adding AI capabilities, reduces weak coupling between AI service and teacher tools, helps teachers identify at-risk students proactively (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX)
+- **Issue Status**: To be closed with PR after documentation updates
+
+## Completed
+
 ### [OPTIMIZER] Add Test Coverage for pdfExportService ✅
 - **Mode**: OPTIMIZER
 - **Issue**: Roadmap Technical Debt - Test Coverage (🔴 High Priority)
