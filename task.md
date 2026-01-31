@@ -33,7 +33,8 @@
   - ✅ src/constants.ts - Added CLASS_INSIGHTS and CLASS_INSIGHTS_TIMESTAMP storage keys
   - ✅ src/components/GradeAnalytics.tsx - Added AI insights integration (import, state, functions, UI panel)
 - **Impact**: Strengthens GradeAnalytics feature by adding AI capabilities, reduces weak coupling between AI service and teacher tools, helps teachers identify at-risk students proactively (Pillars 1: Flow, 2: Standardization, 5: Integrations, 9: Feature Ops, 16: UX/DX)
-- **Issue Status**: To be closed with PR after documentation updates
+- **Pull Request**: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1281
+- **Issue Status**: PR created, ready for review
 
 ## Completed
 
