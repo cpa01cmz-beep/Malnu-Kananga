@@ -3,7 +3,7 @@
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-import type { Student, Grade, Attendance, Schedule, ParentChild } from '../types';
+import type { Student, Grade, Attendance, Schedule, ParentChild, Class, User, Announcement } from '../types';
 import React from 'react';
 import { useNetworkStatus } from '../utils/networkStatus';
 
@@ -23,6 +23,29 @@ export interface CachedStudentData {
 export interface CachedParentData {
   children: ParentChild[];
   childrenData: Record<string, CachedStudentData>; // Map by studentId
+  lastUpdated: number;
+  expiresAt: number;
+}
+
+// Teacher offline data types (Issue #1315)
+export interface CachedTeacherData {
+  teacherId: string;
+  classes: Class[];
+  students: Student[];
+  recentGrades: Grade[];
+  announcements: Announcement[];
+  lastUpdated: number;
+  expiresAt: number;
+}
+
+// Admin offline data types (Issue #1315)
+export interface CachedAdminData {
+  adminId: string;
+  systemStats: Record<string, unknown>;
+  ppdbStats: Record<string, unknown>;
+  recentUsers: User[];
+  pendingPPDB: Array<{ status: 'pending' | 'approved' | 'rejected' }>;
+  announcements: Announcement[];
   lastUpdated: number;
   expiresAt: number;
 }
@@ -238,6 +261,109 @@ class OfflineDataService {
   }
 
   // ============================================
+  // TEACHER DATA OPERATIONS (Issue #1315)
+  // ============================================
+
+  /**
+   * Cache teacher data for offline access
+   */
+  public cacheTeacherData(teacherData: Omit<CachedTeacherData, 'lastUpdated' | 'expiresAt'>): void {
+    try {
+      const cachedData: CachedTeacherData = {
+        ...teacherData,
+        lastUpdated: Date.now(),
+        expiresAt: Date.now() + CACHE_DURATION,
+      };
+
+      localStorage.setItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA, JSON.stringify({
+        ...cachedData,
+        version: CACHE_VERSION,
+      }));
+
+      logger.info('Teacher data cached for offline', {
+        teacherId: teacherData.teacherId,
+        classesCount: teacherData.classes.length,
+        studentsCount: teacherData.students.length,
+        gradesCount: teacherData.recentGrades.length,
+      });
+
+      this.notifySyncStatusChange();
+    } catch (error) {
+      logger.error('Failed to cache teacher data', error);
+    }
+  }
+
+  /**
+   * Get cached teacher data
+   */
+  public getCachedTeacherData(teacherId: string): CachedTeacherData | null {
+    return this.getCachedData<CachedTeacherData>(
+      STORAGE_KEYS.OFFLINE_TEACHER_DATA,
+      teacherId,
+      'teacherId',
+      'Teacher'
+    );
+  }
+
+  /**
+   * Check if teacher data is cached and fresh
+   */
+  public isTeacherDataCached(teacherId: string): boolean {
+    return this.getCachedTeacherData(teacherId) !== null;
+  }
+
+  // ============================================
+  // ADMIN DATA OPERATIONS (Issue #1315)
+  // ============================================
+
+  /**
+   * Cache admin data for offline access
+   */
+  public cacheAdminData(adminData: Omit<CachedAdminData, 'lastUpdated' | 'expiresAt'>): void {
+    try {
+      const cachedData: CachedAdminData = {
+        ...adminData,
+        lastUpdated: Date.now(),
+        expiresAt: Date.now() + CACHE_DURATION,
+      };
+
+      localStorage.setItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA, JSON.stringify({
+        ...cachedData,
+        version: CACHE_VERSION,
+      }));
+
+      logger.info('Admin data cached for offline', {
+        adminId: adminData.adminId,
+        usersCount: adminData.recentUsers.length,
+        pendingPPDBCount: adminData.pendingPPDB.length,
+      });
+
+      this.notifySyncStatusChange();
+    } catch (error) {
+      logger.error('Failed to cache admin data', error);
+    }
+  }
+
+  /**
+   * Get cached admin data
+   */
+  public getCachedAdminData(adminId: string): CachedAdminData | null {
+    return this.getCachedData<CachedAdminData>(
+      STORAGE_KEYS.OFFLINE_ADMIN_DATA,
+      adminId,
+      'adminId',
+      'Admin'
+    );
+  }
+
+  /**
+   * Check if admin data is cached and fresh
+   */
+  public isAdminDataCached(adminId: string): boolean {
+    return this.getCachedAdminData(adminId) !== null;
+  }
+
+  // ============================================
   // SYNC OPERATIONS
   // ============================================
 
@@ -247,7 +373,8 @@ class OfflineDataService {
   public getSyncStatus(): SyncStatus {
     const studentCache = this.getStudentCache();
     const parentCache = this.getCachedParentData();
-    
+    const currentUser = this.getCurrentUserId();
+
     // Get latest update timestamp
     let lastSync = 0;
     let cacheAge = 0;
@@ -261,6 +388,22 @@ class OfflineDataService {
       lastSync = Math.max(lastSync, studentData.lastUpdated);
       cacheAge = Math.max(cacheAge, Date.now() - studentData.lastUpdated);
     });
+
+    // Check teacher cache (Issue #1315)
+    if (currentUser) {
+      const teacherCache = this.getCachedTeacherData(currentUser);
+      if (teacherCache) {
+        lastSync = Math.max(lastSync, teacherCache.lastUpdated);
+        cacheAge = Math.max(cacheAge, Date.now() - teacherCache.lastUpdated);
+      }
+
+      // Check admin cache (Issue #1315)
+      const adminCache = this.getCachedAdminData(currentUser);
+      if (adminCache) {
+        lastSync = Math.max(lastSync, adminCache.lastUpdated);
+        cacheAge = Math.max(cacheAge, Date.now() - adminCache.lastUpdated);
+      }
+    }
 
     // Get pending actions count
     let pendingActions = 0;
@@ -291,11 +434,13 @@ class OfflineDataService {
    */
   public async forceSync(): Promise<void> {
     logger.info('Force syncing offline data');
-    
+
     // Clear caches to force refresh
     localStorage.removeItem(STORAGE_KEYS.OFFLINE_STUDENT_DATA);
     localStorage.removeItem(STORAGE_KEYS.OFFLINE_PARENT_DATA);
-    
+    localStorage.removeItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA); // Issue #1315
+    localStorage.removeItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA); // Issue #1315
+
     this.notifySyncStatusChange();
   }
 
@@ -305,6 +450,8 @@ class OfflineDataService {
   public clearOfflineData(): void {
     localStorage.removeItem(STORAGE_KEYS.OFFLINE_STUDENT_DATA);
     localStorage.removeItem(STORAGE_KEYS.OFFLINE_PARENT_DATA);
+    localStorage.removeItem(STORAGE_KEYS.OFFLINE_TEACHER_DATA); // Issue #1315
+    localStorage.removeItem(STORAGE_KEYS.OFFLINE_ADMIN_DATA); // Issue #1315
     logger.info('Offline data cleared');
     this.notifySyncStatusChange();
   }
@@ -312,6 +459,55 @@ class OfflineDataService {
   // ============================================
   // PRIVATE METHODS
   // ============================================
+
+  private getCurrentUserId(): string {
+    try {
+      const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
+      if (userJSON) {
+        const user = JSON.parse(userJSON);
+        return user.id || '';
+      }
+    } catch (error) {
+      logger.error('Failed to get current user ID', error);
+    }
+    return '';
+  }
+
+  private getCachedData<T extends { lastUpdated: number; expiresAt: number; version?: string }>(
+    storageKey: string,
+    userId: string,
+    userIdKey: string,
+    entityType: string
+  ): T | null {
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (!stored) return null;
+
+      const data = JSON.parse(stored) as T;
+
+      if (data.version !== CACHE_VERSION) {
+        logger.info(`${entityType} data cache version mismatch, clearing cache`);
+        localStorage.removeItem(storageKey);
+        return null;
+      }
+
+      if (Date.now() > data.expiresAt) {
+        logger.info(`${entityType} data cache expired`, { [userIdKey]: userId });
+        localStorage.removeItem(storageKey);
+        return null;
+      }
+
+      const typedData = data as T & Record<string, unknown>;
+      if (typedData[userIdKey] !== userId) {
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      logger.error(`Failed to get cached ${entityType} data`, error);
+      return null;
+    }
+  }
 
   private getStudentCache(): Record<string, CachedStudentData> {
     try {
@@ -430,7 +626,7 @@ export const offlineDataService = new OfflineDataService();
  */
 export function useOfflineDataService() {
   const networkStatus = useNetworkStatus();
- 
+
   return {
     // Student operations
     cacheStudentData: offlineDataService.cacheStudentData.bind(offlineDataService),
@@ -444,12 +640,22 @@ export function useOfflineDataService() {
     getCachedChildData: offlineDataService.getCachedChildData.bind(offlineDataService),
     isParentDataCached: offlineDataService.isParentDataCached.bind(offlineDataService),
 
+    // Teacher operations (Issue #1315)
+    cacheTeacherData: offlineDataService.cacheTeacherData.bind(offlineDataService),
+    getCachedTeacherData: offlineDataService.getCachedTeacherData.bind(offlineDataService),
+    isTeacherDataCached: offlineDataService.isTeacherDataCached.bind(offlineDataService),
+
+    // Admin operations (Issue #1315)
+    cacheAdminData: offlineDataService.cacheAdminData.bind(offlineDataService),
+    getCachedAdminData: offlineDataService.getCachedAdminData.bind(offlineDataService),
+    isAdminDataCached: offlineDataService.isAdminDataCached.bind(offlineDataService),
+
     // Sync operations
     getSyncStatus: offlineDataService.getSyncStatus.bind(offlineDataService),
     forceSync: offlineDataService.forceSync.bind(offlineDataService),
     clearOfflineData: offlineDataService.clearOfflineData.bind(offlineDataService),
     onSyncStatusChange: offlineDataService.onSyncStatusChange.bind(offlineDataService),
- 
+
     // Network status
     isOnline: networkStatus.isOnline,
     isSlow: networkStatus.isSlow,
@@ -459,34 +665,42 @@ export function useOfflineDataService() {
 /**
  * React Hook for offline data management
  */
-export function useOfflineData(role: 'student' | 'parent', studentId?: string) {
+export function useOfflineData(role: 'student' | 'parent' | 'teacher' | 'admin', userId?: string) {
   // React is already imported at the top of the file for hooks
-  
+
   const [syncStatus, setSyncStatus] = React.useState<SyncStatus>(offlineDataService.getSyncStatus());
   const [isCached, setIsCached] = React.useState(false);
-  
+
   React.useEffect(() => {
     // Check initial cache state
-    if (role === 'student' && studentId) {
-      setIsCached(offlineDataService.isStudentDataCached(studentId));
-    } else if (role === 'parent') {  
+    if (role === 'student' && userId) {
+      setIsCached(offlineDataService.isStudentDataCached(userId));
+    } else if (role === 'parent') {
       setIsCached(offlineDataService.isParentDataCached());
+    } else if (role === 'teacher' && userId) {
+      setIsCached(offlineDataService.isTeacherDataCached(userId));
+    } else if (role === 'admin' && userId) {
+      setIsCached(offlineDataService.isAdminDataCached(userId));
     }
 
     // Listen for sync status changes
     const unsubscribe = offlineDataService.onSyncStatusChange((status) => {
       setSyncStatus(status);
-      
+
       // Update cache status
-      if (role === 'student' && studentId) {
-        setIsCached(offlineDataService.isStudentDataCached(studentId));
+      if (role === 'student' && userId) {
+        setIsCached(offlineDataService.isStudentDataCached(userId));
       } else if (role === 'parent') {
         setIsCached(offlineDataService.isParentDataCached());
+      } else if (role === 'teacher' && userId) {
+        setIsCached(offlineDataService.isTeacherDataCached(userId));
+      } else if (role === 'admin' && userId) {
+        setIsCached(offlineDataService.isAdminDataCached(userId));
       }
     });
 
     return unsubscribe;
-  }, [role, studentId]);
+  }, [role, userId]);
 
   return {
     syncStatus,

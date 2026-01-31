@@ -25,8 +25,10 @@ import { ToastType } from './Toast';
 import { UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
+import { useOfflineDataService, useOfflineData, type CachedTeacherData } from '../services/offlineDataService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { classifyError } from '../utils/errorHandler';
 import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
 import DashboardActionCard from './ui/DashboardActionCard';
@@ -61,12 +63,13 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [isExportingConsolidated, setIsExportingConsolidated] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
+  const [_offlineData, setOfflineData] = useState<CachedTeacherData | null>(null);
 
   // Initialize push notifications
-  const { 
-    showNotification, 
+  const {
+    showNotification,
     createNotification,
-    requestPermission 
+    requestPermission
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
@@ -83,6 +86,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     }
     return '';
   };
+
+  const applyCachedData = useCallback((cachedData: CachedTeacherData, isFallback: boolean = false) => {
+    setOfflineData(cachedData);
+    setDashboardData({ lastSync: new Date(cachedData.lastUpdated).toISOString() });
+    if (isFallback) {
+      onShowToast?.('Data terakhir dari cache', 'warning');
+    } else {
+      onShowToast?.('Menggunakan data offline', 'info');
+    }
+  }, [onShowToast]);
 
   const getCurrentUserName = (): string => {
     const userJSON = localStorage.getItem(STORAGE_KEYS.USER);
@@ -102,15 +115,20 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     return '';
   };
 
-  // Load dashboard data with offline support
+  // Initialize offline services (Issue #1315)
+  const offlineDataService = useOfflineDataService();
+  useOfflineData('teacher', getCurrentUserId());
+
+  // Load dashboard data with offline support (Issue #1315)
   useEffect(() => {
     const loadDashboardData = async () => {
+      const teacherId = getCurrentUserId();
+
+      // Try offline cache first
       if (!isOnline) {
-        // Try to load cached data
-        const cachedData = localStorage.getItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE);
+        const cachedData = offlineDataService.getCachedTeacherData(teacherId);
         if (cachedData) {
-          setDashboardData(JSON.parse(cachedData));
-          setError(getOfflineMessage());
+          applyCachedData(cachedData);
         } else {
           setError(getOfflineMessage());
         }
@@ -118,28 +136,45 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         return;
       }
 
+      // Online mode - load fresh data and cache it
       setLoading(true);
       setError(null);
 
       try {
-        // Load fresh data (implementation depends on your API)
+        // Load fresh data from API (implementation depends on your API)
         // const freshData = await teacherAPI.getDashboardData();
         // setDashboardData(freshData);
-        // Cache the data for offline use
-        // localStorage.setItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE, JSON.stringify(freshData));
-        
+
+        // Cache teacher data for offline use
+        // await offlineDataService.cacheTeacherData({
+        //   teacherId,
+        //   classes: freshData.classes,
+        //   students: freshData.students,
+        //   recentGrades: freshData.recentGrades,
+        //   announcements: freshData.announcements,
+        // });
+
         // For now, set minimal dashboard data
-        setDashboardData({ lastSync: new Date().toISOString() });
-        localStorage.setItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE, JSON.stringify({ lastSync: new Date().toISOString() }));
+        const freshData = { lastSync: new Date().toISOString() };
+        setDashboardData(freshData);
+
+        // Cache minimal data for offline support
+        await offlineDataService.cacheTeacherData({
+          teacherId,
+          classes: [],
+          students: [],
+          recentGrades: [],
+          announcements: [],
+        });
       } catch (err) {
         logger.error('Failed to load dashboard data:', err);
-        setError('Gagal memuat data dashboard. Silakan coba lagi.');
-        
+        const appError = classifyError(err, { operation: 'loadDashboardData', timestamp: Date.now() });
+        setError(appError.message);
+
         // Try to load cached data as fallback
-        const cachedData = localStorage.getItem(STORAGE_KEYS.TEACHER_DASHBOARD_CACHE);
+        const cachedData = offlineDataService.getCachedTeacherData(teacherId);
         if (cachedData) {
-          setDashboardData(JSON.parse(cachedData));
-          setError('Data terakhir dari cache. ' + getOfflineMessage());
+          applyCachedData(cachedData, true);
         }
       } finally {
         setLoading(false);
@@ -147,7 +182,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     };
 
     loadDashboardData();
-  }, [isOnline]);
+  }, [isOnline, onShowToast, offlineDataService, applyCachedData]);
 
   // Show slow connection warning
   useEffect(() => {
