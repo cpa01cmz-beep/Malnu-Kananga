@@ -21,32 +21,24 @@ export default tool({
       
       // Filter out blocks that use STORAGE_KEYS in their context
       const problematicBlocks = blocks.filter(block => {
-        // Check if STORAGE_KEYS appears in the block
-        const hasStorageKeys = /STORAGE_KEYS\./.test(block);
-        
-        // Check for variable assignments from STORAGE_KEYS (e.g., const key = STORAGE_KEYS.MY_KEY)
-        const hasVariableFromStorageKeys = /const\s+\w+\s*=\s*STORAGE_KEYS\./.test(block);
-        const hasVariableAssignment = /\w+\s*=\s*STORAGE_KEYS\./.test(block);
+        const exclusionPatterns = [
+          /STORAGE_KEYS\./,
+          /const\s+\w+\s*=\s*STORAGE_KEYS\./,
+          /\w+\s*=\s*STORAGE_KEYS\./,
+          /\/\/.*fallback/i,
+          /\/\/.*hardcoded/i,
+          /\/\/.*TODO.*STORAGE_KEYS/i,
+        ];
 
-        // Check for legitimate fallback values or intentionally documented cases
-        const hasFallbackComment = /\/\/.*fallback/i.test(block);
-        const hasHardcodedComment = /\/\/.*hardcoded/i.test(block);
-        const hasTodoStorageKeys = /\/\/.*TODO.*STORAGE_KEYS/i.test(block);
-
-        // If any of these patterns exist, this localStorage usage is OK
-        if (hasStorageKeys || hasVariableFromStorageKeys || hasVariableAssignment ||
-            hasFallbackComment || hasHardcodedComment || hasTodoStorageKeys) {
-          return false; // This localStorage usage is OK, exclude it
+        if (exclusionPatterns.some(pattern => pattern.test(block))) {
+          return false;
         }
 
-        // Check if it's just a comment
-        const isComment = /^\s*\/\/.*/.test(block) || /^[^:]*:[0-9]*:\s*\/\/.*/.test(block);
-
-        if (isComment) {
-          return false; // Exclude comments
+        if (/\/\/[^\n]*localStorage\./.test(block) || /\/\*[\s\S]*?localStorage\./.test(block)) {
+          return false;
         }
 
-        return true; // This localStorage usage might be problematic, keep it
+        return true;
       });
 
       if (problematicBlocks.length === 0) {

@@ -978,11 +978,10 @@ npm run typecheck         # Run TypeScript compiler
    - Rewrote check-storage-keys to use context-based analysis with 5-line before/after context
    - Added variable assignment detection for STORAGE_KEYS (e.g., `const key = STORAGE_KEYS.X`)
    - Added exclusion patterns for legitimate fallback values and documented cases
-   - Both tools now return filtered, relevant results instead of overwhelming false positives
-   - Significantly improves reliability of automated code analysis (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
- - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
- - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
-   - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
+    - Both tools now return filtered, relevant results instead of overwhelming false positives
+    - Significantly improves reliability of automated code analysis (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+  - **Hardcoded localStorage Keys**: Fixed remaining hardcoded localStorage keys in emailNotificationService (Issue #1269, P1)
+    - Added EMAIL_DIGEST_QUEUE constant and factory functions to STORAGE_KEYS
    - Replaced 5 hardcoded localStorage key strings with STORAGE_KEYS constants
    - All localStorage keys now follow centralized pattern (Pillar 15: Dynamic Coding)
    - TypeScript type checking and ESLint linting passed
