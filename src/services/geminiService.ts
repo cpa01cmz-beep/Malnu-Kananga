@@ -1,7 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews, AIFeedback, StudyPlan } from '../types';
-import { WORKER_CHAT_ENDPOINT } from '../config';
 import { STORAGE_KEYS } from '../constants';
 import {
   classifyError,
@@ -14,7 +13,10 @@ import {
 import { logger } from '../utils/logger';
 import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
-import { offlineActionQueueService } from './offlineActionQueueService';
+
+const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE_URL;
+const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
 
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
@@ -404,11 +406,12 @@ export async function analyzeStudentPerformance(studentData: {
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     if (!isOnline && queueIfOffline) {
       logger.info('Queueing AI analysis for offline execution');
-      
+
       // Generate a unique ID for this analysis
       const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      // Queue the analysis
+
+      // Queue the analysis using dynamic import to avoid circular dependency
+      const { offlineActionQueueService } = await import('./offlineActionQueueService');
       offlineActionQueueService.addAction({
         type: 'create',
         entity: 'ai_analysis',
@@ -1034,4 +1037,15 @@ export async function generateStudyPlan(
       ? "Gagal membuat rencana belajar dengan AI. Silakan coba lagi."
       : message);
   }
+}
+
+
+/**
+ * Cleanup gemini service - clear AI instance state and reset error state
+ * Call this on logout or when service needs to be reset
+ */
+export function cleanupGeminiService(): void {
+  aiInstance = null;
+  aiInitializationError = null;
+  logger.info('Gemini service cleaned up - AI instance cleared');
 }

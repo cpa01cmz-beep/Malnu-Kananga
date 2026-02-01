@@ -1,19 +1,36 @@
 // offlineActionQueueService.ts - Offline Action Queue and Sync System
 // Handles queuing actions when offline and syncing when online
 //
-// NOTE: This service uses dynamic imports for geminiService and aiCacheService to avoid
-// circular dependencies during module initialization. These modules are also statically imported
-// elsewhere in the codebase, so Vite will show warnings about dynamic imports not
-// actually lazy-loading. These warnings are expected and intentional - the dynamic imports
-// serve to break the circular dependency chain (geminiService → offlineActionQueueService →
-// geminiService) during initialization, not to enable lazy loading.
+// NOTE: This service uses dynamic imports for geminiService, aiCacheService, and
+// webSocketService to avoid circular dependencies during module initialization.
+// These modules are also statically imported elsewhere in the codebase, so Vite will show
+// warnings about dynamic imports not actually lazy-loading. These warnings are expected and
+// intentional - the dynamic imports serve to break circular dependency chains during
+// initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
-import type { ApiResponse } from './apiService';
-import { webSocketService, type RealTimeEvent } from './webSocketService';
+
+// Define ApiResponse locally to avoid circular dependency
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: string;
+}
+
+// Type for RealTimeEvent (imported from webSocketService via dynamic import)
+export interface RealTimeEvent {
+  type: string;
+  entity: string;
+  entityId: string;
+  data: unknown;
+  timestamp: string;
+  userRole: string;
+  userId: string;
+}
 
 // ============================================
 // TYPES
@@ -546,7 +563,10 @@ class OfflineActionQueueService {
   /**
    * Setup WebSocket event listeners for real-time conflict resolution
    */
-  public setupWebSocketIntegration(): void {
+  public async setupWebSocketIntegration(): Promise<void> {
+    // Dynamic import to avoid circular dependency with webSocketService
+    const { webSocketService } = await import('./webSocketService');
+
     // Listen for real-time updates that might affect queued actions
     const unsubscribeGrades = webSocketService.subscribe({
       eventType: 'grade_updated',
@@ -555,7 +575,7 @@ class OfflineActionQueueService {
       },
       filter: (event: RealTimeEvent) => {
         // Filter updates for entities we have in queue
-        return this.queue.some(action => 
+        return this.queue.some(action =>
           action.entity === 'grade' && action.entityId === event.entityId
         );
       },
@@ -567,7 +587,7 @@ class OfflineActionQueueService {
         this.handleWebSocketUpdate(event);
       },
       filter: (event: RealTimeEvent) => {
-        return this.queue.some(action => 
+        return this.queue.some(action =>
           action.entity === 'attendance' && action.entityId === event.entityId
         );
       },
@@ -580,7 +600,7 @@ class OfflineActionQueueService {
       },
       filter: (event: RealTimeEvent) => {
         return (event.type === 'announcement_updated' || event.type === 'announcement_deleted') &&
-          this.queue.some(action => 
+          this.queue.some(action =>
             action.entity === 'announcement' && action.entityId === event.entityId
           );
       },
@@ -682,6 +702,19 @@ class OfflineActionQueueService {
     });
     this.websocketUnsubscribers = [];
     logger.debug('WebSocket integration cleaned up');
+  }
+
+  /**
+   * General cleanup method - clear queue state and all listeners
+   * Call this on logout or when service needs to be reset
+   */
+  public cleanup(): void {
+    this.cleanupWebSocketIntegration();
+    this.queue = [];
+    this.isSyncing = false;
+    this.syncCallbacks.clear();
+    this.saveQueue();
+    logger.info('OfflineActionQueue service cleaned up');
   }
 
   /**

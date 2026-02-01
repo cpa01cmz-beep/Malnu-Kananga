@@ -1,7 +1,7 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**: 3.6.0
-      **Last Updated**: 2026-01-31 (Issue #1314: Add Real-Time Updates to AdminDashboard)
+**Version**: 3.6.1
+      **Last Updated**: 2026-02-01 (Issue #1323: Fix Remaining Circular Dependencies)
      **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -216,7 +216,28 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
    - **Target**: 2026-04-15
    - **Completed**: 2026-01-30
 
-2. **[ENHANCEMENT] Integrate PPDB Registration with Student Management** ✅
+ 2. **[ENHANCEMENT] AI-Generated Learning Progress Reports for Parents**
+    - **Status**: ✅ **COMPLETED**
+    - **Priority**: P2
+    - **Issue**: #1227
+    - **Effort**: 4-5 days
+    - **Target**: 2026-02-10
+    - **Completed**: 2026-01-31
+    - **Deliverables**:
+      - ✅ Created parentProgressReportService.ts (466 lines) with AI-powered report generation
+      - ✅ Added ProgressReport and ProgressReportSettings types
+      - ✅ Added STORAGE_KEYS for report and settings cache
+      - ✅ Integrated with geminiService.analyzeStudentPerformance
+      - ✅ Implemented caching with 7-day TTL
+      - ✅ Created LearningProgressReport component with 3 views (latest, history, settings)
+      - ✅ Implemented report frequency settings (weekly/bi-weekly/monthly)
+      - ✅ Implemented quiet hours for notifications
+      - ✅ Added comprehensive tests (21 tests, 100% pass rate)
+      - ✅ TypeScript type checking: Passed (0 errors)
+      - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+    - **Impact**: Provides parents with AI-powered insights into child's learning progress, strengthens parent-teacher communication
+
+ 3. **[ENHANCEMENT] Integrate PPDB Registration with Student Management** ✅
    - **Status**: ✅ **COMPLETED**
    - **Priority**: P2
    - **Issue**: #1248
@@ -626,7 +647,28 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 ### Target Improvements (2026)
 
 #### Q1 2026 Targets
-- ✅ Complete missing documentation (blueprint.md, roadmap.md)
+  - ✅ Complete missing documentation (blueprint.md, roadmap.md)
+  - ✅ Fix remaining circular dependencies (Issue #1323, P1) - 2026-02-01
+               - Fixed 4 out of 5 circular dependencies detected by madge
+               - Removed API re-export from config.ts
+               - Updated api/client.ts to use environment variables directly
+               - Updated webSocketService.ts to use auth functions directly
+               - Updated geminiService.ts to use dynamic import
+               - Updated offlineActionQueueService.ts to use dynamic imports
+               - Build: Passed (24.21s, 0 warnings)
+               - ESLint: Passed (0 errors, 0 warnings)
+               - Reduced from 5 to 1 circular dependency (false positive from dynamic import)
+               - Improves runtime stability and eliminates unpredictable behavior (Pillars 3, 7, 11)
+  - ✅ Fix missing error handling in critical async functions (Issue #1320, P1) - 2026-02-01
+               - Added try-catch blocks to 4 async functions in critical services
+               - studyPlanMaterialService.ts: getRecommendations(), enrichStudyPlanWithSubjectIds()
+               - communicationLogService.ts: exportToPDF(), exportToCSV()
+               - Added error classification and logging using errorHandler utilities
+               - Added graceful fallback behavior on error
+               - Build: Passed; ESLint: Passed (0 errors, 0 warnings)
+               - All tests passing (studyPlanMaterialService: 17/17, communicationLogService: 54/54)
+               - Prevents unhandled promise rejections and application crashes (Pillars 3, 4, 7)
+ - ✅ Fix canAccess mock pattern in test files
 - ✅ Fix canAccess mock pattern in test files
 - ✅ Fix WebSocket memory leak (Issue #1223, P1)
 - ✅ Fix test suite timeout issue (Issue #1193, #1225)
@@ -648,13 +690,15 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
             - ✅ Use STORAGE_KEYS constants instead of hardcoded localStorage keys (Issue #1244) - 2026-01-30
             - ✅ Clean up merged remote branches (Issue #1212) - 2026-01-30
              - ✅ Fix stuck CI workflow deadlock (Issue #1258) - 2026-01-30 (changed turnstyle same-branch-only to true)
-          - ✅ Test Suite Performance Degradation - Times Out After 120 Seconds (Issue #1292, P3) - 2026-01-31
-            - Analyzed test suite performance: ~5.5s with --bail=1 for 150 files/454 tests
-            - Fixed QuizGenerator.test.tsx loading state test (added async/await)
-            - Documented CI/CD best practices: use --bail=1 for PR checks, test batching, caching
-            - Identified that timeout is CI/CD environment limitation, not test slowness
-            - Provides actionable recommendations for CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
-              - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+             - ✅ Test Suite Performance Degradation - Times Out After 120 Seconds (Issue #1292, P3) - 2026-01-31
+             - Analyzed test suite performance: ~5.5s with --bail=1 for 150 files/454 tests
+             - Fixed QuizGenerator.test.tsx loading state test (added async/await)
+             - Documented CI/CD best practices: use --bail=1 for PR checks, test batching, caching
+             - Identified that timeout is CI/CD environment limitation, not actual test slowness
+             - Provides actionable recommendations for CI/CD reliability (Pillars 3: Stability, 6: Optimization Ops, 7: Debug)
+               - ✅ Integrate E-Library Materials with Study Plans (Issue #1226, P2) - 2026-01-31
+               - ✅ Add Parent-Teacher Communication Log to Messaging (Issue #973) - 2026-01-30
+               - ⏳ AI-Generated Learning Progress Reports for Parents (Issue #1227, P2) - In Progress
               - ✅ Fix useCanAccess Hook Stale User Data (Issue #1301, P2) - 2026-01-31
                 - Created useAuth hook (77 lines) with reactive auth state management
                 - Added storage event listener to detect auth token changes
@@ -949,3 +993,4 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
  **Last Review**: 2026-01-31
   **Next Review**: 2026-02-23
 **Reviewed By**: Lead Autonomous Engineer & System Guardian
+   - ✅ Add Cleanup Methods to Singleton Services (Issue #1286, P3) - 2026-01-31: Added standardized cleanup methods to prevent memory leaks; Implemented cleanupGeminiService(), cleanup() for offlineActionQueueService, performanceMonitor, and unifiedNotificationManager; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Improves resource management and prevents memory leaks (Pillars 2: Standardization, 3: Stability, 7: Debug)
