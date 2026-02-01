@@ -6,7 +6,11 @@
 
 ---
 
-## Table of Contents
+### Recent Changes (2026-02-01)
+- **Fix Failing Custom Analysis Tools (Issue #1340, P2)**: Fixed custom analysis tools execution by re-applying patch-package.js after @opencode-ai/plugin upgrade to 1.1.48. Patch fixed package exports configuration and ESM imports. All 8 custom analysis tools now working: check-console-logs, check-missing-error-handling, check-missing-tests, check-storage-keys, find-hardcoded-urls, find-untyped, generate-deployment-checklist, generate-types. Tools can be executed via OpenCode CLI and produce results for code analysis. TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings). (Pillars 6: Optimization Ops, 7: Debug, 8: Documentation)
+
+### Recent Changes (2026-02-01)
+- **Fix Missing Error Handling in API Client validateRequestPermissions (Issue #1337, P2)**: Added try-catch block to validateRequestPermissions() function in src/services/api/client.ts; Added error classification using classifyError utility with operation context; Added error logging using logError and logger.error; Implemented fail-safe default behavior (deny access on error); Returns { allowed: false, reason: 'Permission validation error' } on any error; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); All API service tests passing (56/57 tests, 1 skipped); Prevents unhandled promise rejections in permission validation; Improves consistency with error handling patterns across async functions (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding)
 1. [Architecture Overview](#architecture-overview)
 2. [Tech Stack](#tech-stack)
 3. [Project Structure](#project-structure)

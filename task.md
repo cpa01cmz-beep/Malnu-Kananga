@@ -2,6 +2,41 @@
 
 ## In Progress
 
+### [SANITIZER] Fix Failing Custom Analysis Tools (Issue #1340)
+- **Mode**: SANITIZER
+- **Issue**: #1340
+- **Priority**: P2 (Code Quality)
+- **Status**: Completed
+- **Started**: 2026-02-01
+- **Completed**: 2026-02-01
+- **Reason**: Custom analysis tools in `.opencode/tool/` directory could not be executed due to package configuration errors in `@opencode-ai/plugin@1.1.48`
+- **Root Cause**: After npm upgrade to @opencode-ai/plugin@latest (1.1.48), the patch applied to package.json was overwritten, causing tools to fail with ERR_PACKAGE_PATH_NOT_EXPORTED
+- **Fix Applied**:
+  - [x] Re-ran patch-package.js to fix exports in node_modules/@opencode-ai/plugin/package.json
+  - [x] Verified patch added proper exports: `.`, `./tool`, `./dist/*`, `./package.json`
+  - [x] Verified dist/index.js imports include `.js` extension
+  - [x] Tested all 8 custom tools:
+    - check-console-logs.ts ✅ Working
+    - check-missing-error-handling.ts ✅ Working
+    - check-missing-tests.ts ✅ Working
+    - check-storage-keys.ts ✅ Working
+    - find-hardcoded-urls.ts ✅ Working
+    - find-untyped.ts ✅ Working
+    - generate-deployment-checklist.ts ✅ Working
+    - generate-types.ts ✅ Working
+- **Acceptance Criteria**:
+  - ✅ All custom analysis tools can be executed without errors
+  - ✅ Tools produce output and save results to files
+  - ✅ OpenCode CLI can process tool results with Task tool
+  - ✅ No ERR_PACKAGE_PATH_NOT_EXPORTED errors
+- **Files Modified**:
+  - .opencode/node_modules/@opencode-ai/plugin/package.json (re-patched exports)
+  - .opencode/node_modules/@opencode-ai/plugin/dist/index.js (added .js extension to import)
+- **Pillars Addressed**:
+  - Pillar 6 (Optimization Ops): Custom analysis tools enable code quality automation
+  - Pillar 7 (Debug): Tools provide debugging and code analysis capabilities
+  - Pillar 8 (Documentation): Tool results can be documented and tracked
+
 ### [SANITIZER] Fix Missing Error Handling in API Client validateRequestPermissions (Issue #1337) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1337
