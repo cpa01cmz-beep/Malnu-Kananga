@@ -572,7 +572,6 @@
    - Add cleanup calls to component unmount/logout flows (authService, login components)
    - Create comprehensive tests for new cleanup methods
    - Add cleanup integration with AuthService logout flow
-
 ## Completed
 
 ### [SANITIZER] Fix Remaining Circular Dependencies (Issue #1323) ✅
@@ -626,6 +625,7 @@
   - Pillar 7 (Debug): Easier debugging with unidirectional dependencies
   - Pillar 11 (Modularity): Cleaner module architecture with clear dependency flow
 
+>>>>>>> origin/main
 ## Follow-up Tasks
 
 ### [BUILDER] Integrate Cleanup Methods with Logout Flow (Follow-up to #1286)
