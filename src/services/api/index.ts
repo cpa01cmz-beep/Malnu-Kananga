@@ -70,4 +70,7 @@ export const apiService = {
 
 export const api = apiService;
 
-export { request, getAuthToken, getRefreshToken, parseJwtPayload, isTokenExpired, authAPI, paymentsAPI };
+export { request, getAuthToken, getRefreshToken, parseJwtPayload, isTokenExpired, authAPI };
+
+// Export individual API functions for backward compatibility
+export { usersAPI, studentsAPI, teachersAPI, subjectsAPI, classesAPI, schedulesAPI, gradesAPI, assignmentsAPI, assignmentSubmissionsAPI, attendanceAPI, ppdbAPI, inventoryAPI, eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, eLibraryAPI, fileStorageAPI, announcementsAPI, parentsAPI, messagesAPI, chatAPI, paymentsAPI };
