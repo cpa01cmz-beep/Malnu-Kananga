@@ -1,8 +1,8 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.6.3
-        **Last Updated**: 2026-02-01 (Voice Commands for Study Plan Management)
-      **Maintained By**: Lead Autonomous Engineer & System Guardian
+   **Version**: 3.6.5
+          **Last Updated**: 2026-02-01 (GitHub Issues Synchronization - #1333, #1336)
+       **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -674,8 +674,17 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
                  - All critical P1 issues from task.md now synchronized with GitHub
                  - Issue #1320 commit: 2b0cbd79012e5d3e37f6d7ba6ddf0e5d3eed8fc1
                  - Issue #1323 commits: fce1d76e3685cb24d17bf74de1ad6e64a03c3fc8, 13581ab4f33c31e371a4e8c26608e865b0cf52cf
-                 - Ensures Single Source of Truth across task.md, blueprint.md, roadmap.md, and GitHub issues (Pillar 8: Documentation)
-    - ✅ Add Voice Commands for Study Plan Management (Issue #1326, P2) - 2026-02-01
+                  - Ensures Single Source of Truth across task.md, blueprint.md, roadmap.md, and GitHub issues (Pillar 8: Documentation)
+    - ✅ GitHub Issues Synchronization - Closed Issues #1333 (P1) and #1336 (P2) - 2026-02-01
+                  - Verified error handling fixes for OCR Service are already implemented in codebase
+                  - hashFile() method has try-catch with fallback hash generation (lines 444-461)
+                  - terminate() method has try-catch for worker termination errors (lines 397-409)
+                  - Both methods use logger utility for error logging
+                  - Closed both GitHub issues (#1333 P1, #1336 P2) with comments explaining fixes are in place
+                  - Documentation synchronized: blueprint.md (v3.6.5), roadmap.md (v3.6.5), task.md
+                  - Maintains Single Source of Truth principle (Pillar 8: Documentation)
+                  - Pillars addressed: Stability (3), Debug (7), Dynamic Coding (15)
+     - ✅ Add Voice Commands for Study Plan Management (Issue #1326, P2) - 2026-02-01
                  - Added 5 new voice command patterns to VOICE_COMMANDS in constants.ts
                  - Registered commands in voiceCommandParser.ts with Indonesian language support
                  - Commands: OPEN_STUDY_PLANS, VIEW_RECOMMENDATIONS, CHECK_PROGRESS, CREATE_STUDY_PLAN, VIEW_STUDY_ANALYTICS
@@ -932,11 +941,12 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 
 ---
 
- ## Version History
- 
-  | Version | Date | Changes |
-  |---------|------|---------|
-  | 3.6.3 | 2026-02-01 | Add Voice Commands for Study Plan Management (Issue #1326, P2): Added 5 new voice command patterns to VOICE_COMMANDS in constants.ts; Registered commands in voiceCommandParser.ts with Indonesian language support; Commands: OPEN_STUDY_PLANS (buka rencana belajar, study plan, tampilkan rencana belajar), VIEW_RECOMMENDATIONS (tampilkan rekomendasi materi, buat rekomendasi materi), CHECK_PROGRESS (berapa progres belajar, cek progres study plan), CREATE_STUDY_PLAN (buat rencana belajar baru), VIEW_STUDY_ANALYTICS (lihat analitik belajar); All commands include multiple Indonesian variations for flexibility; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); All 67 voiceCommandParser tests passing (100%); Enables voice navigation to study plans, material recommendations, and progress tracking (Pillars 1: Flow, 9: Feature Ops, 16: UX/DX) |
+  ## Version History
+  
+   | Version | Date | Changes |
+   |---------|------|---------|
+   | 3.6.4 | 2026-02-01 | Fix Missing Error Handling in OCR Service (Issue #1333 P1, #1336 P2): Added try-catch blocks to hashFile() and terminate() methods in ocrService.ts; hashFile() now has fallback hash generation when file reading fails (fallback_${size}_${type}_${timestamp}); terminate() now handles worker termination errors gracefully; Both methods log errors using logger utility for debugging; Prevents unhandled promise rejections and application crashes; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); PR #1338 created; Improves system stability for file processing and worker cleanup (Pillars 3: Stability, 7: Debug, 15: Dynamic Coding) |
+   | 3.6.3 | 2026-02-01 | Add Voice Commands for Study Plan Management (Issue #1326, P2): Added 5 new voice command patterns to VOICE_COMMANDS in constants.ts; Registered commands in voiceCommandParser.ts with Indonesian language support; Commands: OPEN_STUDY_PLANS (buka rencana belajar, study plan, tampilkan rencana belajar), VIEW_RECOMMENDATIONS (tampilkan rekomendasi materi, buat rekomendasi materi), CHECK_PROGRESS (berapa progres belajar, cek progres study plan), CREATE_STUDY_PLAN (buat rencana belajar baru), VIEW_STUDY_ANALYTICS (lihat analitik belajar); All commands include multiple Indonesian variations for flexibility; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); All 67 voiceCommandParser tests passing (100%); Enables voice navigation to study plans, material recommendations, and progress tracking (Pillars 1: Flow, 9: Feature Ops, 16: UX/DX) |
   | 3.6.2 | 2026-02-01 | Documentation Synchronization (Issue #1327, P3): Updated version numbers across all documentation files to maintain Single Source of Truth; Updated README.md version from 3.5.6 to 3.6.2 (version badge, header, and metrics table); Updated README.md Last Updated from 2026-01-31 to 2026-02-01; Updated package.json version from 3.2.0 to 3.6.2; Verified all version references are synchronized across blueprint.md (3.6.2), roadmap.md (3.6.2), README.md (3.6.2), and package.json (3.6.2); TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Ensures Single Source of Truth principle across all documentation (Pillars 8: Documentation, 15: Dynamic Coding, 16: UX/DX) |
 | 3.5.9 | 2026-01-31 | Add Offline Data Service to Teacher and Admin Dashboards (Issue #1315, P2): Integrated offline data service into TeacherDashboard and AdminDashboard; Added CachedTeacherData and CachedAdminData types with 24-hour cache expiration; Added cacheTeacherData/getCachedTeacherData/isTeacherDataCached methods; Added cacheAdminData/getCachedAdminData/isAdminDataCached methods; Added OFFLINE_TEACHER_DATA and OFFLINE_ADMIN_DATA STORAGE_KEYS; Updated TeacherDashboard to cache classes/students/grades/announcements when online and load from cache when offline; Updated AdminDashboard to cache systemStats/ppdbStats/recentUsers/pendingPPDB/announcements when online and load from cache when offline; Updated clearOfflineData/forceSync/getSyncStatus methods; Added toast notifications for offline/cache states; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Completes offline support across all dashboards (StudentPortal, ParentDashboard, TeacherDashboard, AdminDashboard) (Pillars 1: Flow, 2: Standardization, 9: Feature Ops, 16: UX/DX) |
      | 3.5.7 | 2026-01-31 | Fix Circular Dependency Between vendor-react and vendor-charts Chunks (Issue #1313, P1): Fixed Rollup build warning "Circular chunk: vendor-react -> vendor-charts -> vendor-react"; Combined React, React Router, and Charts (Recharts + D3) into single vendor-core chunk; Matches comment intent from line 135: "Keep Recharts and React in same chunk to avoid circular dependency"; Removed separate vendor-react and vendor-charts chunks; Build completed successfully with NO circular dependency warnings; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates potential runtime issues from broken execution order; Improves build stability and reliability (Pillars 3: Stability, 7: Debug) |

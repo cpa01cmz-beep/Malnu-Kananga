@@ -1,7 +1,7 @@
 {
   "name": "asisten-ai-ma-malnu-kananga",
   "private": true,
-  "version": "3.6.3",
+  "version": "3.6.5",
   "type": "module",
   "scripts": {
     "dev": "vite",

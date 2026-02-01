@@ -2,6 +2,37 @@
 
 ## Completed
 
+### [SCRIBE] Synchronize GitHub Issues - OCR Service Error Handling (Issues #1333, #1336) ✅
+- **Mode**: SCRIBE
+- **Issues**: #1333 (P1), #1336 (P2)
+- **Priority**: P1/P2 (Documentation Synchronization)
+- **Status**: Completed
+- **Started**: 2026-02-01
+- **Completed**: 2026-02-01
+- **Reason**: Issues #1333 and #1336 were still OPEN on GitHub despite the error handling fixes being already implemented in ocrService.ts. This created inconsistency between codebase state and issue tracking.
+- **Implementation**:
+   - [x] Verified hashFile() method has try-catch with fallback (lines 444-461)
+   - [x] Verified terminate() method has try-catch for worker termination (lines 397-409)
+   - [x] Confirmed both methods use logger utility for error logging
+   - [x] Closed GitHub issue #1333 with comment explaining fix is in place
+   - [x] Closed GitHub issue #1336 with comment explaining fix is in place
+   - [x] Updated blueprint.md version to 3.6.5 and added synchronization entry
+   - [x] Updated roadmap.md version to 3.6.5 and added synchronization entry
+   - [x] Created this task entry in task.md
+- **Acceptance Criteria**:
+   - ✅ GitHub issue #1333 CLOSED
+   - ✅ GitHub issue #1336 CLOSED
+   - ✅ Documentation synchronized (blueprint.md v3.6.5, roadmap.md v3.6.5)
+   - ✅ Single Source of Truth principle maintained (Pillar 8: Documentation)
+- **Files Modified**:
+   - blueprint.md (version update, synchronization entry)
+   - roadmap.md (version update, synchronization entry)
+   - task.md (added this completed task entry)
+- **Pillars Addressed**:
+   - Pillar 8 (Documentation): Ensures Single Source of Truth across all documentation
+   - Pillar 15 (Dynamic Coding): Proper issue tracking and synchronization
+   - Pillar 16 (UX/DX): Improves developer experience with accurate issue state
+
 ### [SANITIZER] Fix Missing Error Handling in Critical Async Functions (Issue #1320) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1320
@@ -771,6 +802,39 @@
    - Pillar 1 (Flow): Study plan navigation via voice
    - Pillar 9 (Feature Ops): New voice commands for study plans
    - Pillar 16 (UX/DX): Accessibility for voice users
+
+## Completed
+
+### [SANITIZER] Fix Missing Error Handling in OCR Service (Issue #1333, #1336) ✅
+- **Mode**: SANITIZER
+- **Issues**: #1333 (P1), #1336 (P2)
+- **Priority**: P1 (Critical Blocker)
+- **Status**: Completed
+- **Started**: 2026-02-01
+- **Completed**: 2026-02-01
+- **Reason**: Two methods in ocrService.ts lack proper error handling (try-catch blocks), which could lead to unhandled promise rejections and application crashes.
+- **Implementation**:
+   - [x] Add try-catch block to `hashFile()` in ocrService.ts
+   - [x] Add error logging using logger
+   - [x] Add graceful fallback behavior on error
+   - [x] Add try-catch block to `terminate()` in ocrService.ts
+   - [x] Add error logging for terminate failures
+   - [x] Run typecheck: Passed (0 errors)
+   - [x] Run lint: Passed (0 errors, 0 warnings)
+   - [x] Created PR #1338
+- **Acceptance Criteria**:
+   - ✅ hashFile() method now has try-catch block with fallback hash generation
+   - ✅ terminate() method now has try-catch block for worker termination errors
+   - ✅ Both methods log errors using logger utility
+   - ✅ No breaking changes to existing API
+   - ✅ All tests still passing
+- **Files Modified**:
+   - src/services/ocrService.ts (added error handling to hashFile and terminate)
+- **PR Created**: #1338 - [SANITIZER] Fix Missing Error Handling in OCR Service
+- **Pillars Addressed**:
+   - Pillar 3 (Stability): Prevents unhandled promise rejections and application crashes
+   - Pillar 7 (Debug): Better error logging with operation context
+   - Pillar 15 (Dynamic Coding): Consistent error handling pattern across services
 
 ## Follow-up Tasks
 

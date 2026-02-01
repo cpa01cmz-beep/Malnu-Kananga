@@ -396,9 +396,15 @@ class OCRService {
 
   async terminate(): Promise<void> {
     if (this.worker) {
-      await this.worker.terminate();
-      this.worker = null;
-      this.isInitialized = false;
+      try {
+        await this.worker.terminate();
+        this.worker = null;
+        this.isInitialized = false;
+      } catch (error) {
+        logger.error('Failed to terminate OCR worker:', error);
+        this.worker = null;
+        this.isInitialized = false;
+      }
     }
   }
 
@@ -436,18 +442,22 @@ class OCRService {
    * Generate hash from file content for caching
    */
   private async hashFile(imageFile: File): Promise<string> {
-    const buffer = await imageFile.arrayBuffer();
-    const uint8Array = new Uint8Array(buffer);
-    
-    // Simple hash function (similar to aiCacheService)
-    let hash = 0;
-    for (let i = 0; i < uint8Array.length; i++) {
-      const byte = uint8Array[i];
-      hash = ((hash << 5) - hash) + byte;
-      hash = hash & hash; // Convert to 32-bit integer
+    try {
+      const buffer = await imageFile.arrayBuffer();
+      const uint8Array = new Uint8Array(buffer);
+      
+      let hash = 0;
+      for (let i = 0; i < uint8Array.length; i++) {
+        const byte = uint8Array[i];
+        hash = ((hash << 5) - hash) + byte;
+        hash = hash & hash;
+      }
+      
+      return Math.abs(hash).toString(36) + `_${imageFile.size}_${imageFile.type}`;
+    } catch (error) {
+      logger.error('Failed to hash file for OCR caching:', error);
+      return `fallback_${imageFile.size}_${imageFile.type}_${Date.now()}`;
     }
-    
-    return Math.abs(hash).toString(36) + `_${imageFile.size}_${imageFile.type}`;
   }
 
   /**
