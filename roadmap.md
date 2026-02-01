@@ -1,8 +1,8 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.6.4
-         **Last Updated**: 2026-02-01 (Fix Missing Error Handling in OCR Service)
-      **Maintained By**: Lead Autonomous Engineer & System Guardian
+   **Version**: 3.6.5
+          **Last Updated**: 2026-02-01 (GitHub Issues Synchronization - #1333, #1336)
+       **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -674,8 +674,17 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
                  - All critical P1 issues from task.md now synchronized with GitHub
                  - Issue #1320 commit: 2b0cbd79012e5d3e37f6d7ba6ddf0e5d3eed8fc1
                  - Issue #1323 commits: fce1d76e3685cb24d17bf74de1ad6e64a03c3fc8, 13581ab4f33c31e371a4e8c26608e865b0cf52cf
-                 - Ensures Single Source of Truth across task.md, blueprint.md, roadmap.md, and GitHub issues (Pillar 8: Documentation)
-    - ✅ Add Voice Commands for Study Plan Management (Issue #1326, P2) - 2026-02-01
+                  - Ensures Single Source of Truth across task.md, blueprint.md, roadmap.md, and GitHub issues (Pillar 8: Documentation)
+    - ✅ GitHub Issues Synchronization - Closed Issues #1333 (P1) and #1336 (P2) - 2026-02-01
+                  - Verified error handling fixes for OCR Service are already implemented in codebase
+                  - hashFile() method has try-catch with fallback hash generation (lines 444-461)
+                  - terminate() method has try-catch for worker termination errors (lines 397-409)
+                  - Both methods use logger utility for error logging
+                  - Closed both GitHub issues (#1333 P1, #1336 P2) with comments explaining fixes are in place
+                  - Documentation synchronized: blueprint.md (v3.6.5), roadmap.md (v3.6.5), task.md
+                  - Maintains Single Source of Truth principle (Pillar 8: Documentation)
+                  - Pillars addressed: Stability (3), Debug (7), Dynamic Coding (15)
+     - ✅ Add Voice Commands for Study Plan Management (Issue #1326, P2) - 2026-02-01
                  - Added 5 new voice command patterns to VOICE_COMMANDS in constants.ts
                  - Registered commands in voiceCommandParser.ts with Indonesian language support
                  - Commands: OPEN_STUDY_PLANS, VIEW_RECOMMENDATIONS, CHECK_PROGRESS, CREATE_STUDY_PLAN, VIEW_STUDY_ANALYTICS
