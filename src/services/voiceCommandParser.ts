@@ -343,6 +343,42 @@ class VoiceCommandParser {
       language: VoiceLanguage.Indonesian,
     });
 
+    // Study plan commands
+    this.commands.set('open_study_plans', {
+      id: 'open_study_plans',
+      patterns: [...VOICE_COMMANDS.OPEN_STUDY_PLANS],
+      action: 'OPEN_STUDY_PLANS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_recommendations', {
+      id: 'view_recommendations',
+      patterns: [...VOICE_COMMANDS.VIEW_RECOMMENDATIONS],
+      action: 'VIEW_RECOMMENDATIONS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('check_progress', {
+      id: 'check_progress',
+      patterns: [...VOICE_COMMANDS.CHECK_PROGRESS],
+      action: 'CHECK_PROGRESS',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('create_study_plan', {
+      id: 'create_study_plan',
+      patterns: [...VOICE_COMMANDS.CREATE_STUDY_PLAN],
+      action: 'CREATE_STUDY_PLAN',
+      language: VoiceLanguage.Indonesian,
+    });
+
+    this.commands.set('view_study_analytics', {
+      id: 'view_study_analytics',
+      patterns: [...VOICE_COMMANDS.VIEW_STUDY_ANALYTICS],
+      action: 'VIEW_STUDY_ANALYTICS',
+      language: VoiceLanguage.Indonesian,
+    });
+
     logger.debug(`Initialized ${this.commands.size} voice commands`);
   }
 

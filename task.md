@@ -737,6 +737,36 @@
   - Pillar 11 (Modularity): Cleaner module architecture with clear dependency flow
 
 >>>>>>> origin/main
+## In Progress
+
+### [BUILDER] Add Voice Commands for Study Plan Management (Issue #1326)
+- **Mode**: BUILDER
+- **Issue**: #1326
+- **Priority**: P2 (Enhancement)
+- **Status**: In Progress
+- **Started**: 2026-02-01
+- **Reason**: Voice commands exist for many features but are missing for study plans. Adding voice commands makes study plans accessible via voice interface.
+- **Implementation**:
+   - [ ] Add voice command patterns to VOICE_COMMANDS in src/constants.ts
+   - [ ] Register command handlers in src/services/voiceCommandParser.ts
+   - [ ] Add Indonesian language patterns for all commands
+   - [ ] Test voice recognition with command patterns
+   - [ ] Ensure proper navigation to study plan components
+   - [ ] Update voice help/documentation
+- **Commands to Add**:
+   - OPEN_STUDY_PLANS: "buka rencana belajar", "buka study plan", "tampilkan rencana belajar"
+   - VIEW_RECOMMENDATIONS: "tampilkan rekomendasi materi", "buat rekomendasi materi"
+   - CHECK_PROGRESS: "berapa progres belajar", "cek progres study plan"
+   - CREATE_STUDY_PLAN: "buat rencana belajar baru" (teachers)
+   - VIEW_STUDY_ANALYTICS: "lihat analitik belajar"
+- **Files to Modify**:
+   - src/constants.ts (add VOICE_COMMANDS patterns)
+   - src/services/voiceCommandParser.ts (register and handle commands)
+- **Pillars Addressed**:
+   - Pillar 1 (Flow): Study plan navigation via voice
+   - Pillar 9 (Feature Ops): New voice commands for study plans
+   - Pillar 16 (UX/DX): Accessibility for voice users
+
 ## Follow-up Tasks
 
 ### [BUILDER] Integrate Cleanup Methods with Logout Flow (Follow-up to #1286)

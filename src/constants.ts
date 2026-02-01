@@ -306,6 +306,13 @@ export const VOICE_COMMANDS = {
     VIEW_CHILD_ATTENDANCE: ['absensi anak', 'lihat absensi anak', 'view child attendance', 'child attendance'],
     VIEW_CHILD_SCHEDULE: ['jadwal anak', 'lihat jadwal anak', 'view child schedule', 'child schedule'],
     SEE_NOTIFICATIONS: ['notifikasi', 'lihat notifikasi', 'see notifications', 'notifications'],
+
+    // Study plan commands
+    OPEN_STUDY_PLANS: ['buka rencana belajar', 'buka study plan', 'tampilkan rencana belajar', 'lihat jadwal belajar', 'study plan', 'rencana belajar'],
+    VIEW_RECOMMENDATIONS: ['tampilkan rekomendasi materi', 'buat rekomendasi materi', 'apa materi yang disarankan', 'lihat materi yang disarankan', 'rekomendasi materi'],
+    CHECK_PROGRESS: ['berapa progres belajar', 'cek progres study plan', 'sejauh mana progres belajar', 'lihat progres belajar saya', 'progres belajar'],
+    CREATE_STUDY_PLAN: ['buat rencana belajar baru', 'create study plan', 'buat study plan'],
+    VIEW_STUDY_ANALYTICS: ['lihat analitik belajar', 'analitik belajar', 'view study analytics'],
 } as const;
 
 export const NOTIFICATION_CONFIG = {
