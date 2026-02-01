@@ -1,8 +1,8 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.7.4
-             **Last Updated**: 2026-02-01 (Online Payment System - Phase 2 Complete)
-        **Maintained By**: Lead Autonomous Engineer & System Guardian
+  **Version**: 3.7.5
+             **Last Updated**: 2026-02-01 (Critical Security Vulnerabilities Fixed)
+         **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -957,7 +957,8 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
 ---
 
 ## Version History
-
+ 
+       | 3.7.5 | 2026-02-01 | Fix Critical Payment System Security Vulnerabilities (Issue #1353, P0): Removed insecure paymentService.ts (296 lines of client-side payment service); Eliminated API key exposure by removing VITE_PAYMENT_API_KEY from client code; Added PAYMENT_SERVER_KEY documentation for Cloudflare Worker secrets (wrangler.toml, .env.example); Added payments.read permission to parent role in permissions.ts; All payment operations now route through secure Cloudflare Worker backend (paymentsAPI module) instead of direct client API calls; Updated .env.example with security warnings and proper secret management documentation; Paused Issue #1349 Phase 3 work pending security fixes; GitHub issue #1353 CLOSED with commit 1b310b4; PR #1354 created for security fixes; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates API key exposure, prevents fraudulent transactions, aligns with OWASP API Security and PCI DSS standards. (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding) |
        | 3.7.2 | 2026-02-01 | Documentation Version Synchronization & Repository Cleanup (Issues #1341, #1343, #1324, #1235, P3): Updated version numbers across documentation files (README.md: 3.6.4→3.7.2, docs/README.md: 3.4.6→3.7.2); Added *.pdf to .gitignore to prevent PDF file tracking; Removed 4 untracked PDF files from repository (selamat!-diterima-di-sma-negeri-1-malang files, hasil-seleksi-ppdb-sma-negeri-1-malang file); Cleaned up 9 merged remote branches (agent-workspace, feat/add-communication-log-issue-973, feature/ai-class-performance-analysis-1231, feature/issue-1320-missing-error-handling, feature/test-coverage-voiceMessageQueue-1294, fix/issue-1285-doc-location-inconsistency, fix/test-suite-timeout-issue-1279, fix/user-import-tests, local/fix); TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Improves repository hygiene and ensures Single Source of Truth principle across all documentation (Pillar 8: Documentation, Pillar 15: Dynamic Coding, Pillar 16: UX/DX) |
        | 3.7.1 | 2026-02-01 | Synchronize GitHub Issues - Test Suites Fixed (Issues #1345, #1344, P2): Closed GitHub issues #1345 (UserImport Component Tests Failing) and #1344 (QuizPreview Component Tests Failing) with proper commit references (95eb651859b04bb1e96feddbfed973e2c26747a7). Test fixes were already merged to origin/main branch; issues remained OPEN creating inconsistency. Created PR #1347 for documentation synchronization. All 57 tests now verified as passing (27 UserImport, 30 QuizPreview). Ensures Single Source of Truth principle across GitHub issues and documentation (Pillar 8: Documentation, Pillar 16: UX/DX) |
        | 3.7.0 | 2026-02-01 | Fix Failing Test Suites - UserImport & QuizPreview (Issues #1345, #1344, P2): Fixed 35 failing tests across UserImport (22) and QuizPreview (13) components. UserImport fixes: Updated test assertions to use `getByLabelText()`, `getByDisplayValue()`, `getAllByText()` for duplicate text matching; Fixed mock setup for `document.createElement` to avoid TypeScript errors; Updated assertions to match actual component behavior (logger.error vs window.alert). QuizPreview fixes: Changed from `getByText()` to `getByDisplayValue()` for Input components; Used regex for prefixed text matching; Changed from `userEvent.type()` to `fireEvent.change()` for number inputs to avoid value concatenation; Fixed modal button selection with `getAllByText()` and index filtering. All 57 tests now passing (27 UserImport, 30 QuizPreview). TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings). (Pillars 3: Stability, 7: Debug, 16: UX/DX) |
