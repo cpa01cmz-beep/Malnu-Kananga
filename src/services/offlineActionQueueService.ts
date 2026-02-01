@@ -12,7 +12,7 @@ import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
-import type { ApiResponse } from './apiService';
+import type { ApiResponse } from './api/client';
 import { webSocketService, type RealTimeEvent } from './webSocketService';
 
 // ============================================

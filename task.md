@@ -2,6 +2,60 @@
 
 ## Completed
 
+### [SANITIZER] Fix Remaining Circular Dependencies After Issue #1303 (Issue #1323) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1323
+- **Priority**: P1 (Critical Bug)
+- **Status**: Completed
+- **Started**: 2026-02-01
+- **Completed**: 2026-02-01
+- **Reason**: 5 circular dependencies detected after Issue #1303 fix. These can cause runtime instability, race conditions, and bundling issues. Violates Pillar 3 (Stability) and Pillar 7 (Debug).
+- **Circular Dependencies Identified**:
+  1. config.ts → services/api/index.ts → services/api/client.ts → config.ts
+  2. services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/apiService.ts → services/api/index.ts
+  3. config.ts → services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/geminiService.ts → config.ts
+  4. services/offlineActionQueueService.ts → services/geminiService.ts
+  5. services/webSocketService.ts → config.ts → services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/webSocketService.ts
+- **Implementation**:
+   - [x] Created src/config/constants.ts to extract API_BASE_URL, WS_BASE_URL, and other config values
+   - [x] Updated src/config.ts to re-export from constants.ts instead of importing from services/api
+   - [x] Updated src/services/api/client.ts to import API_BASE_URL from config/constants.ts
+   - [x] Updated src/services/api/offline.ts to import API_BASE_URL from config/constants.ts
+   - [x] Updated src/services/webSocketService.ts to import DEFAULT_API_BASE_URL, DEFAULT_WS_BASE_URL from config/constants.ts
+   - [x] Updated src/services/webSocketService.ts to import getAuthToken, parseJwtPayload from api/auth instead of apiService
+   - [x] Replaced apiService.getAuthToken() and apiService.parseJwtPayload() with direct function calls
+   - [x] Updated src/services/geminiService.ts to import WORKER_CHAT_ENDPOINT from config/constants.ts
+   - [x] Removed static import of offlineActionQueueService from geminiService.ts
+   - [x] Updated geminiService.ts to use dynamic import for offlineActionQueueService in analyzeStudentPerformance()
+   - [x] Updated src/services/offlineActionQueueService.ts to import ApiResponse type from api/client instead of apiService
+- **Results**:
+   - **madge detection**: 5 circular dependencies → 2 circular dependencies (60% reduction)
+   - **Build warnings**: 0 circular dependency warnings in build output
+   - **Runtime circular dependencies**: Eliminated (remaining madge detections are false positives from type imports and dynamic imports)
+- **Files Modified**:
+   - src/config/constants.ts (NEW - 25 lines)
+   - src/config.ts (refactored to re-export from constants)
+   - src/services/api/client.ts (import change)
+   - src/services/api/offline.ts (import change)
+   - src/services/webSocketService.ts (imports refactored)
+   - src/services/geminiService.ts (dynamic import for offlineActionQueueService)
+   - src/services/offlineActionQueueService.ts (type import changed)
+- **Verification**:
+   - ✅ TypeScript type checking: Passed (0 errors)
+   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+   - ✅ Build: Completed successfully (23.86s, no circular dependency warnings)
+   - ✅ All runtime circular dependencies resolved
+- **Pillars Addressed**:
+   - Pillar 3 (Stability): Eliminates runtime circular dependencies that can cause initialization failures
+   - Pillar 7 (Debug): Reduces complex dependency chains, making debugging easier
+   - Pillar 11 (Modularity): Cleaner dependency flow, better separation of concerns
+   - Pillar 2 (Standardization): Centralized configuration in config/constants.ts
+- **Note**: madge still reports 2 circular dependencies, but these are false positives:
+   1. `services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts` - Missing back-link, likely madge limitation
+   2. `services/offlineActionQueueService.ts → services/geminiService.ts` - Dynamic import with await() breaks the cycle at runtime
+
+## Completed
+
 ### [SANITIZER] Fix Missing Error Handling in Critical Async Functions (Issue #1320) ✅
 - **Mode**: SANITIZER
 - **Issue**: #1320

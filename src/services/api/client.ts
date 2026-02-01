@@ -6,7 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_BASE_URL as CONFIG_API_BASE_URL } from '../../config';
+import { API_BASE_URL as CONFIG_API_BASE_URL } from '../../config/constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,

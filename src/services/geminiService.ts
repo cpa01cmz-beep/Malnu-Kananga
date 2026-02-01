@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import type { FeaturedProgram, LatestNews, AIFeedback, StudyPlan } from '../types';
-import { WORKER_CHAT_ENDPOINT } from '../config';
+import { WORKER_CHAT_ENDPOINT } from '../config/constants';
 import { STORAGE_KEYS } from '../constants';
 import {
   classifyError,
@@ -14,7 +14,7 @@ import {
 import { logger } from '../utils/logger';
 import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
-import { offlineActionQueueService } from './offlineActionQueueService';
+// offlineActionQueueService is imported dynamically to avoid circular dependencies
 
 // Models
 const FLASH_MODEL = 'gemini-2.5-flash';
@@ -404,10 +404,13 @@ export async function analyzeStudentPerformance(studentData: {
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     if (!isOnline && queueIfOffline) {
       logger.info('Queueing AI analysis for offline execution');
-      
+
       // Generate a unique ID for this analysis
       const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
+      // Import offlineActionQueueService dynamically to avoid circular dependencies
+      const { offlineActionQueueService } = await import('./offlineActionQueueService');
+
       // Queue the analysis
       offlineActionQueueService.addAction({
         type: 'create',

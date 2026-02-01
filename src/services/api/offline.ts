@@ -2,6 +2,7 @@
 
 import { logger } from '../../utils/logger';
 import { offlineActionQueueService } from '../offlineActionQueueService';
+import { API_BASE_URL as CONFIG_API_BASE_URL } from '../../config/constants';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -20,7 +21,7 @@ interface RequestInit {
   body?: string | FormData;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || CONFIG_API_BASE_URL;
 
 // ============================================
 // OFFLINE QUEUE HELPER FUNCTIONS
