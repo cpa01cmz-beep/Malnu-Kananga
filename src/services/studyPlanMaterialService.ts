@@ -1,6 +1,7 @@
 import { eLibraryAPI, subjectsAPI } from './apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import { classifyError, logError } from '../utils/errorHandler';
 import type { StudyPlan, MaterialRecommendation } from '../types';
 import type { ELibrary } from '../types';
 
@@ -13,27 +14,37 @@ class StudyPlanMaterialService {
     studyPlan: StudyPlan,
     forceRefresh = false
   ): Promise<MaterialRecommendation[]> {
-    if (!forceRefresh) {
-      const cached = this.getCachedRecommendations(studyPlan.id);
-      if (cached && this.isCacheValid(cached)) {
-        logger.info('Using cached material recommendations for study plan:', studyPlan.id);
-        return cached.recommendations;
+    try {
+      if (!forceRefresh) {
+        const cached = this.getCachedRecommendations(studyPlan.id);
+        if (cached && this.isCacheValid(cached)) {
+          logger.info('Using cached material recommendations for study plan:', studyPlan.id);
+          return cached.recommendations;
+        }
       }
+
+      const materials = await this.fetchAllMaterials();
+      const studyPlanWithSubjects = await this.enrichStudyPlanWithSubjectIds(studyPlan);
+
+      const recommendations = await this.generateRecommendations(
+        studyPlanWithSubjects,
+        materials
+      );
+
+      const prioritized = this.prioritizeRecommendations(recommendations, studyPlanWithSubjects);
+
+      this.cacheRecommendations(studyPlan.id, prioritized);
+
+      return prioritized;
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'getMaterialRecommendations',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      logger.error('Failed to get material recommendations for study plan:', studyPlan.id, error);
+      return [];
     }
-
-    const materials = await this.fetchAllMaterials();
-    const studyPlanWithSubjects = await this.enrichStudyPlanWithSubjectIds(studyPlan);
-
-    const recommendations = await this.generateRecommendations(
-      studyPlanWithSubjects,
-      materials
-    );
-
-    const prioritized = this.prioritizeRecommendations(recommendations, studyPlanWithSubjects);
-
-    this.cacheRecommendations(studyPlan.id, prioritized);
-
-    return prioritized;
   }
 
   async fetchAllMaterials(): Promise<ELibrary[]> {
@@ -53,21 +64,31 @@ class StudyPlanMaterialService {
   private async enrichStudyPlanWithSubjectIds(
     studyPlan: StudyPlan
   ): Promise<StudyPlanWithSubjects> {
-    const subjectsRes = await subjectsAPI.getAll();
-    const subjectMapping = new Map<string, string>();
+    try {
+      const subjectsRes = await subjectsAPI.getAll();
+      const subjectMapping = new Map<string, string>();
 
-    if (subjectsRes.success && subjectsRes.data) {
-      studyPlan.subjects.forEach((subject) => {
-        const matchedSubject = subjectsRes.data!.find(
-          (s) => s.name.toLowerCase() === subject.subjectName.toLowerCase()
-        );
-        if (matchedSubject) {
-          subjectMapping.set(subject.subjectName, matchedSubject.id);
-        }
+      if (subjectsRes.success && subjectsRes.data) {
+        studyPlan.subjects.forEach((subject) => {
+          const matchedSubject = subjectsRes.data!.find(
+            (s) => s.name.toLowerCase() === subject.subjectName.toLowerCase()
+          );
+          if (matchedSubject) {
+            subjectMapping.set(subject.subjectName, matchedSubject.id);
+          }
+        });
+      }
+
+      return { ...studyPlan, subjectMapping };
+    } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'enrichStudyPlanWithSubjects',
+        timestamp: Date.now()
       });
+      logError(classifiedError);
+      logger.error('Failed to enrich study plan with subject IDs:', error);
+      return { ...studyPlan, subjectMapping: new Map() };
     }
-
-    return { ...studyPlan, subjectMapping };
   }
 
   private async generateRecommendations(

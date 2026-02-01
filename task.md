@@ -2,6 +2,42 @@
 
 ## Completed
 
+### [SANITIZER] Fix Missing Error Handling in Critical Async Functions (Issue #1320) ✅
+- **Mode**: SANITIZER
+- **Issue**: #1320
+- **Priority**: P1 (Critical Blocker)
+- **Status**: Completed
+- **Started**: 2026-02-01
+- **Completed**: 2026-02-01
+- **Reason**: Four async functions in critical services lack proper error handling (try-catch blocks), which could lead to unhandled promise rejections and application crashes.
+- **Implementation**:
+  - [x] Added try-catch block to `getRecommendations()` in studyPlanMaterialService.ts
+  - [x] Added try-catch block to `enrichStudyPlanWithSubjectIds()` in studyPlanMaterialService.ts
+  - [x] Added try-catch block to `exportToPDF()` in communicationLogService.ts
+  - [x] Added try-catch block to `exportToCSV()` in communicationLogService.ts
+  - [x] Added `classifyError` and `logError` imports to both services
+  - [x] Added error logging with context
+  - [x] Added graceful fallback behavior (return empty array or throw user-friendly error)
+  - [x] Run typecheck: Passed (0 errors)
+  - [x] Run lint: Passed (0 errors, 0 warnings)
+  - [x] Test suite: All tests passing
+- **Acceptance Criteria**:
+  - ✅ All async functions now have proper try-catch blocks
+  - ✅ Errors are classified and logged using errorHandler utilities
+  - ✅ Graceful fallback behavior on error (empty array for recommendations, user-friendly error for exports)
+  - ✅ No breaking changes to existing API
+  - ✅ All existing tests still passing
+- **Files Modified**:
+  - src/services/studyPlanMaterialService.ts (added error handling to 2 functions)
+  - src/services/communicationLogService.ts (added error handling to 2 functions)
+- **Pillars Addressed**:
+  - Pillar 3 (Stability): Prevents unhandled promise rejections and application crashes
+  - Pillar 4 (Security): Proper error classification for security-relevant operations
+  - Pillar 7 (Debug): Better error logging with operation context and timestamps
+  - Pillar 15 (Dynamic Coding): Consistent error handling pattern across services
+
+## Completed
+
 ### [BUILDER] Add Real-Time Updates to AdminDashboard (Issue #1314) ✅
 - **Mode**: BUILDER
 - **Issue**: #1314
