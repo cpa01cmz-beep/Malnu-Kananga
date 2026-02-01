@@ -95,6 +95,7 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
                 Judul Kuis
               </label>
               <Input
+                aria-label="Judul Kuis"
                 value={editedQuiz.title}
                 onChange={(e) => setEditedQuiz(prev => ({ ...prev, title: e.target.value }))}
                 className="w-full text-lg font-semibold"
@@ -105,6 +106,7 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
                 Deskripsi
               </label>
               <Textarea
+                aria-label="Deskripsi"
                 value={editedQuiz.description}
                 onChange={(e) => setEditedQuiz(prev => ({ ...prev, description: e.target.value }))}
                 className="w-full"
@@ -117,6 +119,7 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
                   Durasi (menit)
                 </label>
                 <Input
+                  aria-label="Durasi (menit)"
                   type="number"
                   min="5"
                   max="180"
@@ -130,6 +133,7 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
                   Nilai Lulus
                 </label>
                 <Input
+                  aria-label="Nilai Lulus"
                   type="number"
                   min="0"
                   max={editedQuiz.totalPoints}

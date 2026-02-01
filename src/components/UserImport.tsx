@@ -287,11 +287,20 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
           </Button>
 
           <div
+            role="button"
+            aria-label="Upload CSV file"
+            tabIndex={0}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             className={`border-2 border-dashed rounded-xl p-12 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
               dragActive
                 ? 'border-primary-400 bg-primary-50/50 dark:bg-primary-900/10'
