@@ -14,6 +14,8 @@ import { logger } from '../utils/logger';
 import { validateAIResponse } from '../utils/aiEditorValidator';
 import { chatCache, analysisCache, editorCache } from './aiCacheService';
 
+// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
+// See Issue #1323 for circular dependency fix
 const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE_URL;
 const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;

@@ -51,8 +51,7 @@ import { User, UserRole, UserExtraRole, VoiceLanguage } from '../types';
 import ErrorMessage from './ui/ErrorMessage';
 import { OfflineIndicator } from './OfflineIndicator';
 import SearchInput from './ui/SearchInput';
-
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+import { DEFAULT_API_BASE_URL } from '../config';
 
 
 interface StudentGrade {
