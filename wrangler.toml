@@ -31,6 +31,11 @@ ALLOWED_ORIGIN = "*"
 NODE_ENV = "development"
 LOG_LEVEL = "info"
 
+# Email Service API URLs
+SENDGRID_API_URL = "https://api.sendgrid.com/v3/mail/send"
+MAILGUN_API_URL = "https://api.mailgun.net/v3"
+CLOUDFLARE_EMAIL_API_URL = "https://api.cloudflare.com/client/v4/email/send"
+
 # Environment bindings for production
 [env.production]
 name = "malnu-kananga-worker-prod"
@@ -68,6 +73,11 @@ ALLOWED_ORIGIN = "https://ma-malnukananga.sch.id"
 # See docs/DEPLOYMENT_GUIDE.md for secret setup instructions
 NODE_ENV = "production"
 LOG_LEVEL = "error"
+
+# Email Service API URLs (production)
+SENDGRID_API_URL = "https://api.sendgrid.com/v3/mail/send"
+MAILGUN_API_URL = "https://api.mailgun.net/v3"
+CLOUDFLARE_EMAIL_API_URL = "https://api.cloudflare.com/client/v4/email/send"
 
 # Local development
 [env.dev]
@@ -111,6 +121,11 @@ LOG_LEVEL = "info"
 # NOTE: Worker uses GEMINI_API_KEY (WITHOUT VITE_ prefix)
 # Frontend uses VITE_GEMINI_API_KEY (WITH VITE_ prefix) - these are DIFFERENT services
 # Set via Wrangler: echo "your_key" | wrangler secret put GEMINI_API_KEY --env dev
+
+# Email Service API URLs (development)
+SENDGRID_API_URL = "https://api.sendgrid.com/v3/mail/send"
+MAILGUN_API_URL = "https://api.mailgun.net/v3"
+CLOUDFLARE_EMAIL_API_URL = "https://api.cloudflare.com/client/v4/email/send"
 
 # Email Service Configuration
 # EMAIL_PROVIDER: Choose from 'sendgrid', 'mailgun', 'cloudflare-email'

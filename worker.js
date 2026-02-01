@@ -1421,7 +1421,8 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`
     const emailProvider = env.EMAIL_PROVIDER || 'cloudflare';
 
     if (emailProvider === 'cloudflare' && env.SENDGRID_API_KEY) {
-      const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      const sendGridApiUrl = env.SENDGRID_API_URL || 'https://api.sendgrid.com/v3/mail/send';
+      const response = await fetch(sendGridApiUrl, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
@@ -1992,7 +1993,8 @@ async function sendViaSendGrid(env, { to, cc, bcc, subject, html, text, attachme
       }));
     }
 
-    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    const sendGridApiUrl = env.SENDGRID_API_URL || 'https://api.sendgrid.com/v3/mail/send';
+    const response = await fetch(sendGridApiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${sendGridApiKey}`,
@@ -2048,7 +2050,8 @@ async function sendViaMailgun(env, { to, cc, bcc, subject, html, text, attachmen
     }
 
     const auth = btoa(`api:${mailgunApiKey}`);
-    const response = await fetch(`https://api.mailgun.net/v3/${mailgunDomain}/messages`, {
+    const mailgunApiUrl = `${env.MAILGUN_API_URL || 'https://api.mailgun.net/v3'}/${mailgunDomain}/messages`;
+    const response = await fetch(mailgunApiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${auth}`
@@ -2089,7 +2092,8 @@ async function sendViaCloudflareEmail(env, { to, cc, _bcc, subject, html, text, 
       }
     };
 
-    const response = await fetch('https://api.cloudflare.com/client/v4/email/send', {
+    const cloudflareEmailApiUrl = env.CLOUDFLARE_EMAIL_API_URL || 'https://api.cloudflare.com/client/v4/email/send';
+    const response = await fetch(cloudflareEmailApiUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${cloudflareApiKey}`,

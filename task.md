@@ -1,5 +1,42 @@
 # Active Tasks Tracking
 
+## In Progress
+
+### [SANITIZER] Refactor Hardcoded Email Service URLs in Worker.js (Issue #1335) 🔄
+- **Mode**: SANITIZER
+- **Issue**: #1335
+- **Priority**: P2 (Refactoring - Technical Debt)
+- **Status**: In Progress
+- **Started**: 2026-02-01
+- **Reason**: Email service API URLs are hardcoded in worker.js (lines 1424, 1995, 2051, 2092), violating Pillar 15 (Dynamic Coding) and Pillar 4 (Security)
+- **Hardcoded URLs Found**:
+  1. Line 1424: `https://api.sendgrid.com/v3/mail/send` (sendPasswordResetEmail)
+  2. Line 1995: `https://api.sendgrid.com/v3/mail/send` (sendViaSendGrid)
+  3. Line 2051: `https://api.mailgun.net/v3/${mailgunDomain}/messages` (sendViaMailgun)
+  4. Line 2092: `https://api.cloudflare.com/client/v4/email/send` (sendViaCloudflareEmail)
+- **Implementation**:
+  - [ ] Add email provider URL constants to wrangler.toml (environment-specific)
+  - [ ] Add email provider URL variables to .env.example
+  - [ ] Update worker.js to use env variables instead of hardcoded URLs
+  - [ ] Run build: Passed
+  - [ ] Run lint: Passed
+  - [ ] Create PR with descriptive message
+  - [ ] Update documentation (blueprint.md, roadmap.md)
+- **Acceptance Criteria**:
+  - [ ] All email service URLs are read from environment variables
+  - [ ] Environment-specific configuration (production/dev)
+  - [ ] No hardcoded URLs in worker.js
+  - [ ] All tests passing
+  - [ ] Documentation updated
+- **Files to Modify**:
+  - wrangler.toml (add EMAIL_API_URL_* environment variables)
+  - .env.example (add EMAIL_API_URL_* configuration)
+  - worker.js (replace hardcoded URLs with env.* variables)
+- **Pillars Addressed**:
+  - Pillar 4 (Security): Environment-specific configuration prevents exposure
+  - Pillar 15 (Dynamic Coding): Eliminates hardcoded values
+  - Pillar 2 (Standardization): Consistent config usage
+
 ## Completed
 
 ### [SANITIZER] Remove Duplicate DEFAULT_API_BASE_URL Definitions (Issue #1334) ✅
