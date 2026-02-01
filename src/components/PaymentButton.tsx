@@ -4,7 +4,7 @@ import Button from './ui/Button';
 export interface PaymentButtonProps {
   amount: number;
   description: string;
-  onClick: (paymentMethod: 'va' | 'bank_transfer' | 'ewallet' | 'qris' | 'credit_card') => void;
+  onClick: () => void;
   disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'success' | 'indigo';
   size?: 'sm' | 'md' | 'lg';
@@ -18,15 +18,11 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   variant = 'success',
   size = 'md',
 }) => {
-  const handleClick = () => {
-    onClick('va');
-  };
-
   return (
     <Button
       variant={variant}
       size={size}
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled}
       aria-label={`Bayar ${description} sebesar ${new Intl.NumberFormat('id-ID', {
         style: 'currency',

@@ -1,6 +1,7 @@
 // api/modules/payments.ts - Payment API Module
 
 import { request, type ApiResponse } from '../client';
+import type { ParentPayment } from '../../../types/users';
 
 export interface CreatePaymentRequest {
   amount: number;
@@ -46,8 +47,8 @@ export const paymentsAPI = {
     return request<PaymentStatusResponse['status']>(`/api/payments/${paymentId}/status`);
   },
 
-  async getPaymentHistory(studentId: string): Promise<ApiResponse<unknown[]>> {
-    return request<unknown[]>(`/api/payments/history?student_id=${studentId}`);
+  async getPaymentHistory(studentId: string): Promise<ApiResponse<ParentPayment[]>> {
+    return request<ParentPayment[]>(`/api/payments/history?student_id=${studentId}`);
   },
 
   async cancelPayment(paymentId: string): Promise<ApiResponse<null>> {

@@ -3812,11 +3812,43 @@ async function handlePaymentStatus(request, env, corsHeaders) {
 
 async function handlePaymentCallback(request, env, corsHeaders) {
   try {
-    const { paymentId, transactionId, status, signature: _signature, timestamp: _timestamp } = await request.json();
+    const payload = await request.json();
+    const { paymentId, transactionId, status, signature_key, order_id, gross_amount, status_code } = payload;
 
     if (!paymentId || !status) {
       return new Response(JSON.stringify(response.error('Data callback tidak lengkap', HTTP_STATUS_CODES.BAD_REQUEST)), {
         status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const serverKey = env.PAYMENT_SERVER_KEY;
+    if (!serverKey) {
+      logger.error('CRITICAL: PAYMENT_SERVER_KEY is not configured');
+      return new Response(JSON.stringify(response.error('Server configuration error', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+        status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const dataToSign = order_id + status_code + gross_amount + serverKey;
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(serverKey),
+      { name: 'HMAC', hash: 'SHA-512' },
+      false,
+      ['sign']
+    );
+    const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(dataToSign));
+    const expectedSignature = Array.from(new Uint8Array(signature))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    if (expectedSignature !== signature_key) {
+      logger.error('Invalid webhook signature received');
+      return new Response(JSON.stringify(response.error('Invalid signature', HTTP_STATUS_CODES.FORBIDDEN)), {
+        status: HTTP_STATUS_CODES.FORBIDDEN,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
