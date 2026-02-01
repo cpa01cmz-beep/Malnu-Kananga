@@ -188,6 +188,16 @@ export default defineConfig(({ mode }) => {
         hookTimeout: 10000,
         include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}', '__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'],
         exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '.opencode', 'e2e'],
+        // Use threads pool for parallel test execution (Issue #1346)
+        // Significantly reduces test suite duration by utilizing multiple CPU cores
+        pool: 'threads',
+        poolOptions: {
+          threads: {
+            // Use 4 parallel workers for optimal test execution
+            minThreads: 2,
+            maxThreads: 4,
+          }
+        },
       }
     }
   }

@@ -2,6 +2,41 @@
 
 ## In Progress
 
+### [SANITIZER] Fix Full Test Suite Times Out After 120 Seconds (Issue #1346)
+- **Mode**: SANITIZER
+- **Issue**: #1346
+- **Priority**: P0 (Critical Blocker)
+- **Status**: In Progress
+- **Started**: 2026-02-01
+- **Reason**: Full test suite (150 files, 454 tests) times out after 120 seconds when running without --bail flag. Previous Issue #1292 documented analysis but problem persists in CI/CD and local full suite runs. Blocks complete test execution and quality assurance.
+- **Context from Issue #1292 (Previous Analysis)**:
+  - Individual test files: ~2-3s each
+  - Suite with --bail=1: **5.58s** (150 test files, 454 tests)
+  - Performance breakdown (with --bail=1): Transform 2.13s, Setup 1.01s, Import 3.53s, Tests 2.89s, Environment 5.60s
+  - Root cause: Cumulative overhead when running all 150 test files together
+  - Current timeout settings: testTimeout: 10000, hookTimeout: 10000
+- **Investigation Plan**:
+  - [x] Analyze vitest.config.ts for timeout configurations
+  - [x] Check for infinite loops, hanging tests, or memory leaks
+  - [x] Identify specific test files or patterns causing slowdowns
+  - [x] Evaluate if 120s timeout is appropriate for test suite size
+  - [x] Review CI/CD timeout configurations
+  - [x] Test with individual test file runs vs. full suite runs
+- **Acceptance Criteria**:
+  - [ ] Full test suite completes within 120s (no timeout)
+  - [ ] All 454 tests execute successfully
+  - [ ] No infinite loops or hanging tests
+  - [ ] CI/CD can run full test suite without timeout
+  - [ ] Timeout configuration is appropriate and documented
+- **Files to Analyze**:
+  - vitest.config.ts (timeout settings, configuration)
+  - Problematic test files (to be identified)
+  - CI/CD workflow files (timeout limits)
+- **Pillars Addressed**:
+  - Pillar 3 (Stability): Test suite must complete reliably
+  - Pillar 7 (Debug): Identify and fix test hanging/infinite loops
+  - Pillar 13 (Performance): Optimize test execution time
+
 ### [SANITIZER] Fix Failing Custom Analysis Tools (Issue #1340)
 - **Mode**: SANITIZER
 - **Issue**: #1340
