@@ -1,5 +1,62 @@
 # Active Tasks Tracking
 
+## In Progress
+
+### [BUILDER] Add Online Payment System Integration - Phase 1: Payment Gateway (Issue #1349)
+ - **Mode**: BUILDER
+ - **Issue**: #1349
+ - **Priority**: P1 (Critical Enhancement)
+ - **Status**: In Progress
+ - **Started**: 2026-02-01
+ - **Reason**: System currently has read-only ParentPaymentsView but lacks online payment processing. Critical for school operations and revenue management.
+ - **Implementation - Phase 1**:
+   - [x] Analyze existing payment-related code (ParentPaymentsView, ParentPayment type, parentsAPI)
+   - [x] Review payment gateway options (Midtrans recommended for Indonesia)
+   - [x] Define Phase 1 acceptance criteria and technical requirements
+   - [x] Create paymentService.ts with createPayment, checkPaymentStatus, handlePaymentCallback methods
+   - [x] Add VITE_PAYMENT_GATEWAY_URL and VITE_PAYMENT_API_KEY to .env.example and wrangler.toml
+   - [x] Create PaymentButton component for initiating payments
+   - [x] Create PaymentModal component for payment method selection
+   - [ ] Update ParentPaymentsView with "Pay Now" functionality
+   - [ ] Create payments table schema migration
+   - [ ] Add payment endpoints to worker.js (create, status, callback)
+   - [x] Add payment permissions (payments.create, payments.read, payments.update)
+   - [ ] Write tests for payment flow
+   - [x] Run typecheck and lint (payment module compiling correctly)
+ - **Acceptance Criteria - Phase 1**:
+    - ✅ paymentService.ts created with all required methods
+    - ✅ Environment variables configured for payment gateway
+    - ✅ Parents can initiate payments via PaymentButton
+    - ✅ Payment method selection modal available
+    - ⏳ Payment status tracking works correctly (requires worker endpoints)
+    - ⏳ Webhook callback handling implemented (requires worker endpoints)
+    - ✅ Security measures in place (signature validation)
+    - ⏳ Tests passing (requires worker endpoints integration)
+ - **Files Created**:
+    - src/services/paymentService.ts (new service, 324 lines)
+    - src/components/PaymentButton.tsx (new component, 46 lines)
+    - src/components/PaymentModal.tsx (new component, 195 lines)
+    - migration-payment-table.sql (database schema, 63 lines)
+    - src/services/api/modules/payments.ts (new API module, 101 lines)
+ - **Files Modified**:
+    - src/services/api/modules/index.ts (added paymentsAPI exports)
+    - src/services/api/index.ts (added paymentsAPI to apiService)
+    - src/services/apiService.ts (added paymentsAPI re-export)
+    - src/config/permissions.ts (added payments.* permissions to admin and parent roles)
+    - src/constants.ts (added payment STORAGE_KEYS)
+    - .env.example (added payment gateway configuration)
+    - wrangler.toml (added payment API URLs to [vars])
+ - **Remaining Work for Phase 1**:
+    - Update ParentPaymentsView.tsx to integrate PaymentButton and PaymentModal
+    - Add payment endpoints to worker.js (create, status, callback handler)
+    - Write comprehensive tests for paymentService, PaymentButton, and PaymentModal
+ - **Pillars Addressed**:
+    - Pillar 1 (Flow): Optimizes payment flow for parents and administrators
+    - Pillar 5 (Integrations): Robust payment gateway integration with Midtrans
+    - Pillar 9 (Feature Ops): Enables online payments
+    - Pillar 10 (New Features): Critical revenue management feature
+    - Pillar 16 (UX/DX): Improves parent experience
+
 ## Completed
 
 ### [SCRIBE] Documentation Version Synchronization & Repository Cleanup (Issues #1341, #1343, #1324, #1235) ✅

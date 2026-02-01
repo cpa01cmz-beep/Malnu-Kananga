@@ -98,6 +98,11 @@ export const STORAGE_KEYS = {
     STUDY_PLANS: (studentId: string) => `malnu_study_plans_${studentId}`,
     ACTIVE_STUDY_PLAN: (studentId: string) => `malnu_active_study_plan_${studentId}`,
     STUDY_PLAN_ANALYTICS: (studentId: string) => `malnu_study_plan_analytics_${studentId}`,
+
+    // Payments (dynamic factory function)
+    PAYMENT_HISTORY: (parentId: string) => `malnu_payment_history_${parentId}`,
+    PAYMENT_IN_PROGRESS: (parentId: string) => `malnu_payment_in_progress_${parentId}`,
+    PAYMENT_SETTINGS: (parentId: string) => `malnu_payment_settings_${parentId}`,
     STUDY_PLAN_HISTORY: (studentId: string) => `malnu_study_plan_history_${studentId}`,
     WEEKLY_PROGRESS: (studentId: string, weekNumber: number) => `malnu_weekly_progress_${studentId}_${weekNumber}`,
     STUDY_PLAN_MATERIAL_RECOMMENDATIONS: (studyPlanId: string) => `malnu_study_plan_material_recommendations_${studyPlanId}`,

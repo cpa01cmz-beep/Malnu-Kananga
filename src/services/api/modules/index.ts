@@ -22,3 +22,5 @@ export { announcementsAPI } from './announcements';
 export { parentsAPI } from './messaging';
 export { messagesAPI } from './messaging';
 export { chatAPI } from './chat';
+export { paymentsAPI } from './payments';
+export type { CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse } from './payments';

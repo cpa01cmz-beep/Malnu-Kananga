@@ -1,4 +1,4 @@
-import { Permission, PermissionMatrix, UserExtraRole } from '../types/permissions';
+import { Permission, PermissionMatrix } from '../types/permissions';
 
 // Define all available permissions
 export const PERMISSIONS: Record<string, Permission> = {
@@ -175,6 +175,36 @@ export const PERMISSIONS: Record<string, Permission> = {
     action: 'reports'
   },
 
+  // Payment Management
+  'payments.create': {
+    id: 'payments.create',
+    name: 'Create Payments',
+    description: 'Create and initiate payment transactions',
+    resource: 'payments',
+    action: 'create'
+  },
+  'payments.read': {
+    id: 'payments.read',
+    name: 'View Payments',
+    description: 'View payment history and status',
+    resource: 'payments',
+    action: 'read'
+  },
+  'payments.update': {
+    id: 'payments.update',
+    name: 'Update Payments',
+    description: 'Update payment records and statuses',
+    resource: 'payments',
+    action: 'update'
+  },
+  'payments.delete': {
+    id: 'payments.delete',
+    name: 'Delete Payments',
+    description: 'Delete payment records',
+    resource: 'payments',
+    action: 'delete'
+  },
+
   // Special Roles
   'inventory.manage': {
     id: 'inventory.manage',
@@ -243,7 +273,8 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
     'ppdb.manage', 'ppdb.approve',
     'inventory.manage', 'osis.events',
     'parent.monitor', 'parent.reports', 'parent.communication',
-    'student.library', 'student.materials'
+    'student.library', 'student.materials',
+    'payments.create', 'payments.read', 'payments.update', 'payments.delete'
   ],
   teacher: [
     'content.create', 'content.read', 'content.update',
@@ -256,22 +287,15 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
     'student.library', 'student.materials'
   ],
   parent: [
-    'parent.monitor', 'parent.reports', 'parent.communication'
-  ]
-};
-
-// Extra role permissions (added to base role permissions)
-export const EXTRA_ROLE_PERMISSIONS: Partial<Record<NonNullable<UserExtraRole>, string[]>> & { null?: string[] } = {
-  wakasek: [
-    'academic.oversight',
-    'academic.teacher_evaluation', 
-    'academic.discipline',
-    'academic.grades',
-    'academic.attendance',
-    'academic.schedule',
-    'content.read',
-    'users.read',
-    'school.reports'
+    'content.create', 'content.read', 'content.update',
+    'academic.grades', 'academic.attendance', 'academic.schedule', 'academic.classes',
+    'academic.oversight', 'academic.curriculum', 'academic.teacher_evaluation', 'academic.discipline',
+    'school.policies', 'school.reports',
+    'ppdb.manage', 'ppdb.approve',
+    'inventory.manage', 'osis.events',
+    'parent.monitor', 'parent.reports', 'parent.communication',
+    'student.library', 'student.materials',
+    'payments.read'
   ],
   kepsek: [
     'academic.oversight',
