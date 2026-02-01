@@ -1,6 +1,7 @@
 import { eLibraryAPI, subjectsAPI } from './apiService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
+import { classifyError, logError } from '../utils/errorHandler';
 import type { StudyPlan, MaterialRecommendation } from '../types';
 import type { ELibrary } from '../types';
 
@@ -36,7 +37,12 @@ class StudyPlanMaterialService {
 
       return prioritized;
     } catch (error) {
-      logger.error('Failed to get material recommendations:', error);
+      const classifiedError = classifyError(error, {
+        operation: 'getMaterialRecommendations',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
+      logger.error('Failed to get material recommendations for study plan:', studyPlan.id, error);
       return [];
     }
   }
@@ -75,8 +81,13 @@ class StudyPlanMaterialService {
 
       return { ...studyPlan, subjectMapping };
     } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'enrichStudyPlanWithSubjects',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
       logger.error('Failed to enrich study plan with subject IDs:', error);
-      return { ...studyPlan, subjectMapping: new Map<string, string>() };
+      return { ...studyPlan, subjectMapping: new Map() };
     }
   }
 

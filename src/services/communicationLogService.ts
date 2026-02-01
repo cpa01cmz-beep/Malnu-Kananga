@@ -6,6 +6,7 @@ import {
 } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { classifyError, logError } from '../utils/errorHandler';
 import { pdfExportService } from '../services/pdfExportService';
 import Papa from 'papaparse';
 
@@ -383,7 +384,7 @@ class CommunicationLogService {
         ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
         : new Date().toLocaleDateString('id-ID');
 
-      pdfExportService.createReport({
+      await pdfExportService.createReport({
         title: 'Parent-Teacher Communication Log',
         date: dateStr,
         headers: ['Type', 'Date', 'Participants', 'Subject/Agenda', 'Details', 'Status'],
@@ -401,8 +402,13 @@ class CommunicationLogService {
         exportDate: dateStr,
       });
     } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'exportCommunicationLogToPDF',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
       logger.error('Failed to export communication log to PDF:', error);
-      throw error;
+      throw new Error('Gagal membuat ekspor PDF. Silakan coba lagi.');
     }
   }
 
@@ -436,8 +442,13 @@ class CommunicationLogService {
         URL.revokeObjectURL(url);
       }
     } catch (error) {
+      const classifiedError = classifyError(error, {
+        operation: 'exportCommunicationLogToCSV',
+        timestamp: Date.now()
+      });
+      logError(classifiedError);
       logger.error('Failed to export communication log to CSV:', error);
-      throw error;
+      throw new Error('Gagal membuat ekspor CSV. Silakan coba lagi.');
     }
   }
 

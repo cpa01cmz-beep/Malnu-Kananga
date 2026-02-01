@@ -81,6 +81,10 @@ export const STORAGE_KEYS = {
     PARENT_NOTIFICATION_SETTINGS: 'malnu_parent_notification_settings',
     PARENT_NOTIFICATION_QUEUE: 'malnu_parent_notification_queue',
     
+    // Parent Progress Reports (new)
+    PARENT_PROGRESS_REPORTS: (studentId: string) => `malnu_parent_progress_reports_${studentId}`,
+    PARENT_REPORT_SETTINGS: (parentId: string) => `malnu_parent_report_settings_${parentId}`,
+    
     // OCR Audit
     OCR_AUDIT: 'malnu_ocr_audit',
     OCR_VALIDATION_QUEUE: 'malnu_queued_ocr_validations',

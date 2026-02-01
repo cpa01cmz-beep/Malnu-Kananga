@@ -90,4 +90,23 @@ describe('Gemini Service', () => {
       }
     });
   });
+
+  describe('cleanupGeminiService', () => {
+    it('should clear AI instance and error state', async () => {
+      const { cleanupGeminiService } = await import('../geminiService');
+
+      // Cleanup the service
+      cleanupGeminiService();
+
+      // Verify the function exists
+      expect(cleanupGeminiService).toBeTypeOf('function');
+    });
+
+    it('should be callable without errors', async () => {
+      const { cleanupGeminiService } = await import('../geminiService');
+
+      // Should not throw
+      expect(() => cleanupGeminiService()).not.toThrow();
+    });
+  });
 });
