@@ -6,7 +6,6 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_BASE_URL as CONFIG_API_BASE_URL } from '../../config';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -16,7 +15,8 @@ import {
 import { getIsRefreshing, setIsRefreshing, subscribeTokenRefresh, onTokenRefreshed } from './refreshState';
 import { queueOfflineRequest } from './offline';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || CONFIG_API_BASE_URL;
+const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 export interface ApiResponse<T> {
   success: boolean;

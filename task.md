@@ -537,6 +537,38 @@
    - Create comprehensive tests for new cleanup methods
    - Add cleanup integration with AuthService logout flow
 
+## In Progress
+
+### [SANITIZER] Fix Remaining Circular Dependencies (Issue #1323) 🔄
+- **Mode**: SANITIZER
+- **Issue**: #1323
+- **Priority**: P1 (Critical Blocker)
+- **Status**: In Progress
+- **Started**: 2026-02-01
+- **Reason**: 5 circular dependencies detected by `madge` after Issue #1303 fix. These circular dependencies can cause runtime failures, unpredictable behavior, and bundling issues.
+- **Circular Dependencies Found**:
+  1. config.ts → services/api/index.ts → services/api/client.ts → config.ts
+  2. services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/apiService.ts → services/api/index.ts
+  3. config.ts → services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/geminiService.ts → config.ts
+  4. services/offlineActionQueueService.ts → services/geminiService.ts → services/offlineActionQueueService.ts
+  5. services/webSocketService.ts → config.ts → services/api/index.ts → services/api/client.ts → services/api/offline.ts → services/offlineActionQueueService.ts → services/webSocketService.ts
+- **Root Causes**:
+  - config.ts re-exports API modules, creating dependency chain
+  - geminiService.ts has static import of offlineActionQueueService
+  - webSocketService.ts and api/client.ts import config.ts for constants
+- **Planned Fixes**:
+  - [ ] Remove API re-export from config.ts (Fixes #1, #2, #3)
+  - [ ] Convert geminiService → offlineActionQueueService import to dynamic (Fix #4)
+  - [ ] Pass config values to services via parameters/env vars (Fix #5)
+  - [ ] Update all files importing from config.ts to use services/api directly
+  - [ ] Verify with `npx madge --circular --extensions ts,tsx src/`
+  - [ ] Run typecheck and lint
+  - [ ] Create/update PR
+- **Pillars Addressed**:
+  - Pillar 3 (Stability): Eliminates runtime instability from circular dependencies
+  - Pillar 7 (Debug): Easier debugging with unidirectional dependencies
+  - Pillar 11 (Modularity): Cleaner module architecture
+
 ## Follow-up Tasks
 
 ### [BUILDER] Integrate Cleanup Methods with Logout Flow (Follow-up to #1286)
