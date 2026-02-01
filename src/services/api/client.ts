@@ -51,35 +51,48 @@ async function validateRequestPermissions(
   userRole: string,
   userExtraRole: string | null
 ): Promise<{ allowed: boolean; reason?: string }> {
-  const pathParts = endpoint.split('/').filter(Boolean);
-  const resource = pathParts[0] || 'unknown';
-  const method = options.method?.toUpperCase() || 'GET';
-  
-  const actionMap: Record<string, string> = {
-    'GET': 'read',
-    'POST': 'create',
-    'PUT': 'update',
-    'PATCH': 'update',
-    'DELETE': 'delete'
-  };
-  
-  const action = actionMap[method] || 'read';
-  const permissionId = `${resource}.${action}`;
-  
-  const result = permissionService.hasPermission(
-    userRole as UserRole,
-    userExtraRole as UserExtraRole,
-    permissionId,
-    {
-      userId: 'api-request',
-      ip: typeof window !== 'undefined' ? window.location.hostname : 'server'
-    }
-  );
-  
-  return {
-    allowed: result.granted,
-    reason: result.reason
-  };
+  try {
+    const pathParts = endpoint.split('/').filter(Boolean);
+    const resource = pathParts[0] || 'unknown';
+    const method = options.method?.toUpperCase() || 'GET';
+
+    const actionMap: Record<string, string> = {
+      'GET': 'read',
+      'POST': 'create',
+      'PUT': 'update',
+      'PATCH': 'update',
+      'DELETE': 'delete'
+    };
+
+    const action = actionMap[method] || 'read';
+    const permissionId = `${resource}.${action}`;
+
+    const result = permissionService.hasPermission(
+      userRole as UserRole,
+      userExtraRole as UserExtraRole,
+      permissionId,
+      {
+        userId: 'api-request',
+        ip: typeof window !== 'undefined' ? window.location.hostname : 'server'
+      }
+    );
+
+    return {
+      allowed: result.granted,
+      reason: result.reason
+    };
+  } catch (error) {
+    const classifiedError = classifyError(error, {
+      operation: 'validateRequestPermissions',
+      timestamp: Date.now()
+    });
+    logError(classifiedError);
+    logger.error('Permission validation failed', { error, endpoint, userRole });
+    return {
+      allowed: false,
+      reason: 'Permission validation error'
+    };
+  }
 }
 
 // ============================================
