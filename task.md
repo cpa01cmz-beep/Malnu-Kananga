@@ -772,6 +772,31 @@
    - Pillar 9 (Feature Ops): New voice commands for study plans
    - Pillar 16 (UX/DX): Accessibility for voice users
 
+## In Progress
+
+### [SANITIZER] Fix Missing Error Handling in OCR Service (Issue #1333, #1336)
+- **Mode**: SANITIZER
+- **Issues**: #1333 (P1), #1336 (P2)
+- **Priority**: P1 (Critical Blocker)
+- **Status**: In Progress
+- **Started**: 2026-02-01
+- **Reason**: Two methods in ocrService.ts lack proper error handling (try-catch blocks), which could lead to unhandled promise rejections and application crashes.
+- **Implementation**:
+   - [ ] Add try-catch block to `hashFile()` in ocrService.ts
+   - [ ] Add error logging using logger
+   - [ ] Add graceful fallback behavior on error
+   - [ ] Add try-catch block to `terminate()` in ocrService.ts
+   - [ ] Add error logging for terminate failures
+   - [ ] Run typecheck
+   - [ ] Run lint
+   - [ ] Test error scenarios
+- **Files Modified**:
+   - src/services/ocrService.ts
+- **Pillars Addressed**:
+   - Pillar 3 (Stability): Prevents unhandled promise rejections and application crashes
+   - Pillar 7 (Debug): Better error logging with operation context
+   - Pillar 15 (Dynamic Coding): Consistent error handling pattern across services
+
 ## Follow-up Tasks
 
 ### [BUILDER] Integrate Cleanup Methods with Logout Flow (Follow-up to #1286)
