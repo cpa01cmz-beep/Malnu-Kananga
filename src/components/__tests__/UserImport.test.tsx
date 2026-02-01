@@ -15,9 +15,15 @@ vi.mock('../../services/apiService', () => ({
 
 vi.mock('papaparse', () => ({
   default: {
-    parse: vi.fn(),
+    parse: vi.fn((_file: File, config: any) => {
+      if (config.complete) {
+        config.complete({ data: mockParseData, errors: [] });
+      }
+    }),
   },
 }));
+
+let mockParseData: CSVRow[] = [];
 
 const mockUsers = [
   {
@@ -98,6 +104,8 @@ describe('UserImport Component', () => {
       success: true,
       data: mockUsers[0],
     });
+    // Reset mock data to empty
+    mockParseData = [];
   });
 
   afterEach(() => {
@@ -151,11 +159,8 @@ describe('UserImport Component', () => {
     });
 
     it('handles CSV file selection', async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: mockCSVData });
-      });
+      // Set mock data to return
+      mockParseData = mockCSVData;
 
       render(<UserImport {...defaultProps} />);
 
@@ -183,11 +188,8 @@ describe('UserImport Component', () => {
     });
 
     it('shows file info after selection', async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: mockCSVData });
-      });
+      // Set mock data to return
+      mockParseData = mockCSVData;
 
       render(<UserImport {...defaultProps} />);
 
@@ -203,11 +205,8 @@ describe('UserImport Component', () => {
     });
 
     it('removes selected file', async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: mockCSVData });
-      });
+      // Set mock data to return
+      mockParseData = mockCSVData;
 
       render(<UserImport {...defaultProps} />);
 
@@ -226,12 +225,8 @@ describe('UserImport Component', () => {
   });
 
   describe('Preview Step', () => {
-    beforeEach(async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: mockCSVData });
-      });
+    beforeEach(() => {
+      mockParseData = mockCSVData;
     });
 
     it('shows parsed users in table', async () => {
@@ -325,11 +320,7 @@ describe('UserImport Component', () => {
     });
 
     it('disables import button when no valid users', async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: [{ name: '', email: 'invalid', role: 'student' }] });
-      });
+      mockParseData = [{ name: '', email: 'invalid', role: 'student' }];
 
       render(<UserImport {...defaultProps} />);
 
@@ -346,12 +337,8 @@ describe('UserImport Component', () => {
   });
 
   describe('Import Process', () => {
-    beforeEach(async () => {
-      const Papa = await import('papaparse');
-
-      (Papa.default.parse as ReturnType<typeof vi.fn>).mockImplementation(({ complete }: { complete: (results: { data: CSVRow[] }) => void }) => {
-        complete({ data: mockCSVData });
-      });
+    beforeEach(() => {
+      mockParseData = mockCSVData;
     });
 
     it('starts import when clicking Import button', async () => {
@@ -547,6 +534,10 @@ describe('UserImport Component', () => {
   });
 
   describe('Accessibility', () => {
+    beforeEach(() => {
+      mockParseData = mockCSVData;
+    });
+
     it('has correct ARIA labels', () => {
       render(<UserImport {...defaultProps} />);
 
