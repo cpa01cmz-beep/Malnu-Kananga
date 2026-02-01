@@ -426,17 +426,21 @@ class CommunicationLogService {
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `communication_log_${Date.now()}.csv`;
-      link.click();
-      URL.revokeObjectURL(link.href);
+      const url = URL.createObjectURL(blob);
+      try {
+        link.href = url;
+        link.download = `communication_log_${Date.now()}.csv`;
+        link.click();
 
-      logger.info('Communication log exported to CSV:', {
-        entryCount: logs.length,
-        exportDate: options.dateRange
-          ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
-          : new Date().toLocaleDateString('id-ID'),
-      });
+        logger.info('Communication log exported to CSV:', {
+          entryCount: logs.length,
+          exportDate: options.dateRange
+            ? `${new Date(options.dateRange.startDate).toLocaleDateString('id-ID')} - ${new Date(options.dateRange.endDate).toLocaleDateString('id-ID')}`
+            : new Date().toLocaleDateString('id-ID'),
+        });
+      } finally {
+        URL.revokeObjectURL(url);
+      }
     } catch (error) {
       const classifiedError = classifyError(error, {
         operation: 'exportCommunicationLogToCSV',
