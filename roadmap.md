@@ -1,8 +1,8 @@
- # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+# MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.7.2
-             **Last Updated**: 2026-02-01 (Documentation Version Sync & Repository Cleanup)
-       **Maintained By**: Lead Autonomous Engineer & System Guardian
+  **Version**: 3.7.3
+             **Last Updated**: 2026-02-01 (Online Payment System - Phase 1)
+        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
 
@@ -284,6 +284,30 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
       - ✅ Attendance management UI component (AttendanceManagement.tsx with 575 lines)
       - ✅ Comprehensive test coverage (11 tests, 9 passing, 81.8% pass rate)
     - **Impact**: Reduces manual attendance entry work, improves teacher productivity (Pillars 1: Flow, 9: Feature Ops, 16: UX/DX)
+
+3. **[BUILDER] Add Online Payment System - Phase 1 Core Implementation** 🟡
+   - **Status**: 🟡 **IN PROGRESS**
+   - **Priority**: P1
+   - **Issue**: #1349
+   - **Effort**: 7-10 days (Phase 1)
+   - **Target**: 2026-02-10
+   - **Started**: 2026-02-01
+   - **Phase 1 Deliverables**:
+     - ✅ paymentService.ts created with createPayment, checkPaymentStatus, cancelPayment, handlePaymentCallback
+     - ✅ PaymentButton.tsx and PaymentModal.tsx components created
+     - ✅ Payments API module (paymentsAPI) created
+     - ✅ Payment STORAGE_KEYS added
+     - ✅ Migration-payment-table.sql created (payments table schema)
+     - ✅ Payment permissions added (payments.create, payments.read, payments.update, payments.delete)
+     - ✅ Environment variables configured (VITE_PAYMENT_GATEWAY_URL, VITE_PAYMENT_API_KEY)
+     - ✅ API exports updated
+     - ✅ TypeScript type checking: Passed
+     - ✅ ESLint linting: Passed
+     - ⏳ Worker endpoints (create, status, callback) - Phase 2
+     - ⏳ ParentPaymentsView integration - Phase 2
+     - ⏳ Test suite creation - Phase 2
+   - **Impact**: Enables online payments for parents and school revenue management. Critical for school operations.
+
 
 #### Medium Priority (P2)
 
