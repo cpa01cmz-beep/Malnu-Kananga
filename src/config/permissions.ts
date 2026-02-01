@@ -287,7 +287,7 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
     'student.library', 'student.materials'
   ],
   parent: [
-    'parent.monitor', 'parent.reports', 'parent.communication'
+    'parent.monitor', 'parent.reports', 'parent.communication', 'payments.read'
   ]
 };
 

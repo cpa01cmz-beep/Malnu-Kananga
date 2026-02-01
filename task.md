@@ -2,25 +2,78 @@
 
 ## In Progress
 
+### [SANITIZER] Fix Critical Payment System Security Vulnerabilities (Issue #1353)
+  - **Mode**: SANITIZER
+  - **Issue**: #1353
+  - **Priority**: P0 (CRITICAL SECURITY)
+  - **Status**: In Progress
+  - **Started**: 2026-02-01
+  - **Reason**: CRITICAL security vulnerabilities in payment system implementation (PR #1352) must be resolved before Phase 3 can continue. API key exposure, direct API calls from client, weak signature verification, webhook handling on client.
+  - **PAUSED**: Issue #1349 Phase 3 work paused pending security fixes
+  - **Security Issues Found** (7):
+     1. ⛔ CRITICAL: API Key Exposure (paymentService.ts:44) - VITE_PAYMENT_API_KEY embedded in client bundle
+     2. ⛔ CRITICAL: Direct Payment Gateway API Calls from Client (paymentService.ts:61, 133, 224) - Bypasses backend authentication
+     3. ⛔ CRITICAL: Weak Signature Verification (paymentService.ts:282-293) - Simple hash instead of HMAC-SHA256
+     4. ⛔ CRITICAL: Webhook Handling on Client (paymentService.ts:175-218) - Webhooks should be server-only
+     5. HIGH: Missing Backend Implementation - Frontend calls `/api/payments/*` but endpoints may not be properly implemented
+     6. MEDIUM: Permission Misconfiguration - Missing `payments.read` in parent role
+     7. LOW: Dead Code - paymentService.ts never imported or used
+  - **Implementation - Security Fixes**:
+     - [ ] Remove src/services/paymentService.ts (client-side API calls with exposed API key)
+     - [ ] Remove VITE_PAYMENT_API_KEY from .env.example (should be server secret, not env variable)
+     - [ ] Add PAYMENT_SERVER_KEY to Cloudflare Worker secrets documentation
+     - [ ] Remove any imports of paymentService from components
+     - [ ] Verify ParentPaymentsView.tsx uses only paymentsAPI (not paymentService)
+     - [ ] Verify PaymentButton.tsx and PaymentModal.tsx use only paymentsAPI
+     - [ ] Add payments.read permission to parent role in permissions.ts
+     - [ ] Verify worker.js payment endpoints properly implement server-side Midtrans API calls
+     - [ ] Implement proper HMAC-SHA256 webhook signature verification in worker.js
+     - [ ] Run typecheck and lint after security fixes
+     - [ ] Close PR #1352 with security fix PR (DO NOT MERGE current PR #1352)
+  - **Acceptance Criteria - Security Fixes**:
+     - ⏳ paymentService.ts removed from codebase
+     - ⏳ No client-side API calls to Midtrans gateway
+     - ⏳ No API keys in client bundle (VITE_PAYMENT_API_KEY removed)
+     - ⏳ Server key documented as Cloudflare Worker secret
+     - ⏳ All payment operations go through backend (paymentsAPI only)
+     - ⏳ parent role includes payments.read permission
+     - ⏳ worker.js has proper webhook signature verification
+     - ⏳ TypeScript type checking: Passed
+     - ⏳ ESLint linting: Passed
+     - ⏳ Issue #1353 CLOSED
+  - **Pillars Addressed**:
+      - Pillar 3 (Stability): Security fixes prevent payment fraud and system compromise
+      - Pillar 4 (Security): Critical vulnerabilities addressed per OWASP best practices
+      - Pillar 7 (Debug): Removes insecure code patterns
+      - Pillar 15 (Dynamic Coding): Secrets properly stored on server, not client
+
 ### [BUILDER] Add Online Payment System Integration - Phase 3: Database Migration & Tests (Issue #1349)
- - **Mode**: BUILDER
- - **Issue**: #1349
- - **Priority**: P1 (Critical Enhancement)
- - **Status**: In Progress
- - **Started**: 2026-02-01
- - **Reason**: Complete Online Payment System integration by applying database migration and creating comprehensive tests.
- - **Implementation - Phase 3**:
-    - [ ] Run migration-payment-table.sql to create payments table
-    - [ ] Create comprehensive tests for paymentService, PaymentButton, and PaymentModal
-    - [ ] Run full test suite and verify all tests pass
-    - [ ] Update documentation with Phase 2 and Phase 3 completion
- - **Acceptance Criteria - Phase 3**:
-     - ⏳ Payments table created in database
-     - ⏳ All payment handler tests passing (create, status, callback, cancel, history)
-     - ⏳ PaymentButton and PaymentModal tests passing
-     - ⏳ Integration tests for complete payment flow
-     - ⏳ Full test suite passes without errors
-     - ⏳ Documentation updated (blueprint.md, roadmap.md, task.md)
+  - **Mode**: BUILDER
+  - **Issue**: #1349
+  - **Priority**: P1 (Critical Enhancement)
+  - **Status**: PAUSED
+  - **Started**: 2026-02-01
+  - **Reason**: Complete Online Payment System integration by applying database migration and creating comprehensive tests.
+  - **Paused**: 2026-02-01 - Critical security vulnerabilities (Issue #1353, P0) must be resolved first
+  - **Implementation - Phase 3**:
+     - [ ] Run migration-payment-table.sql to create payments table
+     - [ ] Create comprehensive tests for paymentService, PaymentButton, and PaymentModal
+     - [ ] Run full test suite and verify all tests pass
+     - [ ] Update documentation with Phase 2 and Phase 3 completion
+  - **Acceptance Criteria - Phase 3**:
+      - ⏳ Payments table created in database
+      - ⏳ All payment handler tests passing (create, status, callback, cancel, history)
+      - ⏳ PaymentButton and PaymentModal tests passing
+      - ⏳ Integration tests for complete payment flow
+      - ⏳ Full test suite passes without errors
+      - ⏳ Documentation updated (blueprint.md, roadmap.md, task.md)
+  - **Pillars Addressed**:
+      - Pillar 1 (Flow): Completes payment flow from creation to callback processing
+      - Pillar 3 (Stability): Database migration and tests ensure reliability
+      - Pillar 5 (Integrations): Full integration with Midtrans payment gateway
+      - Pillar 9 (Feature Ops): Enables online payments for parents
+      - Pillar 10 (New Features): Critical revenue management feature
+      - Pillar 16 (UX/DX): Improves parent experience with seamless payment flow
  - **Files Created** (Phase 2):
      - src/components/PaymentButton.tsx (new component, 43 lines)
      - src/components/PaymentModal.tsx (new component, 175 lines)

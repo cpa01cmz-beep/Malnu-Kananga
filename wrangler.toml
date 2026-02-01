@@ -40,6 +40,12 @@ CLOUDFLARE_EMAIL_API_URL = "https://api.cloudflare.com/client/v4/email/send"
 PAYMENT_GATEWAY_URL = "https://app.midtrans.com/snap/v1"
 PAYMENT_API_URL = "https://app.midtrans.com/snap/v1"
 
+# SECURITY: Payment Gateway Server Key
+# Midtrans Server Key MUST be stored as Cloudflare Worker secret (NOT in wrangler.toml)
+# Set via: wrangler secret put PAYMENT_SERVER_KEY --env production
+# Get server key from: https://dashboard.midtrans.com/settings/api-info
+# All payment operations go through backend (worker.js) for security
+
 # Environment bindings for production
 [env.production]
 name = "malnu-kananga-worker-prod"
