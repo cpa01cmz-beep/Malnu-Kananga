@@ -1,15 +1,16 @@
-  
-import {
-  STORAGE_KEYS,
-  type UserRole
-} from '../constants';
-import { apiService } from './apiService';
-import type { AuthPayload } from './apiService';
-import { logger } from '../utils/logger';
-import { DEFAULT_API_BASE_URL, DEFAULT_WS_BASE_URL } from '../config';
-import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, DirectMessage, Conversation } from '../types';
 
-/* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
+  import {
+    STORAGE_KEYS,
+    type UserRole
+  } from '../constants';
+  import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
+  import { logger } from '../utils/logger';
+  import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, DirectMessage, Conversation } from '../types';
+
+  /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
+
+const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
 
 
 
@@ -104,13 +105,13 @@ class WebSocketService {
    * Initialize WebSocket connection with authentication
    */
   async initialize(): Promise<void> {
-    const token = apiService.getAuthToken();
+    const token = getAuthToken();
     if (!token) {
       logger.warn('WebSocket: No auth token available');
       return;
     }
 
-    const payload = apiService.parseJwtPayload(token);
+    const payload = parseJwtPayload(token);
     if (!payload || this.isTokenExpired(payload)) {
       logger.warn('WebSocket: Token expired, skipping connection');
       return;
@@ -589,7 +590,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Poll for updates when WebSocket is unavailable
    */
   private async pollForUpdates(): Promise<void> {
-    const token = apiService.getAuthToken();
+    const token = getAuthToken();
     if (!token) return;
 
     const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();
