@@ -4,13 +4,15 @@ import ErrorMessage from './ui/ErrorMessage';
 import Card from './ui/Card';
 import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
-import { authAPI, gradesAPI, attendanceAPI, subjectsAPI } from '../services/apiService';
+import { authAPI, gradesAPI, attendanceAPI, subjectsAPI, eLibraryAPI } from '../services/apiService';
 import { generateStudyPlan } from '../services/geminiService';
+import { studyPlanMaterialService } from '../services/studyPlanMaterialService';
 import type {
   StudyPlan,
   SubjectPerformance,
   Goal,
   AttendanceGradeCorrelation,
+  MaterialRecommendation,
 } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
@@ -21,13 +23,15 @@ import { XCircleIcon } from './icons/XCircleIcon';
 import { CheckCircleIcon } from './icons/StatusIcons';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
+import DocumentTextIcon from './icons/DocumentTextIcon';
+import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 
  interface StudyPlanGeneratorProps {
    onBack: () => void;
    onShowToast?: (msg: string, type: 'success' | 'error' | 'warning' | 'info') => void;
  }
 
- type ActiveTab = 'overview' | 'subjects' | 'schedule' | 'recommendations';
+ type ActiveTab = 'overview' | 'subjects' | 'schedule' | 'recommendations' | 'materials';
 
  const StudyPlanGenerator: React.FC<StudyPlanGeneratorProps> = ({ onBack, onShowToast = () => {} }) => {
    const stableOnBack = useCallback(() => onBack(), [onBack]);
@@ -44,6 +48,11 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>('overview');
   const [durationWeeks, setDurationWeeks] = useState(4);
+  const [materialRecommendations, setMaterialRecommendations] = useState<MaterialRecommendation[]>([]);
+  const [materialsLoading, setMaterialsLoading] = useState(false);
+  const [materialsError, setMaterialsError] = useState<string | null>(null);
+  const [filterSubject, setFilterSubject] = useState('all');
+  const [filterPriority, setFilterPriority] = useState<'all' | 'high' | 'medium' | 'low'>('all');
 
   const fetchData = useCallback(async () => {
     if (!STUDENT_NIS) {
@@ -77,8 +86,10 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
       const savedPlan = loadActiveStudyPlan();
       if (savedPlan && new Date(savedPlan.validUntil) > new Date()) {
         setStudyPlan(savedPlan);
+        await loadMaterialRecommendations(savedPlan);
       } else if (savedPlan) {
         saveActiveStudyPlan(null);
+        setMaterialRecommendations([]);
       }
     } catch (err) {
       setError('Terjadi kesalahan saat mengambil data');
@@ -226,6 +237,20 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
     }
   };
 
+  const loadMaterialRecommendations = useCallback(async (plan: StudyPlan) => {
+    setMaterialsLoading(true);
+    setMaterialsError(null);
+    try {
+      const recommendations = await studyPlanMaterialService.getRecommendations(plan);
+      setMaterialRecommendations(recommendations);
+    } catch (error) {
+      setMaterialsError('Gagal memuat rekomendasi materi');
+      logger.error('Error loading material recommendations:', error);
+    } finally {
+      setMaterialsLoading(false);
+    }
+  }, []);
+
   const handleGeneratePlan = async () => {
     setGenerating(true);
     setError(null);
@@ -263,6 +288,7 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 
       const newPlan = await generateStudyPlan(studentData, durationWeeks);
       saveActiveStudyPlan(newPlan);
+      await loadMaterialRecommendations(newPlan);
       onShowToast('Rencana belajar berhasil dibuat', 'success');
       setActiveTab('overview');
     } catch (err) {
@@ -292,6 +318,41 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
       default: return 'gray';
     }
   };
+
+  const handleMaterialClick = useCallback(async (recommendation: MaterialRecommendation) => {
+    if (!studyPlan) return;
+
+    try {
+      await eLibraryAPI.incrementDownloadCount(recommendation.materialId);
+      studyPlanMaterialService.markAccessed(studyPlan.id, recommendation.materialId);
+      setMaterialRecommendations(prev =>
+        prev.map(r => r.materialId === recommendation.materialId ? { ...r, accessed: true, accessedAt: new Date().toISOString() } : r)
+      );
+      const downloadUrl = `/materials/${recommendation.materialId}`;
+      window.open(downloadUrl, '_blank');
+    } catch (error) {
+      logger.error('Error opening material:', error);
+    }
+  }, [studyPlan]);
+
+  const getFilteredRecommendations = useCallback(() => {
+    let filtered = [...materialRecommendations];
+
+    if (filterSubject !== 'all') {
+      filtered = filtered.filter(r => r.subjectName === filterSubject);
+    }
+
+    if (filterPriority !== 'all') {
+      filtered = filtered.filter(r => r.priority === filterPriority);
+    }
+
+    return filtered;
+  }, [materialRecommendations, filterSubject, filterPriority]);
+
+  const getAvailableSubjects = useCallback(() => {
+    const subjects = new Set(materialRecommendations.map(r => r.subjectName));
+    return Array.from(subjects).sort();
+  }, [materialRecommendations]);
 
   if (loading) {
     return (
@@ -404,12 +465,13 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 
           <div className="mb-6">
             <div className="flex gap-2 flex-wrap">
-              {[
-                { id: 'overview', label: 'Ringkasan', icon: <ChartBarIcon /> },
-                { id: 'subjects', label: 'Mata Pelajaran', icon: <BookOpenIcon /> },
-                { id: 'schedule', label: 'Jadwal', icon: <CalendarDaysIcon /> },
-                { id: 'recommendations', label: 'Rekomendasi', icon: <LightBulbIcon /> },
-              ].map((tab) => (
+               {[
+                 { id: 'overview', label: 'Ringkasan', icon: <ChartBarIcon /> },
+                 { id: 'subjects', label: 'Mata Pelajaran', icon: <BookOpenIcon /> },
+                 { id: 'schedule', label: 'Jadwal', icon: <CalendarDaysIcon /> },
+                 { id: 'recommendations', label: 'Rekomendasi', icon: <LightBulbIcon /> },
+                 { id: 'materials', label: 'Materi', icon: <DocumentTextIcon /> },
+               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as ActiveTab)}
@@ -589,6 +651,159 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
                 ))}
               </div>
             </Card>
+          )}
+
+          {activeTab === 'materials' && (
+            <div className="space-y-6">
+              <Card>
+                <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">Materi Rekomendasi</h3>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                      Materi pembelajaran yang relevan dengan rencana belajar Anda
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <select
+                      value={filterSubject}
+                      onChange={(e) => setFilterSubject(e.target.value)}
+                      className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm"
+                    >
+                      <option value="all">Semua Mapel</option>
+                      {getAvailableSubjects().map(subject => (
+                        <option key={subject} value={subject}>{subject}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={filterPriority}
+                      onChange={(e) => setFilterPriority(e.target.value as 'all' | 'high' | 'medium' | 'low')}
+                      className="px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white text-sm"
+                    >
+                      <option value="all">Semua Prioritas</option>
+                      <option value="high">Prioritas Tinggi</option>
+                      <option value="medium">Prioritas Sedang</option>
+                      <option value="low">Prioritas Rendah</option>
+                    </select>
+                  </div>
+                </div>
+
+                {materialsLoading && (
+                  <div className="space-y-4">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="h-32 bg-neutral-200 dark:bg-neutral-700 animate-pulse rounded-xl" />
+                    ))}
+                  </div>
+                )}
+
+                {materialsError && (
+                  <ErrorMessage
+                    title="Gagal Memuat Materi"
+                    message={materialsError}
+                    variant="card"
+                  />
+                )}
+
+                {!materialsLoading && !materialsError && getFilteredRecommendations().length === 0 && (
+                  <EmptyState
+                    message="Tidak ada materi yang sesuai dengan filter"
+                    subMessage="Coba ubah filter atau buat rencana belajar baru"
+                    size="md"
+                  />
+                )}
+
+                {!materialsLoading && !materialsError && getFilteredRecommendations().length > 0 && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                      {getFilteredRecommendations().slice(0, 6).map((rec) => (
+                        <div
+                          key={rec.materialId}
+                          onClick={() => handleMaterialClick(rec)}
+                          className={`cursor-pointer bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border-2 transition-all hover:shadow-md ${
+                            rec.accessed
+                              ? 'border-green-500 dark:border-green-500'
+                              : 'border-neutral-200 dark:border-neutral-700 hover:border-blue-500 dark:hover:border-blue-500'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-3">
+                            <div className={`p-2 rounded-lg ${
+                              rec.fileType === 'PDF'
+                                ? 'bg-red-50 text-red-600 dark:bg-red-900/20'
+                                : rec.fileType === 'DOCX'
+                                ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20'
+                                : rec.fileType === 'PPT'
+                                ? 'bg-orange-50 text-orange-600 dark:bg-orange-900/20'
+                                : 'bg-purple-50 text-purple-600 dark:bg-purple-900/20'
+                            }`}>
+                              <DocumentTextIcon />
+                            </div>
+                            {rec.accessed && (
+                              <Badge variant="success" size="sm">✓ Diakses</Badge>
+                            )}
+                          </div>
+                          <h4 className="font-bold text-neutral-900 dark:text-white text-sm mb-2 line-clamp-2">
+                            {rec.title}
+                          </h4>
+                          <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-2 line-clamp-2">
+                            {rec.description}
+                          </p>
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="blue" size="sm">{rec.subjectName}</Badge>
+                            <Badge variant={rec.priority === 'high' ? 'red' : rec.priority === 'medium' ? 'yellow' : 'green'} size="sm">
+                              {rec.priority === 'high' ? 'Tinggi' : rec.priority === 'medium' ? 'Sedang' : 'Rendah'}
+                            </Badge>
+                          </div>
+                          {rec.focusArea && (
+                            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                              Fokus: {rec.focusArea}
+                            </p>
+                          )}
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700">
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                              Relevansi: {rec.relevanceScore}%
+                            </div>
+                            <Button variant="primary" size="sm" className="flex items-center gap-1">
+                              <ArrowDownTrayIcon className="w-3 h-3" />
+                              Buka
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {getFilteredRecommendations().length > 6 && (
+                      <div className="text-center">
+                        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                          Menampilkan 6 dari {getFilteredRecommendations().length} materi
+                        </p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => onShowToast('Fitur tampilkan lebih banyak akan segera tersedia', 'info')}
+                        >
+                          Tampilkan Semua
+                        </Button>
+                      </div>
+                    )}
+
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-start gap-3">
+                        <LightBulbIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                        <div>
+                          <h4 className="font-bold text-neutral-900 dark:text-white text-sm mb-1">
+                            Progress Materi
+                          </h4>
+                          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                            {studyPlanMaterialService.getProgress(studyPlan.id).accessed} dari{' '}
+                            {studyPlanMaterialService.getProgress(studyPlan.id).total} materi telah diakses (
+                            {studyPlanMaterialService.getProgress(studyPlan.id).percentage}%)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </Card>
+            </div>
           )}
         </>
       ) : (

@@ -1,7 +1,7 @@
    # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**: 3.6.1
-      **Last Updated**: 2026-02-01 (Issue #1323: Fix Remaining Circular Dependencies)
+ **Version**: 3.6.2
+      **Last Updated**: 2026-02-01 (UI Integration: Study Plan Material Recommendations)
        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -300,3 +300,4 @@ MA Malnu Kananga is a **modern PWA-based school management system** with AI inte
 
 
               - **Add Cleanup Methods to Singleton Services** (Issue #1286, P3): Added standardized cleanup methods to singleton services to prevent memory leaks and resource management issues; Implemented `cleanupGeminiService()` in geminiService.ts to clear AI instance state and error reset; Added `cleanup()` method in offlineActionQueueService.ts to clear queue, listeners, WebSocket subscriptions, and sync state; Added `cleanup()` method in performanceMonitor.ts to clear metrics, reset consecutive failures, and disable monitoring; Added async `cleanup()` method in unifiedNotificationManager.ts to clear batches, templates, analytics, event listeners, voice queue/history, speech synthesis, push subscription, and service worker; All services now follow standardized cleanup pattern; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Added tests for cleanupGeminiService(); Improves stability and prevents memory leaks (Pillars 2: Standardization, 3: Stability, 7: Debug)
+ - **UI Integration: Study Plan Material Recommendations** (Follow-up to Issue #1226, P2): Added new 'Materi' tab in StudyPlanGenerator component to display AI-powered material recommendations from studyPlanMaterialService; Implemented subject and priority filtering (all/high/medium/low); Created material card display with file type icon (PDF/DOCX/PPT color-coded), title, description, subject/priority badges, focus area, relevance score, and access status; Added handleMaterialClick() to open materials in E-Library viewer via material download URL; Integrated markAccessed() to track material access progress; Added progress display showing accessed/total/percentage (e.g., "3 dari 10 materi telah diakses (30%)"); Limited initial display to 6 materials with "Tampilkan Semua" placeholder for future pagination; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Makes study plans more actionable by providing direct access to relevant learning materials (Pillars 1: Flow, 9: Feature Ops, 11: Modularity, 16: UX/DX)
