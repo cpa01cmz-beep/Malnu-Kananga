@@ -106,9 +106,12 @@ npm-pack-*.tgz
 # Git hook samples (standard Git templates, should not be tracked)
 .git/hooks/*.sample
 
-# CI/CD generated files
-ci-context.txt
-docs/reports/
+ # CI/CD generated files
+ ci-context.txt
+ docs/reports/
+
+ # PDF files (temporary documents that should not be tracked)
+ *.pdf
 
 # OpenCode
 .opencode/node_modules/
