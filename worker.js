@@ -3687,8 +3687,294 @@ function mapTableToEventType(table, _row) {
   if (entity === 'elibrary') return 'library_material_updated';
   if (entity === 'schoolevents') return 'event_updated';
   if (entity === 'users') return 'user_status_changed';
+  if (entity === 'payments') return 'payment_updated';
 
   return null;
+}
+
+// ============================================
+// PAYMENT HANDLERS
+// ============================================
+
+async function handleCreatePayment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const { amount, paymentType, description, studentId, parentEmail, paymentMethod } = await request.json();
+
+    if (!amount || !paymentType || !studentId || !parentEmail || !paymentMethod) {
+      return new Response(JSON.stringify(response.error('Field wajib tidak lengkap', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const paymentId = `PAY-${studentId}-${Date.now()}`;
+    const expiryDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+    const payment = await env.DB.prepare(`
+      INSERT INTO payments (id, parent_id, student_id, payment_type, amount, description, payment_method, status, expiry_date, due_date, payment_url)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?)
+    `).bind(
+      paymentId,
+      payload.user_id,
+      studentId,
+      paymentType,
+      amount,
+      description || paymentType,
+      paymentMethod,
+      expiryDate,
+      expiryDate,
+      `https://app.midtrans.com/payment-links/${paymentId}`
+    ).run();
+
+    if (!payment.success) {
+      throw new Error('Failed to create payment record');
+    }
+
+    logger.info(`Payment created: ${paymentId} for student ${studentId}`);
+
+    return new Response(JSON.stringify(response.success({
+      paymentId,
+      paymentUrl: `https://app.midtrans.com/payment-links/${paymentId}`,
+      expiryDate,
+      transactionId: paymentId
+    }, 'Pembayaran berhasil dibuat')), {
+      status: HTTP_STATUS_CODES.CREATED,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Create payment error:', error);
+    return new Response(JSON.stringify(response.error('Gagal membuat pembayaran', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handlePaymentStatus(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const paymentId = url.pathname.split('/').slice(-2, -1)[0];
+
+    if (!paymentId) {
+      return new Response(JSON.stringify(response.error('Payment ID diperlukan', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const payment = await env.DB.prepare(`
+      SELECT * FROM payments WHERE id = ?
+    `).bind(paymentId).first();
+
+    if (!payment) {
+      return new Response(JSON.stringify(response.error('Pembayaran tidak ditemukan', HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    return new Response(JSON.stringify(response.success({
+      paymentId: payment.id,
+      status: payment.status,
+      amount: payment.amount,
+      paymentMethod: payment.payment_method,
+      transactionId: payment.transaction_id,
+      paidAt: payment.payment_date,
+      failureReason: payment.failure_reason
+    })), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Payment status error:', error);
+    return new Response(JSON.stringify(response.error('Gagal memeriksa status pembayaran', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handlePaymentCallback(request, env, corsHeaders) {
+  try {
+    const { paymentId, transactionId, status, signature: _signature, timestamp: _timestamp } = await request.json();
+
+    if (!paymentId || !status) {
+      return new Response(JSON.stringify(response.error('Data callback tidak lengkap', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const payment = await env.DB.prepare(`
+      SELECT * FROM payments WHERE id = ?
+    `).bind(paymentId).first();
+
+    if (!payment) {
+      return new Response(JSON.stringify(response.error('Pembayaran tidak ditemukan', HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (payment.status !== 'pending') {
+      return new Response(JSON.stringify(response.success(null, 'Pembayaran sudah diproses')), {
+        status: HTTP_STATUS_CODES.OK,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const updateData = {
+      status,
+      transaction_id: transactionId,
+      updated_at: new Date().toISOString()
+    };
+
+    if (status === 'paid') {
+      updateData.payment_date = new Date().toISOString();
+    } else if (status === 'failed') {
+      updateData.failure_reason = 'Payment gateway returned failed status';
+    } else if (status === 'expired') {
+      updateData.failure_reason = 'Payment expired';
+    } else if (status === 'cancelled') {
+      updateData.failure_reason = 'Payment cancelled by user';
+    }
+
+    const setClause = Object.keys(updateData).map(k => `${k} = ?`).join(', ');
+    const values = Object.values(updateData);
+
+    await env.DB.prepare(`
+      UPDATE payments SET ${setClause} WHERE id = ?
+    `).bind(...values, paymentId).run();
+
+    logger.info(`Payment callback processed: ${paymentId} - status: ${status}`);
+
+    return new Response(JSON.stringify(response.success(null, 'Callback pembayaran berhasil diproses')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Payment callback error:', error);
+    return new Response(JSON.stringify(response.error('Gagal memproses callback pembayaran', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handleCancelPayment(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const paymentId = url.pathname.split('/').slice(-2, -1)[0];
+
+    if (!paymentId) {
+      return new Response(JSON.stringify(response.error('Payment ID diperlukan', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const payment = await env.DB.prepare(`
+      SELECT * FROM payments WHERE id = ? AND parent_id = ?
+    `).bind(paymentId, payload.user_id).first();
+
+    if (!payment) {
+      return new Response(JSON.stringify(response.error('Pembayaran tidak ditemukan', HTTP_STATUS_CODES.NOT_FOUND)), {
+        status: HTTP_STATUS_CODES.NOT_FOUND,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (payment.status !== 'pending') {
+      return new Response(JSON.stringify(response.error('Hanya pembayaran yang tertunda yang dapat dibatalkan', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    await env.DB.prepare(`
+      UPDATE payments
+      SET status = 'cancelled', failure_reason = 'Dibatalkan oleh pengguna', updated_at = ?
+      WHERE id = ?
+    `).bind(new Date().toISOString(), paymentId).run();
+
+    logger.info(`Payment cancelled: ${paymentId} by user ${payload.user_id}`);
+
+    return new Response(JSON.stringify(response.success(null, 'Pembayaran berhasil dibatalkan')), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Cancel payment error:', error);
+    return new Response(JSON.stringify(response.error('Gagal membatalkan pembayaran', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+async function handlePaymentHistory(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const studentId = url.searchParams.get('student_id');
+
+    if (!studentId) {
+      return new Response(JSON.stringify(response.error('Student ID diperlukan', HTTP_STATUS_CODES.BAD_REQUEST)), {
+        status: HTTP_STATUS_CODES.BAD_REQUEST,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const query = payload.role === 'admin'
+      ? `SELECT * FROM payments WHERE student_id = ? ORDER BY created_at DESC`
+      : `SELECT * FROM payments WHERE parent_id = ? AND student_id = ? ORDER BY created_at DESC`;
+
+    const params = payload.role === 'admin' ? [studentId] : [payload.user_id, studentId];
+
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+
+    return new Response(JSON.stringify(response.success(results || [])), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Payment history error:', error);
+    return new Response(JSON.stringify(response.error('Gagal memuat riwayat pembayaran', HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
 }
 
 // ============================================
@@ -3788,6 +4074,11 @@ function mapTableToEventType(table, _row) {
       '/api/parent/attendance': handleGetChildAttendance,
       '/api/parent/schedule': handleGetChildSchedule,
       '/api/students/*/parents': handleGetStudentParents,
+      '/api/payments/create': handleCreatePayment,
+      '/api/payments/*/status': handlePaymentStatus,
+      '/api/payments/callback': handlePaymentCallback,
+      '/api/payments/*/cancel': handleCancelPayment,
+      '/api/payments/history': handlePaymentHistory,
     };
 
     for (const [path, handler] of Object.entries(routes)) {
