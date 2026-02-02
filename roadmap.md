@@ -1,7 +1,7 @@
 # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-  **Version**: 3.7.5
-             **Last Updated**: 2026-02-01 (Critical Security Vulnerabilities Fixed)
+  **Version**: 3.7.6
+             **Last Updated**: 2026-02-02 (Date Range Filtering Fix)
          **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -112,20 +112,39 @@ To be Indonesia's leading **AI-powered school management system**, providing a s
       - ✅ Verified no type errors or lint errors
     - **Impact**: Ensures all localStorage key usage follows centralized pattern (Pillar 15: Dynamic Coding)
 
-6. **[GAP-111] Enhance Speech Synthesis Service with Error Recovery**
-    - **Status**: ✅ **COMPLETED**
-    - **Priority**: P2
-    - **Effort**: 2-3 days
-    - **Target**: 2026-02-05
-    - **Completed**: 2026-01-29
-    - **Deliverables**:
-      - ✅ Retry logic for speak() with exponential backoff
-      - ✅ Circuit breaker for repeated synthesis failures
-      - ✅ Validation for SpeechSynthesisConfig before speaking
-      - ✅ Comprehensive tests for error recovery scenarios (35 tests)
-    - **Impact**: Improves text-to-speech reliability and user experience
+ 6. **[GAP-111] Enhance Speech Synthesis Service with Error Recovery**
+     - **Status**: ✅ **COMPLETED**
+     - **Priority**: P2
+     - **Effort**: 2-3 days
+     - **Target**: 2026-02-05
+     - **Completed**: 2026-01-29
+     - **Deliverables**:
+       - ✅ Retry logic for speak() with exponential backoff
+       - ✅ Circuit breaker for repeated synthesis failures
+       - ✅ Validation for SpeechSynthesisConfig before speaking
+       - ✅ Comprehensive tests for error recovery scenarios (35 tests)
+     - **Impact**: Improves text-to-speech reliability and user experience
 
-5. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
+ 7. **[SANITIZER] Fix Date Range Filtering in Communication Log Service (Issue #1355)**
+     - **Status**: ✅ **COMPLETED**
+     - **Priority**: P2
+     - **Issue**: #1355
+     - **Effort**: 1-2 hours
+     - **Target**: 2026-02-02
+     - **Completed**: 2026-02-02
+     - **Deliverables**:
+       - ✅ Fixed date range filtering logic in getCommunicationHistory method
+       - ✅ Messages use timestamp field for filtering
+       - ✅ Meetings and calls use meetingDate field for filtering
+       - ✅ Added fallback to timestamp if meetingDate is undefined
+       - ✅ Updated test expectation from 3 to 2 results (call date '2026-02-02' is outside filter range)
+       - ✅ Added verification to ensure all returned entries fall within date range
+       - ✅ All 54 communicationLogService tests passing (100% pass rate)
+       - ✅ TypeScript type checking: Passed (0 errors)
+       - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+     - **Impact**: Fixes audit trail filtering for parent-teacher communications (Issue #1304), improves data accuracy for reporting (Pillars 3: Stability, 7: Debug, 16: UX/DX)
+
+ 8. **[ENHANCEMENT] Weak Coupling: Voice Commands Should Support All Teacher Operations**
     - **Status**: ✅ **COMPLETED**
     - **Priority**: P2
     - **Issue**: #1204

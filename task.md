@@ -54,6 +54,46 @@
      - Pillar 16 (UX/DX): Improves parent experience with seamless payment flow
 
 ## Completed
+ 
+### [SANITIZER] Fix Date Range Filtering in Communication Log Service (Issue #1355) ✅
+  - **Mode**: SANITIZER
+  - **Issue**: #1355
+  - **Priority**: P2 (Bug Fix)
+  - **Status**: Completed
+  - **Started**: 2026-02-02
+  - **Completed**: 2026-02-02
+  - **Reason**: Date range filtering in getCommunicationHistory was failing because meetings and calls used timestamp (created at time) instead of their actual dates (meetingDate/callDate).
+  - **Root Cause**:
+    - Messages use provided `timestamp` field from test data (e.g., '2026-01-31T10:00:00Z')
+    - Meetings use `timestamp: new Date().toISOString()` at creation time (NOT the meeting date)
+    - Calls use `timestamp: new Date().toISOString()` at creation time (NOT the call date)
+    - Date range filter checked log.timestamp for all entry types, causing incorrect results
+  - **Implementation**:
+     - [x] Analyzed getCommunicationHistory date range filtering logic (lines 262-269)
+     - [x] Updated filtering to use appropriate date field based on log type:
+       - Messages: use log.timestamp
+       - Meetings/Calls: use log.meetingDate with fallback to log.timestamp
+     - [x] Fixed test expectation from 3 to 2 results (call date '2026-02-02' is outside filter range '2026-01-31T00:00:00Z' to '2026-02-01T23:59:59Z')
+     - [x] Added verification to ensure all returned entries fall within date range
+     - [x] Run typecheck: Passed (0 errors)
+     - [x] Run lint: Passed (0 errors, 0 warnings)
+     - [x] Run tests: 54/54 passing (100% pass rate)
+  - **Acceptance Criteria**:
+     - ✅ Date range filtering uses correct date field for each log type
+     - ✅ Messages filtered by timestamp field
+     - ✅ Meetings and calls filtered by meetingDate field
+     - ✅ Fallback to timestamp if meetingDate is undefined
+     - ✅ Test expectations updated to reflect correct filter behavior
+     - ✅ All 54 communicationLogService tests passing
+     - ✅ TypeScript type checking: Passed (0 errors)
+     - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+  - **Files Modified**:
+     - src/services/communicationLogService.ts (lines 262-269: date range filtering logic)
+     - src/services/__tests__/communicationLogService.test.ts (line 455: test expectation, lines 447-466: date range test)
+  - **Pillars Addressed**:
+     - Pillar 3 (Stability): Fixes audit trail filtering bug for parent-teacher communications
+     - Pillar 7 (Debug): Corrects date-based filtering logic, improves data accuracy
+     - Pillar 16 (UX/DX): Improves reporting and analytics reliability for CommunicationDashboard
 
 ### [BUILDER] Add Online Payment System - Phase 2: Worker Endpoints & Integration (Issue #1349) ✅
  - **Mode**: BUILDER

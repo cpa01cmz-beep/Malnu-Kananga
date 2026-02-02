@@ -263,7 +263,16 @@ class CommunicationLogService {
       const startDate = new Date(filter.dateRange.startDate);
       const endDate = new Date(filter.dateRange.endDate);
       logs = logs.filter(log => {
-        const logDate = new Date(log.timestamp);
+        let logDate: Date;
+        switch (log.type) {
+          case 'meeting':
+          case 'call':
+            logDate = log.meetingDate ? new Date(log.meetingDate) : new Date(log.timestamp);
+            break;
+          default:
+            logDate = new Date(log.timestamp);
+            break;
+        }
         return logDate >= startDate && logDate <= endDate;
       });
     }

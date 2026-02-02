@@ -452,7 +452,14 @@ describe('communicationLogService', () => {
         },
       });
 
-      expect(result).toHaveLength(3);
+      expect(result).toHaveLength(2);
+      expect(result.every(log => {
+        const logDate = log.type === 'meeting' || log.type === 'call'
+          ? new Date(log.meetingDate || '')
+          : new Date(log.timestamp);
+        return logDate >= new Date('2026-01-31T00:00:00Z') && 
+               logDate <= new Date('2026-02-01T23:59:59Z');
+      })).toBe(true);
     });
 
     it('should filter by keyword in message', () => {

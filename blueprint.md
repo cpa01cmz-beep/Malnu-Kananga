@@ -1,9 +1,12 @@
    # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-  **Version**: 3.7.4
-   **Last Updated**: 2026-02-01 (Critical Security Vulnerabilities Fixed)
+  **Version**: 3.7.6
+   **Last Updated**: 2026-02-02 (Date Range Filtering Fix)
 
 ---
+
+### Recent Changes (2026-02-02)
+- **[SANITIZER] Fix Date Range Filtering in Communication Log Service (Issue #1355, P2)**: Fixed date range filtering logic in getCommunicationHistory method to use appropriate date fields for different log types; Messages use timestamp field; Meetings and calls use meetingDate field; Added fallback to timestamp if meetingDate is undefined; Updated test expectation from 3 to 2 results (call date '2026-02-02' is outside filter range '2026-01-31T00:00:00Z' to '2026-02-01T23:59:59Z'); Added verification to ensure all returned entries fall within date range; All 54 communicationLogService tests now passing (100% pass rate); TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Fixes audit trail filtering for parent-teacher communications (Issue #1304). (Pillars 3: Stability, 7: Debug, 16: UX/DX)
 
 ### Recent Changes (2026-02-01)
 - **[SANITIZER] Fix Critical Payment System Security Vulnerabilities (Issue #1353, P0)**: Removed insecure client-side paymentService.ts (296 lines); Eliminated API key exposure by removing VITE_PAYMENT_API_KEY from client code; Added PAYMENT_SERVER_KEY documentation for Cloudflare Worker secrets; Added payments.read permission to parent role; All payment operations now route through secure Cloudflare Worker backend (paymentsAPI module) instead of direct client API calls; Updated .env.example with security warnings and proper secret management documentation; Updated wrangler.toml with PAYMENT_SERVER_KEY secret documentation; Paused Issue #1349 Phase 3 pending security fixes; GitHub issue #1353 CLOSED with commit 1b310b4; PR #1354 created for security fixes; TypeScript type checking: Passed (0 errors); ESLint linting: Passed (0 errors, 0 warnings); Eliminates API key exposure, prevents fraudulent transactions, aligns with OWASP API Security and PCI DSS standards. (Pillars 3: Stability, 4: Security, 7: Debug, 15: Dynamic Coding)
