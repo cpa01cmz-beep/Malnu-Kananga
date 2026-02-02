@@ -1,23 +1,30 @@
 import React from 'react';
-import DocumentTextIcon from '../../icons/DocumentTextIcon';
-import { StarIcon, BookmarkIcon } from '../../icons/MaterialIcons';
-import { ELibrary as ELibraryType, ReadingProgress, Review } from '../../../types';
-import { GRADIENT_CLASSES } from '../../../config/gradients';
-import Badge from '../../ui/Badge';
-import ProgressBar from '../../ui/ProgressBar';
-import Button from '../../ui/Button';
+import DocumentTextIcon from '../icons/DocumentTextIcon';
+import { StarIcon, BookmarkIcon } from '../icons/MaterialIcons';
+import { ELibrary as ELibraryType, ReadingProgress, Bookmark, OCRProcessingState } from '../../types';
+import { GRADIENT_CLASSES } from '../../config/gradients';
+import Badge from '../ui/Badge';
+import ProgressBar from '../ui/ProgressBar';
+import Button from '../ui/Button';
+
+interface SemanticSearchResult {
+  material: ELibraryType;
+  relevanceScore: number;
+  relevanceReason: string;
+  matchedConcepts: string[];
+}
 
 export interface MaterialCardProps {
   item: ELibraryType;
-  bookmarks: any[];
+  bookmarks: Bookmark[];
   favorites: Set<string>;
   offlineDownloads: Set<string>;
   readingProgress: Map<string, ReadingProgress>;
-  ocrProcessing: Map<string, any>;
+  ocrProcessing: Map<string, OCRProcessingState>;
   ocrEnabled: boolean;
   selectedForOCR: Set<string>;
   isSemanticMode: boolean;
-  semanticSearchResults: any[];
+  semanticSearchResults: SemanticSearchResult[];
   getFileType: (fileType: string) => 'PDF' | 'DOCX' | 'PPT' | 'VIDEO';
   getSubjectName: (material: ELibraryType) => string;
   formatFileSize: (bytes: number) => string;
@@ -53,7 +60,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
   onOCRProcess
 }) => {
   const semanticResult = isSemanticMode && semanticSearchResults.length > 0
-    ? semanticSearchResults.find((r: any) => r.material.id === item.id)
+    ? semanticSearchResults.find((r) => r.material.id === item.id)
     : null;
 
   return (
@@ -75,7 +82,7 @@ const MaterialCard: React.FC<MaterialCardProps> = ({
         <div className="flex gap-1">
           <Button
             onClick={() => onBookmark(item.id)}
-            variant={bookmarks.some((b: any) => b.materialId === item.id) ? 'info' : 'ghost'}
+            variant={bookmarks.some((b) => b.materialId === item.id) ? 'info' : 'ghost'}
             size="sm"
             className="p-1.5"
             aria-label="Bookmark"

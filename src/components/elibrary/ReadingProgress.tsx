@@ -1,9 +1,8 @@
 import React from 'react';
-import ProgressBar from '../../ui/ProgressBar';
+import ProgressBar from '../ui/ProgressBar';
 
 export interface ReadingProgressProps {
   materialId: string;
-  title: string;
   currentPosition: number;
   isCompleted: boolean;
   readTime: number;
@@ -11,7 +10,6 @@ export interface ReadingProgressProps {
 }
 
 const ReadingProgressDisplay: React.FC<ReadingProgressProps> = ({
-  title,
   currentPosition,
   isCompleted,
   readTime,

@@ -1,9 +1,9 @@
 import React from 'react';
-import SearchInput from '../../ui/SearchInput';
-import Input from '../../ui/Input';
-import Select from '../../ui/Select';
-import Button from '../../ui/Button';
-import { FunnelIcon, StarIcon } from '../../icons/MaterialIcons';
+import SearchInput from '../ui/SearchInput';
+import Input from '../ui/Input';
+import Select from '../ui/Select';
+import Button from '../ui/Button';
+import { FunnelIcon, StarIcon } from '../icons/MaterialIcons';
 
 export interface MaterialSearchProps {
   search: string;
@@ -27,9 +27,9 @@ export interface MaterialSearchProps {
   showOCROptions: boolean;
   onToggleOCROptions: () => void;
   onClearFilters: () => void;
-  semanticSearchIsSearching: boolean;
-  semanticSearchSuggestedQueries: string[];
-  onSemanticSearchSuggestionClick: (suggestion: string) => void;
+  _semanticSearchIsSearching: boolean;
+  _semanticSearchSuggestedQueries: string[];
+  _onSemanticSearchSuggestionClick: (suggestion: string) => void;
 }
 
 const MaterialSearch: React.FC<MaterialSearchProps> = ({
@@ -54,11 +54,11 @@ const MaterialSearch: React.FC<MaterialSearchProps> = ({
   showOCROptions,
   onToggleOCROptions,
   onClearFilters,
-  semanticSearchIsSearching,
-  semanticSearchSuggestedQueries,
-  onSemanticSearchSuggestionClick
+  _semanticSearchIsSearching,
+  _semanticSearchSuggestedQueries,
+  _onSemanticSearchSuggestionClick
 }) => {
-  const handleFilterKeyDown = (e: React.KeyboardEvent, action: () => void) => {
+  const handleFilterKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLButtonElement>, action: () => void) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       action();
@@ -142,16 +142,16 @@ const MaterialSearch: React.FC<MaterialSearchProps> = ({
               label="Guru Pengupload"
               placeholder="Nama guru..."
               value={filterTeacher}
-              onChange={(e) => onFilterTeacherChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onFilterTeacherChange(e.target.value)}
               fullWidth
               size="sm"
             />
- 
+   
             {/* Date Range Filter */}
             <Select
               label="Rentang Waktu"
               value={filterDateRange}
-              onChange={(e) => onFilterDateRangeChange(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onFilterDateRangeChange(e.target.value as 'all' | 'week' | 'month' | 'semester')}
               fullWidth
               size="sm"
               options={[
@@ -161,7 +161,7 @@ const MaterialSearch: React.FC<MaterialSearchProps> = ({
                 { value: 'semester', label: 'Semester Ini' }
               ]}
             />
- 
+   
             {/* Rating Filter */}
             <div>
               <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
@@ -190,12 +190,12 @@ const MaterialSearch: React.FC<MaterialSearchProps> = ({
                 ))}
               </div>
             </div>
- 
+   
             {/* Sort Options */}
             <Select
               label="Urutkan"
               value={sortBy}
-              onChange={(e) => onSortByChange(e.target.value as any)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onSortByChange(e.target.value as 'title' | 'date' | 'rating' | 'downloads')}
               fullWidth
               size="sm"
               options={[

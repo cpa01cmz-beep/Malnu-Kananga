@@ -147,7 +147,7 @@ vi.mock('../utils/networkStatus', () => ({
 }));
 
 // Import ELibrary after mocking
-import ELibrary from '../ELibrary';
+import ELibrary from '../elibrary/ELibrary';
 
 // Render function for ELibrary mock component
 const renderELibrary = () => {

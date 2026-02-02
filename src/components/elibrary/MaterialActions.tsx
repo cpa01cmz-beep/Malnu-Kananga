@@ -1,27 +1,19 @@
 import React from 'react';
-import Button from '../../ui/Button';
-import DocumentTextIcon from '../../icons/DocumentTextIcon';
-import { StarIcon, BookmarkIcon } from '../../icons/MaterialIcons';
+import Button from '../ui/Button';
+import DocumentTextIcon from '../icons/DocumentTextIcon';
+import { StarIcon } from '../icons/MaterialIcons';
+import { ELibrary as ELibraryType } from '../../types';
 
 export interface MaterialActionsProps {
-  material: any;
-  isBookmarked: boolean;
-  isFavorite: boolean;
+  material: ELibraryType;
   isOfflineAvailable: boolean;
-  onBookmark: () => void;
-  onFavorite: () => void;
   onDownload: () => void;
   onRating: () => void;
   onOfflineToggle: () => void;
 }
 
 const MaterialActions: React.FC<MaterialActionsProps> = ({
-  material,
-  isBookmarked,
-  isFavorite,
   isOfflineAvailable,
-  onBookmark,
-  onFavorite,
   onDownload,
   onRating,
   onOfflineToggle

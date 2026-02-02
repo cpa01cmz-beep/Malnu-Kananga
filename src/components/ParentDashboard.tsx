@@ -3,7 +3,7 @@ import { UserIcon } from './icons/UserIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
-import ELibrary from './ELibrary';
+import ELibrary from './elibrary/ELibrary';
 import OsisEvents from './OsisEvents';
 import { GRADIENT_CLASSES } from '../config/gradients';
 import ConsolidatedReportsView from './ConsolidatedReportsView';

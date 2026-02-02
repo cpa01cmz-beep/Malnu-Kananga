@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { eLibraryAPI } from '../../services/apiService';
 import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag } from '../../types';
 import { STORAGE_KEYS } from '../../constants';
@@ -7,6 +7,13 @@ import { CategoryValidator } from '../../utils/categoryValidator';
 import { ocrService } from '../../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../../services/ocrEnhancementService';
 import { logger } from '../../utils/logger';
+
+interface SemanticSearchResult {
+  material: ELibraryType;
+  relevanceScore: number;
+  relevanceReason: string;
+  matchedConcepts: string[];
+}
 
 export interface UseELibraryDataProps {
   userId?: string;
@@ -42,7 +49,7 @@ export interface UseELibraryDataReturn {
   showOCROptions: boolean;
   ocrEnabled: boolean;
   searchOptions: SearchOptions;
-  semanticSearchResults: any[];
+  semanticSearchResults: SemanticSearchResult[];
   
   // Setters
   setMaterials: React.Dispatch<React.SetStateAction<ELibraryType[]>>;
@@ -72,6 +79,7 @@ export interface UseELibraryDataReturn {
   setSelectedForOCR: React.Dispatch<React.SetStateAction<Set<string>>>;
   setShowOCROptions: React.Dispatch<React.SetStateAction<boolean>>;
   setSearchOptions: React.Dispatch<React.SetStateAction<SearchOptions>>;
+  setSemanticSearchResults: React.Dispatch<React.SetStateAction<SemanticSearchResult[]>>;
   
   // Data Functions
   fetchMaterials: () => Promise<void>;
@@ -84,7 +92,7 @@ export interface UseELibraryDataReturn {
   openRatingModal: (material: ELibraryType) => void;
   submitRating: () => void;
   getSubjectName: (material: ELibraryType) => string;
-  getSubjectStats: () => any[];
+  getSubjectStats: () => Array<{ name: string; count: number; totalMaterials: number }>;
   getFileType: (fileType: string) => 'PDF' | 'DOCX' | 'PPT' | 'VIDEO';
   formatFileSize: (bytes: number) => string;
   getAvailableSubjects: () => string[];
@@ -264,7 +272,7 @@ export const useELibraryData = ({ userId = 'current_student' }: UseELibraryDataP
     localStorage.setItem(STORAGE_KEYS.STUDENT_READING_PROGRESS, JSON.stringify(Array.from(newProgress)));
   }, [readingProgress, userId]);
 
-  const toggleOfflineDownload = useCallback((materialId: string, fileUrl: string) => {
+  const toggleOfflineDownload = useCallback((materialId: string, _fileUrl: string) => {
     const newOfflineDownloads = new Set(offlineDownloads);
     if (newOfflineDownloads.has(materialId)) {
       newOfflineDownloads.delete(materialId);
@@ -319,8 +327,9 @@ export const useELibraryData = ({ userId = 'current_student' }: UseELibraryDataP
     return material.category || 'Umum';
   }, [subjects]);
 
-  const getSubjectStats = useCallback(() => {
-    return CategoryValidator.getCategoryStatistics(subjects, materials);
+  const getSubjectStats = useCallback((): Array<{ name: string; count: number; totalMaterials: number }> => {
+    const stats = CategoryValidator.getCategoryStatistics(subjects, materials);
+    return stats.map((s) => ({ name: (s as any).name || (s as any).subjectName || 'Unknown', count: (s as any).count || 0, totalMaterials: (s as any).totalMaterials || 0 }));
   }, [subjects, materials]);
 
   const getFileType = useCallback((fileType: string): 'PDF' | 'DOCX' | 'PPT' | 'VIDEO' => {
@@ -531,18 +540,18 @@ export const useELibraryData = ({ userId = 'current_student' }: UseELibraryDataP
       return;
     }
 
-    let processed = 0;
-    let failed = 0;
+    let _processed = 0;
+    let _failed = 0;
 
     for (const materialId of materialIds) {
       const material = materials.find(m => m.id === materialId);
       if (material && material.ocrStatus !== 'completed' && material.ocrStatus !== 'processing') {
         try {
           await processDocumentOCR(material);
-          processed++;
+          _processed++;
         } catch (error) {
           logger.error(`Failed to process material ${materialId}:`, error);
-          failed++;
+          _failed++;
         }
       }
     }
@@ -584,7 +593,7 @@ export const useELibraryData = ({ userId = 'current_student' }: UseELibraryDataP
   }, []);
 
   // Placeholder for semantic search results (will be handled by component)
-  const [semanticSearchResults, setSemanticSearchResults] = useState<any[]>([]);
+  const [semanticSearchResults, setSemanticSearchResults] = useState<SemanticSearchResult[]>([]);
 
   return {
     // State
@@ -646,6 +655,7 @@ export const useELibraryData = ({ userId = 'current_student' }: UseELibraryDataP
     setSelectedForOCR,
     setShowOCROptions,
     setSearchOptions,
+    setSemanticSearchResults,
     
     // Data Functions
     fetchMaterials,

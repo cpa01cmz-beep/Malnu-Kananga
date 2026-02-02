@@ -9,7 +9,7 @@ import { BrainIcon } from './icons/BrainIcon';
 import AssignmentIcon from './icons/AssignmentIcon';
 import { LightBulbIcon } from './icons/LightBulbIcon';
 import ScheduleView from './ScheduleView';
-import ELibrary from './ELibrary';
+import ELibrary from './elibrary/ELibrary';
 import AcademicGrades from './AcademicGrades';
 import AttendanceView from './AttendanceView';
 import StudentInsights from './StudentInsights';

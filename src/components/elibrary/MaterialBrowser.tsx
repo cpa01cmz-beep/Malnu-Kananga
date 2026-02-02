@@ -1,20 +1,26 @@
 import React from 'react';
 import { EmptyState } from '../ui/LoadingState';
-import { ELibrary as ELibraryType } from '../../types';
+import { ELibrary as ELibraryType, Bookmark, ReadingProgress, OCRProcessingState } from '../../types';
 import MaterialCard from './MaterialCard';
-import Button from '../ui/Button';
+
+interface SemanticSearchResult {
+  material: ELibraryType;
+  relevanceScore: number;
+  relevanceReason: string;
+  matchedConcepts: string[];
+}
 
 export interface MaterialBrowserProps {
   materials: ELibraryType[];
-  bookmarks: any[];
+  bookmarks: Bookmark[];
   favorites: Set<string>;
   offlineDownloads: Set<string>;
-  readingProgress: Map<any, any>;
-  ocrProcessing: Map<string, any>;
+  readingProgress: Map<string, ReadingProgress>;
+  ocrProcessing: Map<string, OCRProcessingState>;
   ocrEnabled: boolean;
   selectedForOCR: Set<string>;
   isSemanticMode: boolean;
-  semanticSearchResults: any[];
+  semanticSearchResults: SemanticSearchResult[];
   getFileType: (fileType: string) => 'PDF' | 'DOCX' | 'PPT' | 'VIDEO';
   getSubjectName: (material: ELibraryType) => string;
   formatFileSize: (bytes: number) => string;
