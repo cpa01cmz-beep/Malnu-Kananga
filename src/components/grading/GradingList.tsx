@@ -4,6 +4,7 @@ import FieldVoiceInput from '../FieldVoiceInput';
 import { calculateFinalGrade, calculateGradeLetter, validateGradeInput } from '../../utils/teacherValidation';
 import { VoiceLanguage } from '../../types';
 import Button from '../ui/Button';
+import { logger } from '../../utils/logger';
 
 export interface GradingListProps {
   grades: Array<{
@@ -216,7 +217,7 @@ const GradingList: React.FC<GradingListProps> = ({
                             });
 
                             if (!validation.isValid) {
-                              console.error('Validation failed:', validation.errors);
+                              logger.error('Validation failed:', validation.errors);
                               return;
                             }
 

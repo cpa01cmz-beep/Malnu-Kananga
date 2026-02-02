@@ -35,7 +35,7 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    Papa.parse(file, {
+    Papa.parse<Record<string, string>>(file, {
       header: true,
       complete: (results) => {
         try {
@@ -89,7 +89,7 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
           onShowToast(CSV_MESSAGES.IMPORT_FAILED, 'error');
         }
       },
-      _error: (err) => {
+      error: (_err: Error) => {
         onShowToast(CSV_MESSAGES.PARSE_FAILED, 'error');
       }
     });

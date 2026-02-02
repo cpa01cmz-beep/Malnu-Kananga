@@ -194,7 +194,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
     const url = URL.createObjectURL(blob);
 
     link.setAttribute('href', url);
-    link.setAttribute('download', `grades_${className}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `grades_${_className}_${new Date().toISOString().split('T')[0]}.csv`);
     link.style.visibility = 'hidden';
 
     document.body.appendChild(link);
@@ -211,21 +211,21 @@ const GradingActions: React.FC<GradingActionsProps> = ({
     }
 
     try {
-      setIsExportingPDF(true);
+      _setIsExportingPDF(true);
       // Implementation would use pdfExportService
       onShowToast(EXPORT_MESSAGES.PDF_SUCCESS, 'success');
-    } catch (error) {
+    } catch (_error) {
       onShowToast(EXPORT_MESSAGES.PDF_FAILED, 'error');
     } finally {
-      setIsExportingPDF(false);
+      _setIsExportingPDF(false);
     }
   };
 
   const handleAIAnalysis = async () => {
-      setIsAnalyzing(true);
+      _setIsAnalyzing(true);
       setAnalysisResult(null);
       // Implementation would use analyzeClassPerformance
-      setIsAnalyzing(false);
+      _setIsAnalyzing(false);
   };
 
   const handleOCRExamUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -249,7 +249,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
 
     try {
       _setOCRProgress({ status: 'Memproses hasil...', progress: 100 });
-    } catch (error) {
+    } catch (_error) {
       onShowToast(AI_MESSAGES.OCR_PROCESS_FAILED, 'error');
     } finally {
       _setIsOCRProcessing(false);

@@ -13,7 +13,7 @@ export interface GradeInputRowProps {
     midExam: number;
     finalExam: number;
   };
-  isEditing: boolean;
+  _isEditing: boolean;
   inlineErrors: Record<string, string> | undefined;
   onInputChange: (id: string, field: 'assignment' | 'midExam' | 'finalExam', value: string) => void;
 }

@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { permissionService } from '../../services/permissionService';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
 import { OfflineIndicator } from '../OfflineIndicator';
@@ -45,8 +45,8 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const userExtraRole = authUser?.extraRole as UserExtraRole;
 
   const canManageGrades = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted;
-  const canCreateContent = permissionService.hasPermission(userRole, userExtraRole, 'content.create').granted;
-  const canUseOCRGrading = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted &&
+  const _canCreateContent = permissionService.hasPermission(userRole, userExtraRole, 'content.create').granted;
+  const _canUseOCRGrading = permissionService.hasPermission(userRole, userExtraRole, 'academic.grades').granted &&
     ['teacher', 'wakasek'].includes(userRole);
 
   const className = 'XII IPA 1';
@@ -81,14 +81,14 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   } = useGradingData(className, subjectId, authUser, onShowToast);
 
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+  const [isAnalyzing, _setIsAnalyzing] = React.useState(false);
   const [analysisResult, setAnalysisResult] = React.useState<string | null>(null);
-  const [isOCRProcessing, setIsOCRProcessing] = React.useState(false);
-  const [ocrProgress, setOCRProgress] = React.useState<{ status: string; progress: number }>({ status: '', progress: 0 });
-  const [ocrResult, setOcrResult] = React.useState<unknown>(null);
+  const [isOCRProcessing, _setIsOCRProcessing] = React.useState(false);
+  const [ocrProgress, _setOCRProgress] = React.useState<{ status: string; progress: number }>({ status: '', progress: 0 });
+  const [_ocrResult, setOcrResult] = React.useState<unknown>(null);
   const [showOCRModal, setShowOCRModal] = React.useState(false);
   const [ocrReviewData, setOcrReviewData] = React.useState<OCRReviewData | null>(null);
-  const [isExportingPDF, setIsExportingPDF] = React.useState(false);
+  const [_isExportingPDF, _setIsExportingPDF] = React.useState(false);
 
   const [confirmDialog, setConfirmDialog] = React.useState<{
     isOpen: boolean;
@@ -406,7 +406,7 @@ export interface BatchOperationsProps {
 const BatchOperations: React.FC<BatchOperationsProps> = ({
   selectedStudents,
   grades,
-  toggleStudentSelection,
+  toggleStudentSelection: _toggleStudentSelection,
   handleBatchGradeInput,
   setSelectedStudents,
 }) => {
