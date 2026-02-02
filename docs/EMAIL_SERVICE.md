@@ -1,9 +1,36 @@
 # Email Service Documentation
 
 **Status**: ✅ FULLY IMPLEMENTED (Frontend and Backend complete)
-**Last Updated**: 2026-01-13
+**Last Updated**: 2026-02-02
 
 > **Note**: Email service is fully implemented with production-ready functionality. Frontend services (`emailService.ts`, `emailTemplates.ts`, `emailQueueService.ts`) and backend API endpoints (`/api/email/send`) are complete. Email provider integration (SendGrid, Mailgun, Cloudflare Email) requires secret configuration before use.
+
+## Recent Updates (2026-02-02)
+
+### Bug Fix: Password Reset Email Provider Routing (Issue #1350)
+**Status**: ✅ FIXED
+
+**Issue Identified**:
+- The `sendPasswordResetEmail` function in `worker.js` had a critical bug where it checked `emailProvider === 'cloudflare'` but used `SENDGRID_API_KEY`
+- This was a copy-paste error from Issue #1335 refactoring that hardcoded email provider URLs
+- Password reset emails would fail for non-cloudflare providers
+- Password reset function was not using unified email routing like `handleSendEmail`
+
+**Fix Applied**:
+- Refactored `sendPasswordResetEmail` to use proper provider routing based on `EMAIL_PROVIDER` secret
+- Now uses `sendViaSendGrid()`, `sendViaMailgun()`, or `sendViaCloudflareEmail()` based on provider
+- Consistent with main email sending flow (`handleSendEmail`)
+- All three providers now supported: `sendgrid`, `mailgun`, `cloudflare-email`
+
+**Verification**:
+- TypeScript type checking: ✅ Passed (0 errors)
+- ESLint linting: ✅ Passed (0 errors, 0 warnings)
+- Configuration documentation updated in `.env.example` and `wrangler.toml`
+
+**Impact**:
+- Password reset emails now work correctly with all configured email providers
+- Improved consistency across email sending functions
+- Better maintainability (unified provider routing)
 
 ## Overview
 

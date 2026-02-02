@@ -1420,34 +1420,27 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`
 
     const emailProvider = env.EMAIL_PROVIDER || 'cloudflare';
 
-    if (emailProvider === 'cloudflare' && env.SENDGRID_API_KEY) {
-      const sendGridApiUrl = env.SENDGRID_API_URL || 'https://api.sendgrid.com/v3/mail/send';
-      const response = await fetch(sendGridApiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          personalizations: [{
-            to: emailData.to.map(r => ({ email: r.email, name: r.name || '' })),
-            subject: emailData.subject
-          }],
-          from: { email: env.EMAIL_FROM || 'noreply@ma-malnukananga.sch.id' },
-          content: [
-            { type: 'text/plain', value: emailData.text },
-            { type: 'text/html', value: emailData.html }
-          ]
-        })
-      });
+    let sendResult;
+    switch (emailProvider.toLowerCase()) {
+      case 'sendgrid':
+        sendResult = await sendViaSendGrid(env, emailData);
+        break;
+      case 'mailgun':
+        sendResult = await sendViaMailgun(env, emailData);
+        break;
+      case 'cloudflare-email':
+      case 'cloudflare':
+        sendResult = await sendViaCloudflareEmail(env, emailData);
+        break;
+      default:
+        logger.error('Unsupported email provider for password reset:', emailProvider);
+        sendResult = { success: false, error: 'Unsupported email provider' };
+    }
 
-      if (!response.ok) {
-        logger.error('Failed to send password reset email via SendGrid:', await response.text());
-      } else {
-        logger.info('Password reset email sent to:', user.email);
-      }
+    if (sendResult.success) {
+      logger.info('Password reset email sent to:', user.email);
     } else {
-      logger.warn('Email provider not configured for password reset');
+      logger.error('Failed to send password reset email:', sendResult.error);
     }
   } catch (error) {
     logger.error('Error sending password reset email:', error);
