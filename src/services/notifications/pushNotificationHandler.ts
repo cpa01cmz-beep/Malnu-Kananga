@@ -22,7 +22,7 @@ export class PushNotificationHandler {
   private subscription: PushSubscription | null = null;
 
   constructor() {
-    this.loadSubscription();
+    this.loadSubscription().catch(err => logger.error('Failed to initialize push subscription', err));
   }
 
   private saveSubscription(subscription: PushSubscription): void {
@@ -36,11 +36,21 @@ export class PushNotificationHandler {
     }
   }
 
-  private loadSubscription(): void {
+  private async loadSubscription(): Promise<void> {
     try {
-      const stored = localStorage.getItem(STORAGE_KEYS.PUSH_SUBSCRIPTION_KEY);
-      if (stored) {
-        logger.info('Loaded existing push subscription from storage');
+      if (!('serviceWorker' in navigator)) {
+        logger.warn('Service Worker not supported, cannot load push subscription.');
+        return;
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        this.subscription = subscription;
+        logger.info('Loaded existing push subscription from browser.');
+        this.saveSubscription(subscription);
+      } else {
+        logger.info('No active push subscription found.');
+        this.clearSubscription();
       }
     } catch (error) {
       logger.error('Failed to load push subscription:', error);

@@ -1,28 +1,9 @@
 import {
   PushNotification,
-  UserRole,
-  UserExtraRole,
-  NotificationType,
 } from '../../types';
 import { STORAGE_KEYS } from '../../constants';
 import { logger } from '../../utils/logger';
 import { getEmailNotificationService } from '../emailNotificationService';
-
-export interface UnifiedNotificationTemplate {
-  id: string;
-  name: string;
-  type: NotificationType;
-  title: string;
-  body: string;
-  variables: string[];
-  priority: 'low' | 'normal' | 'high';
-  isActive: boolean;
-  targetRoles?: UserRole[];
-  targetExtraRoles?: UserExtraRole[];
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export class EmailNotificationHandler {
   private emailNotificationService = getEmailNotificationService();

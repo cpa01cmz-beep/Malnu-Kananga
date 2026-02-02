@@ -61,12 +61,7 @@ export class NotificationHistoryHandler {
 
   getUnifiedHistory(limit: number = 20): NotificationHistoryItem[] {
     try {
-      const stored = localStorage.getItem(STORAGE_KEYS.NOTIFICATION_HISTORY_KEY);
-      if (stored) {
-        const history: NotificationHistoryItem[] = JSON.parse(stored);
-        return history.slice(-limit);
-      }
-      return [];
+      return this.history.slice(-limit);
     } catch (error) {
       logger.error('Failed to get notification history:', error);
       return [];
@@ -75,7 +70,6 @@ export class NotificationHistoryHandler {
 
   markAsRead(notificationId: string): void {
     try {
-      this.loadHistory();
       const updatedHistory = this.history.map((item) => {
         if (item.id === notificationId) {
           return {

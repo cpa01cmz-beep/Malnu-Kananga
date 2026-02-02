@@ -68,7 +68,6 @@ class UnifiedNotificationManager {
   private voiceHandler: VoiceNotificationHandler;
   private batches: Map<string, NotificationBatch> = new Map();
   private eventListeners: Map<string, Set<(event: NotificationEvent) => void>> = new Map();
-  private defaultTemplates: Map<NotificationType, UnifiedNotificationTemplate> = new Map();
 
   constructor() {
     this.pushHandler = new PushNotificationHandler();
@@ -274,11 +273,11 @@ class UnifiedNotificationManager {
     try {
       let body = `Nilai ${studentName} untuk ${subject}`;
 
-      if (previousGrade && newGrade) {
+      if (previousGrade !== undefined && newGrade !== undefined) {
         const difference = newGrade - previousGrade;
         const trend = difference > 0 ? 'naik' : difference < 0 ? 'turun' : 'tetap';
         body += ` ${trend} dari ${previousGrade} ke ${newGrade}`;
-      } else if (newGrade) {
+      } else if (newGrade !== undefined) {
         body += `: ${newGrade}`;
       }
 
