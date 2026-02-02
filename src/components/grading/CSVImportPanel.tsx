@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Papa from 'papaparse';
-import { CSV_MESSAGES, DATA_MESSAGES, VALIDATION_MESSAGES, EXPORT_MESSAGES } from '../../utils/errorMessages';
+import { CSV_MESSAGES } from '../../utils/errorMessages';
 import { validateCSVImport } from '../../utils/teacherValidation';
 
 export interface CSVImportPanelProps {
@@ -23,8 +23,8 @@ export interface CSVImportPanelProps {
 }
 
 const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
-  csvError,
-  setCsvError,
+  csvError: _csvError,
+  setCsvError: _setCsvError,
   grades,
   setGrades,
   setIsBatchMode,
@@ -85,11 +85,11 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
               setIsBatchMode(false);
               onShowToast(CSV_MESSAGES.IMPORT_BATCH_SUCCESS(importResult.successfulImports), 'success');
             }
-        } catch (err) {
+        } catch (_err) {
           onShowToast(CSV_MESSAGES.IMPORT_FAILED, 'error');
         }
       },
-      error: (err) => {
+      _error: (err) => {
         onShowToast(CSV_MESSAGES.PARSE_FAILED, 'error');
       }
     });

@@ -18,7 +18,7 @@ export interface OCRPanelProps {
   authUser: { name?: string } | null;
   setShowOCRModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOcrReviewData: React.Dispatch<React.SetStateAction<OCRReviewData | null>>;
-  setOcrResult: React.Dispatch<React.SetStateAction<any>>;
+  setOcrResult: React.Dispatch<React.SetStateAction<unknown>>;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
   setGrades: React.Dispatch<React.SetStateAction<Array<{
     id: string; name: string; nis: string; assignment: number; midExam: number; finalExam: number;

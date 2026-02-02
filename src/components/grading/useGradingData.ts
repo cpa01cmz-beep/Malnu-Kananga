@@ -12,7 +12,6 @@ import {
   API_ERROR_MESSAGES,
   SYNC_MESSAGES,
   AUTO_SAVE_MESSAGES,
-  VALIDATION_MESSAGES,
   DATA_MESSAGES,
 } from '../../utils/errorMessages';
 import { useNetworkStatus, getOfflineMessage } from '../../utils/networkStatus';

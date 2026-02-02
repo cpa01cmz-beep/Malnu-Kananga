@@ -1,11 +1,10 @@
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Papa from 'papaparse';
 import Button from '../ui/Button';
 import { LightBulbIcon } from '../icons/LightBulbIcon';
-import { FILE_ERROR_MESSAGES, CSV_MESSAGES, EXPORT_MESSAGES, AI_MESSAGES, VALIDATION_MESSAGES, SUCCESS_MESSAGES } from '../../utils/errorMessages';
+import { FILE_ERROR_MESSAGES, CSV_MESSAGES, EXPORT_MESSAGES, AI_MESSAGES } from '../../utils/errorMessages';
 import { createToastHandler } from '../../utils/teacherErrorHandler';
-import LoadingSpinner from '../ui/LoadingSpinner';
 import { validateCSVImport, sanitizeGradeInput, validateGradeInput, type GradeInput } from '../../utils/teacherValidation';
 import type { QueuedGradeUpdate, OCRReviewData } from './useGradingData';
 
@@ -42,48 +41,48 @@ export interface GradingActionsProps {
   setOCRProgress: React.Dispatch<React.SetStateAction<{ status: string; progress: number }>>;
   setShowOCRModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOcrReviewData: React.Dispatch<React.SetStateAction<OCRReviewData | null>>;
-  setOcrResult: React.Dispatch<React.SetStateAction<any>>;
+  setOcrResult: React.Dispatch<React.SetStateAction<unknown>>;
   setIsExportingPDF: React.Dispatch<React.SetStateAction<boolean>>;
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
 }
 
 const GradingActions: React.FC<GradingActionsProps> = ({
-  csvInputRef,
-  ocrInputRef,
+  csvInputRef: _csvInputRef,
+  ocrInputRef: _ocrInputRef,
   isBatchMode,
   selectedStudents,
-  canUseOCRGrading,
-  canCreateContent,
+  canUseOCRGrading: _canUseOCRGrading,
+  canCreateContent: _canCreateContent,
   isOCRProcessing,
   isAnalyzing,
   isExportingPDF,
   grades,
-  className,
-  subjectId,
+  className: _className,
+  subjectId: _subjectId,
   setGrades,
   setIsBatchMode,
   setSelectedStudents,
-  setQueuedGradeUpdates,
+  setQueuedGradeUpdates: _setQueuedGradeUpdates,
   setConfirmDialog,
   setShowStats,
-  setIsAnalyzing,
+  setIsAnalyzing: _setIsAnalyzing,
   setAnalysisResult,
-  setIsOCRProcessing,
-  setOCRProgress,
+  setIsOCRProcessing: _setIsOCRProcessing,
+  setOCRProgress: _setOCRProgress,
   setShowOCRModal,
-  setOcrReviewData,
-  setOcrResult,
-  setIsExportingPDF,
+  setOcrReviewData: _setOcrReviewData,
+  setOcrResult: _setOcrResult,
+  setIsExportingPDF: _setIsExportingPDF,
   onShowToast,
 }) => {
-  const toast = createToastHandler(onShowToast);
+  const _toast = createToastHandler(onShowToast);
 
   const toggleBatchMode = () => {
     setIsBatchMode(!isBatchMode);
     setSelectedStudents(new Set());
   };
 
-  const toggleStudentSelection = (studentId: string) => {
+  const __toggleStudentSelection = (studentId: string) => {
     const newSelected = new Set(selectedStudents);
     if (newSelected.has(studentId)) {
       newSelected.delete(studentId);
@@ -93,7 +92,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
     setSelectedStudents(newSelected);
   };
 
-  const handleBatchGradeInput = (field: 'assignment' | 'midExam' | 'finalExam', value: string) => {
+  const __handleBatchGradeInput = (field: 'assignment' | 'midExam' | 'finalExam', value: string) => {
     const numValue = sanitizeGradeInput(value);
     const gradeInput: GradeInput = { [field]: numValue };
     const validation = validateGradeInput(gradeInput);
@@ -146,27 +145,27 @@ const GradingActions: React.FC<GradingActionsProps> = ({
                  onShowToast(CSV_MESSAGES.IMPORT_SUCCESS(importResult.successfulImports), 'success');
                }
              });
-           } else {
-             setGrades(prev => prev.map(grade => {
-               const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
-               if (successfulImport) {
-                 return {
-                   ...grade,
-                   assignment: successfulImport.assignment,
-                   midExam: successfulImport.midExam,
-                   finalExam: successfulImport.finalExam
-                 };
-               }
-               return grade;
-              }));
-              setIsBatchMode(false);
-              onShowToast(CSV_MESSAGES.IMPORT_BATCH_SUCCESS(importResult.successfulImports), 'success');
-            }
-        } catch (err) {
+            } else {
+              setGrades(prev => prev.map(grade => {
+                const successfulImport = importResult.successDetails.find(s => s.nis === grade.nis);
+                if (successfulImport) {
+                  return {
+                    ...grade,
+                    assignment: successfulImport.assignment,
+                    midExam: successfulImport.midExam,
+                    finalExam: successfulImport.finalExam
+                  };
+                }
+                return grade;
+               }));
+               setIsBatchMode(false);
+               onShowToast(CSV_MESSAGES.IMPORT_BATCH_SUCCESS(importResult.successfulImports), 'success');
+             }
+        } catch (_err) {
           onShowToast(CSV_MESSAGES.IMPORT_FAILED, 'error');
         }
       },
-      error: (err) => {
+      error: (_err) => {
         onShowToast(CSV_MESSAGES.PARSE_FAILED, 'error');
       }
     });
@@ -244,16 +243,16 @@ const GradingActions: React.FC<GradingActionsProps> = ({
       return;
     }
 
-    setIsOCRProcessing(true);
-    setOCRProgress({ status: 'Memulai OCR...', progress: 0 });
+    _setIsOCRProcessing(true);
+    _setOCRProgress({ status: 'Memulai OCR...', progress: 0 });
     setShowOCRModal(true);
 
     try {
-      setOCRProgress({ status: 'Memproses hasil...', progress: 100 });
+      _setOCRProgress({ status: 'Memproses hasil...', progress: 100 });
     } catch (error) {
       onShowToast(AI_MESSAGES.OCR_PROCESS_FAILED, 'error');
     } finally {
-      setIsOCRProcessing(false);
+      _setIsOCRProcessing(false);
       if (event.target) {
         event.target.value = '';
       }
@@ -279,7 +278,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
         </Button>
 
         <input
-          ref={csvInputRef}
+          ref={_csvInputRef}
           type="file"
           accept=".csv"
           onChange={handleCSVImport}
@@ -288,15 +287,15 @@ const GradingActions: React.FC<GradingActionsProps> = ({
         <Button
           variant="orange-solid"
           size="md"
-          onClick={() => csvInputRef.current?.click()}
+          onClick={() => _csvInputRef.current?.click()}
         >
           Import CSV
         </Button>
 
-        {canUseOCRGrading && (
+        {_canUseOCRGrading && (
             <>
                 <input
-                    ref={ocrInputRef}
+                    ref={_ocrInputRef}
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png,.heic"
                     onChange={handleOCRExamUpload}
@@ -306,7 +305,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
                 <Button
                     variant="purple-solid"
                     size="md"
-                    onClick={() => ocrInputRef.current?.click()}
+                    onClick={() => _ocrInputRef.current?.click()}
                     disabled={isOCRProcessing}
                 >
                     📷 Scan Exam
@@ -330,7 +329,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           Export CSV
         </Button>
 
-        {canCreateContent && (
+        {_canCreateContent && (
           <Button
             onClick={handleAIAnalysis}
             disabled={isAnalyzing}

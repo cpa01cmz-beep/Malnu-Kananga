@@ -31,8 +31,8 @@ export interface GradingManagementProps {
 }
 
 const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToast }) => {
-  const csvInputRef = useRef<HTMLInputElement>(null);
-  const ocrInputRef = useRef<HTMLInputElement>(null);
+  const _csvInputRef = React.useRef<HTMLInputElement>(null);
+  const _ocrInputRef = React.useRef<HTMLInputElement>(null);
   const { notifyGradeUpdate, useMonitorLocalStorage } = useEventNotifications();
 
   const getCurrentUser = (): User | null => {
@@ -85,7 +85,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
   const [analysisResult, setAnalysisResult] = React.useState<string | null>(null);
   const [isOCRProcessing, setIsOCRProcessing] = React.useState(false);
   const [ocrProgress, setOCRProgress] = React.useState<{ status: string; progress: number }>({ status: '', progress: 0 });
-  const [ocrResult, setOcrResult] = React.useState<any>(null);
+  const [ocrResult, setOcrResult] = React.useState<unknown>(null);
   const [showOCRModal, setShowOCRModal] = React.useState(false);
   const [ocrReviewData, setOcrReviewData] = React.useState<OCRReviewData | null>(null);
   const [isExportingPDF, setIsExportingPDF] = React.useState(false);

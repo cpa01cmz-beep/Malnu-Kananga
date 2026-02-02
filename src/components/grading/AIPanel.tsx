@@ -10,7 +10,7 @@ export interface AIPanelProps {
   setAnalysisResult: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const AIPanel: React.FC<AIPanelProps> = ({ isAnalyzing, analysisResult, setAnalysisResult }) => {
+const AIPanel: React.FC<AIPanelProps> = ({ isAnalyzing: _isAnalyzing, analysisResult, setAnalysisResult }) => {
   if (!analysisResult) return null;
 
   return (

@@ -18,7 +18,7 @@ export interface GradeInputRowProps {
   onInputChange: (id: string, field: 'assignment' | 'midExam' | 'finalExam', value: string) => void;
 }
 
-const GradeInputRow: React.FC<GradeInputRowProps> = ({ student, isEditing, inlineErrors, onInputChange }) => {
+const GradeInputRow: React.FC<GradeInputRowProps> = ({ student, _isEditing, inlineErrors, onInputChange }) => {
   const finalScore = calculateFinalGrade(student.assignment, student.midExam, student.finalExam);
   const gradeLetter = calculateGradeLetter(finalScore);
 
