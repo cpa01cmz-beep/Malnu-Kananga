@@ -154,6 +154,7 @@
    - **Phase**: 2 of 5 (unifiedNotificationManager.ts modularization)
    - **Estimated Effort**: 6-8 hours
    - **Actual Effort**: ~4 hours
+   - **PR**: #1369
    - **Deliverables** (Phase 2 - Handler Modules Extraction):
       - ✅ Extracted pushNotificationHandler.ts module (~150 lines)
          - Methods: requestPermission(), subscribeToPush(), unsubscribeFromPush(), getCurrentSubscription(), isPermissionGranted(), isPermissionDenied()
