@@ -3,7 +3,7 @@ import { studentsAPI, attendanceAPI } from '../services/apiService';
 import { Student, Attendance } from '../types';
 import { logger } from '../utils/logger';
 import { validateAttendance } from '../utils/teacherValidation';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import {
   executeWithRetry,
   createToastHandler

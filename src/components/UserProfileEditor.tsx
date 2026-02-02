@@ -5,7 +5,7 @@ import { authService } from '../services/authService';
 import { usersAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Textarea from './ui/Textarea';

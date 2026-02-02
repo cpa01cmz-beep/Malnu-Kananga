@@ -3,7 +3,7 @@ import { AnnouncementCategory, AnnouncementTargetType, type Announcement, type A
 import { STORAGE_KEYS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { apiService } from '../services/apiService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';

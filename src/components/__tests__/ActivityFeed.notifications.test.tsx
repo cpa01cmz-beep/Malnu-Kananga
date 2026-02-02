@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import ActivityFeed from '../ActivityFeed';
-import { unifiedNotificationManager } from '../../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { STORAGE_KEYS, ACTIVITY_NOTIFICATION_CONFIG } from '../../constants';
 import type { RealTimeEvent } from '../../services/webSocketService';
 

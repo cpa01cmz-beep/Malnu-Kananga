@@ -5,7 +5,7 @@ import DocumentTextIcon from './icons/DocumentTextIcon';
 import { ShareIcon } from './icons/MaterialIcons';
 import { eLibraryAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, MaterialFolder, VoiceLanguage } from '../types';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { FileUploadResponse } from '../services/apiService';

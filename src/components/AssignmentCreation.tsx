@@ -12,7 +12,7 @@ import {
   User
 } from '../types';
 import { STORAGE_KEYS } from '../constants';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
 import { logger } from '../utils/logger';

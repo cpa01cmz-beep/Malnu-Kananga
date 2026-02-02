@@ -13,7 +13,7 @@ import { XMarkIcon } from './icons/MaterialIcons';
 import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 
 export interface CSVRow {
   [key: string]: string;

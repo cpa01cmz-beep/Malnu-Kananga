@@ -1,7 +1,7 @@
 import { NotificationSettings, PushNotification, NotificationHistoryItem, NotificationBatch, NotificationTemplate, NotificationAnalytics, UserExtraRole } from '../types';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
-import { unifiedNotificationManager } from './unifiedNotificationManager';
+import { unifiedNotificationManager, UnifiedNotificationTemplate } from './notifications/unifiedNotificationManager';
 
 /* eslint-disable no-undef */
 declare global {
@@ -143,7 +143,7 @@ class PushNotificationService {
 
   getTemplates(): NotificationTemplate[] {
     const unifiedTemplates = this.unified.getTemplates();
-    return unifiedTemplates.map(template => ({
+    return unifiedTemplates.map((template: UnifiedNotificationTemplate) => ({
       id: template.id,
       name: template.name,
       type: template.type,

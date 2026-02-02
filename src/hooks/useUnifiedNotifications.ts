@@ -8,8 +8,8 @@ import {
 import {
   UnifiedNotificationTemplate,
   UnifiedNotificationSettings
-} from '../services/unifiedNotificationManager';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+} from '../services/notifications/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
 

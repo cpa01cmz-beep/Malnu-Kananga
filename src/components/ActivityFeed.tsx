@@ -12,7 +12,7 @@ import AcademicCapIcon from './icons/AcademicCapIcon';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import ChatBubbleLeftRightIcon from './icons/ChatBubbleLeftRightIcon';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 
 export type ActivityType =
   | 'grade_updated'

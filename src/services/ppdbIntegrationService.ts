@@ -8,7 +8,7 @@
  */
 
 import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
-import { unifiedNotificationManager } from './unifiedNotificationManager';
+import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
