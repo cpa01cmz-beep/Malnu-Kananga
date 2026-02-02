@@ -754,185 +754,213 @@ class UnifiedNotificationManager {
 
   // Event Notification Methods (unified from useEventNotifications)
   async notifyGradeUpdate(
-    studentName: string, 
-    subject: string, 
-    previousGrade?: number, 
+    studentName: string,
+    subject: string,
+    previousGrade?: number,
     newGrade?: number
   ): Promise<void> {
-    this.defaultTemplates.get('grade')!;
-    let body = `Nilai ${studentName} untuk ${subject}`;
+    try {
+      this.defaultTemplates.get('grade')!;
+      let body = `Nilai ${studentName} untuk ${subject}`;
 
-    if (previousGrade && newGrade) {
-      const difference = newGrade - previousGrade;
-      const trend = difference > 0 ? 'naik' : difference < 0 ? 'turun' : 'tetap';
-      body += ` ${trend} dari ${previousGrade} ke ${newGrade}`;
-    } else if (newGrade) {
-      body += `: ${newGrade}`;
+      if (previousGrade && newGrade) {
+        const difference = newGrade - previousGrade;
+        const trend = difference > 0 ? 'naik' : difference < 0 ? 'turun' : 'tetap';
+        body += ` ${trend} dari ${previousGrade} ke ${newGrade}`;
+      } else if (newGrade) {
+        body += `: ${newGrade}`;
+      }
+
+      const notification: PushNotification = {
+        id: `notif-grade-${Date.now()}`,
+        type: 'grade',
+        title: `Nilai Update: ${subject}`,
+        body,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'normal',
+        targetRoles: ['student', 'parent', 'teacher'],
+        data: {
+          type: 'grade_update' as const,
+          studentName,
+          subject,
+          previousGrade,
+          newGrade,
+        },
+      };
+
+      await this.showNotification(notification);
+      this.emitEvent('grade_update', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyGradeUpdate:', error);
     }
-
-    const notification: PushNotification = {
-      id: `notif-grade-${Date.now()}`,
-      type: 'grade',
-      title: `Nilai Update: ${subject}`,
-      body,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'normal',
-      targetRoles: ['student', 'parent', 'teacher'],
-      data: {
-        type: 'grade_update' as const,
-        studentName,
-        subject,
-        previousGrade,
-        newGrade,
-      },
-    };
-
-    await this.showNotification(notification);
-    this.emitEvent('grade_update', notification.data || {});
   }
 
   async notifyPPDBStatus(count: number): Promise<void> {
-    if (count <= 0) return;
+    try {
+      if (count <= 0) return;
 
-    this.defaultTemplates.get('ppdb')!;
-    const notification: PushNotification = {
-      id: `notif-ppdb-${Date.now()}`,
-      type: 'ppdb',
-      title: 'Pendaftaran Baru PPDB',
-      body: `Ada ${count} pendaftaran PPDB yang menunggu persetujuan`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'high',
-      targetRoles: ['admin'],
-      data: {
-        type: 'ppdb_update' as const,
-        count,
-      },
-    };
+      this.defaultTemplates.get('ppdb')!;
+      const notification: PushNotification = {
+        id: `notif-ppdb-${Date.now()}`,
+        type: 'ppdb',
+        title: 'Pendaftaran Baru PPDB',
+        body: `Ada ${count} pendaftaran PPDB yang menunggu persetujuan`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'high',
+        targetRoles: ['admin'],
+        data: {
+          type: 'ppdb_update' as const,
+          count,
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('ppdb_update', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('ppdb_update', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyPPDBStatus:', error);
+    }
   }
 
   async notifyLibraryUpdate(materialTitle: string, materialType: string): Promise<void> {
-    this.defaultTemplates.get('library')!;
-    const notification: PushNotification = {
-      id: `notif-library-${Date.now()}`,
-      type: 'library',
-      title: 'Materi Baru',
-      body: `${materialType}: ${materialTitle} tersedia di e-library`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'low',
-      targetRoles: ['teacher', 'student'],
-      data: {
-        type: 'library_update' as const,
-        materialTitle,
-        materialType,
-      },
-    };
+    try {
+      this.defaultTemplates.get('library')!;
+      const notification: PushNotification = {
+        id: `notif-library-${Date.now()}`,
+        type: 'library',
+        title: 'Materi Baru',
+        body: `${materialType}: ${materialTitle} tersedia di e-library`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'low',
+        targetRoles: ['teacher', 'student'],
+        data: {
+          type: 'library_update' as const,
+          materialTitle,
+          materialType,
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('library_update', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('library_update', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyLibraryUpdate:', error);
+    }
   }
 
   async notifyMeetingRequest(requesterName: string, meetingType: string): Promise<void> {
-    this.defaultTemplates.get('event')!;
-    const notification: PushNotification = {
-      id: `notif-meeting-${Date.now()}`,
-      type: 'event',
-      title: 'Permintaan Pertemuan',
-      body: `${requesterName} meminta ${meetingType.toLowerCase()}`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'normal',
-      targetRoles: ['admin', 'teacher'],
-      data: {
-        type: 'meeting_request' as const,
-        requesterName,
-        meetingType,
-      },
-    };
+    try {
+      this.defaultTemplates.get('event')!;
+      const notification: PushNotification = {
+        id: `notif-meeting-${Date.now()}`,
+        type: 'event',
+        title: 'Permintaan Pertemuan',
+        body: `${requesterName} meminta ${meetingType.toLowerCase()}`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'normal',
+        targetRoles: ['admin', 'teacher'],
+        data: {
+          type: 'meeting_request' as const,
+          requesterName,
+          meetingType,
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('meeting_request', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('meeting_request', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyMeetingRequest:', error);
+    }
   }
 
   async notifyScheduleChange(className: string, changeType: string): Promise<void> {
-    this.defaultTemplates.get('announcement')!;
-    const notification: PushNotification = {
-      id: `notif-schedule-${Date.now()}`,
-      type: 'announcement',
-      title: 'Perubahan Jadwal',
-      body: `Jadwal ${className}: ${changeType}`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'normal',
-      targetRoles: ['admin', 'teacher', 'student'],
-      data: {
-        type: 'schedule_change' as const,
-        className,
-        changeType,
-      },
-    };
+    try {
+      this.defaultTemplates.get('announcement')!;
+      const notification: PushNotification = {
+        id: `notif-schedule-${Date.now()}`,
+        type: 'announcement',
+        title: 'Perubahan Jadwal',
+        body: `Jadwal ${className}: ${changeType}`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'normal',
+        targetRoles: ['admin', 'teacher', 'student'],
+        data: {
+          type: 'schedule_change' as const,
+          className,
+          changeType,
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('schedule_change', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('schedule_change', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyScheduleChange:', error);
+    }
   }
 
   async notifyAttendanceAlert(studentName: string, alertType: string): Promise<void> {
-    this.defaultTemplates.get('system')!;
-    const notification: PushNotification = {
-      id: `notif-attendance-${Date.now()}`,
-      type: 'system',
-      title: 'Alert Kehadiran',
-      body: `${studentName}: ${alertType}`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'high',
-      targetRoles: ['admin', 'teacher'],
-      data: {
-        type: 'attendance_alert' as const,
-        studentName,
-        alertType,
-      },
-    };
+    try {
+      this.defaultTemplates.get('system')!;
+      const notification: PushNotification = {
+        id: `notif-attendance-${Date.now()}`,
+        type: 'system',
+        title: 'Alert Kehadiran',
+        body: `${studentName}: ${alertType}`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'high',
+        targetRoles: ['admin', 'teacher'],
+        data: {
+          type: 'attendance_alert' as const,
+          studentName,
+          alertType,
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('attendance_alert', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('attendance_alert', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyAttendanceAlert:', error);
+    }
   }
 
   async notifyOCRValidation(event: OCRValidationEvent): Promise<void> {
-    const severity = event.type === 'validation-failure' ? 'Gagal' :
-                    event.type === 'validation-warning' ? 'Peringatan' : 'Berhasil';
+    try {
+      const severity = event.type === 'validation-failure' ? 'Gagal' :
+                      event.type === 'validation-warning' ? 'Peringatan' : 'Berhasil';
 
-    this.defaultTemplates.get('ocr')!;
-    const notification: PushNotification = {
-      id: `notif-ocr-${Date.now()}`,
-      type: 'ocr',
-      title: `Validasi OCR ${severity}`,
-      body: `Dokumen ${event.documentType} - Confidence: ${event.confidence}%. ${event.issues.length > 0 ? `Issues: ${event.issues.join(', ')}` : 'Validasi berhasil'}`,
-      timestamp: new Date().toISOString(),
-      read: false,
-      priority: 'normal',
-      targetRoles: ['admin', 'teacher'],
-      data: {
-        type: 'ocr_validation' as const,
-        documentId: event.documentId,
-        documentType: event.documentType,
-        confidence: event.confidence,
-        severity: event.type,
-        issues: event.issues,
-        userId: event.userId,
-        userRole: event.userRole,
-        actionUrl: event.actionUrl,
-        requiresReview: event.type === 'validation-failure',
-      },
-    };
+      this.defaultTemplates.get('ocr')!;
+      const notification: PushNotification = {
+        id: `notif-ocr-${Date.now()}`,
+        type: 'ocr',
+        title: `Validasi OCR ${severity}`,
+        body: `Dokumen ${event.documentType} - Confidence: ${event.confidence}%. ${event.issues.length > 0 ? `Issues: ${event.issues.join(', ')}` : 'Validasi berhasil'}`,
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'normal',
+        targetRoles: ['admin', 'teacher'],
+        data: {
+          type: 'ocr_validation' as const,
+          documentId: event.documentId,
+          documentType: event.documentType,
+          confidence: event.confidence,
+          severity: event.type,
+          issues: event.issues,
+          userId: event.userId,
+          userRole: event.userRole,
+          actionUrl: event.actionUrl,
+          requiresReview: event.type === 'validation-failure',
+        },
+      };
 
-    await this.showNotification(notification);
-    this.emitEvent('ocr_validation', notification.data || {});
+      await this.showNotification(notification);
+      this.emitEvent('ocr_validation', notification.data || {});
+    } catch (error) {
+      logger.error('Error in notifyOCRValidation:', error);
+    }
   }
 
   // Event System
@@ -1255,20 +1283,24 @@ class UnifiedNotificationManager {
   }
 
   private async showBatchedNotification(notification: PushNotification, batch: NotificationBatch): Promise<void> {
-    const batchedNotification = {
-      ...notification,
-      data: {
-        ...notification.data,
-        batchId: batch.id,
-        batchSize: batch.notifications.length,
-        isBatched: true,
-      },
-      title: notification.title.includes(`[${batch.notifications.length}]`) 
-        ? notification.title 
-        : `[${batch.notifications.length}] ${notification.title}`,
-    };
+    try {
+      const batchedNotification = {
+        ...notification,
+        data: {
+          ...notification.data,
+          batchId: batch.id,
+          batchSize: batch.notifications.length,
+          isBatched: true,
+        },
+        title: notification.title.includes(`[${batch.notifications.length}]`)
+          ? notification.title
+          : `[${batch.notifications.length}] ${notification.title}`,
+      };
 
-    await this.showNotification(batchedNotification);
+      await this.showNotification(batchedNotification);
+    } catch (error) {
+      logger.error('Error in showBatchedNotification:', error);
+    }
   }
 
   private addToHistory(notification: PushNotification): void {

@@ -228,8 +228,13 @@ class ErrorMonitoringService {
    * Flush pending events
    */
   async flush(timeout: number = 2000): Promise<boolean> {
-    if (!this.isEnabled()) return true;
-    return Sentry.flush(timeout);
+    try {
+      if (!this.isEnabled()) return true;
+      return Sentry.flush(timeout);
+    } catch (error) {
+      logger.error('Error flushing Sentry events:', error);
+      return false;
+    }
   }
 
   /**

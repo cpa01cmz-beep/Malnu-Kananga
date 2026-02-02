@@ -118,29 +118,41 @@ class VoiceMessageQueue {
     logger.debug('Starting message queue playback');
     this.callbacks.onQueueStart?.();
 
-    await this.processQueue();
+    try {
+      await this.processQueue();
+    } catch (error) {
+      logger.error('Error in startQueue:', error);
+      this.callbacks.onQueueError?.('Failed to start queue');
+      this.stopQueue();
+    }
   }
 
   private async processQueue(): Promise<void> {
-    while (this.isPlaying && this.currentIndex < this.queue.length) {
-      if (this.isPaused) {
-        await this.waitForResume();
-        continue;
+    try {
+      while (this.isPlaying && this.currentIndex < this.queue.length) {
+        if (this.isPaused) {
+          await this.waitForResume();
+          continue;
+        }
+
+        const message = this.queue[this.currentIndex];
+        logger.debug(`Playing message ${this.currentIndex + 1}/${this.queue.length}:`, message.id);
+
+        this.callbacks.onMessageStart?.(message);
+        this.speakFunction(message.text);
+
+        await this.waitForMessageEnd();
+
+        this.callbacks.onMessageEnd?.(message);
+        this.currentIndex++;
       }
 
-      const message = this.queue[this.currentIndex];
-      logger.debug(`Playing message ${this.currentIndex + 1}/${this.queue.length}:`, message.id);
-
-      this.callbacks.onMessageStart?.(message);
-      this.speakFunction(message.text);
-
-      await this.waitForMessageEnd();
-
-      this.callbacks.onMessageEnd?.(message);
-      this.currentIndex++;
+      this.stopQueue();
+    } catch (error) {
+      logger.error('Error in processQueue:', error);
+      this.callbacks.onQueueError?.('Failed to process queue');
+      this.stopQueue();
     }
-
-    this.stopQueue();
   }
 
   private waitForResume(): Promise<void> {

@@ -770,8 +770,14 @@ private updateEventsData(event: RealTimeEvent): void {
    * Force reconnection
    */
   async reconnect(): Promise<void> {
-    this.disconnect();
-    await this.initialize();
+    try {
+      this.disconnect();
+      await this.initialize();
+    } catch (error) {
+      logger.error('Error in reconnect:', error);
+      this.connectionState.reconnecting = false;
+      this.connectionState.connected = false;
+    }
   }
 }
 
