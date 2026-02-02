@@ -661,12 +661,12 @@ class UnifiedNotificationManager {
 
   isPermissionGranted(): boolean {
     // eslint-disable-next-line no-undef
-    return Notification.permission === 'granted';
+    return typeof Notification !== 'undefined' && Notification.permission === 'granted';
   }
 
   isPermissionDenied(): boolean {
     // eslint-disable-next-line no-undef
-    return Notification.permission === 'denied';
+    return typeof Notification !== 'undefined' && Notification.permission === 'denied';
   }
 
   async requestPermission(): Promise<boolean> {
