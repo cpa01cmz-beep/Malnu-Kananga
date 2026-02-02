@@ -6,8 +6,10 @@ import { ToastType } from './Toast';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import Alert from './ui/Alert';
+import PaymentButton from './PaymentButton';
+import PaymentModal from './PaymentModal';
 import type { ParentChild, ParentPayment } from '../types';
-import { parentsAPI } from '../services/apiService';
+import { parentsAPI, paymentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateParentPayment } from '../utils/parentValidation';
 import { GRADIENT_CLASSES } from '../config/gradients';
@@ -31,6 +33,11 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState<'current' | 'all'>('current');
   const [showDetails, setShowDetails] = useState<{ [key: string]: boolean }>({});
+  const [paymentModal, setPaymentModal] = useState<{ isOpen: boolean; payment: ParentPayment | null }>({
+    isOpen: false,
+    payment: null
+  });
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     const fetchPaymentData = async () => {
@@ -128,6 +135,60 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
 
   const exportPaymentReport = () => {
     onShowToast('Mengunduh laporan pembayaran...', 'info');
+  };
+
+  const handlePayNow = (payment: ParentPayment) => {
+    if (payment.status !== 'pending' && payment.status !== 'overdue') {
+      onShowToast('Hanya pembayaran yang tertunda atau terlambat yang dapat dibayar', 'warning');
+      return;
+    }
+    setPaymentModal({ isOpen: true, payment });
+  };
+
+  const handlePaymentMethodSelect = async (paymentMethod: 'va' | 'bank_transfer' | 'ewallet' | 'qris' | 'credit_card') => {
+    if (!paymentModal.payment) return;
+
+    setProcessingPayment(true);
+
+    try {
+      const user = JSON.parse(localStorage.getItem('malnu_user') || '{}');
+      const parentEmail = user.email || '';
+
+      if (!parentEmail) {
+        onShowToast('Email pengguna tidak ditemukan', 'error');
+        return;
+      }
+
+      const response = await paymentsAPI.createPayment({
+        amount: paymentModal.payment.amount,
+        paymentType: paymentModal.payment.paymentType,
+        description: paymentModal.payment.description || paymentModal.payment.paymentType,
+        studentId: paymentModal.payment.childId || '',
+        parentEmail,
+        paymentMethod
+      });
+
+      if (response.success && response.data) {
+        window.open(response.data.paymentUrl, '_blank');
+        onShowToast('Pembayaran sedang diproses', 'success');
+
+        setPaymentData(prev =>
+          prev.map(data => ({
+            ...data,
+            payments: data.payments.map(p =>
+              p.id === paymentModal.payment?.id ? { ...p, status: 'pending' as const } : p
+            )
+          }))
+        );
+      } else {
+        onShowToast(response.message || 'Gagal membuat pembayaran', 'error');
+      }
+    } catch (error) {
+      logger.error('Payment error:', error);
+      onShowToast('Terjadi kesalahan saat memproses pembayaran', 'error');
+    } finally {
+      setProcessingPayment(false);
+    }
   };
 
   if (loading) {
@@ -289,13 +350,23 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
                           Jatuh tempo: {formatDate(payment.dueDate)}
                         </p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end gap-2">
                         <p className="font-bold text-neutral-900 dark:text-white mb-2">
                           {formatCurrency(payment.amount)}
                         </p>
                         <Badge variant={getStatusVariant(payment.status)} size="md">
                           {getStatusText(payment.status)}
                         </Badge>
+                        {(payment.status === 'pending' || payment.status === 'overdue') && (
+                          <PaymentButton
+                            amount={payment.amount}
+                            description={payment.description || payment.paymentType}
+                            onClick={() => handlePayNow(payment)}
+                            disabled={processingPayment}
+                            variant="success"
+                            size="sm"
+                          />
+                        )}
                       </div>
                     </div>
                   </div>
@@ -303,8 +374,16 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
               </div>
             </div>
           )}
-        </div>
-      ))}
+         </div>
+       ))}
+
+      <PaymentModal
+        isOpen={paymentModal.isOpen}
+        onClose={() => setPaymentModal({ isOpen: false, payment: null })}
+        onPaymentMethodSelect={handlePaymentMethodSelect}
+        paymentType={paymentModal.payment?.paymentType || ''}
+        amount={paymentModal.payment?.amount || 0}
+      />
     </div>
   );
 };

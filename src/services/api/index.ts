@@ -28,9 +28,14 @@ import {
   parentsAPI,
   messagesAPI,
   chatAPI,
+  paymentsAPI,
+  type CreatePaymentRequest,
+  type PaymentData,
+  type PaymentStatus,
+  type PaymentStatusResponse,
 } from './modules';
 
-export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress };
+export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse };
 
 export const apiService = {
   auth: authAPI,
@@ -57,13 +62,43 @@ export const apiService = {
   parents: parentsAPI,
   messages: messagesAPI,
   chat: chatAPI,
+  payments: paymentsAPI,
   getAuthToken,
+  getRefreshToken,
   parseJwtPayload,
 };
 
-export { request, getAuthToken, getRefreshToken, parseJwtPayload, isTokenExpired, authAPI };
-
 export const api = apiService;
 
-// Export individual API functions for backward compatibility
-export { usersAPI, studentsAPI, teachersAPI, subjectsAPI, classesAPI, schedulesAPI, gradesAPI, assignmentsAPI, assignmentSubmissionsAPI, attendanceAPI, ppdbAPI, inventoryAPI, eventsAPI, eventRegistrationsAPI, eventBudgetsAPI, eventPhotosAPI, eventFeedbackAPI, eLibraryAPI, fileStorageAPI, announcementsAPI, parentsAPI, messagesAPI, chatAPI };
+export {
+  request,
+  getAuthToken,
+  getRefreshToken,
+  parseJwtPayload,
+  isTokenExpired,
+  authAPI,
+  usersAPI,
+  studentsAPI,
+  teachersAPI,
+  subjectsAPI,
+  classesAPI,
+  schedulesAPI,
+  gradesAPI,
+  assignmentsAPI,
+  assignmentSubmissionsAPI,
+  attendanceAPI,
+  ppdbAPI,
+  inventoryAPI,
+  eventsAPI,
+  eventRegistrationsAPI,
+  eventBudgetsAPI,
+  eventPhotosAPI,
+  eventFeedbackAPI,
+  eLibraryAPI,
+  fileStorageAPI,
+  announcementsAPI,
+  parentsAPI,
+  messagesAPI,
+  chatAPI,
+  paymentsAPI,
+};

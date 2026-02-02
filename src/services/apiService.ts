@@ -4,7 +4,7 @@
 
 export { apiService, api, request, getAuthToken, getRefreshToken, parseJwtPayload, isTokenExpired, authAPI, type LoginResponse, type AuthPayload, type ApiResponse, type RequestOptions } from './api';
 
-export type { FileUploadResponse, UploadProgress } from './api';
+export type { FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse } from './api';
 
 export {
   usersAPI,
@@ -30,4 +30,5 @@ export {
   parentsAPI,
   messagesAPI,
   chatAPI,
+  paymentsAPI,
 } from './api';
