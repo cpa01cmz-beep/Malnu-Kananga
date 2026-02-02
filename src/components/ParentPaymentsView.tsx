@@ -13,6 +13,7 @@ import { parentsAPI, paymentsAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { validateParentPayment } from '../utils/parentValidation';
 import { GRADIENT_CLASSES } from '../config/gradients';
+import { STORAGE_KEYS } from '../constants';
 
 interface ParentPaymentsViewProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -151,7 +152,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
     setProcessingPayment(true);
 
     try {
-      const user = JSON.parse(localStorage.getItem('malnu_user') || '{}');
+      const user = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER) || '{}');
       const parentEmail = user.email || '';
 
       if (!parentEmail) {

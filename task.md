@@ -3,6 +3,37 @@
 ## In Progress
 ## Completed
 
+### [SANITIZER] Fix Hardcoded localStorage Key in ParentPaymentsView.tsx (Issue #1361) ✅
+   - **Mode**: SANITIZER
+   - **Issue**: #1361
+   - **Priority**: P2 (Code Quality)
+   - **Status**: Completed
+   - **Started**: 2026-02-02
+   - **Completed**: 2026-02-02
+   - **Reason**: ParentPaymentsView.tsx line 154 uses hardcoded localStorage key string `'malnu_user'` instead of `STORAGE_KEYS.USER` constant. This violates project coding standards (Pillar 15: Dynamic Coding) and creates inconsistency with rest of codebase. Risk of key name mismatch if constant is renamed.
+   - **Implementation**:
+      - [x] Replace `'malnu_user'` with `STORAGE_KEYS.USER` in ParentPaymentsView.tsx line 155
+      - [x] Add `import { STORAGE_KEYS } from '../constants'` to ParentPaymentsView.tsx line 16
+      - [x] Verify no other hardcoded localStorage keys exist in ParentPaymentsView.tsx
+      - [x] Run typecheck: Passed (0 errors)
+      - [x] Run lint: Passed (0 errors, 0 warnings)
+   - **Acceptance Criteria**:
+      - ✅ Hardcoded `'malnu_user'` string replaced with `STORAGE_KEYS.USER`
+      - ✅ STORAGE_KEYS import added to file
+      - ✅ No hardcoded localStorage keys remain in ParentPaymentsView.tsx
+      - ✅ TypeScript type checking: Passed (0 errors)
+      - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+   - **Files Modified**:
+      - src/components/ParentPaymentsView.tsx (line 16: added STORAGE_KEYS import; line 155: replaced hardcoded string)
+      - blueprint.md (added fix entry to Recent Changes 2026-02-02)
+      - roadmap.md (added completed task entry to Recent Completed Work 2026-02-02)
+      - task.md (added this completed task entry)
+   - **Pillars Addressed**:
+      - Pillar 15 (Dynamic Coding): Eliminates hardcoded values, ensures centralized pattern
+      - Pillar 16 (UX/DX): Maintains consistency with project standards, improves developer experience
+   - **Related Issues**: #1244 (CLOSED), #1182 (CLOSED), #980 (CLOSED) - Previous hardcoded storage key cleanups
+   - **GitHub Issue**: #1361 (OPEN - to be CLOSED with commit reference after commit)
+
 ### [SCRIBE] Synchronize GitHub Issue #1362 - Missing Error Handling (P1) ✅
    - **Mode**: SCRIBE
    - **Issue**: #1362
