@@ -8,7 +8,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ppdbIntegrationService } from '../ppdbIntegrationService';
 import { ppdbAPI, studentsAPI, usersAPI } from '../apiService';
-import { unifiedNotificationManager } from '../unifiedNotificationManager';
+import { unifiedNotificationManager } from '../notifications/unifiedNotificationManager';
 import { emailService } from '../emailService';
 import { logger } from '../../utils/logger';
 import { STORAGE_KEYS } from '../../constants';
@@ -31,7 +31,7 @@ vi.mock('../apiService', () => ({
 }));
 
 // Mock notification services
-vi.mock('../unifiedNotificationManager', () => ({
+vi.mock('../notifications/unifiedNotificationManager', () => ({
   unifiedNotificationManager: {
     showNotification: vi.fn(),
   },

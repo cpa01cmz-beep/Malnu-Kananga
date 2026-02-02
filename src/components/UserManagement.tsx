@@ -12,7 +12,7 @@ import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import UserImport from './UserImport';
 import { api } from '../services/apiService';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { useErrorHandler } from '../hooks/useErrorHandler';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { TableSkeleton } from './ui/Skeleton';

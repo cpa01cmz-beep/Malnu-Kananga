@@ -5,7 +5,7 @@ import { analyzeClassPerformance } from '../services/geminiService';
 import { studentsAPI, gradesAPI } from '../services/apiService';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
 import { permissionService } from '../services/permissionService';
-import { unifiedNotificationManager } from '../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { ocrService, OCRExtractionResult, OCRProgress } from '../services/ocrService';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { LightBulbIcon } from './icons/LightBulbIcon';

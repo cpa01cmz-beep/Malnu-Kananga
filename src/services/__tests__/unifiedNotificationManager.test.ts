@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import type { PushNotification, NotificationType } from '../../types';
-import { unifiedNotificationManager } from '../../services/unifiedNotificationManager';
+import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { STORAGE_KEYS, NOTIFICATION_CONFIG } from '../../constants';
 
 describe('unifiedNotificationManager', () => {

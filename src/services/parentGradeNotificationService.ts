@@ -1,7 +1,7 @@
 // parentGradeNotificationService.ts - Service for parent grade notifications
 // Integrates with push notification service and event notifications hook
 
-import { unifiedNotificationManager } from './unifiedNotificationManager';
+import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 import { gradesAPI } from './apiService';
