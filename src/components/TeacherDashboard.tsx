@@ -8,7 +8,7 @@ import { ChartLineIcon } from './icons/ChartLineIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
 
 // Lazy load heavy dashboard components to reduce initial bundle size
-const GradingManagement = lazy(() => import('./GradingManagement'));
+const GradingManagement = lazy(() => import('./grading/GradingManagement'));
 const ClassManagement = lazy(() => import('./ClassManagement'));
 const MaterialUpload = lazy(() => import('./MaterialUpload'));
 const SchoolInventory = lazy(() => import('./SchoolInventory'));
