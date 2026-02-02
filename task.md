@@ -1,6 +1,268 @@
 # Active Tasks Tracking
 
 ## In Progress
+
+### [ARCHITECT] Complete unifiedNotificationManager.ts Refactoring - Phase 2 (Issue #1364, P2)
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: Not Started (follow-up to Phase 1)
+   - **Phase**: 2 of 5 (unifiedNotificationManager.ts modularization)
+   - **Estimated Effort**: 6-8 hours
+   - **Dependencies**: REFACTORING_GUIDE.md (Phase 1 foundation COMPLETED)
+   - **Implementation Steps** (from REFACTORING_GUIDE.md):
+      - [ ] Extract pushNotificationHandler.ts module (~200 lines)
+      - [ ] Extract emailNotificationHandler.ts module (~150 lines)
+      - [ ] Extract notificationHistoryHandler.ts module (~200 lines)
+      - [ ] Extract notificationAnalyticsHandler.ts module (~150 lines)
+      - [ ] Extract notificationTemplatesHandler.ts module (~150 lines)
+      - [ ] Create main orchestrator `unifiedNotificationManager.ts` (~400 lines)
+      - [ ] Update 9 imports across codebase
+      - [ ] Delete original `src/services/unifiedNotificationManager.ts`
+      - [ ] Run typecheck: npm run typecheck
+      - [ ] Run lint: npm run lint
+      - [ ] Run tests: npm test
+   - **Acceptance Criteria**:
+      - [ ] unifiedNotificationManager.ts split into 6 modules
+      - [ ] Each module <300 lines
+      - [ ] Main orchestrator maintains backward compatibility
+      - [ ] All 9 file imports updated
+      - [ ] TypeScript type checking: Passed (0 errors)
+      - [ ] ESLint linting: Passed (0 errors, 0 warnings)
+      - [ ] All tests passing
+      - [ ] Original file deleted
+   - **Pillars Addressed**:
+      - Pillar 1 (Flow): Modular notification handlers improve clarity
+      - Pillar 11 (Modularity): Atomic, reusable handler classes
+      - Pillar 16 (UX/DX): Easier to understand and maintain
+
+### [ARCHITECT] Complete GradingManagement.tsx Refactoring - Phase 3 (Issue #1364, P2)
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: Not Started (follow-up to Phase 2)
+   - **Phase**: 3 of 5 (GradingManagement.tsx modularization)
+   - **Estimated Effort**: 8-10 hours
+   - **Dependencies**: Phase 2 COMPLETED
+   - **Implementation Steps** (from REFACTORING_GUIDE.md):
+      - [ ] Create `src/components/grading/` directory
+      - [ ] Extract useGradingData.ts hook (~200 lines)
+      - [ ] Extract GradingList.tsx component (~400 lines)
+      - [ ] Extract GradeInputRow.tsx component (~250 lines)
+      - [ ] Extract GradingActions.tsx component (~200 lines)
+      - [ ] Extract GradingStats.tsx component (~150 lines)
+      - [ ] Extract AIPanel.tsx component (~150 lines)
+      - [ ] Extract OCRPanel.tsx component (~200 lines)
+      - [ ] Extract CSVImportPanel.tsx component (~150 lines)
+      - [ ] Create main container `GradingManagement.tsx` (~250 lines)
+      - [ ] Update TeacherDashboard import
+      - [ ] Delete original `src/components/GradingManagement.tsx`
+      - [ ] Run typecheck: npm run typecheck
+      - [ ] Run lint: npm run lint
+      - [ ] Run tests: npm test
+   - **Acceptance Criteria**:
+      - [ ] GradingManagement.tsx split into 9 modules
+      - [ ] Each module <400 lines
+      - [ ] Main container orchestrates sub-components
+      - [ ] TeacherDashboard import updated
+      - [ ] TypeScript type checking: Passed (0 errors)
+      - [ ] ESLint linting: Passed (0 errors, 0 warnings)
+      - [ ] All tests passing
+      - [ ] Original file deleted
+   - **Pillars Addressed**:
+      - Pillar 1 (Flow): Data flow clearer with custom hook
+      - Pillar 11 (Modularity): UI components are atomic and reusable
+      - Pillar 16 (UX/DX): Easier to test and maintain individual features
+
+### [ARCHITECT] Complete ELibrary.tsx Refactoring - Phase 4 (Issue #1364, P2)
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: Not Started (follow-up to Phase 3)
+   - **Phase**: 4 of 5 (ELibrary.tsx modularization)
+   - **Estimated Effort**: 6-8 hours
+   - **Dependencies**: Phase 3 COMPLETED
+   - **Implementation Steps** (from REFACTORING_GUIDE.md):
+      - [ ] Create `src/components/elibrary/` directory
+      - [ ] Extract useELibraryData.ts hook (~200 lines)
+      - [ ] Extract MaterialBrowser.tsx component (~350 lines)
+      - [ ] Extract MaterialCard.tsx component (~200 lines)
+      - [ ] Extract MaterialUpload.tsx component (~250 lines)
+      - [ ] Extract MaterialSearch.tsx component (~200 lines)
+      - [ ] Extract MaterialActions.tsx component (~150 lines)
+      - [ ] Extract ReadingProgress.tsx component (~150 lines)
+      - [ ] Create main container `ELibrary.tsx` (~200 lines)
+      - [ ] Update StudentPortal/TeacherPortal imports
+      - [ ] Delete original `src/components/ELibrary.tsx`
+      - [ ] Run typecheck: npm run typecheck
+      - [ ] Run lint: npm run lint
+      - [ ] Run tests: npm test
+   - **Acceptance Criteria**:
+      - [ ] ELibrary.tsx split into 8 modules
+      - [ ] Each module <400 lines
+      - [ ] Main container orchestrates sub-components
+      - [ ] Portal imports updated
+      - [ ] TypeScript type checking: Passed (0 errors)
+      - [ ] ESLint linting: Passed (0 errors, 0 warnings)
+      - [ ] All tests passing
+      - [ ] Original file deleted
+   - **Pillars Addressed**:
+      - Pillar 1 (Flow): Data flow clearer with custom hook
+      - Pillar 11 (Modularity): UI components are atomic and reusable
+      - Pillar 16 (UX/DX): Easier to test and maintain individual features
+
+### [ARCHITECT] Large File Refactoring - Final Verification & Testing (Issue #1364, P2)
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: Not Started (follow-up to Phase 4)
+   - **Phase**: 5 of 5 (Final verification and documentation sync)
+   - **Estimated Effort**: 2-3 hours
+   - **Dependencies**: Phases 2, 3, and 4 COMPLETED
+   - **Implementation Steps**:
+      - [ ] Run full test suite: npm test
+      - [ ] Run typecheck: npm run typecheck
+      - [ ] Run lint: npm run lint
+      - [ ] Build verification: npm run build
+      - [ ] Update blueprint.md with completion status
+      - [ ] Update roadmap.md with completion status
+      - [ ] Close GitHub Issue #1364 with detailed comment
+      - [ ] Delete REFACTORING_GUIDE.md (or mark as reference document)
+   - **Acceptance Criteria**:
+      - [ ] All refactored modules have tests passing
+      - [ ] TypeScript type checking: Passed (0 errors)
+      - [ ] ESLint linting: Passed (0 errors, 0 warnings)
+      - [ ] Build: Passed (no warnings)
+      - [ ] GitHub Issue #1364 CLOSED
+      - [ ] Documentation updated (blueprint.md, roadmap.md, task.md)
+   - **Pillars Addressed**:
+      - Pillar 3 (Stability): Tests ensure no regressions
+      - Pillar 8 (Documentation): Complete documentation of refactoring
+      - Pillar 16 (UX/DX): Clean codebase for developers
+
+## Completed
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: Completed (Phase 1: Strategy & Foundation)
+   - **Started**: 2026-02-02
+   - **Completed**: 2026-02-02
+   - **Phase 1 Deliverables** (Strategy & Foundation):
+      - ✅ Analyzed all three files to understand structure and dependencies
+      - ✅ Created `src/services/notifications/` directory structure
+      - ✅ Created comprehensive REFACTORING_GUIDE.md with detailed step-by-step instructions
+      - ✅ Extracted working proof-of-concept module: `voiceNotificationHandler.ts` (~250 lines)
+      - ✅ Established 5-phase refactoring approach (Foundation → unifiedNotificationManager → GradingManagement → ELibrary → Final Verification)
+      - ✅ Updated blueprint.md with strategy entry (version 3.8.2)
+      - ✅ Updated roadmap.md version (3.8.2)
+      - ✅ Updated package.json version (3.8.2)
+      - ✅ TypeScript type checking: Passed (voiceNotificationHandler has 0 errors)
+   - **Deliverables**:
+      - REFACTORING_GUIDE.md created with comprehensive implementation steps for all three files
+      - Target directory structures documented for each refactoring
+      - Extraction steps, import update paths, acceptance criteria defined
+      - Progress tracking framework established
+      - One working module extracted (voiceNotificationHandler.ts)
+   - **Impact**: Provides clear Single Source of Truth for completing large file refactoring with systematic, phased approach; Enables incremental completion while maintaining backward compatibility; Reduces cognitive load by breaking down complex task into manageable phases.
+   - **Pillars Addressed**:
+      - Pillar 8 (Documentation): REFACTORING_GUIDE.md serves as comprehensive reference
+      - Pillar 11 (Modularity): Foundation established for modular structure
+      - Pillar 16 (UX/DX): Clear step-by-step guidance improves developer experience
+   - **Related Files**:
+      - REFACTORING_GUIDE.md (new file, comprehensive refactoring guide)
+      - src/services/notifications/voiceNotificationHandler.ts (new module, ~250 lines)
+      - package.json (version 3.8.1 → 3.8.2)
+      - blueprint.md (added strategy entry)
+      - roadmap.md (version updated to 3.8.2)
+   - **Follow-up Tasks** (to be created):
+      - [ ] Phase 2: Complete unifiedNotificationManager.ts refactoring
+      - [ ] Phase 3: Complete GradingManagement.tsx refactoring
+      - [ ] Phase 4: Complete ELibrary.tsx refactoring
+      - [ ] Phase 5: Final verification and testing
+
+### [ARCHITECT] Complete Large File Refactoring - GradingManagement, ELibrary, and unifiedNotificationManager (Issue #1364)
+   - **Mode**: ARCHITECT
+   - **Issue**: #1364
+   - **Priority**: P2 (Code Quality & Maintainability)
+   - **Status**: In Progress (Strategy Phase - Refactoring Guide Created)
+   - **Started**: 2026-02-02
+   - **Reason**: Issue #1293 completed types.ts (1,808 lines → 17 modules) and apiService.ts refactoring, but three large files remain exceeding 1,500 lines each, making them difficult to maintain, test, and review. Large files create merge conflicts, increase cognitive load, and violate modular architecture principles (Pillars 11: Modularity, 12: Scalability).
+   - **Files to Refactor**:
+      1. **GradingManagement.tsx** (1,904 lines) - Teacher grading component with OCR, AI analysis, CSV import/export, offline support
+      2. **ELibrary.tsx** (1,688 lines) - E-Library component with material browsing, upload, search, bookmarks, favorites
+      3. **unifiedNotificationManager.ts** (1,596 lines) - Notification service with push, email, voice handlers
+   - **Current Progress**:
+      - ✅ Analyzed all three files to understand structure and dependencies
+      - ✅ Created `src/services/notifications/` directory
+      - ✅ Created REFACTORING_GUIDE.md with detailed refactoring steps for all three files
+      - ✅ Extracted `voiceNotificationHandler.ts` module (~250 lines, error-free)
+      - ⏳ Additional handler modules to be extracted based on guide
+   - **Implementation Strategy** (PRAGMATIC APPROACH):
+      Given the complexity (5,200+ total lines) and need for backward compatibility, this refactoring will be completed in **phased approach**:
+      
+      **Phase 1: Strategy & Foundation (COMPLETED)**
+         - [x] Analyze all three files
+         - [x] Create directory structure (`src/services/notifications/`)
+         - [x] Create comprehensive REFACTORING_GUIDE.md with step-by-step instructions
+         - [x] Extract one working module as proof-of-concept (`voiceNotificationHandler.ts`)
+
+      **Phase 2: unifiedNotificationManager (NEXT PRIORITY)**
+         - [ ] Extract remaining handler modules (push, email, history, analytics, templates)
+         - [ ] Create main orchestrator with backward compatibility
+         - [ ] Update all imports across codebase (9 files identified)
+         - [ ] Delete original unifiedNotificationManager.ts
+         - [ ] Verify tests pass
+
+      **Phase 3: GradingManagement.tsx**
+         - [ ] Create `src/components/grading/` directory
+         - [ ] Extract custom hook: `useGradingData.ts`
+         - [ ] Extract UI components: GradingList, GradeInputRow, GradingActions, GradingStats, AIPanel, OCRPanel, CSVImportPanel
+         - [ ] Create main container with sub-components
+         - [ ] Update TeacherDashboard import
+         - [ ] Delete original GradingManagement.tsx
+         - [ ] Verify tests pass
+
+      **Phase 4: ELibrary.tsx**
+         - [ ] Create `src/components/elibrary/` directory
+         - [ ] Extract custom hook: `useELibraryData.ts`
+         - [ ] Extract UI components: MaterialBrowser, MaterialCard, MaterialUpload, MaterialSearch, MaterialActions, ReadingProgress
+         - [ ] Create main container with sub-components
+         - [ ] Update StudentPortal/TeacherPortal imports
+         - [ ] Delete original ELibrary.tsx
+         - [ ] Verify tests pass
+
+      **Phase 5: Final Verification**
+         - [ ] Run full test suite: npm test
+         - [ ] Run typecheck: npm run typecheck
+         - [ ] Run lint: npm run lint
+         - [ ] Build verification: npm run build
+         - [ ] Update blueprint.md with refactoring completion
+         - [ ] Update roadmap.md with completion status
+         - [ ] Close GitHub Issue #1364
+   - **Refactoring Guide**:
+      - ✅ REFACTORING_GUIDE.md created with comprehensive implementation steps
+      - Guide includes: target directory structures, extraction steps, acceptance criteria, progress tracking
+      - Guide serves as Single Source of Truth for completing this refactoring
+   - **Acceptance Criteria**:
+      - ✅ Refactoring strategy and guide created
+      - ✅ Directory structure foundation established
+      - ✅ One working module extracted (voiceNotificationHandler)
+      - [ ] All three large files split into modular components/services
+      - [ ] Each new file <500 lines (ideally <300 lines)
+      - [ ] All imports updated across codebase
+      - [ ] TypeScript type checking passes (0 errors)
+      - [ ] ESLint linting passes (0 errors, 0 warnings)
+      - [ ] All tests pass (npm test)
+      - [ ] Original large files deleted
+      - [ ] Documentation updated (blueprint.md, roadmap.md, task.md)
+   - **Pillars Addressed**:
+      - Pillar 1 (Flow): Modular components improve data flow clarity
+      - Pillar 11 (Modularity): Atomic, reusable components
+      - Pillar 12 (Scalability): Easier to extend and maintain
+      - Pillar 13 (Performance): Smaller files enable better tree-shaking
+      - Pillar 16 (UX/DX): Better developer experience, easier to understand
+   - **Related Issues**: #1293 (CLOSED - initial large file refactoring), #1362 (CLOSED - error handling in unifiedNotificationManager)
+
 ## Completed
 
 ### [SANITIZER] Fix Hardcoded localStorage Key in ParentPaymentsView.tsx (Issue #1361) ✅
