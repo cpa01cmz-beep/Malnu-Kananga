@@ -18,8 +18,9 @@ import StudentAssignments from './StudentAssignments';
 import { GroupChat } from './GroupChat';
 import StudyPlanGenerator from './StudyPlanGenerator';
 import StudyPlanAnalytics from './StudyPlanAnalytics';
+import { StudentQuiz } from './StudentQuiz';
 import { ToastType } from './Toast';
-import { UserExtraRole, Student } from '../types';
+import { UserExtraRole, Student, Quiz, QuizAttempt } from '../types';
 import { UserRole, UserExtraRole as PermUserExtraRole } from '../types/permissions';
 import { authAPI, studentsAPI, gradesAPI, attendanceAPI, schedulesAPI } from '../services/apiService';
 import { permissionService } from '../services/permissionService';
@@ -51,7 +52,7 @@ interface StudentPortalProps {
     extraRole: UserExtraRole;
 }
 
-type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups' | 'study-plan' | 'study-analytics';
+type PortalView = 'home' | 'schedule' | 'library' | 'grades' | 'assignments' | 'attendance' | 'insights' | 'osis' | 'groups' | 'study-plan' | 'study-analytics' | 'quiz' | 'quiz-history';
 
 const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
@@ -63,6 +64,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const [cacheFreshness, setCacheFreshness] = useState<CacheFreshnessInfo | null>(null);
   const [showValidationDetails, setShowValidationDetails] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
+  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
 
   // Initialize push notifications and offline services
   const { 
@@ -82,6 +84,17 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
   const checkPermission = (permission: string) => {
     const result = permissionService.hasPermission('student' as UserRole, extraRole as PermUserExtraRole, permission);
     return result.granted;
+  };
+
+  const handleQuizSubmit = (attempt: QuizAttempt) => {
+    logger.info('Quiz submitted:', attempt);
+    onShowToast('Kuis berhasil dikirim!', 'success');
+    setCurrentView('quiz-history');
+  };
+
+  const handleQuizCancel = () => {
+    setSelectedQuiz(null);
+    setCurrentView('home');
   };
 
   useEffect(() => {
@@ -298,7 +311,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     userRole: 'student',
     extraRole,
     onNavigate: (view: string) => {
-      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups', 'study-plan', 'study-analytics'];
+      const validViews: PortalView[] = ['schedule', 'library', 'assignments', 'grades', 'attendance', 'insights', 'osis', 'groups', 'study-plan', 'study-analytics', 'quiz', 'quiz-history'];
       if (validViews.includes(view as PortalView)) {
         setCurrentView(view as PortalView);
         onShowToast(`Navigasi ke ${view}`, 'success');
@@ -638,7 +651,25 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
         permission: 'content.read',
         active: true
       },
-   ];
+      {
+        title: 'Kuis',
+        description: 'Kerjakan kuis dan ujian online.',
+        icon: <ClipboardDocumentCheckIcon />,
+        colorTheme: 'indigo' as const,
+        action: () => setCurrentView('quiz'),
+        permission: 'quizzes.take',
+        active: true
+      },
+      {
+        title: 'Riwayat Kuis',
+        description: 'Lihat riwayat hasil kuis dan skor.',
+        icon: <ClipboardDocumentCheckIcon />,
+        colorTheme: 'purple' as const,
+        action: () => setCurrentView('quiz-history'),
+        permission: 'quizzes.view_history',
+        active: true
+      },
+    ];
 
   // Filter menu items based on permissions
   const menuItems = allMenuItems.filter(item => checkPermission(item.permission));
@@ -989,6 +1020,28 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
           {currentView === 'study-plan' && <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
           {currentView === 'study-analytics' && <StudyPlanAnalytics onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+          {currentView === 'quiz' && (
+            <div className="animate-fade-in-up">
+              {!selectedQuiz ? (
+                <div className="p-6 text-center text-gray-600 dark:text-gray-400">
+                  <p>Pilih kuis dari daftar yang tersedia (Fitur akan tersedia di Phase 3)</p>
+                  <button
+                    onClick={() => setCurrentView('home')}
+                    className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    Kembali
+                  </button>
+                </div>
+              ) : (
+                <StudentQuiz
+                  quiz={selectedQuiz}
+                  onSubmit={handleQuizSubmit}
+                  onCancel={handleQuizCancel}
+                />
+              )}
+            </div>
+          )}
+          {currentView === 'quiz-history' && <div className="animate-fade-in-up"><div className="p-6 text-center text-gray-600 dark:text-gray-400">Coming Soon: Quiz History</div></div>}
 
         {/* Voice Commands Help Modal */}
         <VoiceCommandsHelp

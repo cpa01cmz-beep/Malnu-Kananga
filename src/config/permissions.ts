@@ -258,6 +258,27 @@ export const PERMISSIONS: Record<string, Permission> = {
     description: 'Access learning materials and resources',
     resource: 'student',
     action: 'materials'
+  },
+  'quizzes.take': {
+    id: 'quizzes.take',
+    name: 'Take Quizzes',
+    description: 'Take quizzes and submit answers',
+    resource: 'quizzes',
+    action: 'take'
+  },
+  'quizzes.view_results': {
+    id: 'quizzes.view_results',
+    name: 'View Quiz Results',
+    description: 'View quiz results and detailed feedback',
+    resource: 'quizzes',
+    action: 'view_results'
+  },
+  'quizzes.view_history': {
+    id: 'quizzes.view_history',
+    name: 'View Quiz History',
+    description: 'View past quiz attempts and history',
+    resource: 'quizzes',
+    action: 'view_history'
   }
 };
 
@@ -279,15 +300,18 @@ export const ROLE_PERMISSION_MATRIX: PermissionMatrix = {
   teacher: [
     'content.create', 'content.read', 'content.update',
     'academic.grades', 'academic.attendance', 'academic.schedule', 'academic.classes',
-    'student.library', 'student.materials'
+    'student.library', 'student.materials',
+    'quizzes.view_results', 'quizzes.view_history'
   ],
   student: [
     'content.read',
     'academic.schedule',
-    'student.library', 'student.materials'
+    'student.library', 'student.materials',
+    'quizzes.take', 'quizzes.view_results', 'quizzes.view_history'
   ],
   parent: [
-    'parent.monitor', 'parent.reports', 'parent.communication', 'payments.read'
+    'parent.monitor', 'parent.reports', 'parent.communication', 'payments.read',
+    'quizzes.view_results', 'quizzes.view_history'
   ]
 };
 
