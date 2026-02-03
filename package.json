@@ -1,8 +1,9 @@
 {
-   "name": "asisten-ai-ma-malnu-kananga",
-   "private": true,
-   "version": "3.8.3",
-   "type": "module",
+  "name": "asisten-ai-ma-malnu-kananga",
+  "private": true,
+  "version": "3.8.4",
+  "description": "MA Malnu Kananga - Modern School Management System",
+  "type": "module",
    "scripts": {
       "dev": "vite",
       "build": "vite build",

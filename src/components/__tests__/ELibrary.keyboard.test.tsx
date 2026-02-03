@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ELibrary from '../elibrary/ELibrary';
+import ELibrary from '../ELibrary';
 import { logger as _logger } from '../../utils/logger';
 
 vi.mock('../../utils/logger', () => ({
