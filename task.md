@@ -1,46 +1,41 @@
 # Active Tasks Tracking
 
-### [SANITIZER] Fix Test Suite Timeout - Vitest Configuration Optimization (Issue #1382, P1) 🟡
+### [SANITIZER] Fix Test Suite Bugs - Infinite Loops & Console Error Usage (Issue #1381, P2)
     - **Mode**: SANITIZER
-    - **Issue**: #1382
-    - **Priority**: P1 (Critical Stability & Performance)
-    - **Status**: In Progress (Configuration optimized, separate test bugs remain)
+    - **Issue**: #1381
+    - **Priority**: P2 (Code Quality & Stability)
+    - **Status**: In Progress
     - **Started**: 2026-02-03
     - **Implementation**:
-       - ✅ Fixed Vitest 4 deprecated `poolOptions` configuration (moved to top-level)
-       - ✅ Increased parallel workers: 2-4 → 2-8 threads
-       - ✅ Reduced test timeouts: 10s → 5s (testTimeout, hookTimeout)
-       - ✅ Enhanced logger mock to suppress console I/O (returns undefined)
-       - ✅ Added bail configuration documentation for CI/CD
-    - **Performance Improvements**:
-       - Individual test execution reduced by ~17% (AssignmentGrading: 1160ms → 968ms)
-       - 3 test files (158 tests): 1.93s (vs previous ~10s+)
-       - No deprecation warnings in output
-       - Reduced console output overhead significantly
-    - **Root Cause Identified**:
-       - React Testing Library warnings: "Maximum update depth exceeded" and "An update not wrapped in act(...)"
-       - Affected files: MaterialUpload-search.test.tsx, UserProfileEditor.test.tsx, MessageList.test.tsx
-       - These are infinite render loops requiring individual test fixes (separate from config optimization)
-    - **Remaining Work**:
-       - Fix infinite update loops in MaterialUpload-search.test.tsx
-       - Fix infinite update loops in UserProfileEditor.test.tsx
-       - Fix console.error usage instead of logger (Issue #1381)
+       - ✅ Fixed StudentPortal.tsx: Replaced `console.error` with `logger.error` (line 104)
+       - ✅ Fixed UserProfileEditor.test.tsx: Made mock return stable object reference
+       - ✅ Fixed EnhancedMaterialSharing.tsx: Added `useMemo` for permissionSummary and ref to prevent infinite loops
+       - ✅ Added `useRef` initialization guard in EnhancedMaterialSharing.tsx
+       - ✅ Fixed ESLint warnings (0 errors, 0 warnings)
+    - **Root Causes Identified**:
+        - StudentPortal.tsx: Used `console.error` instead of project `logger` utility
+        - UserProfileEditor.test.tsx: Mock functions created new references on every call, causing useEffect to run repeatedly
+        - EnhancedMaterialSharing.tsx: `permissionSummary` created on every render via `getPermissionSummary(material)`, causing infinite re-renders
     - **Acceptance Criteria** (Partial Complete):
-       - ✅ Vitest 4 configuration updated and deprecated warnings removed
-       - ✅ Test execution time reduced by 17%
-       - ✅ Parallel execution optimized (8 workers vs 4)
-       - ⏳ Full suite completion pending test bug fixes (Issue #1381)
+        - ✅ console.error replaced with logger.error in StudentPortal.tsx
+        - ✅ Mocks made stable in UserProfileEditor.test.tsx
+        - ✅ Infinite loop fixed in EnhancedMaterialSharing.tsx (useMemo + useRef)
+        - ✅ All TypeScript type checking passed (0 errors)
+        - ✅ All ESLint linting passed (0 errors, 0 warnings)
+        - ⏳ Remaining test failures are assertion errors (not infinite loops)
     - **Files Modified**:
-       - vite.config.ts (pool configuration, timeouts, bail documentation)
-       - test-setup.ts (enhanced logger mock)
+        - src/components/student-portal/StudentPortal.tsx (added logger import, fixed console.error)
+        - src/components/__tests__/UserProfileEditor.test.tsx (stable mock objects)
+        - src/components/EnhancedMaterialSharing.tsx (useMemo, useRef, imports)
     - **Pillars Addressed**:
-       - Pillar 3 (Stability): Improved test reliability and reduced timeouts
-       - Pillar 13 (Performance): 17% improvement in test execution time
-       - Pillar 7 (Debug): Cleaner test output without excessive logging
+        - Pillar 3 (Stability): Fixed infinite loops and standardized error logging
+        - Pillar 7 (Debug): Consistent logging with project logger
+        - Pillar 15 (Dynamic Coding): Removed hardcoded logging approach
+    - **Related Issues**: #1382 (Test Suite Optimization - config complete, test bugs remain)
 
 ---
 
-### [ARCHITECT] Refactor Large Components - MaterialUpload, StudentPortal, and geminiService (Issue #1367, P2) 🟡
+### [SANITIZER] Fix Test Suite Timeout - Vitest Configuration Optimization (Issue #1382, P1) 🟡
     - **Mode**: ARCHITECT
     - **Issue**: #1367
     - **Priority**: P2 (Code Quality & Maintainability)
