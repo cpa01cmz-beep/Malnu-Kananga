@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import MaterialUpload from '../MaterialUpload';
 import { STORAGE_KEYS } from '../../constants';
 import * as apiService from '../../services/apiService';
@@ -172,7 +173,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -185,7 +186,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'energi' } });
+      await userEvent.type(searchInput, 'energi');
 
       await waitFor(() => {
         expect(screen.getByText('Presentasi Fisika')).toBeInTheDocument();
@@ -197,7 +198,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'Biologi' } });
+      await userEvent.type(searchInput, 'Biologi');
 
       await waitFor(() => {
         expect(screen.getByText('Video Pembelajaran Biologi')).toBeInTheDocument();
@@ -208,14 +209,14 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
         expect(screen.queryByText('Presentasi Fisika')).not.toBeInTheDocument();
       });
 
-      fireEvent.change(searchInput, { target: { value: '' } });
+      await userEvent.clear(searchInput);
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -228,7 +229,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       await waitFor(() => {
         expect(screen.getByText(/Search:/i)).toBeInTheDocument();
@@ -239,14 +240,14 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       await waitFor(() => {
         expect(screen.getByText(/Search:/i)).toBeInTheDocument();
       });
 
       const clearButton = screen.getByLabelText(/Clear search/i);
-      fireEvent.click(clearButton);
+      await userEvent.click(clearButton);
 
       await waitFor(() => {
         expect(searchInput).toHaveValue('');
@@ -272,7 +273,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -288,7 +289,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Matematika')).toBeInTheDocument();
@@ -303,14 +304,14 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Matematika')).toBeInTheDocument();
       });
 
       const clearButton = screen.getByLabelText(/Clear category filter/i);
-      fireEvent.click(clearButton);
+      await userEvent.click(clearButton);
 
       await waitFor(() => {
         expect(categoryFilter).toHaveValue('all');
@@ -335,7 +336,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'PDF' } });
+      await userEvent.selectOptions(fileTypeFilter, 'PDF');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -348,7 +349,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'DOCX' } });
+      await userEvent.selectOptions(fileTypeFilter, 'DOCX');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Bahasa Indonesia')).toBeInTheDocument();
@@ -360,7 +361,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'PPT' } });
+      await userEvent.selectOptions(fileTypeFilter, 'PPT');
 
       await waitFor(() => {
         expect(screen.getByText('Presentasi Fisika')).toBeInTheDocument();
@@ -372,7 +373,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'VIDEO' } });
+      await userEvent.selectOptions(fileTypeFilter, 'VIDEO');
 
       await waitFor(() => {
         expect(screen.getByText('Video Pembelajaran Biologi')).toBeInTheDocument();
@@ -384,7 +385,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'PDF' } });
+      await userEvent.selectOptions(fileTypeFilter, 'PDF');
 
       await waitFor(() => {
         expect(screen.getByText('PDF')).toBeInTheDocument();
@@ -410,7 +411,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const sharedButton = screen.getByText('Dibagikan');
-      fireEvent.click(sharedButton);
+      await userEvent.click(sharedButton);
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -423,7 +424,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const privateButton = screen.getByText('Privat');
-      fireEvent.click(privateButton);
+      await userEvent.click(privateButton);
 
       await waitFor(() => {
         expect(screen.getByText('Presentasi Fisika')).toBeInTheDocument();
@@ -436,13 +437,13 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const sharedButton = screen.getByText('Dibagikan');
-      fireEvent.click(sharedButton);
+      await userEvent.click(sharedButton);
 
       await waitFor(() => {
         expect(screen.queryByText('Presentasi Fisika')).not.toBeInTheDocument();
       });
 
-      fireEvent.click(sharedButton);
+      await userEvent.click(sharedButton);
 
       await waitFor(() => {
         expect(screen.getByText('Presentasi Fisika')).toBeInTheDocument();
@@ -453,7 +454,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const sharedButton = screen.getByText('Dibagikan');
-      fireEvent.click(sharedButton);
+      await userEvent.click(sharedButton);
 
       await waitFor(() => {
         expect(screen.getByText('Dibagikan')).toBeInTheDocument();
@@ -466,10 +467,10 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'materi' } });
+      await userEvent.type(searchInput, 'materi');
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -481,10 +482,10 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'PDF' } });
+      await userEvent.selectOptions(fileTypeFilter, 'PDF');
 
       const sharedButton = screen.getByText('Dibagikan');
-      fireEvent.click(sharedButton);
+      await userEvent.click(sharedButton);
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -496,13 +497,13 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'test' } });
+      await userEvent.type(searchInput, 'test');
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       const fileTypeFilter = screen.getByText(/Semua Tipe/i);
-      fireEvent.change(fileTypeFilter, { target: { value: 'PDF' } });
+      await userEvent.selectOptions(fileTypeFilter, 'PDF');
 
       await waitFor(() => {
         expect(screen.getByText(/Reset Filters \(3\)/i)).toBeInTheDocument();
@@ -515,7 +516,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'test' } });
+      await userEvent.type(searchInput, 'test');
 
       await waitFor(() => {
         expect(screen.getByText(/Reset Filters/i)).toBeInTheDocument();
@@ -526,13 +527,13 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       const resetButton = screen.getByText(/Reset Filters/i);
-      fireEvent.click(resetButton);
+      await userEvent.click(resetButton);
 
       await waitFor(() => {
         expect(screen.getByPlaceholderText(/Cari materi/i)).toHaveValue('');
@@ -544,17 +545,17 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'matematika' } });
+      await userEvent.type(searchInput, 'matematika');
 
       const categoryFilter = screen.getByText(/Semua Kategori/i);
-      fireEvent.change(categoryFilter, { target: { value: 'Matematika' } });
+      await userEvent.selectOptions(categoryFilter, 'Matematika');
 
       await waitFor(() => {
         expect(screen.queryByText('Presentasi Fisika')).not.toBeInTheDocument();
       });
 
       const resetButton = screen.getByText(/Reset Filters/i);
-      fireEvent.click(resetButton);
+      await userEvent.click(resetButton);
 
       await waitFor(() => {
         expect(screen.getByText('Modul Matematika Bab 1')).toBeInTheDocument();
@@ -570,7 +571,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       render(<MaterialUpload onBack={mockOnBack} onShowToast={mockOnShowToast} />);
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'nonexistent' } });
+      await userEvent.type(searchInput, 'nonexistent');
 
       await waitFor(() => {
         expect(screen.getByText(/Tidak ada materi yang cocok dengan filter yang dipilih/i)).toBeInTheDocument();
@@ -587,7 +588,7 @@ describe('MaterialUpload - Search and Filtering', () => {
       });
 
       const searchInput = screen.getByPlaceholderText(/Cari materi/i);
-      fireEvent.change(searchInput, { target: { value: 'materi' } });
+      await userEvent.type(searchInput, 'materi');
 
       await waitFor(() => {
         expect(screen.getByText(/Semua Materi \(2\)/i)).toBeInTheDocument();
