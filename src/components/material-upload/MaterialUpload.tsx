@@ -224,22 +224,22 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
                 submitting={submitting}
               />
             </div>
+          </div>
 
-            <div className="lg:col-span-1">
-              {materials.length > 0 && (
-                <>
-                  <VersionControl
-                    material={materials[0]}
-                    onShowToast={onShowToast}
-                    onVersionUpdate={fetchMaterials}
-                  />
-                  <MaterialAnalytics
-                    material={materials[0]}
-                    onShowToast={onShowToast}
-                  />
-                </>
-              )}
-            </div>
+          <div className="lg:col-span-1">
+            {materials.length > 0 && (
+              <>
+                <VersionControl
+                  material={materials[0]}
+                  onShowToast={onShowToast}
+                  onVersionUpdate={fetchMaterials}
+                />
+                <MaterialAnalytics
+                  material={materials[0]}
+                  onShowToast={onShowToast}
+                />
+              </>
+            )}
           </div>
         </div>
       )}
