@@ -26,6 +26,12 @@ export interface QuizQuestion {
   tags?: string[];
 }
 
+export interface QuizAutoIntegrationConfig {
+  enabled: boolean;
+  minPassingScore?: number;
+  includeEssays?: boolean;
+}
+
 export interface Quiz {
   id: string;
   title: string;
@@ -50,6 +56,7 @@ export interface Quiz {
   materialIds?: string[];
   aiGenerated: boolean;
   aiConfidence?: number;
+  autoIntegration?: QuizAutoIntegrationConfig;
 }
 
 export interface QuizGenerationOptions {

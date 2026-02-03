@@ -1,5 +1,6 @@
 import { Grade, Quiz, QuizAttempt, AssignmentType } from '../types';
 import { gradesAPI } from './apiService';
+import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 
@@ -14,6 +15,9 @@ import { STORAGE_KEYS } from '../constants';
  * - Batch processing for multiple quiz attempts
  * - Integration with existing grades API
  * - Error handling and logging
+ * - Automatic triggering on quiz completion
+ * - Notifications on auto-integration
+ * - Audit log for integrated grades
  * 
  * @module quizGradeIntegrationService
  */
@@ -21,6 +25,25 @@ import { STORAGE_KEYS } from '../constants';
 interface QuizGradeIntegrationOptions {
   skipExisting: boolean;
   overwriteDuplicates: boolean;
+  autoIntegrate?: boolean;
+  minPassingScore?: number;
+}
+
+export interface QuizAutoIntegrationAudit {
+  id: string;
+  quizId: string;
+  quizTitle: string;
+  studentId: string;
+  studentName: string;
+  attemptNumber: number;
+  score: number;
+  maxScore: number;
+  percentage: number;
+  gradeId?: string;
+  status: 'success' | 'failed' | 'skipped';
+  reason?: string;
+  integratedAt: string;
+  triggeredBy: 'automatic' | 'manual';
 }
 
 interface IntegrationResult {
@@ -41,6 +64,8 @@ interface BatchIntegrationResult {
 const DEFAULT_OPTIONS: QuizGradeIntegrationOptions = {
   skipExisting: true,
   overwriteDuplicates: false,
+  autoIntegrate: true,
+  minPassingScore: 0,
 };
 
 /**
@@ -421,7 +446,268 @@ function getIntegrationStatus(): {
   };
 }
 
-export type { QuizGradeIntegrationOptions, IntegrationResult, BatchIntegrationResult };
+/**
+ * Save audit log entry for auto-integrated grades
+ * @param auditEntry - Audit entry to save
+ */
+function saveAuditLog(auditEntry: QuizAutoIntegrationAudit): void {
+  try {
+    const auditLogs = getAuditLogs();
+    auditLogs.push(auditEntry);
+    localStorage.setItem(
+      STORAGE_KEYS.QUIZ_GRADE_INTEGRATION_AUDIT,
+      JSON.stringify(auditLogs)
+    );
+    logger.debug('Audit log saved:', auditEntry);
+  } catch (error) {
+    logger.error('Failed to save audit log:', error);
+  }
+}
+
+/**
+ * Get audit logs for auto-integrated grades
+ * @returns Array of audit log entries
+ */
+function getAuditLogs(): QuizAutoIntegrationAudit[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.QUIZ_GRADE_INTEGRATION_AUDIT);
+    if (!stored) {
+      return [];
+    }
+    return JSON.parse(stored);
+  } catch (error) {
+    logger.error('Failed to load audit logs:', error);
+    return [];
+  }
+}
+
+/**
+ * Check if quiz meets auto-integration criteria
+ * @param quiz - Quiz to check
+ * @param attempt - Quiz attempt to check
+ * @returns Validation result
+ */
+function checkAutoIntegrationEligibility(
+  quiz: Quiz,
+  attempt: QuizAttempt
+): { eligible: boolean; reason?: string } {
+  if (!quiz.autoIntegration?.enabled) {
+    return { eligible: false, reason: 'Auto-integration disabled for quiz' };
+  }
+
+  const minScore = quiz.autoIntegration.minPassingScore ?? quiz.passingScore;
+  if (attempt.percentage < minScore) {
+    return {
+      eligible: false,
+      reason: `Score ${attempt.percentage}% below minimum ${minScore}%`,
+    };
+  }
+
+  if (!quiz.autoIntegration.includeEssays) {
+    const hasEssayQuestions = quiz.questions.some(q => q.type === 'essay');
+    if (hasEssayQuestions) {
+      return {
+        eligible: false,
+        reason: 'Essay questions require manual grading',
+      };
+    }
+  }
+
+  return { eligible: true };
+}
+
+/**
+ * Automatically integrate a quiz attempt on completion
+ * @param attempt - Quiz attempt to integrate
+ * @param quiz - Quiz metadata
+ * @param teacherId - Teacher's user ID
+ * @returns Integration result
+ */
+async function autoIntegrateQuizAttempt(
+  attempt: QuizAttempt,
+  quiz: Quiz,
+  teacherId: string
+): Promise<IntegrationResult> {
+  try {
+    const eligibility = checkAutoIntegrationEligibility(quiz, attempt);
+    
+    if (!eligibility.eligible) {
+      const auditEntry: QuizAutoIntegrationAudit = {
+        id: `audit_${Date.now()}`,
+        quizId: quiz.id,
+        quizTitle: quiz.title,
+        studentId: attempt.studentId,
+        studentName: attempt.studentName,
+        attemptNumber: attempt.attemptNumber,
+        score: attempt.score,
+        maxScore: attempt.maxScore,
+        percentage: attempt.percentage,
+        status: 'skipped',
+        reason: eligibility.reason,
+        integratedAt: new Date().toISOString(),
+        triggeredBy: 'automatic',
+      };
+      
+      saveAuditLog(auditEntry);
+      
+      return {
+        success: false,
+        message: `Auto-integration skipped: ${eligibility.reason}`,
+      };
+    }
+
+    const result = await integrateQuizAttempt(
+      attempt,
+      quiz,
+      teacherId,
+      DEFAULT_OPTIONS
+    );
+
+    if (result.success) {
+      const auditEntry: QuizAutoIntegrationAudit = {
+        id: `audit_${Date.now()}`,
+        quizId: quiz.id,
+        quizTitle: quiz.title,
+        studentId: attempt.studentId,
+        studentName: attempt.studentName,
+        attemptNumber: attempt.attemptNumber,
+        score: attempt.score,
+        maxScore: attempt.maxScore,
+        percentage: attempt.percentage,
+        gradeId: result.gradeId,
+        status: 'success',
+        integratedAt: new Date().toISOString(),
+        triggeredBy: 'automatic',
+      };
+      
+      saveAuditLog(auditEntry);
+
+      await unifiedNotificationManager.notifyGradeUpdate(
+        attempt.studentName,
+        quiz.subjectName || quiz.subjectId,
+        undefined,
+        attempt.score
+      );
+
+      logger.info(
+        `Auto-integrated quiz attempt: ${attempt.quizId} - ${attempt.studentName} (${attempt.percentage}%)`
+      );
+    }
+
+    return result;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Auto-integration failed:', error);
+    
+    const auditEntry: QuizAutoIntegrationAudit = {
+      id: `audit_${Date.now()}`,
+      quizId: quiz.id,
+      quizTitle: quiz.title,
+      studentId: attempt.studentId,
+      studentName: attempt.studentName,
+      attemptNumber: attempt.attemptNumber,
+      score: attempt.score,
+      maxScore: attempt.maxScore,
+      percentage: attempt.percentage,
+      status: 'failed',
+      reason: errorMessage,
+      integratedAt: new Date().toISOString(),
+      triggeredBy: 'automatic',
+    };
+    
+    saveAuditLog(auditEntry);
+
+    return {
+      success: false,
+      error: errorMessage,
+      message: `Auto-integration failed: ${errorMessage}`,
+    };
+  }
+}
+
+/**
+ * Retroactively integrate all pending quiz attempts (batch operation)
+ * @param teacherId - Teacher's user ID
+ * @param options - Integration options
+ * @returns Batch integration result
+ */
+async function retroactiveIntegration(
+  teacherId: string,
+  options: QuizGradeIntegrationOptions = DEFAULT_OPTIONS
+): Promise<BatchIntegrationResult> {
+  logger.info('Starting retroactive integration of pending quiz attempts...');
+  
+  const attempts = getQuizAttempts();
+  
+  if (attempts.length === 0) {
+    logger.info('No pending quiz attempts found');
+    return {
+      total: 0,
+      succeeded: 0,
+      failed: 0,
+      skipped: 0,
+      results: [],
+    };
+  }
+
+  const uniqueQuizIds = [...new Set(attempts.map(a => a.quizId))];
+  const quizzes = new Map<string, Quiz>();
+
+  for (const quizId of uniqueQuizIds) {
+    const quiz = getQuiz(quizId);
+    if (quiz) {
+      quizzes.set(quizId, quiz);
+    }
+  }
+
+  const results: IntegrationResult[] = [];
+  let succeeded = 0;
+  let failed = 0;
+  let skipped = 0;
+
+  for (const attempt of attempts) {
+    const quiz = quizzes.get(attempt.quizId);
+    
+    if (!quiz) {
+      results.push({
+        success: false,
+        error: `Quiz ${attempt.quizId} not found`,
+        message: `Quiz ${attempt.quizId} not found`,
+      });
+      failed++;
+      continue;
+    }
+
+    const result = await integrateQuizAttempt(attempt, quiz, teacherId, options);
+    results.push(result);
+
+    if (result.success) {
+      succeeded++;
+    } else if (result.message.includes('already exists')) {
+      skipped++;
+    } else {
+      failed++;
+    }
+  }
+
+  logger.info(
+    `Retroactive integration complete: ${succeeded} succeeded, ${failed} failed, ${skipped} skipped`
+  );
+
+  return {
+    total: attempts.length,
+    succeeded,
+    failed,
+    skipped,
+    results,
+  };
+}
+
+export type {
+  QuizGradeIntegrationOptions,
+  IntegrationResult,
+  BatchIntegrationResult,
+};
 export {
   integrateQuizAttempt,
   integrateQuizAttemptsBatch,
@@ -434,4 +720,9 @@ export {
   getQuiz,
   findExistingGrade,
   convertToGrade,
+  autoIntegrateQuizAttempt,
+  retroactiveIntegration,
+  getAuditLogs,
+  checkAutoIntegrationEligibility,
+  saveAuditLog,
 };

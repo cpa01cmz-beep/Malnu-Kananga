@@ -30,6 +30,7 @@ import { STORAGE_KEYS } from '../constants';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedStudentData } from '../services/offlineDataService';
 import { StudentPortalValidator, type CacheFreshnessInfo, type ValidationResult } from '../utils/studentPortalValidator';
+import { autoIntegrateQuizAttempt } from '../services/quizGradeIntegrationService';
 
 import ErrorMessage from './ui/ErrorMessage';
 import DashboardActionCard from './ui/DashboardActionCard';
@@ -86,10 +87,24 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
     return result.granted;
   };
 
-  const handleQuizSubmit = (attempt: QuizAttempt) => {
+  const handleQuizSubmit = async (attempt: QuizAttempt) => {
     logger.info('Quiz submitted:', attempt);
     onShowToast('Kuis berhasil dikirim!', 'success');
     setCurrentView('quiz-history');
+
+    try {
+      const quizzesStr = localStorage.getItem(STORAGE_KEYS.QUIZZES);
+      if (quizzesStr) {
+        const quizzes: Quiz[] = JSON.parse(quizzesStr);
+        const quiz = quizzes.find(q => q.id === attempt.quizId);
+        
+        if (quiz && quiz.autoIntegration?.enabled) {
+          await autoIntegrateQuizAttempt(attempt, quiz, quiz.teacherId);
+        }
+      }
+    } catch (error) {
+      logger.error('Failed to auto-integrate quiz attempt:', error);
+    }
   };
 
   const handleQuizCancel = () => {

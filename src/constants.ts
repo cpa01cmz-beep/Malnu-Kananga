@@ -162,6 +162,7 @@ export const STORAGE_KEYS = {
     QUIZ_ANALYTICS: (quizId: string) => `malnu_quiz_analytics_${quizId}`,
     QUIZ_GENERATION_CACHE: 'malnu_quiz_generation_cache',
     AI_FEEDBACK_CACHE: 'malnu_ai_feedback_cache',
+    QUIZ_GRADE_INTEGRATION_AUDIT: 'malnu_quiz_grade_integration_audit',
 
     // Messaging System (new)
     MESSAGES: 'malnu_messages',

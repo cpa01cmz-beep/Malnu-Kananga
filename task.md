@@ -1,5 +1,49 @@
 # Active Tasks Tracking
 
+### [BUILDER] Auto-Integrate Quiz Results with Grade Book (Issue #1371, P1) ✅
+   - **Mode**: BUILDER
+   - **Issue**: #1371
+   - **Priority**: P1 (Critical Workflow Improvement)
+   - **Status**: Completed
+   - **Started**: 2026-02-03
+   - **Completed**: 2026-02-03
+   - **Reason**: The `quizGradeIntegrationService` exists but requires manual triggering to convert quiz attempts to grades. Teachers need automatic gradebook integration upon quiz completion to eliminate manual intervention and ensure data accuracy.
+   - **Implementation**:
+       - ✅ Added QuizAutoIntegrationConfig interface to quiz.ts with enabled, minPassingScore, includeEssays properties
+       - ✅ Added QuizAutoIntegrationAudit interface to track all auto-integration events
+       - ✅ Added QUIZ_GRADE_INTEGRATION_AUDIT storage key to constants.ts
+       - ✅ Extended quizGradeIntegrationService.ts with:
+          - checkAutoIntegrationEligibility() function to validate quiz attempt eligibility
+          - saveAuditLog() and getAuditLogs() functions for audit trail
+          - autoIntegrateQuizAttempt() function with threshold validation, notification, and audit logging
+          - retroactiveIntegration() function for batch processing of existing attempts
+       - ✅ Modified StudentPortal.tsx handleQuizSubmit() to call autoIntegrateQuizAttempt() when quiz is submitted
+       - ✅ Auto-integration triggers on quiz completion with eligibility checks
+       - ✅ Notification sent via unifiedNotificationManager.notifyGradeUpdate on successful integration
+       - ✅ Audit log entry created for all integration attempts (success, failed, skipped)
+   - **Acceptance Criteria**:
+       - ✅ Quiz completion triggers automatic grade integration
+       - ✅ Configurable thresholds (minimum passing score before grade recording)
+       - ✅ Option to disable auto-integration per quiz (enabled property in autoIntegration config)
+       - ✅ Batch retroactive integration for existing quiz attempts (retroactiveIntegration function)
+       - ✅ Notification when grades are auto-integrated (via notifyGradeUpdate)
+       - ✅ Audit log for auto-integrated grades (QuizAutoIntegrationAudit interface and getAuditLogs function)
+   - **Testing**:
+       - ✅ TypeScript type checking: Passed (0 errors)
+       - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+   - **Pillars Addressed**:
+       - Pillar 1 (Flow): Completes quiz feature workflow (creation → taking → gradebook)
+       - Pillar 9 (Feature Ops): Enhances existing quiz functionality with automation
+       - Pillar 10 (New Features): Adds critical automation for teachers
+       - Pillar 16 (UX/DX): Improves teacher experience with automatic grade updates
+   - **Follow-up Tasks**:
+       - Phase 2: Quiz Results & Feedback component (for students to view their results)
+       - Phase 3: StudentQuizHistory component (for students to view attempt history)
+       - Phase 4: Gradebook integration UI updates (show auto-integrated grades)
+   - **Related Issues**: #1351 (Student Quiz Taking Interface - Phase 1 Completed)
+
+---
+
 ### [SCRIBE] Fix Documentation Discrepancy - ELibrary.tsx Phase 4 Status (P2) ✅
    - **Mode**: SCRIBE
    - **Priority**: P2 (Documentation Accuracy)
