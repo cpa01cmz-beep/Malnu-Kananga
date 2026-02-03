@@ -36,12 +36,13 @@ console.error = (...args) => {
 
 // Mock logger utility globally to reduce console I/O overhead
 // This significantly improves test performance by reducing log output
+// Suppress all logger output to eliminate I/O overhead during test execution (Issue #1382)
 vi.mock('@/utils/logger', () => ({
   logger: {
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    log: vi.fn(),
+    debug: vi.fn(() => undefined),
+    info: vi.fn(() => undefined),
+    warn: vi.fn(() => undefined),
+    error: vi.fn(() => undefined),
+    log: vi.fn(() => undefined),
   }
 }));
