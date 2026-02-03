@@ -42,7 +42,6 @@
 
 ---
 
-<<<<<<< HEAD
 ### [SANITIZER] Fix Test Suite Bugs - React Testing Library Warnings (Issue #1382, P1) ✅
     - **Mode**: SANITIZER
     - **Issue**: #1382
