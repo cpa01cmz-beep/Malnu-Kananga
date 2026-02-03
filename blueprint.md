@@ -1,11 +1,12 @@
    # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.9.1
-              **Last Updated**: 2026-02-03 (geminiService.ts Refactoring - Phase 3 Complete)
+ **Version**: 3.9.2
+               **Last Updated**: 2026-02-03 (Closed Duplicate GitHub Issue #1359 - Vitest poolOptions Already Fixed in #1382)
 
 ---
 
 ### Recent Changes (2026-02-03)
+    - **[SANITIZER] Close Duplicate GitHub Issue #1359 - Vitest poolOptions Already Fixed in #1382** ✅: Closed GitHub Issue #1359 ([CHORE] Fix Vitest poolOptions Deprecation Warning) as duplicate of Issue #1382; Verified vite.config.ts already uses Vitest 4 top-level options (lines 196-198: pool, minThreads, maxThreads); Confirmed comment on line 195 states "Vitest 4: poolOptions moved to top-level options"; Issue #1382 completed the fix on 2026-02-03T14:54:02Z; Closed issue #1359 with detailed closure comment referencing #1382 and PR #1384; Eliminates duplicate open issue; GitHub issue tracker now accurately reflects that Vitest poolOptions fix is complete; Reduces confusion for future contributors; All TypeScript type checking: Passed (0 errors); All ESLint linting: Passed (0 errors, 0 warnings). (Pillars 8: Documentation, 16: UX/DX)
     - **[SCRIBE] Resolve Merge Conflict in task.md - Remove Erroneous Conflict Marker** ✅: Fixed partial merge conflict in task.md where only '<<<<<<< HEAD' marker was present without proper conflict resolution markers ('=======', '>>>>>>> other_branch'); This appears to be an incomplete/conflicted commit that was accidentally pushed to main branch; Removed erroneous '<<<<<<< HEAD' marker from line 45 of task.md; Fixed separator format between Issue #1381 and Issue #1382 entries; Verified git status shows clean working tree after fix; All TypeScript type checking: Passed (0 errors); All ESLint linting: Passed (0 errors, 0 warnings). Restores task.md to valid state for accurate task tracking; Eliminates confusion when reading task.md for next task selection. (Pillars 8: Documentation, 16: UX/DX)
 
        - **[SANITIZER] Fix Test Suite Bugs - Infinite Loops & Console Error Usage (Issue #1381, P2)** ✅: Fixed StudentPortal.tsx console.error (line 104 → logger.error); Fixed UserProfileEditor.test.tsx mock stability (object references recreated every call → stable mocks); Fixed EnhancedMaterialSharing.tsx infinite loop (permissionSummary recalculation + fetch functions in deps → useMemo + useRef initialization guard); Added eslint-disable comment for intentional exclusion; Test improvements: 5/17 tests now pass (was 3/17 before fixes), no more 'Maximum update depth exceeded' errors; All TypeScript type checking: 0 errors; All ESLint linting: 0 errors, 0 warnings; Fixed infinite loops, standardized logging, improved test reliability. (Pillars 3: Stability, 7: Debug, 15: Dynamic Coding)
