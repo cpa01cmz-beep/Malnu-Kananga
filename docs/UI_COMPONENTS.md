@@ -1,6 +1,6 @@
 # UI Components Documentation
 
-**Status**: ✅ COMPLETED (41 of 41 components documented - 100%)
+**Status**: ✅ COMPLETED (43 of 43 components documented - 100%)
 
 **Last Updated**: 2026-01-16
 **Last Updated**: 2026-01-16
@@ -15744,13 +15744,523 @@ import FileInput from './components/ui/FileInput';
 **Total lines added**: ~6400 lines of comprehensive documentation (15 components)
 **Components remaining**: 0 components
 
-**ALL 41 UI COMPONENTS NOW DOCUMENTED!**
+**ALL 43 UI COMPONENTS NOW DOCUMENTED!**
+ 
+---
+ 
+## FileUploader Component
+
+**Location**: `src/components/ui/FileUploader.tsx`
+
+A comprehensive file uploader component with drag-and-drop, progress tracking, and file management.
+
+### Features
+
+- **3 Variants**: `default`, `compact`, `minimal`
+- **3 Sizes**: `sm`, `md`, `lg`
+- **Drag & Drop**: Support for file drag and drop
+- **Progress Tracking**: Real-time upload progress with speed and time remaining
+- **File Management**: List of uploaded files with delete capability
+- **File Validation**: Size and type validation
+- **Preview Support**: Image preview for uploaded files
+- **Accessibility**: Full ARIA support, keyboard navigation
+- **Dark Mode**: Consistent styling across light and dark themes
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onFileUploaded` | `(file: FileUploadResponse) => void` | `undefined` | Callback when file is successfully uploaded |
+| `onFileDeleted` | `(key: string) => void` | `undefined` | Callback when file is deleted |
+| `acceptedFileTypes` | `string` | `'.pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.mp4'` | Accepted file types |
+| `maxSizeMB` | `number` | `50` | Maximum file size in MB |
+| `uploadPath` | `string` | `undefined` | Upload path for storage API |
+| `existingFiles` | `UploadedFile[]` | `[]` | List of existing uploaded files |
+| `maxFiles` | `number` | `10` | Maximum number of files |
+| `disabled` | `boolean` | `false` | Disable uploader |
+| `showPreview` | `boolean` | `true` | Show file preview |
+| `allowMultiple` | `boolean` | `true` | Allow multiple file selection |
+| `dragAndDrop` | `boolean` | `true` | Enable drag and drop |
+| `variant` | `'default' \| 'compact' \| 'minimal'` | `'default'` | Visual style variant |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Component size |
+| `className` | `string` | `''` | Additional CSS classes |
+| `allowedTypes` | `string[]` | `undefined` | Array of allowed MIME types |
+
+### Variants
+
+#### Default Variant
+
+Full-featured uploader with drag-and-drop and file list.
+
+```tsx
+import FileUploader from './ui/FileUploader';
+
+<FileUploader
+  onFileUploaded={handleUpload}
+  onFileDeleted={handleDelete}
+  acceptedFileTypes=".pdf,.docx"
+  maxSizeMB={10}
+/>
+```
+
+#### Compact Variant
+
+Smaller layout for space-constrained interfaces.
+
+```tsx
+<FileUploader
+  variant="compact"
+  onFileUploaded={handleUpload}
+  maxSizeMB={5}
+/>
+```
+
+#### Minimal Variant
+
+Simplest layout with minimal UI.
+
+```tsx
+<FileUploader
+  variant="minimal"
+  onFileUploaded={handleUpload}
+  dragAndDrop={false}
+/>
+```
+
+### Upload Progress
+
+The component displays real-time upload progress with:
+- Progress bar showing percentage
+- Upload speed (bytes/second)
+- Estimated time remaining
+- Bytes uploaded so far
+
+```tsx
+<FileUploader
+  onFileUploaded={handleUpload}
+  maxSizeMB={20}
+  uploadPath="documents"
+/>
+```
+
+### File Management
+
+Uploaded files are displayed with:
+- File name and size
+- Upload date
+- Preview image (if image file)
+- Delete button
+
+```tsx
+const existingFiles: UploadedFile[] = [
+  {
+    id: '1',
+    key: 'file-key',
+    name: 'document.pdf',
+    size: 1024000,
+    type: 'application/pdf',
+    uploadDate: '2026-01-15T10:30:00Z'
+  }
+];
+
+<FileUploader
+  existingFiles={existingFiles}
+  onFileUploaded={handleUpload}
+  onFileDeleted={handleDelete}
+/>
+```
+
+### Accessibility Features
+
+1. **ARIA Live Regions**: Upload status is announced to screen readers
+2. **Drag & Drop ARIA**: Proper ARIA attributes for drag-drop zones
+3. **Keyboard Navigation**: File input is keyboard accessible
+4. **Focus Management**: Clear focus indication
+5. **Error Notifications**: Errors are announced with `role="alert"`
+
+### Dark Mode
+
+All variants automatically support dark mode:
+- Background: `bg-white` → `dark:bg-neutral-800`
+- Borders: `border-neutral-200` → `dark:border-neutral-700`
+- Text: Proper dark mode text colors
+- Progress bar: Adapts to dark theme
+
+### Real-World Examples
+
+#### Document Upload
+
+```tsx
+function DocumentUpload() {
+  const [files, setFiles] = useState<UploadedFile[]>([]);
+
+  const handleUpload = (response: FileUploadResponse) => {
+    setFiles([...files, {
+      id: response.id,
+      key: response.key,
+      name: response.name,
+      size: response.size,
+      type: response.type,
+      uploadDate: new Date().toISOString()
+    }]);
+  };
+
+  return (
+    <FileUploader
+      onFileUploaded={handleUpload}
+      existingFiles={files}
+      acceptedFileTypes=".pdf,.doc,.docx"
+      maxSizeMB={10}
+      uploadPath="documents"
+    />
+  );
+}
+```
+
+#### Image Upload with Preview
+
+```tsx
+<FileUploader
+  acceptedFileTypes=".jpg,.jpeg,.png"
+  maxSizeMB={5}
+  uploadPath="images"
+  showPreview={true}
+  variant="compact"
+/>
+```
+
+#### Multi-File Upload
+
+```tsx
+<FileUploader
+  allowMultiple={true}
+  maxFiles={10}
+  maxSizeMB={20}
+  uploadPath="materials"
+  dragAndDrop={true}
+/>
+```
+
+### Performance Considerations
+
+The FileUploader component is optimized using:
+- Functional component with hooks
+- AbortController for upload cancellation
+- Efficient file validation
+- Progress tracking without blocking UI
+- Cleanup on unmount
+
+### Migration Guide
+
+**Before:**
+```tsx
+<input
+  type="file"
+  multiple
+  onChange={handleFiles}
+  accept=".pdf"
+/>
+```
+
+**After:**
+```tsx
+import FileUploader from './ui/FileUploader';
+
+<FileUploader
+  allowMultiple={true}
+  onFileUploaded={handleUpload}
+  acceptedFileTypes=".pdf"
+/>
+```
 
 ---
 
-## Summary of All 41 UI Components
+## OfflineBanner Component
 
-### Form Components (8)
+**Location**: `src/components/ui/OfflineBanner.tsx`
+
+A banner component for displaying offline/slow network status with retry and sync capabilities.
+
+### Features
+
+- **3 Modes**: `offline`, `slow`, `both`
+- **Retry Support**: Retry button for connection issues
+- **Sync Status**: Display sync status with pending actions
+- **Cached Data Info**: Show cached data availability
+- **Accessibility**: Full ARIA support with live regions
+- **Dark Mode**: Consistent styling across light and dark themes
+- **Indonesian Localization**: Built-in Indonesian messages
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `mode` | `'offline' \| 'slow' \| 'both'` | Required | Banner mode (offline/slow/both) |
+| `show` | `boolean` | Required | Whether to show banner |
+| `onRetry` | `() => void` | `undefined` | Callback when retry button is clicked |
+| `isRetryLoading` | `boolean` | `false` | Loading state for retry button |
+| `syncStatus` | `object` | `undefined` | Sync status information |
+| `onSync` | `() => void` | `undefined` | Callback when sync button is clicked |
+| `isSyncLoading` | `boolean` | `false` | Loading state for sync button |
+| `cachedDataAvailable` | `boolean` | `false` | Whether cached data is available |
+| `cachedDataInfo` | `string` | `undefined` | Information about cached data |
+| `className` | `string` | `''` | Additional CSS classes |
+
+### SyncStatus Interface
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `needsSync` | `boolean` | Whether sync is needed |
+| `pendingActions` | `number` | Number of pending sync actions |
+| `lastSync` | `number` | Timestamp of last sync |
+
+### Modes
+
+#### Offline Mode
+
+Banner shown when user is offline.
+
+```tsx
+import OfflineBanner from './ui/OfflineBanner';
+
+<OfflineBanner
+  mode="offline"
+  show={isOffline}
+  onRetry={handleRetry}
+  isRetryLoading={isRetrying}
+/>
+```
+
+#### Slow Mode
+
+Banner shown when connection is slow.
+
+```tsx
+<OfflineBanner
+  mode="slow"
+  show={isSlow}
+  onRetry={handleRetry}
+  isRetryLoading={isRetrying}
+/>
+```
+
+#### Both Mode
+
+Banner shown for both offline and slow conditions.
+
+```tsx
+<OfflineBanner
+  mode="both"
+  show={isOffline || isSlow}
+  onRetry={handleRetry}
+  isRetryLoading={isRetrying}
+/>
+```
+
+### Sync Status
+
+Display sync status with pending actions and last sync time.
+
+```tsx
+<OfflineBanner
+  mode="offline"
+  show={isOffline}
+  syncStatus={{
+    needsSync: true,
+    pendingActions: 5,
+    lastSync: Date.now() - 3600000
+  }}
+  onSync={handleSync}
+  isSyncLoading={isSyncing}
+  cachedDataAvailable={true}
+  cachedDataInfo="Data tersimpan dari jam 14:30"
+/>
+```
+
+### Cached Data Information
+
+Show cached data availability and information.
+
+```tsx
+<OfflineBanner
+  mode="offline"
+  show={isOffline}
+  cachedDataAvailable={true}
+  cachedDataInfo="Anda dapat mengakses 30 materi offline"
+/>
+```
+
+### Accessibility Features
+
+1. **ARIA Live Regions**: `role="alert"` and `aria-live="polite"` for announcements
+2. **Icon Accessibility**: Icons are hidden with `aria-hidden="true"`
+3. **Focus Management**: Buttons are keyboard accessible with visible focus
+4. **Screen Reader Support**: All messages are announced to screen readers
+
+### Dark Mode
+
+All variants automatically support dark mode:
+- Error (offline): `bg-red-50` → `dark:bg-red-900/20`
+- Warning (slow): `bg-yellow-50` → `dark:bg-yellow-900/20`
+- Info: `bg-blue-50` → `dark:bg-blue-900/20`
+- Proper text colors for both themes
+
+### Real-World Examples
+
+#### Offline Detection
+
+```tsx
+function App() {
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return (
+    <div>
+      <OfflineBanner
+        mode="offline"
+        show={isOffline}
+        onRetry={() => window.location.reload()}
+      />
+      {/* App content */}
+    </div>
+  );
+}
+```
+
+#### Slow Connection Detection
+
+```tsx
+function App() {
+  const [isSlow, setIsSlow] = useState(false);
+
+  const checkConnectionSpeed = async () => {
+    const start = Date.now();
+    await fetch('/api/health');
+    const duration = Date.now() - start;
+    setIsSlow(duration > 3000);
+  };
+
+  useEffect(() => {
+    checkConnectionSpeed();
+    const interval = setInterval(checkConnectionSpeed, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div>
+      <OfflineBanner
+        mode="slow"
+        show={isSlow}
+      />
+      {/* App content */}
+    </div>
+  );
+}
+```
+
+#### Offline with Sync
+
+```tsx
+function App() {
+  const [isOffline, setIsOffline] = useState(false);
+  const [syncStatus, setSyncStatus] = useState({
+    needsSync: true,
+    pendingActions: 3,
+    lastSync: Date.now() - 7200000
+  });
+
+  const handleSync = async () => {
+    await syncPendingActions();
+    setSyncStatus({
+      needsSync: false,
+      pendingActions: 0,
+      lastSync: Date.now()
+    });
+  };
+
+  return (
+    <div>
+      <OfflineBanner
+        mode="offline"
+        show={isOffline}
+        syncStatus={syncStatus}
+        onSync={handleSync}
+        isSyncLoading={isSyncing}
+        cachedDataAvailable={true}
+        cachedDataInfo="3 materi tersimpan offline"
+      />
+      {/* App content */}
+    </div>
+  );
+}
+```
+
+### Performance Considerations
+
+The OfflineBanner component is optimized using:
+- Functional component with hooks
+- Conditional rendering (returns null when not showing)
+- Minimal re-renders
+- CSS-only styling and animations
+- Efficient state management
+
+### Migration Guide
+
+**Before:**
+```tsx
+{isOffline && (
+  <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+    <p>Anda sedang offline</p>
+    <button onClick={handleRetry}>Coba Lagi</button>
+  </div>
+)}
+```
+
+**After:**
+```tsx
+import OfflineBanner from './ui/OfflineBanner';
+
+<OfflineBanner
+  mode="offline"
+  show={isOffline}
+  onRetry={handleRetry}
+/>
+```
+
+**Benefits:**
+- ✅ Consistent styling across application
+- ✅ Built-in retry and sync functionality
+- ✅ Cached data information display
+- ✅ Improved accessibility with proper ARIA
+- ✅ Dark mode support
+- ✅ Indonesian localization
+
+### Future Enhancements
+
+Potential improvements to consider:
+- Auto-dismiss timer
+- Multiple connection quality levels
+- Network speed indicator
+- Offline action queue display
+- Estimated time until reconnection
+
+---
+
+## Summary of All 43 UI Components
+
+### Form Components (9)
 1. ✅ FileInput - File input with 3 sizes, 3 states, accessibility
 2. ✅ Input - Text input with 3 sizes, 3 states, 6 input masks, validation
 3. ✅ Select - Dropdown with 3 sizes, 3 states, placeholder support
@@ -15759,6 +16269,7 @@ import FileInput from './components/ui/FileInput';
 6. ✅ Toggle - Toggle switch with 3 sizes, 6 colors, 3 states
 7. ✅ SearchInput - Search input with icon, 3 sizes, 3 states
 8. ✅ FormGrid - Responsive grid for forms, 4 columns, 3 gaps
+9. ✅ FileUploader - Full-featured uploader with drag-drop, progress tracking, file management
 
 ### Button Components (5)
 9. ✅ Button - Primary button with 5 variants, 5 sizes, loading state
@@ -15792,33 +16303,36 @@ import FileInput from './components/ui/FileInput';
 29. ✅ Tab - Tab with 3 variants (pill/border/icon), 6 colors, keyboard nav
 30. ✅ Toast - Toast notification with 3 types, auto-dismissal, pause on hover
 
+### Status Components (1)
+31. ✅ OfflineBanner - Offline/slow network banner with retry, sync, cached data info
+
 ### Navigation Components (1)
-31. ✅ Pagination - Pagination with 3 variants, smart page numbering, items per page
+32. ✅ Pagination - Pagination with 3 variants, smart page numbering, items per page
 
 ### Loading Components (5)
-32. ✅ LoadingState - Loading state with EmptyState, ErrorState, 3 sizes
-33. ✅ LoadingSpinner - Spinner with 3 sizes, 4 colors, optional text
-34. ✅ SuspenseLoading - Suspense loading with skeleton patterns
-35. ✅ LoadingOverlay - Overlay with 4 sizes, 3 variants, progress bar
-36. ✅ Skeleton - Skeleton with 3 variants (text/rectangular/circular), 2 animations
+33. ✅ LoadingState - Loading state with EmptyState, ErrorState, 3 sizes
+34. ✅ LoadingSpinner - Spinner with 3 sizes, 4 colors, optional text
+35. ✅ SuspenseLoading - Suspense loading with skeleton patterns
+36. ✅ LoadingOverlay - Overlay with 4 sizes, 3 variants, progress bar
+37. ✅ Skeleton - Skeleton with 3 variants (text/rectangular/circular), 2 animations
 
 ### Progress Components (1)
-37. ✅ ProgressBar - Progress bar with 4 sizes, 12 colors, 3 variants (default/striped/animated)
+38. ✅ ProgressBar - Progress bar with 4 sizes, 12 colors, 3 variants (default/striped/animated)
 
 ### Utility Components (4)
-38. ✅ PageHeader - Page header with 3 sizes, back button, actions
-39. ✅ ErrorMessage - Error message with 2 variants (inline/card)
-40. ✅ PDFExportButton - PDF export button with loading state
-41. ✅ FormGrid - Responsive form grid with 4 columns, 3 gaps
+39. ✅ PageHeader - Page header with 3 sizes, back button, actions
+40. ✅ ErrorMessage - Error message with 2 variants (inline/card)
+41. ✅ PDFExportButton - PDF export button with loading state
+42. ✅ FormGrid - Responsive form grid with 4 columns, 3 gaps
 
 **Legacy Components**
 - ❌ FileUpload - Legacy component (use FileInput instead)
 
 ---
 
-**Documentation Complete**: 100% (41/41 components)
+**Documentation Complete**: 100% (43/43 components)
 **Total Documentation Lines**: ~17,600 lines
-**Last Updated**: 2026-01-16
+**Last Updated**: 2026-02-03
 **Completed By**: Lead Autonomous Engineer (SCRIBE MODE)
 
 ---
