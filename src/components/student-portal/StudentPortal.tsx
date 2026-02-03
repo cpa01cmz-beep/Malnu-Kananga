@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserExtraRole } from '../../types';
 import { useNetworkStatus, getSlowConnectionMessage } from '../../utils/networkStatus';
+import { logger } from '../../utils/logger';
 import { usePushNotifications } from '../../hooks/useUnifiedNotifications';
 import { useOfflineDataService } from '../../services/offlineDataService';
 import { useDashboardVoiceCommands } from '../../hooks/useDashboardVoiceCommands';
@@ -101,7 +102,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
           );
         }
       } catch (error) {
-        console.error('Failed to initialize student notifications:', error);
+        logger.error('Failed to initialize student notifications', error);
       }
     };
 

@@ -7,25 +7,33 @@ import { usersAPI } from '../../services/apiService';
 
 vi.mock('../../services/authService');
 vi.mock('../../services/apiService');
+const mockUseCanAccess = {
+  user: { id: 'user-1', role: 'student', name: 'Test User', email: 'test@example.com' },
+  userRole: 'student',
+  userExtraRole: null,
+  canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: 'user.update' })),
+  canAccessAny: vi.fn(() => true),
+  canAccessResource: vi.fn(() => true),
+  userPermissions: [],
+  userPermissionIds: [],
+};
+
+const mockHandleAsyncError = vi.fn((fn) => fn());
+const mockClearError = vi.fn();
+const mockUseErrorHandler = {
+  errorState: { hasError: false, appError: null, feedback: null },
+  handleAsyncError: mockHandleAsyncError,
+  clearError: mockClearError,
+  handleError: vi.fn(),
+  retryWithAction: vi.fn()
+};
+
 vi.mock('../../hooks/useCanAccess', () => ({
-  useCanAccess: () => ({
-    user: { id: 'user-1', role: 'student', name: 'Test User', email: 'test@example.com' },
-    userRole: 'student',
-    userExtraRole: null,
-    canAccess: vi.fn(() => ({ canAccess: true, requiredPermission: 'user.update' })),
-    canAccessAny: vi.fn(() => true),
-    canAccessResource: vi.fn(() => true),
-    userPermissions: [],
-    userPermissionIds: [],
-  })
+  useCanAccess: () => mockUseCanAccess
 }));
 
 vi.mock('../../hooks/useErrorHandler', () => ({
-  useErrorHandler: () => ({
-    errorState: { hasError: false, feedback: null },
-    handleAsyncError: vi.fn((fn) => fn()),
-    clearError: vi.fn()
-  })
+  useErrorHandler: () => mockUseErrorHandler
 }));
 
 vi.mock('../../services/unifiedNotificationManager', () => ({
