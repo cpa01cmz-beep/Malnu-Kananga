@@ -66,7 +66,10 @@
          - [ ] Run typecheck and lint
          - [ ] Verify tests pass
 
-      **Phase 2: StudentPortal.tsx** (4-5 hours) - NOT STARTED
+       **Phase 2: StudentPortal.tsx** (4-5 hours) - DEFERRED
+          - Reason: JSX complexity in orchestrator requires significant refactoring to avoid breaking changes
+          - Recommendation: Defer to dedicated effort with proper test coverage
+       - [ ] Phase 2: StudentPortal.tsx (1,089 lines) - DEFERRED
          - [ ] Create `src/components/student-portal/` directory
          - [ ] Extract StudentSchedule.tsx module
          - [ ] Extract StudentELibrary.tsx module
@@ -81,6 +84,10 @@
          - [ ] Verify tests pass
 
       **Phase 3: geminiService.ts** (4-6 hours) - NOT STARTED
+       **Phase 3: geminiService.ts** (4-6 hours) - NOT STARTED
+       - [ ] Phase 3: geminiService.ts (1,053 lines) - DEFERRED
+          - Reason: Similar complexity concerns as Phase 2; modularization requires careful import handling
+          - Recommendation: Create dedicated issue for AI service refactoring with test-first approach
          - [ ] Create `src/services/ai/` directory
          - [ ] Extract geminiChat.ts module
          - [ ] Extract geminiAnalysis.ts module
