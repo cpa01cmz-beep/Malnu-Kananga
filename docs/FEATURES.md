@@ -1,9 +1,9 @@
 # Feature Matrix
 
- **Created**: 2025-01-01
- **Last Updated**: 2026-01-22
- **Version**: 3.2.0
- **Status**: Active
+  **Created**: 2025-01-01
+  **Last Updated**: 2026-02-03
+  **Version**: 3.8.6
+  **Status**: Active
 
 Feature availability by user role.
 
@@ -14,16 +14,24 @@ Feature availability by user role.
 | **Landing Page Access** | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **AI Chat Assistant** | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Portal Dashboard** | ❌ | ✅ | ✅ | ✅ | ✅ |
-| **Class Schedule** | ❌ | ✅ | ❌ | ✅ | ✅ |
-| **Grade Input** | ❌ | ✅ (View) | ✅ (Active) | ✅ (View) | ❌ |
+| **Class Schedule** | ❌ | ✅ | ✅ | ✅ | ✅ |
+| **Grade Input** | ❌ | ✅ (View) | ✅ (Active) | ✅ (View) | ✅ (View) |
 | **Class Advisor** | ❌ | ❌ | ✅ (Active) | ❌ | ❌ |
 | **Material Upload** | ❌ | ❌ | ✅ (Active) | ❌ | ❌ |
-| **E-Library** | ❌ | ✅ (Download) | ❌ | ❌ | ❌ |
+| **E-Library** | ❌ | ✅ (Download) | ✅ (Upload/Manage) | ✅ | ✅ (Download) |
 | **PPDB Online** | ✅ (Register) | ❌ | ❌ | ✅ (Manage) | ❌ |
 | **AI Site Editor** | ❌ | ❌ | ❌ | ✅ | ❌ |
 | **User Management** | ❌ | ❌ | ❌ | ✅ | ❌ |
 | **Inventory Management**| ❌ | ❌ | ✅ (**Staff Role**) | ❌ | ❌ |
 | **OSIS Events** | ❌ | ✅ (**OSIS Role**) | ❌ | ❌ | ❌ |
+| **Assignments** | ❌ | ✅ (View/Submit) | ✅ (Create/Grade) | ✅ (View) | ✅ (View) |
+| **Learning Modules** | ❌ | ✅ | ❌ | ❌ | ✅ |
+| **Student Insights** | ❌ | ✅ | ❌ | ✅ | ✅ (Child's Data) |
+| **Quiz** | ❌ | ✅ (Take) | ✅ (Create) | ✅ (View) | ✅ (Child's Results) |
+| **Meetings** | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Messaging** | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Payments** | ❌ | ❌ | ❌ | ✅ | ✅ (Pay) |
+| **Notification Settings** | ❌ | ✅ | ✅ | ✅ | ✅ |
 | **Attendance** | ❌ | ✅ (View) | ✅ (Input) | ✅ (View) | ✅ (View) |
 | **Notifications** | ✅ | ✅ | ✅ | ✅ | ✅ |
 | **Presence** | ❌ | ✅ (View) | ✅ (Input) | ✅ (View) | ✅ (View) |
@@ -102,8 +110,33 @@ The system now supports **Extra Roles** for Teachers and Students with special r
 **Material Upload & E-Library**
 - Upload teaching materials by teachers
 - Material categorization by subject
-- Student download access
+- Student and parent download access
 - File storage on Cloudflare R2
+
+**Assignments**
+- View and submit assignments for students
+- Create and grade assignments for teachers
+- Track assignment status (Pending/Submitted/Graded)
+- Deadline notifications and reminders
+
+**Learning Modules**
+- Access structured learning materials
+- Organized by subject and topic
+- Progress tracking per module
+- Interactive content support
+
+**Student Insights**
+- Personal learning analytics
+- Performance trends and visualizations
+- Subject-wise progress reports
+- AI-powered learning recommendations
+
+**Quiz**
+- Take quizzes for students (timer, auto-save)
+- Create quizzes for teachers with AI generation
+- Multiple question types (Multiple Choice, True/False, Short Answer, Essay)
+- Automatic grade integration to gradebook
+- Quiz history and results viewing
 
 ### Administrative Features
 
@@ -137,6 +170,36 @@ The system now supports **Extra Roles** for Teachers and Students with special r
 - Event status tracking
 - Upcoming and completed events view
 - Event announcements with notifications
+
+### Communication & Parent Features
+
+**Meetings**
+- Schedule parent-teacher meetings
+- View teacher availability slots
+- Meeting calendar integration
+- Automated meeting reminders
+- Online meeting support
+
+**Messaging**
+- Direct messaging between parents and teachers
+- Group communication channels
+- Message history and search
+- File sharing in messages
+- Real-time message delivery
+
+**Payments**
+- View payment history and outstanding fees
+- Make online payments via multiple methods (VA, Bank Transfer, E-Wallet, QRIS, Credit Card)
+- Payment status tracking
+- Automatic payment reminders
+- Receipt generation and download
+
+**Notification Settings**
+- Configure notification preferences per type
+- Set quiet hours for notifications
+- Manage push, email, and voice notification channels
+- Role-based notification filtering
+- Notification history viewing
 
 ### Communication & Notifications
 
