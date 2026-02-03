@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import AssignmentGrading from '../AssignmentGrading';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../../services/apiService';
-import { generateAssignmentFeedback } from '../../services/geminiService';
+import { generateAssignmentFeedback } from '../../services/ai';
 import { Assignment, AssignmentSubmission, User, AssignmentType, AssignmentStatus } from '../../types';
 import { STORAGE_KEYS } from '../../constants';
 

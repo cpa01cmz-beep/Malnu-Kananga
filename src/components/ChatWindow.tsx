@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews, VoiceCommand } from '../types';
 import { Sender } from '../types';
-import { getAIResponseStream, initialGreeting } from '../services/geminiService';
+import { getAIResponseStream, initialGreeting } from '../services/ai';
 import { CloseIcon } from './icons/CloseIcon';
 import { BrainIcon } from './icons/BrainIcon';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';

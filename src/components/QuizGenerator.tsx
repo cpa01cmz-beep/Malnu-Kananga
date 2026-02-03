@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { ELibrary, Quiz, QuizQuestion } from '../types';
 import { QuizDifficulty, QuizQuestionType } from '../types';
-import { generateQuiz } from '../services/geminiService';
+import { generateQuiz } from '../services/ai';
 import { eLibraryAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';

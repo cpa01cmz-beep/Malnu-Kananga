@@ -1,5 +1,5 @@
 import type { Grade, Attendance } from '../types';
-import { analyzeStudentPerformance } from './geminiService';
+import { analyzeStudentPerformance } from './ai';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
 

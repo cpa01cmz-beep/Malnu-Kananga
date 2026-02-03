@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../services/apiService';
-import { generateAssignmentFeedback } from '../services/geminiService';
+import { generateAssignmentFeedback } from '../services/ai';
 import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { useCanAccess } from '../hooks/useCanAccess';

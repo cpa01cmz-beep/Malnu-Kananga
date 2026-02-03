@@ -35,7 +35,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
 import ProgressBar from './ui/ProgressBar';
 import { CHART_COLORS } from '../config/chartColors';
-import { analyzeClassPerformance } from '../services/geminiService';
+import { analyzeClassPerformance } from '../services/ai';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 

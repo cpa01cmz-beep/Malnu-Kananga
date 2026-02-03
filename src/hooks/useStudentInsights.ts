@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { analyzeStudentPerformance } from '../services/geminiService';
+import { analyzeStudentPerformance } from '../services/ai';
 import { gradesAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';

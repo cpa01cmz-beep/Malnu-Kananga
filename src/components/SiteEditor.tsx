@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { ChatMessage, FeaturedProgram, LatestNews } from '../types';
 import { Sender } from '../types';
 import Button from './ui/Button';
-import { getAIEditorResponse } from '../services/geminiService';
+import { getAIEditorResponse } from '../services/ai';
 import { validateAICommand, type AuditLogEntry } from '../utils/aiEditorValidator';
 import { CloseIcon } from './icons/CloseIcon';
 import { SparklesIcon } from './icons/SparklesIcon';

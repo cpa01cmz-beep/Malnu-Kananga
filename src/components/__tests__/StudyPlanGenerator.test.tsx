@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import StudyPlanGenerator from '../StudyPlanGenerator';
 import * as apiService from '../../services/apiService';
-import * as geminiService from '../../services/geminiService';
+import * as geminiService from '../../services/ai';
 import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');

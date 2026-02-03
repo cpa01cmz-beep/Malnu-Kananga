@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QuizGenerator } from '../QuizGenerator';
-import * as geminiService from '../../services/geminiService';
+import * as geminiService from '../../services/ai';
 import * as apiService from '../../services/apiService';
 import type { ELibrary } from '../../types';
 

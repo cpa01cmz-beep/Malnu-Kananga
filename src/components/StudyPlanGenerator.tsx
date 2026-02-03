@@ -5,7 +5,7 @@ import Card from './ui/Card';
 import { EmptyState } from './ui/LoadingState';
 import Badge from './ui/Badge';
 import { authAPI, gradesAPI, attendanceAPI, subjectsAPI, eLibraryAPI } from '../services/apiService';
-import { generateStudyPlan } from '../services/geminiService';
+import { generateStudyPlan } from '../services/ai';
 import { studyPlanMaterialService } from '../services/studyPlanMaterialService';
 import type {
   StudyPlan,
