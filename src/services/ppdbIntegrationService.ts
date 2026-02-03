@@ -12,7 +12,7 @@ import { unifiedNotificationManager } from './notifications/unifiedNotificationM
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS } from '../constants';
-import type { PPDBRegistrant, Student, User } from '../types';
+import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
  * PPDB Pipeline Status - Extended admission pipeline
@@ -269,7 +269,9 @@ class PPDBIntegrationService {
       };
 
       // Execute pipeline actions based on new status
-      if (newStatus === 'enrolled') {
+      if (newStatus === 'accepted') {
+        await this.executeAutoCreationActions(registrant, updatedPipelineState);
+      } else if (newStatus === 'enrolled') {
         await this.executeEnrollmentActions(registrant, updatedPipelineState);
       }
 
@@ -286,6 +288,101 @@ class PPDBIntegrationService {
       });
     } catch (error) {
       logger.error('Failed to transition pipeline status:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Execute auto-creation actions when status becomes "accepted"
+   * Creates parent account and student record if auto-creation is enabled
+   */
+  private async executeAutoCreationActions(
+    registrant: PPDBRegistrant,
+    pipelineState: PPDBPipelineState
+  ): Promise<void> {
+    try {
+      const config = this.getAutoCreationConfig();
+
+      if (!config.enabled || !config.autoCreateOnApproval) {
+        logger.info('Auto-creation disabled, skipping', { registrantId: registrant.id });
+        return;
+      }
+
+      if (pipelineState.studentId && pipelineState.parentAccountId) {
+        logger.info('Student already created, skipping auto-creation', {
+          studentId: pipelineState.studentId,
+        });
+        return;
+      }
+
+      if (config.requireEnrollmentConfirmation) {
+        logger.info('Enrollment confirmation required, auto-creation deferred', {
+          registrantId: registrant.id,
+        });
+        return;
+      }
+
+      logger.info('Executing auto-creation for approved registrant', { registrantId: registrant.id });
+
+      const audit: PPDBAutoCreationAudit = {
+        id: `audit_${Date.now()}`,
+        registrantId: registrant.id,
+        status: 'success',
+        timestamp: new Date().toISOString(),
+      };
+
+      try {
+        if (config.createParentAccount) {
+          const parentCredentials = await this.createParentAccount(registrant);
+          pipelineState.parentAccountId = parentCredentials.userId;
+          audit.parentAccountId = parentCredentials.userId;
+        }
+
+        const student = await this.convertRegistrantToStudent(
+          registrant,
+          pipelineState.parentAccountId || ''
+        );
+
+        pipelineState.studentId = student.id;
+        pipelineState.assignedClass = student.className;
+        pipelineState.enrollmentDate = student.enrollmentDate;
+        audit.studentId = student.id;
+        audit.nis = student.nis;
+
+        if (config.sendWelcomeEmail) {
+          await this.sendAutoCreationNotification(registrant, student.nis);
+        }
+
+        await unifiedNotificationManager.showNotification({
+          id: `ppdb-auto-create-${registrant.id}`,
+          type: 'ppdb',
+          title: 'Siswa Otomatis Dibuat',
+          body: `Siswa ${registrant.fullName} berhasil dibuat secara otomatis dengan NIS: ${student.nis}`,
+          icon: '✅',
+          timestamp: new Date().toISOString(),
+          read: false,
+          priority: 'high',
+          targetUsers: ['admin'],
+          data: {
+            action: 'view_student',
+            studentId: student.id,
+            registrantId: registrant.id,
+          },
+        });
+
+        logger.info('Auto-creation completed successfully', {
+          studentId: student.id,
+          nis: student.nis,
+        });
+      } catch (error) {
+        audit.status = 'failed';
+        audit.reason = error instanceof Error ? error.message : 'Unknown error';
+        logger.error('Auto-creation failed:', error);
+      }
+
+      this.saveAutoCreationAudit(registrant.id, audit);
+    } catch (error) {
+      logger.error('Failed to execute auto-creation actions:', error);
       throw error;
     }
   }
@@ -580,6 +677,217 @@ class PPDBIntegrationService {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return password;
+  }
+
+  /**
+   * Get auto-creation configuration
+   */
+  public getAutoCreationConfig(): PPDBAutoCreationConfig {
+    try {
+      const configJson = localStorage.getItem(STORAGE_KEYS.PPDB_AUTO_CREATION_CONFIG);
+      if (configJson) {
+        return JSON.parse(configJson);
+      }
+
+      return this.getDefaultAutoCreationConfig();
+    } catch (error) {
+      logger.error('Failed to get auto-creation config:', error);
+      return this.getDefaultAutoCreationConfig();
+    }
+  }
+
+  /**
+   * Set auto-creation configuration
+   */
+  public setAutoCreationConfig(config: Partial<PPDBAutoCreationConfig>): void {
+    try {
+      const currentConfig = this.getAutoCreationConfig();
+      const updatedConfig = { ...currentConfig, ...config };
+      localStorage.setItem(
+        STORAGE_KEYS.PPDB_AUTO_CREATION_CONFIG,
+        JSON.stringify(updatedConfig)
+      );
+      logger.info('Auto-creation config updated', updatedConfig);
+    } catch (error) {
+      logger.error('Failed to set auto-creation config:', error);
+    }
+  }
+
+  /**
+   * Get default auto-creation configuration
+   */
+  private getDefaultAutoCreationConfig(): PPDBAutoCreationConfig {
+    return {
+      enabled: true,
+      autoCreateOnApproval: true,
+      requireEnrollmentConfirmation: false,
+      createParentAccount: true,
+      sendWelcomeEmail: true,
+    };
+  }
+
+  /**
+   * Rollback auto-created student and parent accounts
+   */
+  public async rollbackStudentAccount(registrantId: string): Promise<void> {
+    try {
+      const pipelineState = this.getPipelineState(registrantId);
+
+      if (!pipelineState.studentId || !pipelineState.parentAccountId) {
+        throw new Error('No auto-created accounts to rollback');
+      }
+
+      logger.info('Rolling back auto-created accounts', {
+        registrantId,
+        studentId: pipelineState.studentId,
+        parentAccountId: pipelineState.parentAccountId,
+      });
+
+      const registrantResponse = await ppdbAPI.getById(registrantId);
+      if (!registrantResponse.success || !registrantResponse.data) {
+        throw new Error('Registrant not found');
+      }
+
+      await studentsAPI.delete(pipelineState.studentId);
+      await usersAPI.delete(pipelineState.parentAccountId);
+
+      const audit: PPDBAutoCreationAudit = {
+        id: `audit_${Date.now()}`,
+        registrantId,
+        studentId: pipelineState.studentId,
+        parentAccountId: pipelineState.parentAccountId,
+        nis: pipelineState.assignedClass,
+        status: 'rolled_back',
+        timestamp: new Date().toISOString(),
+      };
+
+      this.saveAutoCreationAudit(registrantId, audit);
+
+      pipelineState.studentId = undefined;
+      pipelineState.parentAccountId = undefined;
+      pipelineState.assignedClass = undefined;
+      pipelineState.enrollmentDate = undefined;
+
+      this.savePipelineState(registrantId, pipelineState);
+
+      await unifiedNotificationManager.showNotification({
+        id: `ppdb-rollback-${registrantId}`,
+        type: 'ppdb',
+        title: 'Rollback Berhasil',
+        body: `Akun siswa untuk ${registrantResponse.data.fullName} telah dihapus (rollback)`,
+        icon: '↩️',
+        timestamp: new Date().toISOString(),
+        read: false,
+        priority: 'high',
+        targetUsers: ['admin'],
+        data: {
+          action: 'view_ppdb',
+          registrantId,
+        },
+      });
+
+      logger.info('Rollback completed successfully', {
+        registrantId,
+        studentId: pipelineState.studentId,
+      });
+    } catch (error) {
+      logger.error('Failed to rollback student account:', error);
+      throw new Error('Gagal melakukan rollback akun siswa');
+    }
+  }
+
+  /**
+   * Send auto-creation notification to parent
+   */
+  private async sendAutoCreationNotification(
+    registrant: PPDBRegistrant,
+    nis: string
+  ): Promise<void> {
+    try {
+      await emailService.sendEmail({
+        recipients: [
+          {
+            email: registrant.email,
+            name: registrant.parentName,
+          },
+        ],
+        subject: 'Selamat! Akun Siswa Telah Dibuat',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
+            <p>Dear ${registrant.parentName},</p>
+            <p>Kami dengan senang hati menginformasikan bahwa akun siswa untuk <strong>${registrant.fullName}</strong> telah dibuat secara otomatis.</p>
+            
+            <div style="background-color: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h3 style="margin-top: 0;">Data Siswa</h3>
+              <p><strong>Nama Lengkap:</strong> ${registrant.fullName}</p>
+              <p><strong>NIS:</strong> ${nis}</p>
+              <p><strong>Kelas:</strong> (Akan ditentukan kemudian)</p>
+            </div>
+            
+            <p>Akun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.</p>
+            <p>Terima kasih,</p>
+            <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+          </div>
+        `,
+        text: `Selamat! Akun siswa untuk ${registrant.fullName} telah dibuat secara otomatis.\n\nNIS: ${nis}\n\nAkun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB MA Malnu Kananga`,
+        data: {
+          templateId: 'auto_creation_confirmation',
+          registrantId: registrant.id,
+          nis,
+        },
+      });
+
+      logger.info('Auto-creation notification sent', {
+        email: registrant.email,
+        nis,
+      });
+    } catch (error) {
+      logger.error('Failed to send auto-creation notification:', error);
+    }
+  }
+
+  /**
+   * Save auto-creation audit log
+   */
+  private saveAutoCreationAudit(registrantId: string, audit: PPDBAutoCreationAudit): void {
+    try {
+      const key = STORAGE_KEYS.PPDB_AUTO_CREATION_AUDIT(registrantId);
+      localStorage.setItem(key, JSON.stringify(audit));
+    } catch (error) {
+      logger.error('Failed to save auto-creation audit:', error);
+    }
+  }
+
+  /**
+   * Get auto-creation audit logs
+   */
+  public async getAutoCreationAuditLogs(): Promise<PPDBAutoCreationAudit[]> {
+    try {
+      const registrantResponse = await ppdbAPI.getAll();
+      if (!registrantResponse.success || !registrantResponse.data) {
+        return [];
+      }
+
+      const audits: PPDBAutoCreationAudit[] = [];
+
+      for (const registrant of registrantResponse.data) {
+        const key = STORAGE_KEYS.PPDB_AUTO_CREATION_AUDIT(registrant.id);
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            audits.push(JSON.parse(saved));
+          } catch (error) {
+            logger.error('Failed to parse audit log:', error);
+          }
+        }
+      }
+
+      return audits;
+    } catch (error) {
+      logger.error('Failed to get auto-creation audit logs:', error);
+      return [];
+    }
   }
 }
 

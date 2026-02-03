@@ -14,6 +14,8 @@ export const STORAGE_KEYS = {
     PPDB_NIS_COUNTER: 'malnu_ppdb_nis_counter',
     PPDB_METRICS: 'malnu_ppdb_metrics',
     PPDB_PIPELINE_STATUS: (registrantId: string) => `malnu_ppdb_pipeline_status_${registrantId}`,
+    PPDB_AUTO_CREATION_CONFIG: 'malnu_ppdb_auto_creation_config',
+    PPDB_AUTO_CREATION_AUDIT: (registrantId: string) => `malnu_ppdb_auto_creation_audit_${registrantId}`,
     MATERIALS: 'malnu_materials',
     INVENTORY: 'malnu_inventory',
     EVENTS: 'malnu_events',

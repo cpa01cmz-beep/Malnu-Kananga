@@ -48,6 +48,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   const [showOCRModal, setShowOCRModal] = useState<string | null>(null);
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrProgress, setOcrProgress] = useState<{ status: string; progress: number }>({ status: 'Idle', progress: 0 });
+  const [autoCreationConfig, setAutoCreationConfig] = useState(ppdbIntegrationService.getAutoCreationConfig());
 
   // Default templates for bulk actions
   const [templates] = useState<PPDBTemplate[]>([
@@ -398,6 +399,33 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             )}
         </div>
 
+        {/* Auto-Creation Toggle */}
+        <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100" className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-neutral-900 dark:text-white">Pembuatan Akun Otomatis</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">Buat akun siswa dan orang tua secara otomatis saat pendaftar diterima</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={autoCreationConfig.enabled}
+                onChange={(e) => {
+                  const newConfig = { ...autoCreationConfig, enabled: e.target.checked };
+                  setAutoCreationConfig(newConfig);
+                  ppdbIntegrationService.setAutoCreationConfig(newConfig);
+                  onShowToast(
+                    e.target.checked ? 'Pembuatan akun otomatis diaktifkan' : 'Pembuatan akun otomatis dinonaktifkan',
+                    'info'
+                  );
+                }}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-neutral-600 peer-checked:bg-green-600"></div>
+            </label>
+          </div>
+        </Card>
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
@@ -629,6 +657,24 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                   }}
                                                 />
                                               </>
+                                            )}
+                                            {reg.status === 'approved' && canApprovePPDB && (
+                                              <IconButton
+                                                icon={<span className="text-lg">↩️</span>}
+                                                ariaLabel="Rollback akun siswa yang dibuat secara otomatis"
+                                                tooltip="Rollback"
+                                                variant="warning"
+                                                size="sm"
+                                                onClick={async () => {
+                                                  try {
+                                                    await ppdbIntegrationService.rollbackStudentAccount(reg.id);
+                                                    onShowToast('Akun siswa berhasil di-rollback', 'success');
+                                                  } catch (error) {
+                                                    logger.error('Rollback failed:', error);
+                                                    onShowToast('Gagal melakukan rollback akun siswa', 'error');
+                                                  }
+                                                }}
+                                              />
                                             )}
                                         </div>
                                     </td>

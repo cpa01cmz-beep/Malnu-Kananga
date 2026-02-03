@@ -84,3 +84,23 @@ export interface PPDBRubric {
     description: string;
   }[];
 }
+
+export interface PPDBAutoCreationConfig {
+  enabled: boolean;
+  autoCreateOnApproval: boolean;
+  requireEnrollmentConfirmation: boolean;
+  createParentAccount: boolean;
+  sendWelcomeEmail: boolean;
+}
+
+export interface PPDBAutoCreationAudit {
+  id: string;
+  registrantId: string;
+  studentId?: string;
+  parentAccountId?: string;
+  nis?: string;
+  status: 'success' | 'failed' | 'rolled_back';
+  reason?: string;
+  timestamp: string;
+  createdBy?: string;
+}
