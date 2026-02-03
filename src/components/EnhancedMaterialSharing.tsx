@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { UsersIcon } from './icons/UsersIcon';
 import { ShareIcon, ShieldIcon, XMarkIcon, ClockIcon } from './icons/MaterialIcons';
 import { ChartBarIcon } from './icons/ChartBarIcon';
@@ -127,17 +127,11 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
     }
   }, [material.downloadCount, permissionSummary]);
 
-  const hasInitialized = useRef(false);
-
   useEffect(() => {
-    if (!hasInitialized.current) {
-      fetchUsers();
-      fetchAuditLog();
-      fetchAnalytics();
-      hasInitialized.current = true;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [material.id]);
+    fetchUsers();
+    fetchAuditLog();
+    fetchAnalytics();
+  }, [fetchUsers, fetchAuditLog, fetchAnalytics]);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
