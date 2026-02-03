@@ -4,10 +4,10 @@
    - **Mode**: ARCHITECT
    - **Issue**: #1367
    - **Priority**: P2 (Code Quality & Maintainability)
-   - **Status**: In Progress (Phase 1 of 3 Complete - MaterialUpload.tsx refactored)
+   - **Status**: In Progress (Phase 1 Complete, Phase 2-3 Strategy Created)
    - **Started**: 2026-02-03
-   - **Estimated Effort**: 12-16 hours (3 files)
-   - **Phase 1 Progress** (2026-02-03):
+   - **Estimated Effort**: 30-34 hours (3 phases total)
+   - **Phase 1 Progress** (2026-02-03) ✅:
       ✅ MaterialUpload.tsx refactored from 1,122 lines to 1,159 lines (4 modular files)
       ✅ useMaterialData.ts custom hook created (393 lines)
       ✅ MaterialForm.tsx component created (141 lines)
@@ -16,43 +16,80 @@
       ✅ TypeScript type checking: Passed (0 errors)
       ✅ ESLint linting: Passed (0 errors, 0 warnings)
       ✅ Build: Passed (23.42s, no warnings)
+   - **Phase 2 Progress** (StudentPortal.tsx - 1,105 lines) 🟡 IN PROGRESS:
+      ✅ Refactoring strategy document created: STUDENT_PORTAL_REFACTORING.md
+      ✅ Module breakdown analysis completed
+      ✅ Target directory structure defined: src/components/student-portal/
+      [ ] Create directory structure
+      [ ] Extract useStudentPortalData.ts (~200 lines)
+      [ ] Extract StudentPortalHome.tsx (~300 lines)
+      [ ] Extract StudentPortalMenu.tsx (~150 lines)
+      [ ] Extract StudentPortalOffline.tsx (~200 lines)
+      [ ] Extract StudentPortalRealtime.tsx (~150 lines)
+      [ ] Extract StudentPortalQuiz.tsx (~100 lines)
+      [ ] Create main orchestrator StudentPortal.tsx (~150 lines)
+      [ ] Update imports across codebase
+      [ ] Run typecheck: npm run typecheck
+      [ ] Run lint: npm run lint
+      [ ] Run tests: npm test
+      [ ] Build verification: npm run build
+   - **Phase 3 Progress** (geminiService.ts - 1,054 lines) 🟡 NOT STARTED:
+      ✅ Refactoring strategy document created: GEMINI_SERVICE_REFACTORING.md
+      ✅ Module breakdown analysis completed
+      ✅ Target directory structure defined: src/services/ai/
+      [ ] Create directory structure
+      [ ] Extract geminiClient.ts (~70 lines)
+      [ ] Extract geminiChat.ts (~150 lines)
+      [ ] Extract geminiAnalysis.ts (~200 lines)
+      [ ] Extract geminiEditor.ts (~180 lines)
+      [ ] Extract geminiQuiz.ts (~150 lines)
+      [ ] Extract geminiStudy.ts (~200 lines)
+      [ ] Create main orchestrator ai/index.ts (~100 lines)
+      [ ] Update imports across codebase
+      [ ] Delete original geminiService.ts
+      [ ] Run typecheck: npm run typecheck
+      [ ] Run lint: npm run lint
+      [ ] Run tests: npm test
+      [ ] Build verification: npm run build
    - **Reason**: Three large files exceed 1000 lines and should be refactored for maintainability following pattern from Issue #1364 (GradingManagement, ELibrary, unifiedNotificationManager). Large files create maintainability issues, testing difficulties, code review challenges, and merge conflicts.
    - **Files to Refactor**:
-      1. **MaterialUpload.tsx** (1,122 lines) → split into 6 modules:
-         - MaterialUpload.tsx (main orchestrator, ~200 lines)
-         - MaterialFileHandler.tsx (~300 lines)
-         - MaterialVersionControl.tsx (~200 lines)
-         - MaterialSharing.tsx (~200 lines)
-         - MaterialAnalytics.tsx (~150 lines)
-         - MaterialTemplates.tsx (~100 lines)
-      2. **StudentPortal.tsx** (1,089 lines) → split into 7 modules:
-         - StudentPortal.tsx (main dashboard container, ~200 lines)
-         - [ ] Verify tests pass
-
-      **Phase 4: Final Verification** (1-2 hours) - NOT STARTED
-         - [ ] Run full test suite: npm test
-         - [ ] Run typecheck: npm run typecheck
-         - [ ] Run lint: npm run lint
-         - [ ] Build verification: npm run build
-         - [ ] Update blueprint.md with completion status
-         - [ ] Update roadmap.md with completion status
-         - [ ] Close GitHub Issue #1367 with detailed comment
+      1. ✅ **MaterialUpload.tsx** (1,122 lines) → split into 4 modules (COMPLETED)
+      2. 🟡 **StudentPortal.tsx** (1,105 lines) → split into 7 modules:
+         - useStudentPortalData.ts (~200 lines)
+         - StudentPortalHome.tsx (~300 lines)
+         - StudentPortalMenu.tsx (~150 lines)
+         - StudentPortalOffline.tsx (~200 lines)
+         - StudentPortalRealtime.tsx (~150 lines)
+         - StudentPortalQuiz.tsx (~100 lines)
+         - StudentPortal.tsx orchestrator (~150 lines)
+      3. 🟡 **geminiService.ts** (1,054 lines) → split into 7 modules:
+         - geminiClient.ts (~70 lines)
+         - geminiChat.ts (~150 lines)
+         - geminiAnalysis.ts (~200 lines)
+         - geminiEditor.ts (~180 lines)
+         - geminiQuiz.ts (~150 lines)
+         - geminiStudy.ts (~200 lines)
+         - ai/index.ts orchestrator (~100 lines)
    - **Acceptance Criteria**:
-       - [ ] Split MaterialUpload.tsx into `src/components/material-upload/` directory (6 modules)
-       - [ ] Split StudentPortal.tsx into `src/components/student-portal/` directory (7 modules)
-       - [ ] Split geminiService.ts into `src/services/ai/` directory (6 modules)
-       - [ ] All new files <500 lines (ideally <300 lines)
-       - [ ] Update imports across codebase
-       - [ ] Ensure tests still pass after refactoring
-       - [ ] Run typecheck: 0 errors
-       - [ ] Run lint: 0 errors, 0 warnings
-       - [ ] Original large files deleted
-   - **Pillars Addressed**:
-       - Pillar 1 (Flow): Modular components improve clarity and data flow
-       - Pillar 11 (Modularity): Atomic, reusable components and services
-       - Pillar 12 (Scalability): Easier to extend and maintain
-       - Pillar 16 (UX/DX): Better developer experience, easier code reviews
-   - **Related Issues**: #1364 (Large File Refactoring - Partial Complete), #1293 (Types Refactoring)
+        - ✅ Split MaterialUpload.tsx into `src/components/material-upload/` directory (4 modules)
+        - [ ] Split StudentPortal.tsx into `src/components/student-portal/` directory (7 modules)
+        - [ ] Split geminiService.ts into `src/services/ai/` directory (7 modules)
+        - [ ] All new files <500 lines (ideally <300 lines)
+        - [ ] Update imports across codebase
+        - [ ] Ensure tests still pass after refactoring
+        - [ ] Run typecheck: 0 errors
+        - [ ] Run lint: 0 errors, 0 warnings
+        - [ ] Original large files deleted
+    - **Pillars Addressed**:
+        - Pillar 1 (Flow): Modular components improve clarity and data flow
+        - Pillar 11 (Modularity): Atomic, reusable components and services
+        - Pillar 12 (Scalability): Easier to extend and maintain
+        - Pillar 16 (UX/DX): Better developer experience, easier code reviews
+    - **Related Issues**: #1364 (Large File Refactoring - Partial Complete), #1293 (Types Refactoring)
+    - **Strategy Documents**:
+        - STUDENT_PORTAL_REFACTORING.md - Complete refactoring plan for StudentPortal.tsx
+        - GEMINI_SERVICE_REFACTORING.md - Complete refactoring plan for geminiService.ts
+        - REFACTORING_GUIDE.md - General guide for large file refactoring (from Issue #1364)
 
 ---
 
