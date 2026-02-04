@@ -26,38 +26,81 @@
 
 ---
 
-### [SANITIZER] Remove Deprecated pushNotificationService and Sync Stale Branches (Issue #1365, P2) 🔄
+### [SANITIZER] Remove Deprecated pushNotificationService (Issue #1365, P2) - Task 1 Complete ✅
     - **Mode**: SANITIZER
     - **Issue**: #1365
     - **Priority**: P2 (Repository Hygiene)
-    - **Status**: In Progress
+    - **Status**: Completed (Task 1 Only - Task 2 Pending)
     - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
     - **Reason**: Deprecated pushNotificationService wrapper should be removed along with stale branches. This service was marked @deprecated in issues #990 and #1114 and is now replaced by unifiedNotificationManager.
-    - **Task 1: Remove Deprecated Service**
+    - **Task 1: Remove Deprecated Service** ✅
        - ✅ Verified no production code imports pushNotificationService
-       - ✅ Identified files to remove:
-          - src/services/pushNotificationService.ts (257 lines)
-          - src/__tests__/pushNotifications.integration.test.ts (323 lines)
-       - ✅ Identified test files requiring mock updates:
-          - src/services/__tests__/ocrNotificationIntegration.test.ts
-          - src/services/__tests__/ocr-validation-integration.test.ts
-          - src/components/__tests__/GradingManagement.offline.test.tsx
-       - ⏳ Remove deprecated files and update test mocks
-    - **Task 2: Branch Cleanup**
+       - ✅ Removed src/services/pushNotificationService.ts (257 lines)
+       - ✅ Removed src/__tests__/pushNotifications.integration.test.ts (323 lines)
+       - ✅ Updated test mocks to use unifiedNotificationManager:
+          - src/services/__tests__/ocrNotificationIntegration.test.ts (showNotification mock)
+          - src/services/__tests__/ocr-validation-integration.test.ts (showNotification mock)
+          - src/components/__tests__/GradingManagement.offline.test.tsx (complete mock with getUnifiedHistory, clearUnifiedHistory, etc.)
+       - ✅ Run typecheck: Passed (0 errors)
+       - ✅ Run lint: Passed (0 errors, 0 warnings)
+       - ✅ Run affected tests: All passing (6/6, 4/4, 6/6)
+    - **Task 2: Branch Cleanup** ⏳ (Deferred to separate PR)
        - ⏳ Evaluate stale branches for sync or deletion
-    - **Acceptance Criteria**:
-       - [ ] pushNotificationService.ts deleted
-       - [ ] pushNotifications.integration.test.ts deleted
-       - [ ] Test mocks updated to use unifiedNotificationManager
-       - [ ] Run typecheck: Passed (0 errors)
-       - [ ] Run lint: Passed (0 errors, 0 warnings)
-       - [ ] Run tests: All passing
-       - [ ] Stale branches evaluated and cleaned up
+    - **Commit**: 1b5a42a
+    - **Acceptance Criteria (Task 1)**:
+       - ✅ pushNotificationService.ts deleted
+       - ✅ pushNotifications.integration.test.ts deleted
+       - ✅ Test mocks updated to use unifiedNotificationManager
+       - ✅ Run typecheck: Passed (0 errors)
+       - ✅ Run lint: Passed (0 errors, 0 warnings)
+       - ✅ Run tests: All passing
+       - ⏳ Stale branches evaluated and cleaned up (Task 2)
+    - **Impact**:
+       - Removed 580 lines of dead code (257 + 323 from deleted files, plus mock updates)
+       - Eliminates confusion for new developers about which notification service to use
+       - unifiedNotificationManager is now Single Source of Truth for all notification functionality
+       - All test mocks updated and passing
     - **Pillars Addressed**:
        - Pillar 3 (Stability): Remove dead code to prevent confusion
        - Pillar 8 (Documentation): Single Source of Truth maintained
        - Pillar 15 (Dynamic Coding): Eliminate deprecated wrappers
        - Pillar 16 (UX/DX): Cleaner codebase for developers
+    - **Follow-up**: Task 2 (Branch Cleanup) to be completed in separate PR
+
+---
+
+### [SANITIZER] Sync and Clean Up Stale Branches (Issue #1365, P2 - Task 2) 🔄
+    - **Mode**: SANITIZER
+    - **Issue**: #1365 (Task 2)
+    - **Priority**: P2 (Repository Hygiene)
+    - **Status**: Pending
+    - **Reason**: Multiple branches are behind main and should be synchronized or deleted to improve repository hygiene.
+    - **Stale Branches Identified**:
+       - feat/ai-learning-integration (7 commits behind)
+       - feature/issue-1302-fix-skipped-test (3 commits behind)
+       - feature/ocr-validation-parent-notifications (2 commits behind)
+       - feature/footer-accessibility-improvement (2 commits behind)
+       - feature/color-icon-system-accessibility (2 commits behind)
+       - feature/accessibility-button-keyboard-nav (2 commits behind)
+       - docs/remove-redundant-documentation (2 commits behind)
+       - feature/dashboard-action-card-component (1 commit behind)
+       - feature/consolidate-notification-systems (1 commit behind)
+       - feature/advanced-theme-system (1 commit behind)
+    - **Oldest Branches** (28 days old):
+       - fix/analyzer-workflow-2026-01-05
+       - feat/ai-learning-integration
+       - fix/518-gemini-api-error-recovery
+       - fix/opencode-installer
+    - **Acceptance Criteria**:
+       - [ ] Evaluate each stale branch for active development (PR activity, open issues, WIP status)
+       - [ ] Sync active branches with main (rebase or merge)
+       - [ ] Delete abandoned/merged branches
+       - [ ] Document any valuable features lost during cleanup
+    - **Pillars Addressed**:
+       - Pillar 8 (Documentation): Clean repository improves clarity
+       - Pillar 16 (UX/DX): Cleaner branch structure for developers
+    - **Follow-up**: Create separate issue if any valuable features should be salvaged from deleted branches
 
 ---
 
