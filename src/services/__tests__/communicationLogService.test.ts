@@ -1001,4 +1001,168 @@ describe('communicationLogService', () => {
       expect(result).toEqual([]);
     });
   });
+
+  describe('logEmail', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      mockStorage[STORAGE_KEYS.COMMUNICATION_LOG] = '[]';
+    });
+
+    it('should log an email entry', () => {
+      const result = communicationLogService.logEmail({
+        messageId: 'email_123',
+        recipientEmail: 'parent@example.com',
+        subject: 'Grade Update',
+        bodyPreview: 'Your child received an A grade...',
+        deliveryStatus: 'sent',
+        hasAttachment: false,
+        sender: 'system',
+        timestamp: '2026-02-04T10:00:00Z',
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toMatch(/^comm_log_/);
+      expect(result.type).toBe('email');
+      expect(result.emailMessageId).toBe('email_123');
+      expect(result.recipientEmail).toBe('parent@example.com');
+      expect(result.subject).toBe('Grade Update');
+      expect(result.deliveryStatus).toBe('sent');
+      expect(result.hasAttachment).toBe(false);
+      expect(result.sender).toBe('system');
+      expect(result.status).toBe('logged');
+
+      const logs = communicationLogService.getCommunicationHistory();
+      expect(logs).toHaveLength(1);
+      expect(logs[0].id).toBe(result.id);
+    });
+
+    it('should log email with student and parent info', () => {
+      const result = communicationLogService.logEmail({
+        messageId: 'email_456',
+        parentId: 'parent_1',
+        parentName: 'Budi Santoso',
+        teacherId: 'teacher_1',
+        teacherName: 'Ibu Guru',
+        studentId: 'student_1',
+        studentName: 'Ahmad Dahlan',
+        recipientEmail: 'parent@example.com',
+        subject: 'Meeting Reminder',
+        bodyPreview: 'Reminder about scheduled meeting...',
+        deliveryStatus: 'sent',
+        hasAttachment: true,
+        sender: 'teacher',
+        timestamp: '2026-02-04T11:00:00Z',
+      });
+
+      expect(result.studentId).toBe('student_1');
+      expect(result.studentName).toBe('Ahmad Dahlan');
+      expect(result.parentId).toBe('parent_1');
+      expect(result.parentName).toBe('Budi Santoso');
+      expect(result.teacherId).toBe('teacher_1');
+      expect(result.teacherName).toBe('Ibu Guru');
+      expect(result.hasAttachment).toBe(true);
+    });
+
+    it('should use current timestamp when not provided', () => {
+      const beforeLog = Date.now();
+      const result = communicationLogService.logEmail({
+        messageId: 'email_789',
+        recipientEmail: 'parent@example.com',
+        subject: 'Test Email',
+        sender: 'system',
+      });
+      const afterLog = Date.now();
+
+      expect(new Date(result.timestamp!).getTime()).toBeGreaterThanOrEqual(beforeLog);
+      expect(new Date(result.timestamp!).getTime()).toBeLessThanOrEqual(afterLog);
+    });
+
+    it('should trim body preview to 200 characters', () => {
+      const longBody = 'a'.repeat(300);
+      const result = communicationLogService.logEmail({
+        messageId: 'email_long',
+        recipientEmail: 'parent@example.com',
+        subject: 'Long Email',
+        bodyPreview: longBody,
+        sender: 'system',
+      });
+
+      expect(result.message?.length).toBeLessThanOrEqual(203);
+      expect(result.message?.endsWith('...')).toBe(true);
+    });
+
+    it('should log multiple emails in chronological order', () => {
+      communicationLogService.logEmail({
+        messageId: 'email_1',
+        recipientEmail: 'parent1@example.com',
+        subject: 'First Email',
+        sender: 'system',
+        timestamp: '2026-02-04T10:00:00Z',
+      });
+
+      communicationLogService.logEmail({
+        messageId: 'email_2',
+        recipientEmail: 'parent2@example.com',
+        subject: 'Second Email',
+        sender: 'system',
+        timestamp: '2026-02-04T11:00:00Z',
+      });
+
+      const logs = communicationLogService.getCommunicationHistory();
+      expect(logs).toHaveLength(2);
+      expect(logs[0].emailMessageId).toBe('email_2');
+      expect(logs[1].emailMessageId).toBe('email_1');
+    });
+  });
+
+  describe('getStatistics with emails', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      mockStorage[STORAGE_KEYS.COMMUNICATION_LOG] = '[]';
+
+      communicationLogService.logEmail({
+        messageId: 'email_1',
+        parentId: 'parent_1',
+        parentName: 'Budi Santoso',
+        teacherId: 'teacher_1',
+        teacherName: 'Ibu Guru',
+        studentId: 'student_1',
+        studentName: 'Ahmad',
+        recipientEmail: 'parent@example.com',
+        subject: 'Test',
+        sender: 'system',
+      });
+
+      communicationLogService.logEmail({
+        messageId: 'email_2',
+        parentId: 'parent_1',
+        parentName: 'Budi Santoso',
+        teacherId: 'teacher_1',
+        teacherName: 'Ibu Guru',
+        studentId: 'student_1',
+        studentName: 'Ahmad',
+        recipientEmail: 'parent@example.com',
+        subject: 'Test 2',
+        sender: 'system',
+      });
+    });
+
+    it('should count total emails', () => {
+      const stats = communicationLogService.getStatistics();
+
+      expect(stats.totalEmails).toBe(2);
+    });
+
+    it('should count emails by parent', () => {
+      const stats = communicationLogService.getStatistics();
+
+      expect(stats.emailCountByParent).toEqual({ parent_1: 2 });
+    });
+
+    it('should count emails by teacher', () => {
+      const stats = communicationLogService.getStatistics();
+
+      expect(stats.emailCountByTeacher).toEqual({ teacher_1: 2 });
+    });
+  });
 });

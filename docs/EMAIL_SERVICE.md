@@ -36,6 +36,26 @@
 
 The Email Service provides a comprehensive email sending solution with template support, offline queue, and delivery tracking. It integrates with multiple email providers (SendGrid, Mailgun, Cloudflare Email) and includes Indonesian language templates for school communications.
 
+### Communication Log Integration
+
+All sent emails are automatically logged to the communication log service, providing a unified view of all parent-teacher communications. This integration ensures:
+
+- Complete audit trail for all email communications
+- Unified communication history (messages, meetings, calls, emails, notes)
+- Email delivery status tracking
+- Search and filter capabilities across all communication types
+- Export functionality for reporting
+
+The following information is logged for each email:
+- Message ID (for tracking)
+- Recipient email address
+- Subject
+- Body preview (first 200 characters, HTML tags stripped)
+- Delivery status (queued, sent, delivered, bounced, opened)
+- Attachment indicator
+- Timestamp
+- Linked student/parent/teacher information (if provided)
+
 ## Features
 
 - **Multiple Provider Support**: SendGrid, Mailgun, Cloudflare Email
@@ -496,6 +516,7 @@ See `src/services/emailService.ts` for complete API documentation.
 
 ## Related Services
 
+- `communicationLogService.ts`: For logging all communications (messages, meetings, calls, emails, notes)
 - `pdfExportService.ts`: For generating PDF reports
 - `pushNotificationService.ts`: For in-app notifications
 - `apiService.ts`: For backend API communication

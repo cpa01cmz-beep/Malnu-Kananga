@@ -1,7 +1,7 @@
-       # MA Malnu Kananga - Blueprint (Architecture & Design)
+        # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-        **Version**:3.9.9
-                      **Last Updated**: 2026-02-04 (Fix Documentation Version Inconsistency - Issue #1391)
+         **Version**:3.10.0
+                      **Last Updated**: 2026-02-04 (Integrate Email Service with Communication Log - Issue #1374)
 
       ---
 
@@ -87,6 +87,55 @@
             - Pillar 16 (UX/DX): Better developer experience with accurate tests
 
       ---
+
+      ### [BUILDER] Integrate Email Service with Communication Log (Issue #1374, P2) ✅
+         - **Status**: ✅ **COMPLETED**
+         - **Priority**: P2 (Enhancement)
+         - **Issue**: #1374 (CLOSED 2026-02-04)
+         - **Effort**: 3-4 hours
+         - **Completed**: 2026-02-04
+         - **Deliverables**:
+            - ✅ Added 'email' to `CommunicationLogType` in src/types/messaging.ts
+            - ✅ Added email-specific fields to `CommunicationLogEntry` (emailMessageId, deliveryStatus, recipientEmail, hasAttachment)
+            - ✅ Added 'system' to `sender` type for automated emails
+            - ✅ Added totalEmails, emailCountByParent, emailCountByTeacher to `CommunicationLogStats`
+            - ✅ Created `logEmail()` method in communicationLogService.ts with body preview trimming (max 200 characters)
+            - ✅ Integrated emailService.sendEmail() to automatically call logEmail() after successful send
+            - ✅ Added `createBodyPreview()` helper method to emailService for HTML-to-text conversion
+            - ✅ Updated getStatistics() to include email counts
+            - ✅ Wrote comprehensive tests (7 new tests, all passing)
+            - ✅ Updated EMAIL_SERVICE.md with Communication Log Integration section
+         - **Files Modified**:
+            - src/types/messaging.ts (added 'email' type, email fields, stats fields)
+            - src/services/communicationLogService.ts (added logEmail method, trimBodyPreview helper)
+            - src/services/emailService.ts (imported communicationLogService, added auto-logging)
+            - src/services/__tests__/communicationLogService.test.ts (added 7 tests for logEmail and stats)
+            - docs/EMAIL_SERVICE.md (added Communication Log Integration documentation)
+         - **Acceptance Criteria**:
+            - ✅ All sent emails automatically logged to communication log
+            - ✅ Email content and metadata stored in log (messageId, recipientEmail, subject, bodyPreview, deliveryStatus, hasAttachment)
+            - ✅ Email delivery status tracking (queued, sent, delivered, bounced, opened)
+            - ✅ View communication history per student/parent (already implemented)
+            - ✅ Export communication history (already implemented)
+            - ✅ Search and filter capabilities (already implemented)
+            - ✅ Privacy controls (role-based access, already implemented)
+            - ✅ TypeScript type checking: Passed (0 errors)
+            - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+            - ✅ All tests passing (62/62)
+         - **Impact**:
+            - Unified communication history (messages, meetings, calls, emails, notes) in one place
+            - Teachers can see all parent communications in a single view
+            - Complete audit trail for all communications
+            - Better tracking and reporting capabilities
+            - Automatic logging reduces manual data entry errors
+         - **Pillars Addressed**:
+            - Pillar 1 (Flow): Completes email workflow with automatic logging
+            - Pillar 5 (Integrations): Email Service → Communication Log integration
+            - Pillar 9 (Feature Ops): Enhances existing email and communication log features
+            - Pillar 10 (New Features): Adds email logging to communication log
+            - Pillar 16 (UX/DX): Better teacher experience with unified communication history
+
+---
 
       ### [BUILDER] Connect Activity Feed to WebSocket for Real-Time Updates (Issue #1375, P2) 🟡
          - **Status**: 🟡 **IN PROGRESS**

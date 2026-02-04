@@ -1,6 +1,6 @@
 import type { MessageType } from './chat';
 
-export type CommunicationLogType = 'message' | 'meeting' | 'call' | 'note';
+export type CommunicationLogType = 'message' | 'meeting' | 'call' | 'note' | 'email';
 
 export type CommunicationLogStatus = 'logged' | 'synced' | 'archived';
 
@@ -19,7 +19,12 @@ export interface CommunicationLogEntry {
   subject?: string;
   message?: string;
   messageType?: MessageType;
-  sender?: 'parent' | 'teacher' | 'student';
+  sender?: 'parent' | 'teacher' | 'student' | 'system';
+
+  emailMessageId?: string;
+  deliveryStatus?: 'queued' | 'sent' | 'delivered' | 'bounced' | 'opened';
+  recipientEmail?: string;
+  hasAttachment?: boolean;
 
   meetingId?: string;
   meetingDate?: string;
@@ -82,9 +87,12 @@ export interface CommunicationLogStats {
   totalMeetings: number;
   totalCalls: number;
   totalNotes: number;
+  totalEmails: number;
   messageCountByParent: Record<string, number>;
   messageCountByTeacher: Record<string, number>;
   meetingCountByStatus: Record<string, number>;
+  emailCountByParent: Record<string, number>;
+  emailCountByTeacher: Record<string, number>;
   averageResponseTime?: number;
   mostActiveTeachers: string[];
   mostActiveParents: string[];

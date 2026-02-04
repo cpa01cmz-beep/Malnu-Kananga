@@ -40,6 +40,54 @@
 
 ---
 
+### [BUILDER] Integrate Email Service with Communication Log (Issue #1374, P2) ✅
+    - **Mode**: BUILDER
+    - **Issue**: #1374 (COMPLETED)
+    - **Priority**: P2 (Enhancement)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: Emails sent via emailService aren't automatically logged to communicationLogService. This enhancement will auto-log all sent emails to communication log for unified communication history.
+    - **Implementation**:
+        - ✅ Add 'email' type to CommunicationLogType in src/types/messaging.ts
+        - ✅ Add email-specific fields to CommunicationLogEntry interface (messageId, deliveryStatus, recipientEmail, hasAttachment)
+        - ✅ Add totalEmails to CommunicationLogStats interface
+        - ✅ Create logEmail() method in communicationLogService.ts
+        - ✅ Integrate emailService.sendEmail() to call logEmail() after successful send
+        - ✅ Handle delivery status updates (sent, delivered, bounced, opened)
+        - ✅ Write tests for logEmail() method and integration
+        - ✅ Update EMAIL_SERVICE.md documentation
+    - **Acceptance Criteria**:
+        - ✅ All sent emails automatically logged to communication log
+        - ✅ Email content and metadata stored in log (subject, recipients, timestamp, delivery status, body preview)
+        - ✅ Email delivery status tracking
+        - ✅ View communication history per student/parent (already implemented)
+        - ✅ Export communication history (already implemented)
+        - ✅ Search and filter capabilities (already implemented)
+        - ✅ Privacy controls (role-based access, already implemented)
+        - ✅ TypeScript type checking: Passed (0 errors)
+        - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+        - ✅ All tests passing (62/62)
+    - **Impact**:
+        - Unified communication history (messages, meetings, calls, emails, notes) in one place
+        - Teachers can see all parent communications
+        - Complete audit trail for all communications
+        - Better tracking and reporting capabilities
+    - **Files Modified**:
+        - src/types/messaging.ts (added 'email' type, email fields, stats fields)
+        - src/services/communicationLogService.ts (added logEmail method, trimBodyPreview helper)
+        - src/services/emailService.ts (imported communicationLogService, added auto-logging)
+        - src/services/__tests__/communicationLogService.test.ts (added 7 tests for logEmail and stats)
+        - docs/EMAIL_SERVICE.md (added Communication Log Integration documentation)
+    - **Pillars Addressed**:
+        - Pillar 1 (Flow): Completes email workflow with logging
+        - Pillar 5 (Integrations): Email Service → Communication Log integration
+        - Pillar 9 (Feature Ops): Enhances existing email and communication log features
+        - Pillar 10 (New Features): Adds email logging to communication log
+        - Pillar 16 (UX/DX): Better teacher experience with unified communication history
+
+---
+
 ### [SANITIZER] Fix Test Suite Failures from Issue #1382 Follow-up (NEW TASK) ✅
     - **Mode**: SANITIZER
     - **Issue**: NEW TASK (follow-up from Issue #1382)

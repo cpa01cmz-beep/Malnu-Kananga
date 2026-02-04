@@ -1,7 +1,7 @@
-import type { 
-  EmailData, 
-  EmailRecipient, 
-  EmailSendOptions, 
+import type {
+  EmailData,
+  EmailRecipient,
+  EmailSendOptions,
   EmailDeliveryStatus,
   EmailAnalytics,
   EmailNotificationSettings,
@@ -13,6 +13,7 @@ import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
 import { STORAGE_KEYS } from '../constants';
+import { communicationLogService } from './communicationLogService';
 
 class EmailService {
   private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS || 'malnu_email_notification_settings';
@@ -195,6 +196,24 @@ class EmailService {
         }
 
         logger.info(`Email sent successfully: ${response.data.messageId}`);
+
+        const toRecipient = emailData.to;
+        if (toRecipient) {
+          const recipient = Array.isArray(toRecipient) ? toRecipient[0] : toRecipient;
+          const hasAttachment = (emailData.attachments && emailData.attachments.length > 0) || false;
+
+          communicationLogService.logEmail({
+            messageId: response.data.messageId,
+            recipientEmail: recipient.email,
+            subject: emailData.subject,
+            bodyPreview: this.createBodyPreview(emailData.html || '', emailData.text || ''),
+            deliveryStatus: 'sent',
+            hasAttachment,
+            sender: 'system',
+            timestamp: new Date().toISOString(),
+          });
+        }
+
         return { success: true, messageId: response.data.messageId };
       } else {
         const error = response.error || 'Failed to send email';
@@ -358,6 +377,19 @@ class EmailService {
       const value = context[key];
       return value !== undefined ? String(value) : match;
     });
+  }
+
+  private createBodyPreview(html: string, text: string): string {
+    if (text) {
+      return text.length > 200 ? text.substring(0, 200) + '...' : text;
+    }
+
+    if (html) {
+      const plainText = html.replace(/<[^>]+>/g, '');
+      return plainText.length > 200 ? plainText.substring(0, 200) + '...' : plainText;
+    }
+
+    return '';
   }
 }
 

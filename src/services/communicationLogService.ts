@@ -29,6 +29,18 @@ class CommunicationLogService {
     }
   }
 
+  private trimBodyPreview(body: string): string {
+    if (!body) return '';
+
+    let plainText = body.replace(/<[^>]+>/g, '');
+
+    if (plainText.length > 200) {
+      plainText = plainText.substring(0, 200) + '...';
+    }
+
+    return plainText;
+  }
+
   private saveLogsToStorage(logs: CommunicationLogEntry[]): void {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(logs));
@@ -232,6 +244,62 @@ class CommunicationLogService {
     return logEntry;
   }
 
+  logEmail(data: {
+    messageId: string;
+    parentId?: string;
+    parentName?: string;
+    teacherId?: string;
+    teacherName?: string;
+    studentId?: string;
+    studentName?: string;
+    recipientEmail: string;
+    subject: string;
+    bodyPreview?: string;
+    deliveryStatus?: 'queued' | 'sent' | 'delivered' | 'bounced' | 'opened';
+    hasAttachment?: boolean;
+    sender: 'parent' | 'teacher' | 'student' | 'system';
+    timestamp?: string;
+  }): CommunicationLogEntry {
+    const logs = this.getLogsFromStorage();
+
+    const trimmedBodyPreview = this.trimBodyPreview(data.bodyPreview || '');
+
+    const logEntry: CommunicationLogEntry = {
+      id: this.generateId(),
+      type: 'email',
+      status: 'logged',
+      parentId: data.parentId,
+      parentName: data.parentName,
+      teacherId: data.teacherId,
+      teacherName: data.teacherName,
+      studentId: data.studentId,
+      studentName: data.studentName,
+      emailMessageId: data.messageId,
+      recipientEmail: data.recipientEmail,
+      subject: data.subject,
+      message: trimmedBodyPreview,
+      deliveryStatus: data.deliveryStatus || 'sent',
+      hasAttachment: data.hasAttachment || false,
+      sender: data.sender,
+      timestamp: data.timestamp || new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      createdBy: data.sender !== 'system' ? (data.sender === 'parent' ? data.parentId : data.teacherId) : 'system',
+      createdByName: data.sender !== 'system' ? (data.sender === 'parent' ? data.parentName : data.teacherName) : 'System',
+    };
+
+    logs.unshift(logEntry);
+    this.saveLogsToStorage(logs);
+
+    logger.info('Email logged to communication log:', {
+      messageId: data.messageId,
+      logId: logEntry.id,
+      recipient: data.recipientEmail,
+      subject: data.subject,
+    });
+
+    return logEntry;
+  }
+
   getCommunicationHistory(filter?: CommunicationLogFilter): CommunicationLogEntry[] {
     let logs = this.getLogsFromStorage();
 
@@ -339,9 +407,12 @@ class CommunicationLogService {
       totalMeetings: logs.filter(log => log.type === 'meeting').length,
       totalCalls: logs.filter(log => log.type === 'call').length,
       totalNotes: logs.filter(log => log.type === 'note').length,
+      totalEmails: logs.filter(log => log.type === 'email').length,
       messageCountByParent: {},
       messageCountByTeacher: {},
       meetingCountByStatus: {},
+      emailCountByParent: {},
+      emailCountByTeacher: {},
       mostActiveTeachers: [],
       mostActiveParents: [],
     };
@@ -353,6 +424,15 @@ class CommunicationLogService {
         }
         if (log.teacherId) {
           stats.messageCountByTeacher[log.teacherId] = (stats.messageCountByTeacher[log.teacherId] || 0) + 1;
+        }
+      }
+
+      if (log.type === 'email') {
+        if (log.parentId) {
+          stats.emailCountByParent[log.parentId] = (stats.emailCountByParent[log.parentId] || 0) + 1;
+        }
+        if (log.teacherId) {
+          stats.emailCountByTeacher[log.teacherId] = (stats.emailCountByTeacher[log.teacherId] || 0) + 1;
         }
       }
 
