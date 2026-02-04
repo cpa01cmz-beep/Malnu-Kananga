@@ -1,12 +1,46 @@
         # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
  **Version**:3.10.1
-                                    **Last Updated**: 2026-02-04 (WebSocket Documentation Status Updated - Issue #1392)
-                       **Maintained By**: Lead Autonomous Engineer & System Guardian
+                                     **Last Updated**: 2026-02-04 (Use STORAGE_KEYS for Timeline Cache - Issue #1393)
+                        **Maintained By**: Lead Autonomous Engineer & System Guardian
 
- ---
+  ---
 
-       ### [SCRIBE] Fix WebSocket Documentation Status in docs/README.md (Issue #1392, P3) ✅
+        ### [SANITIZER] Use STORAGE_KEYS for Timeline Cache - studentTimelineService.ts (Issue #1393, P2) ✅
+           - **Status**: ✅ **COMPLETED**
+           - **Priority**: P2 (Code Quality & Standardization)
+           - **Issue**: #1393 (COMPLETED 2026-02-04)
+           - **Effort**: 30 minutes
+           - **Completed**: 2026-02-04
+           - **Deliverables**:
+              - ✅ Added `TIMELINE_CACHE: (studentId: string) => 'malnu_timeline_${studentId}'` to STORAGE_KEYS
+              - ✅ Removed hardcoded `TIMELINE_CACHE_KEY` constant from studentTimelineService.ts
+              - ✅ Updated saveTimelineToStorage and clearCache methods to use STORAGE_KEYS.TIMELINE_CACHE
+           - **Files Modified**:
+              - src/constants.ts (added TIMELINE_CACHE key)
+              - src/services/studentTimelineService.ts (replaced hardcoded key with STORAGE_KEYS)
+           - **Acceptance Criteria**:
+              - ✅ TIMELINE_CACHE added to STORAGE_KEYS constant
+              - ✅ studentTimelineService.ts uses STORAGE_KEYS.TIMELINE_CACHE
+              - ✅ Hardcoded TIMELINE_CACHE_KEY removed
+              - ✅ TypeScript type checking: Passed (0 errors)
+              - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+              - ✅ All tests passing (10/10 studentTimelineService tests)
+           - **Impact**:
+              - Consistent storage key management across project
+              - Eliminates hardcoded storage key strings (Pillar 15: Dynamic Coding)
+              - STORAGE_KEYS remains Single Source of Truth for all localStorage operations
+              - Better developer experience with centralized constants
+           - **Pillars Addressed**:
+              - Pillar 3 (Stability): Consistent storage key management prevents conflicts
+              - Pillar 4 (Security): Centralized keys easier to audit
+              - Pillar 8 (Documentation): STORAGE_KEYS is Single Source of Truth
+              - Pillar 15 (Dynamic Coding): Eliminates hardcoded storage key strings
+              - Pillar 16 (UX/DX): Better developer experience with centralized constants
+
+      ---
+
+        ### [SCRIBE] Fix WebSocket Documentation Status in docs/README.md (Issue #1392, P3) ✅
           - **Status**: ✅ **COMPLETED**
           - **Priority**: P3 (Documentation Synchronization)
           - **Issue**: #1392 (COMPLETED 2026-02-04)

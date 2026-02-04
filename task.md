@@ -40,11 +40,48 @@
          - Clearer documentation section (removed "Planned/In Progress" subtitle)
       - **Pillars Addressed**:
          - Pillar 8 (Documentation): Ensures WebSocket documentation accurately reflects current state
-         - Pillar 16 (UX/DX): Improves developer experience with accurate documentation
+          - Pillar 16 (UX/DX): Improves developer experience with accurate documentation
+
+ ---
+
+### [SANITIZER] Use STORAGE_KEYS for Timeline Cache - studentTimelineService.ts (Issue #1393, P2) ✅
+    - **Mode**: SANITIZER
+    - **Issue**: #1393 (COMPLETED)
+    - **Priority**: P2 (Code Quality & Standardization)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: Hardcoded localStorage key `'malnu_timeline_${studentId}'` in line 35 violates project standard (Pillar 15: Dynamic Coding). All localStorage keys should use centralized STORAGE_KEYS constant from src/constants.ts.
+    - **Implementation**:
+        - ✅ Added `TIMELINE_CACHE: (studentId: string) => 'malnu_timeline_${studentId}'` to STORAGE_KEYS in constants.ts (line 90)
+        - ✅ Replaced hardcoded `TIMELINE_CACHE_KEY` constant with `STORAGE_KEYS.TIMELINE_CACHE`
+        - ✅ Updated saveTimelineToStorage method (line 786) to use STORAGE_KEYS
+        - ✅ Updated clearCache method (line 801) to use STORAGE_KEYS
+        - ✅ Removed hardcoded TIMELINE_CACHE_KEY constant (line 35)
+    - **Files Modified**:
+        - src/constants.ts (added TIMELINE_CACHE to STORAGE_KEYS)
+        - src/services/studentTimelineService.ts (removed hardcoded constant, replaced with STORAGE_KEYS usage)
+    - **Acceptance Criteria**:
+        - ✅ TIMELINE_CACHE added to STORAGE_KEYS constant
+        - ✅ studentTimelineService.ts uses STORAGE_KEYS.TIMELINE_CACHE
+        - ✅ Hardcoded TIMELINE_CACHE_KEY removed
+        - ✅ TypeScript type checking: Passed (0 errors)
+        - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+        - ✅ All tests passing (10/10 studentTimelineService tests)
+    - **Impact**:
+        - Consistent storage key management across project
+        - Easier maintenance and tracking of storage usage
+        - Follows project coding standards (Pillar 15: Dynamic Coding)
+    - **Pillars Addressed**:
+        - Pillar 3 (Stability): Consistent storage key management prevents conflicts
+        - Pillar 4 (Security): Centralized keys easier to audit
+        - Pillar 8 (Documentation): STORAGE_KEYS is Single Source of Truth for storage keys
+        - Pillar 15 (Dynamic Coding): Eliminates hardcoded storage key strings
+        - Pillar 16 (UX/DX): Better developer experience with centralized constants
 
 ---
 
-### [SCRIBE] Fix Documentation Version Inconsistency (Issue #1391, P2) ✅
+ ### [SCRIBE] Fix Documentation Version Inconsistency (Issue #1391, P2) ✅
      - **Mode**: SCRIBE
      - **Issue**: #1391 (COMPLETED)
      - **Priority**: P2 (Documentation Synchronization)

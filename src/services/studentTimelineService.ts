@@ -32,7 +32,6 @@ import type {
   EventEventData,
 } from '../types/timeline';
 
-const TIMELINE_CACHE_KEY = (studentId: string) => `malnu_timeline_${studentId}`;
 const TIMELINE_CACHE_TTL = 300000;
 
 interface TimelineCache {
@@ -785,7 +784,7 @@ class StudentTimelineService {
 
   private saveTimelineToStorage(studentId: string, events: TimelineEvent[]): void {
     try {
-      const key = TIMELINE_CACHE_KEY(studentId);
+      const key = STORAGE_KEYS.TIMELINE_CACHE(studentId);
       localStorage.setItem(key, JSON.stringify(events));
     } catch (error) {
       logger.error('TimelineService: Failed to save timeline to storage', error);
@@ -799,7 +798,7 @@ class StudentTimelineService {
           this.cache.delete(key);
         }
       }
-      localStorage.removeItem(TIMELINE_CACHE_KEY(studentId));
+      localStorage.removeItem(STORAGE_KEYS.TIMELINE_CACHE(studentId));
     } else {
       this.cache.clear();
     }

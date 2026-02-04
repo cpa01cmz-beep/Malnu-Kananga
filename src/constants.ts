@@ -86,6 +86,9 @@ export const STORAGE_KEYS = {
     // Parent Progress Reports (new)
     PARENT_PROGRESS_REPORTS: (studentId: string) => `malnu_parent_progress_reports_${studentId}`,
     PARENT_REPORT_SETTINGS: (parentId: string) => `malnu_parent_report_settings_${parentId}`,
+
+    // Student Timeline (refactored from hardcoded in Issue #1393)
+    TIMELINE_CACHE: (studentId: string) => `malnu_timeline_${studentId}`,
     
     // OCR Audit
     OCR_AUDIT: 'malnu_ocr_audit',
