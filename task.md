@@ -1,5 +1,40 @@
 # Active Tasks Tracking
 
+### [SANITIZER] Delete Merged Remote Branches (Issue #1396, P3) ✅
+    - **Mode**: SANITIZER
+    - **Issue**: #1396 (COMPLETED)
+    - **Priority**: P3 (Chore)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: Two remote branches have been merged to main and can be deleted to clean up repository.
+    - **Analysis**:
+       - ✅ `origin/fix/issue-1365-remove-deprecated-push-notification-service` - Verified as merged ancestor
+       - ✅ `origin/fix/test-followup-issue-1382` - Verified as merged ancestor
+       - ✅ No open PRs reference these branches
+       - ✅ Both verified using `git merge-base --is-ancestor <branch> origin/main`
+    - **Implementation**:
+       - ✅ Delete both merged remote branches
+       - ✅ Verify deletion successful
+       - ✅ Close GitHub Issue #1396
+    - **Files Modified**:
+       - Remote branches deleted (no local file changes)
+    - **Acceptance Criteria**:
+       - ✅ Delete `origin/fix/issue-1365-remove-deprecated-push-notification-service`
+       - ✅ Delete `origin/fix/test-followup-issue-1382`
+       - ✅ Verify deletion successful (branches no longer listed in git branch -r)
+       - ✅ Confirm no open PRs reference these branches
+    - **Impact**:
+       - Cleaner remote branch listing (32 branches → 31 branches)
+       - Reduces confusion about active development branches
+       - Follows repository hygiene best practices
+    - **Pillars Addressed**:
+       - Pillar 3 (Stability): Remove stale branches to prevent confusion
+       - Pillar 8 (Documentation): Clean repository improves clarity
+       - Pillar 16 (UX/DX): Cleaner branch structure for developers
+
+---
+
 ### [SCRIBE] Fix AGENTS.md - Update Push Notification Service Reference (Issue #1395, P3) ✅
     - **Mode**: SCRIBE
     - **Issue**: #1395 (COMPLETED)
