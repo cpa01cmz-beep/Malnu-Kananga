@@ -247,7 +247,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
   return (
     <div className="animate-fade-in-up space-y-6">
         <PageHeader
-          title="Ganti Password"
+          title="Edit Profil"
         />
 
       {errorState.hasError && (

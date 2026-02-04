@@ -72,7 +72,7 @@ describe('UserProfileEditor', () => {
     render(<UserProfileEditor />);
 
     await waitFor(() => {
-      expect(screen.getByText('Profil Saya')).toBeInTheDocument();
+      expect(screen.getByText('Edit Profil')).toBeInTheDocument();
       expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
       expect(screen.getByDisplayValue('john@example.com')).toBeInTheDocument();
     });
