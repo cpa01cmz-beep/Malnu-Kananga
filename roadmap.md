@@ -1,12 +1,47 @@
-          # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+           # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**:3.10.4
-                                         **Last Updated**: 2026-02-04 (Move Misplaced Test File - Issue #1321)
+**Version**:3.10.5
+                                          **Last Updated**: 2026-02-04 (Remove Redundant Test File - Issue #1289)
                            **Maintained By**: Lead Autonomous Engineer & System Guardian
 
-     ---
+      ---
 
-            ### [SANITIZER] Move Misplaced Test File - SiteEditor.validation.test.tsx (Issue #1321, P3) ✅
+             ### [SANITIZER] Remove Redundant Test File - authService.test.ts (Issue #1289, P3) ✅
+                - **Status**: ✅ **COMPLETED**
+                - **Priority**: P3 (Chore)
+                - **Issue**: #1289 (COMPLETED 2026-02-04)
+                - **Effort**: 30 minutes
+                - **Completed**: 2026-02-04
+                - **Deliverables**:
+                   - ✅ Deleted `src/services/authService.test.ts` (116 lines, 8 tests - older version)
+                   - ✅ Verified `src/services/__tests__/authService.test.ts` (277 lines, 23 tests - newer comprehensive version) covers all functionality
+                   - ✅ Ran test suite: 23/23 tests passing (26ms duration)
+                   - ✅ Confirmed no reduction in test coverage (newer file has 3x more tests)
+                   - ✅ Checked for code references to old file (none found)
+                   - ✅ Verified documentation references newer file only
+                - **Files Deleted**:
+                   - src/services/authService.test.ts (116 lines)
+                - **Acceptance Criteria**:
+                   - ✅ Delete `src/services/authService.test.ts`
+                   - ✅ Verify test suite still passes after deletion (23/23 tests passing)
+                   - ✅ Confirm no reduction in test coverage (newer file: 23 tests vs old: 8 tests)
+                   - ✅ No documentation references to old file location
+                   - ✅ TypeScript type checking: Passed (0 errors)
+                   - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+                - **Impact**:
+                   - Eliminates duplicate test execution during test runs
+                   - Reduces confusion about which test file is authoritative
+                   - Consistent test file organization following AGENTS.md standards (tests in `__tests__/` directories)
+                   - Cleaner codebase structure
+                   - Prevents outdated test expectations from running
+                - **Pillars Addressed**:
+                   - Pillar 3 (Stability): Remove redundant code to prevent confusion
+                   - Pillar 8 (Documentation): Clean codebase improves clarity
+                   - Pillar 16 (UX/DX): Cleaner code structure for developers
+
+             ---
+
+             ### [SANITIZER] Move Misplaced Test File - SiteEditor.validation.test.tsx (Issue #1321, P3) ✅
                - **Status**: ✅ **COMPLETED**
                - **Priority**: P3 (Chore)
                - **Issue**: #1321 (COMPLETED 2026-02-04)

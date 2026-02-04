@@ -1,5 +1,48 @@
 # Active Tasks Tracking
 
+### [SANITIZER] Remove Redundant Test File - authService.test.ts (Issue #1289, P3) ✅
+    - **Mode**: SANITIZER
+    - **Issue**: #1289 (COMPLETED)
+    - **Priority**: P3 (Chore)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: Duplicate test file exists: `src/services/authService.test.ts` (116 lines, 8 tests) is an older version of authService tests, while `src/services/__tests__/authService.test.ts` (277 lines, 23 tests) is the newer, comprehensive test file following project structure standard. Both files may run during `npm test`, causing duplicate tests.
+    - **Analysis**:
+        - ✅ Old file: `src/services/authService.test.ts` (116 lines, 8 tests)
+           - Tests: login (2), logout (2), isAuthenticated (1), getCurrentUser (1), getAuthToken (1), getRefreshToken (1)
+           - Missing: forgotPassword, verifyResetToken, resetPassword, updateProfile, changePassword
+        - ✅ New file: `src/services/__tests__/authService.test.ts` (277 lines, 23 tests)
+           - Tests: login (4), logout (2), isAuthenticated (1), getCurrentUser (2), getAuthToken (2), getRefreshToken (2), forgotPassword (2), verifyResetToken (2), resetPassword (2), updateProfile (2), changePassword (2)
+           - Coverage: All auth methods including password reset and profile management
+        - ✅ No code references to old file (only documentation mentions newer file)
+        - ✅ New file follows correct project structure (`__tests__/` directory)
+    - **Implementation**:
+        - ✅ Deleted `src/services/authService.test.ts`
+        - ✅ Verified test suite still passes after deletion (23 tests passing)
+        - ✅ Confirmed no reduction in test coverage (newer file has 3x more tests)
+        - ✅ Checked for documentation references (none found for old file location)
+    - **Files Deleted**:
+        - src/services/authService.test.ts (116 lines)
+    - **Acceptance Criteria**:
+        - ✅ Delete `src/services/authService.test.ts`
+        - ✅ Verify test suite still passes after deletion (23/23 tests passing)
+        - ✅ Confirm no reduction in test coverage (newer file has 23 tests vs 8 in old file)
+        - ✅ No documentation references to old file location
+        - ✅ TypeScript type checking: Passed (0 errors)
+        - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+    - **Impact**:
+        - Eliminates duplicate test execution during test runs
+        - Reduces confusion about which test file is authoritative
+        - Consistent test file organization following AGENTS.md standards
+        - Cleaner codebase structure
+    - **Pillars Addressed**:
+        - Pillar 3 (Stability): Remove redundant code to prevent confusion
+        - Pillar 8 (Documentation): Clean codebase improves clarity
+        - Pillar 16 (UX/DX): Cleaner code structure for developers
+
+---
+
 ### [SANITIZER] Move Misplaced Test File - SiteEditor.validation.test.tsx (Issue #1321, P3) ✅
     - **Mode**: SANITIZER
     - **Issue**: #1321 (COMPLETED)
