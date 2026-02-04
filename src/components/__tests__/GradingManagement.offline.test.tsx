@@ -58,9 +58,9 @@ vi.mock('../../services/permissionService', () => ({
   },
 }));
 
-vi.mock('../../services/pushNotificationService', () => ({
-  pushNotificationService: {
-    sendNotification: () => Promise.resolve(),
+vi.mock('../../services/notifications/unifiedNotificationManager', () => ({
+  unifiedNotificationManager: {
+    showNotification: () => Promise.resolve(),
     getSettings: () => ({
       enabled: false,
       quietHours: { enabled: false, start: '22:00', end: '07:00' },
@@ -69,13 +69,21 @@ vi.mock('../../services/pushNotificationService', () => ({
       vibrationEnabled: true,
       desktopEnabled: false,
     }),
-    getHistory: () => [],
+    getUnifiedSettings: () => ({
+      enabled: false,
+      quietHours: { enabled: false, start: '22:00', end: '07:00' },
+      batchNotifications: true,
+      soundEnabled: true,
+      vibrationEnabled: true,
+      desktopEnabled: false,
+    }),
+    getUnifiedHistory: () => [],
     getBatches: () => [],
     getTemplates: () => [],
     getAnalytics: () => ({ totalSent: 0, totalRead: 0, readRate: 0 }),
-    clearHistory: () => {},
+    clearUnifiedHistory: () => {},
     createBatch: () => 'batch-id',
-    createNotificationFromTemplate: () => {},
+    createNotificationFromTemplateId: () => {},
     createTemplate: () => 'template-id',
     deleteFromHistory: () => {},
     isPermissionDenied: () => false,
@@ -85,10 +93,10 @@ vi.mock('../../services/pushNotificationService', () => ({
     requestPermission: () => Promise.resolve(true),
     resetSettings: () => {},
     saveSettings: () => {},
-    sendBatch: () => {},
-    showLocalNotification: () => {},
-    subscribeToPush: () => {},
-    unsubscribeFromPush: () => {},
+    sendBatch: () => Promise.resolve(),
+    showLocalNotification: () => Promise.resolve(),
+    subscribeToPush: () => Promise.resolve(null),
+    unsubscribeFromPush: () => Promise.resolve(true),
   },
 }));
 

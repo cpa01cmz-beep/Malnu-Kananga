@@ -26,6 +26,41 @@
 
 ---
 
+### [SANITIZER] Remove Deprecated pushNotificationService and Sync Stale Branches (Issue #1365, P2) 🔄
+    - **Mode**: SANITIZER
+    - **Issue**: #1365
+    - **Priority**: P2 (Repository Hygiene)
+    - **Status**: In Progress
+    - **Started**: 2026-02-04
+    - **Reason**: Deprecated pushNotificationService wrapper should be removed along with stale branches. This service was marked @deprecated in issues #990 and #1114 and is now replaced by unifiedNotificationManager.
+    - **Task 1: Remove Deprecated Service**
+       - ✅ Verified no production code imports pushNotificationService
+       - ✅ Identified files to remove:
+          - src/services/pushNotificationService.ts (257 lines)
+          - src/__tests__/pushNotifications.integration.test.ts (323 lines)
+       - ✅ Identified test files requiring mock updates:
+          - src/services/__tests__/ocrNotificationIntegration.test.ts
+          - src/services/__tests__/ocr-validation-integration.test.ts
+          - src/components/__tests__/GradingManagement.offline.test.tsx
+       - ⏳ Remove deprecated files and update test mocks
+    - **Task 2: Branch Cleanup**
+       - ⏳ Evaluate stale branches for sync or deletion
+    - **Acceptance Criteria**:
+       - [ ] pushNotificationService.ts deleted
+       - [ ] pushNotifications.integration.test.ts deleted
+       - [ ] Test mocks updated to use unifiedNotificationManager
+       - [ ] Run typecheck: Passed (0 errors)
+       - [ ] Run lint: Passed (0 errors, 0 warnings)
+       - [ ] Run tests: All passing
+       - [ ] Stale branches evaluated and cleaned up
+    - **Pillars Addressed**:
+       - Pillar 3 (Stability): Remove dead code to prevent confusion
+       - Pillar 8 (Documentation): Single Source of Truth maintained
+       - Pillar 15 (Dynamic Coding): Eliminate deprecated wrappers
+       - Pillar 16 (UX/DX): Cleaner codebase for developers
+
+---
+
 ### [SCRIBE] Synchronize GitHub Issue #1367 - Large File Refactoring Completion ✅
     - **Mode**: SCRIBE
     - **Issue**: #1367

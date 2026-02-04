@@ -34,10 +34,10 @@ if (!File.prototype.arrayBuffer) {
   };
 }
 
-vi.mock('../pushNotificationService', () => ({
-  pushNotificationService: {
-    showLocalNotification: vi.fn()
-  }
+vi.mock('../notifications/unifiedNotificationManager', () => ({
+  unifiedNotificationManager: {
+    showNotification: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
 describe('OCR Validation Notification Integration', () => {

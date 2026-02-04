@@ -26,13 +26,13 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
-// Mock push notification service
+// Mock unified notification manager
 const mockShowNotification = vi.fn().mockResolvedValue(undefined);
 
-vi.mock('../pushNotificationService', () => ({
-  pushNotificationService: {
-    showLocalNotification: mockShowNotification
-  }
+vi.mock('../notifications/unifiedNotificationManager', () => ({
+  unifiedNotificationManager: {
+    showNotification: mockShowNotification,
+  },
 }));
 
 // Mock parentGradeNotificationService
