@@ -6,6 +6,8 @@ export class ThemeManager {
   private static instance: ThemeManager;
   private currentTheme: Theme | null = null;
   private listeners: ((theme: Theme) => void)[] = [];
+  // eslint-disable-next-line no-undef
+  private storageListener: ((event: StorageEvent) => void) | null = null;
 
   private constructor() {
     this.loadCurrentTheme();
@@ -294,7 +296,8 @@ export class ThemeManager {
 
   private setupStorageListener(): void {
     // Listen for changes to theme in localStorage from other tabs
-    window.addEventListener('storage', (event) => {
+    // eslint-disable-next-line no-undef
+    this.storageListener = (event: StorageEvent) => {
       if (event.key === STORAGE_KEYS.THEME && event.newValue) {
         try {
           const data = JSON.parse(event.newValue);
@@ -308,6 +311,25 @@ export class ThemeManager {
           logger.error('Failed to sync theme from storage event:', error);
         }
       }
-    });
+    };
+    window.addEventListener('storage', this.storageListener);
+  }
+
+  /**
+   * Cleanup event listeners and resources
+   * Call this when the service is no longer needed (e.g., on app unmount)
+   */
+  public cleanup(): void {
+    // Remove 'storage' event listener
+    if (this.storageListener) {
+      window.removeEventListener('storage', this.storageListener);
+      this.storageListener = null;
+      logger.debug('Storage event listener removed');
+    }
+
+    // Clear all theme listeners
+    this.listeners = [];
+
+    logger.info('Theme manager cleaned up');
   }
 }

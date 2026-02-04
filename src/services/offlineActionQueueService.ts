@@ -512,13 +512,16 @@ class OfflineActionQueueService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  private onlineListener: (() => void) | null = null;
+
   private setupNetworkListener(): void {
     // Listen for online events to trigger sync
-    window.addEventListener('online', () => {
+    this.onlineListener = () => {
       if (this.getPendingCount() > 0 && !this.isSyncing) {
         setTimeout(() => this.sync(), 1000);
       }
-    });
+    };
+    window.addEventListener('online', this.onlineListener);
   }
 
   private loadQueue(): void {
@@ -709,6 +712,13 @@ class OfflineActionQueueService {
    * Call this on logout or when service needs to be reset
    */
   public cleanup(): void {
+    // Remove 'online' event listener
+    if (this.onlineListener) {
+      window.removeEventListener('online', this.onlineListener);
+      this.onlineListener = null;
+      logger.debug('Online event listener removed');
+    }
+
     this.cleanupWebSocketIntegration();
     this.queue = [];
     this.isSyncing = false;

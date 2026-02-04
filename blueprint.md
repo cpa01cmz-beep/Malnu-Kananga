@@ -1,13 +1,67 @@
-    # MA Malnu Kananga - Blueprint (Architecture & Design)
+     # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-     **Version**:3.9.6
-                   **Last Updated**: 2026-02-04 (Add Unified Student Timeline View - Issue #1373 Complete)
+      **Version**:3.9.7
+                    **Last Updated**: 2026-02-04 (Add Cleanup for Event Listeners - Issue #1368 Complete)
 
     ---
 
-    ### Recent Changes (2026-02-04)
+     ### Recent Changes (2026-02-04)
 
-    ### [BUILDER] Add Unified Student Timeline View (Issue #1373, P2) ✅
+     ### [OPTIMIZER] Add Cleanup for Event Listeners in Singleton Services (Issue #1368, P3) ✅
+        - **Status**: ✅ **COMPLETED**
+        - **Priority**: P3 (Refactor)
+        - **Issue**: #1368 (COMPLETED 2026-02-04)
+        - **Effort**: 3-4 hours
+        - **Completed**: 2026-02-04
+        - **Deliverables**:
+           - ✅ Audited all singleton services for event listener registration patterns
+           - ✅ Identified cleanup status:
+              - ✅ webSocketService: Has cleanup in disconnect() method (visibilitychange listener)
+              - ✅ speechRecognitionService: Has cleanup method (permission listener)
+              - ✅ pushNotificationHandler: Has cleanup() and unsubscribeFromPush() methods
+              - ✅ unifiedNotificationManager: Has cleanup() delegating to all handlers
+              - ❌ offlineActionQueueService: Missing cleanup for 'online' event listener
+              - ❌ themeManager: Missing cleanup for 'storage' event listener
+           - ✅ Enhanced offlineActionQueueService.ts:
+              - Added onlineListener property to track event listener reference
+              - Updated cleanup() method to remove 'online' event listener
+              - Ensured WebSocket integration cleanup is called
+           - ✅ Enhanced themeManager.ts:
+              - Added storageListener property to track event listener reference
+              - Added comprehensive cleanup() method
+              - Removes 'storage' event listener
+              - Clears all theme listeners
+           - ✅ Created comprehensive test suite:
+              - offlineActionQueueService.cleanup.test.ts (5 tests, 100% pass)
+              - themeManager.cleanup.test.ts (6 tests, 100% pass)
+        - **Acceptance Criteria**:
+           - ✅ All singleton services have comprehensive cleanup methods
+           - ✅ Event listeners are properly removed on cleanup
+           - ✅ No memory leaks detected (verified with tests)
+           - ✅ All TypeScript type checking passed (0 errors)
+           - ✅ All ESLint linting passed (0 errors, 0 warnings)
+           - ✅ All tests passing (11/11)
+           - ✅ Documentation updated (task.md, blueprint.md, roadmap.md)
+        - **Impact**:
+           - Eliminates memory leaks from orphaned event listeners
+           - Improves application stability and resource management
+           - Prevents stale event handlers from executing after cleanup
+           - Better developer experience with predictable cleanup behavior
+        - **Files Modified**:
+           - src/services/offlineActionQueueService.ts (enhanced cleanup, added onlineListener property)
+           - src/services/themeManager.ts (added cleanup method, added storageListener property)
+        - **Files Created**:
+           - src/services/__tests__/offlineActionQueueService.cleanup.test.ts (136 lines)
+           - src/services/__tests__/themeManager.cleanup.test.ts (141 lines)
+        - **Pillars Addressed**:
+           - Pillar 3 (Stability): Prevents memory leaks from orphaned event listeners
+           - Pillar 11 (Modularity): Clean separation of initialization and cleanup
+           - Pillar 16 (UX/DX): Better performance and reliability
+           - Pillar 13 (Performance): Efficient resource management
+
+     ---
+
+     ### [BUILDER] Add Unified Student Timeline View (Issue #1373, P2) ✅
        - **Status**: ✅ **COMPLETED**
        - **Priority**: P2 (UX Improvement)
        - **Issue**: #1373 (CLOSED 2026-02-04)

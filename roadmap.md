@@ -1,12 +1,41 @@
-    # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+     # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-     **Version**:3.9.6
-                              **Last Updated**: 2026-02-04 (Add Unified Student Timeline View - Issue #1373 Complete)
-                   **Maintained By**: Lead Autonomous Engineer & System Guardian
+      **Version**:3.9.7
+                               **Last Updated**: 2026-02-04 (Add Cleanup for Event Listeners - Issue #1368 Complete)
+                    **Maintained By**: Lead Autonomous Engineer & System Guardian
 
    ---
 
-  ### [BUILDER] Add Unified Student Timeline View (Issue #1373, P2) ✅
+   ### [OPTIMIZER] Add Cleanup for Event Listeners in Singleton Services (Issue #1368, P3) ✅
+      - **Status**: ✅ **COMPLETED**
+      - **Priority**: P3 (Refactor)
+      - **Issue**: #1368 (COMPLETED 2026-02-04)
+      - **Effort**: 3-4 hours
+      - **Completed**: 2026-02-04
+      - **Deliverables**:
+         - ✅ Audited all singleton services for event listener registration
+         - ✅ Enhanced offlineActionQueueService.ts cleanup method
+         - ✅ Added themeManager.ts cleanup method
+         - ✅ Created comprehensive test suite (11 tests, 100% pass)
+      - **Acceptance Criteria**:
+         - ✅ All singleton services have cleanup methods
+         - ✅ Event listeners removed on cleanup
+         - ✅ No memory leaks detected
+         - ✅ TypeScript type checking: Passed (0 errors)
+         - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+         - ✅ All tests passing (11/11)
+      - **Impact**:
+         - Eliminates memory leaks
+         - Improves stability
+         - Better resource management
+      - **Pillars Addressed**:
+         - Pillar 3 (Stability): Prevents memory leaks
+         - Pillar 11 (Modularity): Clean separation of init/cleanup
+         - Pillar 16 (UX/DX): Better performance
+
+   ---
+
+   ### [BUILDER] Add Unified Student Timeline View (Issue #1373, P2) ✅
      - **Status**: ✅ **COMPLETED**
      - **Priority**: P2 (UX Improvement)
      - **Issue**: #1373 (COMPLETED 2026-02-04)
