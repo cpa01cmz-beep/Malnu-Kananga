@@ -1,12 +1,43 @@
           # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
-**Version**:3.10.3
-                                        **Last Updated**: 2026-02-04 (Delete Merged Remote Branches - Issue #1396)
-                          **Maintained By**: Lead Autonomous Engineer & System Guardian
+**Version**:3.10.4
+                                         **Last Updated**: 2026-02-04 (Move Misplaced Test File - Issue #1321)
+                           **Maintained By**: Lead Autonomous Engineer & System Guardian
 
-    ---
+     ---
 
-           ### [SANITIZER] Delete Merged Remote Branches (Issue #1396, P3) ✅
+            ### [SANITIZER] Move Misplaced Test File - SiteEditor.validation.test.tsx (Issue #1321, P3) ✅
+               - **Status**: ✅ **COMPLETED**
+               - **Priority**: P3 (Chore)
+               - **Issue**: #1321 (COMPLETED 2026-02-04)
+               - **Effort**: 30 minutes
+               - **Completed**: 2026-02-04
+               - **Deliverables**:
+                  - ✅ Moved test file from `src/tests/SiteEditor.validation.test.tsx` to `src/components/__tests__/SiteEditor.validation.test.tsx`
+                  - ✅ Updated import paths for new location
+                  - ✅ Deleted old test file and empty src/tests/ directory
+                  - ✅ Verified tests run from new location
+               - **Acceptance Criteria**:
+                  - ✅ Test file moved to `src/components/__tests__/SiteEditor.validation.test.tsx`
+                  - ✅ Import paths updated correctly
+                  - ✅ Tests run from new location
+                  - ✅ TypeScript type checking: Passed (0 errors)
+                  - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+                  - ✅ Old location deleted
+               - **Impact**:
+                  - Consistent test file organization across project
+                  - Tests located next to code they test
+                  - Follows project conventions established in AGENTS.md
+                  - Cleaner directory structure
+               - **Pillars Addressed**:
+                  - Pillar 3 (Stability): Consistent test organization prevents confusion
+                  - Pillar 8 (Documentation): Follows documented project structure
+                  - Pillar 11 (Modularity): Tests co-located with components
+                  - Pillar 16 (UX/DX): Better developer experience with predictable structure
+
+            ---
+
+            ### [SANITIZER] Delete Merged Remote Branches (Issue #1396, P3) ✅
               - **Status**: ✅ **COMPLETED**
               - **Priority**: P3 (Chore)
               - **Issue**: #1396 (COMPLETED 2026-02-04)

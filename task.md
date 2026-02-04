@@ -1,5 +1,49 @@
 # Active Tasks Tracking
 
+### [SANITIZER] Move Misplaced Test File - SiteEditor.validation.test.tsx (Issue #1321, P3) ✅
+    - **Mode**: SANITIZER
+    - **Issue**: #1321 (COMPLETED)
+    - **Priority**: P3 (Chore)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: Test file was in `src/tests/SiteEditor.validation.test.tsx` but should be in `src/components/__tests__/SiteEditor.validation.test.tsx` to follow project convention (tests in `__tests__/` directories alongside the code they test).
+    - **Analysis**:
+        - ✅ Misplaced: `src/tests/SiteEditor.validation.test.tsx`
+        - ✅ Should be: `src/components/__tests__/SiteEditor.validation.test.tsx`
+        - ✅ Component location: `src/components/SiteEditor.tsx`
+        - ✅ No existing SiteEditor tests in `src/components/__tests__/`
+        - ✅ Import paths updated: `../components/SiteEditor` → `./SiteEditor`, `../types` → `../../types`, etc.
+    - **Implementation**:
+        - ✅ Created `src/components/__tests__/SiteEditor.validation.test.tsx` with updated import paths
+        - ✅ Test file runs correctly from new location (same pass rate as original: 12/16)
+        - ✅ Deleted `src/tests/SiteEditor.validation.test.tsx`
+        - ✅ Deleted `src/tests/` directory (now empty)
+    - **Files Created**:
+        - src/components/__tests__/SiteEditor.validation.test.tsx (231 lines)
+    - **Files Deleted**:
+        - src/tests/SiteEditor.validation.test.tsx (227 lines)
+        - src/tests/ (directory)
+    - **Acceptance Criteria**:
+        - ✅ Test file moved to `src/components/__tests__/SiteEditor.validation.test.tsx`
+        - ✅ Import paths updated correctly
+        - ✅ Tests run from new location
+        - ✅ TypeScript type checking: Passed (0 errors)
+        - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+        - ✅ Old location deleted (file and directory)
+    - **Impact**:
+        - Consistent test file organization across project
+        - Tests located next to code they test
+        - Follows project conventions established in AGENTS.md
+        - Empty src/tests/ directory removed
+    - **Pillars Addressed**:
+        - Pillar 3 (Stability): Consistent test organization prevents confusion
+        - Pillar 8 (Documentation): Follows documented project structure
+        - Pillar 11 (Modularity): Tests co-located with components
+        - Pillar 16 (UX/DX): Better developer experience with predictable structure
+
+---
+
 ### [SANITIZER] Delete Merged Remote Branches (Issue #1396, P3) ✅
     - **Mode**: SANITIZER
     - **Issue**: #1396 (COMPLETED)
