@@ -41,6 +41,8 @@
        - Pillar 3 (Stability): Prevents memory leaks
        - Pillar 11 (Modularity): Clean separation of initialization and cleanup
        - Pillar 16 (UX/DX): Better performance and reliability
+    - **Pull Request**: https://github.com/cpa01cmz-beep/Malnu-Kananga/pull/1390
+    - **Commit**: be9755e
 
 ---
 
