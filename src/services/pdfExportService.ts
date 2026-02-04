@@ -220,7 +220,7 @@ class PDFExportService {
       ['Kehadiran/Hari', `${attendance.filter(a => a.status === 'Hadir').length}/${attendance.length}`],
       ['Persentase Kehadiran', `${((attendance.filter(a => a.status === 'Hadir').length / attendance.length) * 100).toFixed(1)}%`]
     ];
-    
+
     this.createReport({
       title: 'Laporan Konsolidasi Siswa',
       studentName: studentInfo.name || studentInfo.nama,
@@ -230,7 +230,39 @@ class PDFExportService {
       data
     });
   }
-  
+
+  createTimelineReport(events: unknown[], studentName: string, startDate?: string, endDate?: string): void {
+    const headers = ['Waktu', 'Jenis', 'Judul', 'Deskripsi'];
+    const data = events.map((event: unknown) => {
+      const e = event as { timestamp: string; type: string; title: string; description: string };
+      return [
+        new Date(e.timestamp).toLocaleString('id-ID'),
+        e.type,
+        e.title,
+        e.description
+      ];
+    });
+
+    let period = '';
+    if (startDate && endDate) {
+      period = `${new Date(startDate).toLocaleDateString('id-ID')} - ${new Date(endDate).toLocaleDateString('id-ID')}`;
+    } else {
+      period = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long' });
+    }
+
+    this.createReport({
+      title: 'Timeline Aktivitas Siswa',
+      studentName,
+      period,
+      headers,
+      data,
+      summary: {
+        'Total Aktivitas': events.length.toString(),
+        'Periode': period
+      }
+    });
+  }
+
   private calculateAverage(values: number[]): number {
     const validValues = values.filter(v => v > 0);
     if (validValues.length === 0) return 0;

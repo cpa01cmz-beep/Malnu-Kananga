@@ -1,11 +1,83 @@
-   # MA Malnu Kananga - Blueprint (Architecture & Design)
+    # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-    **Version**: 3.9.5
-                  **Last Updated**: 2026-02-04 (Remove Redundant docs/ROADMAP.md - Issue #1386 Complete)
+     **Version**:3.9.6
+                   **Last Updated**: 2026-02-04 (Add Unified Student Timeline View - Issue #1373 Complete)
 
-   ---
+    ---
 
-   ### Recent Changes (2026-02-04)
+    ### Recent Changes (2026-02-04)
+
+    ### [BUILDER] Add Unified Student Timeline View (Issue #1373, P2) ✅
+       - **Status**: ✅ **COMPLETED**
+       - **Priority**: P2 (UX Improvement)
+       - **Issue**: #1373 (CLOSED 2026-02-04)
+       - **Effort**: 4-5 hours
+       - **Completed**: 2026-02-04
+       - **Deliverables**:
+          - ✅ Created comprehensive timeline types system (src/types/timeline.ts)
+             - 13 timeline event types: grade, assignment, submission, attendance, material_access, material_download, material_rating, material_bookmark, message_sent, message_received, announcement, event, system
+             - Event data interfaces for each type
+             - Timeline filter and options interfaces
+             - Statistics interface
+          - ✅ Created studentTimelineService.ts (828 lines)
+             - Aggregates events from grades, assignments, submissions, attendance, materials, bookmarks, ratings, messages, announcements, and school events
+             - Implements caching mechanism with TTL (5 minutes)
+             - Implements filtering by event type, date range, score range
+             - Implements sorting by timestamp or type
+             - Calculates statistics (average score, attendance rate, total events)
+             - Event-to-timeline mapping with color coding and icons
+          - ✅ Created StudentTimeline.tsx component (370 lines)
+             - Displays timeline events grouped by date
+             - Filterable by event type (13 types with icons)
+             - Filterable by date range (start/end dates)
+             - Sortable by timestamp (newest/oldest)
+             - Configurable display limit (10/20/50/100/All)
+             - Statistics view with event counts per type
+             - PDF export functionality
+             - Clickable events with onEventClick callback
+             - Accessible with semantic HTML and ARIA labels
+             - Loading and error states with retry functionality
+          - ✅ Enhanced pdfExportService with createTimelineReport method
+          - ✅ Wrote comprehensive tests (21 tests, all passing)
+             - studentTimelineService.test.ts: 10 tests
+             - StudentTimeline.test.tsx: 11 tests
+       - **Acceptance Criteria**:
+          - ✅ Timeline component displays all student activities in chronological order
+          - ✅ Filterable by event type (grades, attendance, materials, messages, etc.)
+          - ✅ Clickable events that navigate to details
+          - ✅ Export timeline to PDF
+          - ⏳ Role-based access (parents see limited view) - deferred to follow-up
+          - ⏳ Real-time updates via WebSocket - deferred to follow-up
+          - ✅ Configurable date range
+          - ✅ All TypeScript type checking passed (0 errors)
+          - ✅ All ESLint linting passed (0 errors, 0 warnings)
+          - ✅ All tests passing (21/21)
+          - ✅ Documentation updated (blueprint.md, roadmap.md, task.md)
+       - **Impact**:
+          - Comprehensive student visibility across all features
+          - Better teacher/parent understanding of student engagement
+          - Single source of truth for student history
+          - PDF export capability for reporting
+       - **Files Created**:
+          - src/types/timeline.ts (270 lines)
+          - src/services/studentTimelineService.ts (828 lines)
+          - src/components/Shared/StudentTimeline.tsx (370 lines)
+          - src/components/Shared/__tests__/StudentTimeline.test.tsx (322 lines)
+          - src/services/__tests__/studentTimelineService.test.ts (265 lines)
+       - **Files Modified**:
+          - src/types/index.ts (export timeline types)
+          - src/services/pdfExportService.ts (add createTimelineReport method)
+       - **Pillars Addressed**:
+          - Pillar 1 (Flow): Unified data flow from multiple services
+          - Pillar 10 (New Features): New comprehensive student timeline
+          - Pillar 11 (Modularity): Reusable timeline component and service
+          - Pillar 14 (Content/SEO): Semantic HTML and accessible timeline UI
+          - Pillar 16 (UX/DX): Better experience for teachers and parents
+       - **Follow-up Tasks**:
+          - Integrate WebSocket for real-time timeline updates
+          - Implement role-based access controls (parents see limited view)
+
+    ---
 
 ### [SCRIBE] Remove Redundant docs/ROADMAP.md (Issue #1386, P3) ✅
       - **Status**: ✅ **COMPLETED**

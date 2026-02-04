@@ -15,3 +15,4 @@ export * from './quiz';
 export * from './analytics';
 export * from './email.types';
 export * from './permissions';
+export * from './timeline';
