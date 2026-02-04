@@ -16,7 +16,11 @@ export enum ErrorType {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   PERMISSION_ERROR = 'PERMISSION_ERROR',
   OFFLINE_ERROR = 'OFFLINE_ERROR',
-  CONFLICT_ERROR = 'CONFLICT_ERROR'
+  CONFLICT_ERROR = 'CONFLICT_ERROR',
+  AI_SERVICE_ERROR = 'AI_SERVICE_ERROR',
+  AI_MODEL_ERROR = 'AI_MODEL_ERROR',
+  AI_CONTENT_GENERATION_ERROR = 'AI_CONTENT_GENERATION_ERROR',
+  AI_CACHE_ERROR = 'AI_CACHE_ERROR'
 }
 
 export interface ErrorContext {
@@ -24,6 +28,7 @@ export interface ErrorContext {
   timestamp: number;
   attempt?: number;
   maxAttempts?: number;
+  aiModel?: string;
 }
 
 export class AppError extends Error {
@@ -201,6 +206,35 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
     return new AppError(
       CENTRALIZED_ERROR_MESSAGES.CONFLICT_ERROR,
       ErrorType.CONFLICT_ERROR,
+      context,
+      true,
+      error
+    );
+  }
+
+  // AI-specific error patterns
+  if (errorMessage.includes('ai') || errorMessage.includes('gemini') || errorMessage.includes('model')) {
+    if (errorMessage.includes('generate') || errorMessage.includes('content')) {
+      return new AppError(
+        CENTRALIZED_ERROR_MESSAGES.AI_CONTENT_GENERATION_ERROR,
+        ErrorType.AI_CONTENT_GENERATION_ERROR,
+        context,
+        true,
+        error
+      );
+    }
+    if (errorMessage.includes('model') || errorMessage.includes('unavailable')) {
+      return new AppError(
+        CENTRALIZED_ERROR_MESSAGES.AI_MODEL_ERROR,
+        ErrorType.AI_MODEL_ERROR,
+        context,
+        true,
+        error
+      );
+    }
+    return new AppError(
+      CENTRALIZED_ERROR_MESSAGES.AI_SERVICE_ERROR,
+      ErrorType.AI_SERVICE_ERROR,
       context,
       true,
       error
@@ -551,6 +585,33 @@ export function getUIFeedback(error: AppError): ErrorFeedback {
     case ErrorType.OFFLINE_ERROR:
       baseFeedback.type = 'warning';
       baseFeedback.message = 'Anda sedang offline. Data akan disimpan dan disinkronkan saat koneksi tersedia.';
+      break;
+
+    case ErrorType.AI_SERVICE_ERROR:
+    case ErrorType.AI_MODEL_ERROR:
+    case ErrorType.AI_CONTENT_GENERATION_ERROR:
+      baseFeedback.actions = [
+        {
+          label: 'Coba Lagi',
+          action: () => window.location.reload(),
+          variant: 'primary'
+        }
+      ];
+      break;
+
+    case ErrorType.QUOTA_EXCEEDED_ERROR:
+      baseFeedback.actions = [
+        {
+          label: 'Coba Lagi Nanti',
+          action: () => window.location.reload(),
+          variant: 'secondary'
+        },
+        {
+          label: 'Hubungi Administrator',
+          action: () => window.open(`mailto:${ADMIN_EMAIL}`),
+          variant: 'primary'
+        }
+      ];
       break;
   }
 

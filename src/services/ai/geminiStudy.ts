@@ -2,13 +2,13 @@ import { Type } from "@google/genai";
 import type { StudyPlan } from '../../types';
 import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
-import {
-  classifyError,
-  logError,
-  getUserFriendlyMessage,
-  withCircuitBreaker
-} from '../../utils/errorHandler';
+import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import {
+  getAIErrorMessage,
+  AIOperationType,
+  handleAIError
+} from '../../utils/aiErrorHandler';
 
 /**
  * Generate personalized study plan for a student
@@ -196,14 +196,8 @@ export async function generateStudyPlan(
 
     return studyPlan;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'generateStudyPlan',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Gagal membuat rencana belajar dengan AI. Silakan coba lagi."
-      : message);
+    const classifiedError = handleAIError(error, AIOperationType.STUDY_PLAN, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.STUDY_PLAN);
+    throw new Error(message);
   }
 }

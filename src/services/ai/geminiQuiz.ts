@@ -1,13 +1,13 @@
 import { Type } from "@google/genai";
 import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
-import {
-  classifyError,
-  logError,
-  getUserFriendlyMessage,
-  withCircuitBreaker
-} from '../../utils/errorHandler';
+import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import {
+  getAIErrorMessage,
+  AIOperationType,
+  handleAIError
+} from '../../utils/aiErrorHandler';
 
 /**
  * Generate quiz from learning materials
@@ -179,14 +179,8 @@ export async function generateQuiz(
 
     return quizData;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'generateQuiz',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Gagal membuat kuis dengan AI. Silakan coba lagi atau kurangi jumlah pertanyaan."
-      : message);
+    const classifiedError = handleAIError(error, AIOperationType.QUIZ, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.QUIZ);
+    throw new Error(message);
   }
 }

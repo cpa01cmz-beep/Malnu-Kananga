@@ -19,6 +19,10 @@ export const ERROR_MESSAGES = {
   PERMISSION_ERROR: 'Anda tidak memiliki izin untuk melakukan tindakan ini.',
   OFFLINE_ERROR: 'Tidak dapat melakukan operasi saat offline. Data akan disinkronkan saat online.',
   CONFLICT_ERROR: 'Data telah diubah oleh pengguna lain. Silakan refresh dan coba lagi.',
+  AI_SERVICE_ERROR: 'Gagal memproses permintaan AI. Silakan coba lagi.',
+  AI_MODEL_ERROR: 'Model AI tidak tersedia atau sedang dalam pemeliharaan. Silakan coba lagi nanti.',
+  AI_CONTENT_GENERATION_ERROR: 'Gagal menghasilkan konten dari AI. Silakan coba dengan instruksi yang lebih spesifik.',
+  AI_CACHE_ERROR: 'Gagal mengakses cache AI. Silakan coba lagi.',
 } as const;
 
 export const VALIDATION_MESSAGES = {

@@ -1,13 +1,13 @@
 import type { FeaturedProgram, LatestNews } from '../../types';
 import { getAIInstance, DEFAULT_API_BASE_URL, AI_MODELS } from './geminiClient';
 import { chatCache } from '../aiCacheService';
-import {
-  classifyError,
-  logError,
-  getUserFriendlyMessage,
-  withCircuitBreaker
-} from '../../utils/errorHandler';
+import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import {
+  getAIErrorMessage,
+  AIOperationType,
+  handleAIError
+} from '../../utils/aiErrorHandler';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE_URL;
 const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
@@ -133,14 +133,8 @@ PANDUAN MENJAWAB:
       chatCache.set(cacheKey, accumulatedResponse);
     }
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'getAIResponseStream',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    yield message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? 'Maaf, sistem AI sedang sibuk atau mengalami gangguan. Silakan coba sesaat lagi.'
-      : message;
+    const classifiedError = handleAIError(error, AIOperationType.CHAT, AI_MODELS.FLASH);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.CHAT);
+    yield message;
   }
 }

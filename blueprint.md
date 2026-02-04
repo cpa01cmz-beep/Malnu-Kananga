@@ -1,11 +1,70 @@
-           # MA Malnu Kananga - Blueprint (Architecture & Design)
+# MA Malnu Kananga - Blueprint (Architecture & Design)
 
-**Version**:3.10.5
-                              **Last Updated**: 2026-02-04 (Improve WebSocket Service Test Mocks - Issue #1261)
+**Version**:3.10.6
+                               **Last Updated**: 2026-02-04 (Standardize Error Handling in AI Services - Issue #1402)
 
-          ---
+           ---
 
-          ### [SANITIZER] Improve WebSocket Service Test Mocks (Issue #1261, P3) ✅
+           ### [SANITIZER] Standardize Error Handling in AI Services (Issue #1402, P2) ✅
+             - **Status**: ✅ **COMPLETED**
+             - **Priority**: P2 (Enhancement)
+             - **Issue**: #1402 (COMPLETED 2026-02-04)
+             - **Effort**: 4-5 hours
+             - **Completed**: 2026-02-04
+             - **Deliverables**:
+                 - ✅ Added AI-specific error types to ErrorType enum (AI_SERVICE_ERROR, AI_MODEL_ERROR, AI_CONTENT_GENERATION_ERROR, AI_CACHE_ERROR)
+                 - ✅ Added AI-specific error messages to errorMessages.ts (4 new error messages)
+                 - ✅ Created centralized aiErrorHandler.ts utility (156 lines)
+                    - AIOperationType enum (6 operations: CHAT, ANALYSIS, EDITOR, QUIZ, STUDY_PLAN, FEEDBACK)
+                    - handleAIError function for consistent error classification
+                    - getAIErrorMessage for operation-specific user-friendly messages
+                    - shouldRetryAIError for retry logic
+                    - logAIOperationStart/Success/Error for operation logging
+                    - getCircuitBreakerStateMessage for circuit breaker states
+                    - createAIError for creating AI errors with context
+                 - ✅ Updated all AI services to use standardized error handling:
+                    - geminiChat.ts (1 catch block)
+                    - geminiAnalysis.ts (3 catch blocks)
+                    - geminiEditor.ts (1 catch block)
+                    - geminiQuiz.ts (1 catch block)
+                    - geminiStudy.ts (1 catch block)
+                 - ✅ Removed unused imports from all AI services
+                 - ✅ Updated ErrorContext interface to include aiModel field
+                 - ✅ Added AI error types to getUIFeedback function
+                 - ✅ Created comprehensive test suite (35 tests, all passing)
+             - **Files Created**:
+                 - src/utils/aiErrorHandler.ts (156 lines)
+                 - src/utils/__tests__/aiErrorHandler.test.ts (322 lines, 35 tests)
+             - **Files Modified**:
+                 - src/utils/errorHandler.ts (added AI error types, updated ErrorContext, added AI error types to getUIFeedback)
+                 - src/utils/errorMessages.ts (added 4 AI-specific error messages)
+                 - src/services/ai/geminiChat.ts (updated imports and error handling)
+                 - src/services/ai/geminiAnalysis.ts (updated imports and error handling)
+                 - src/services/ai/geminiEditor.ts (updated imports and error handling)
+                 - src/services/ai/geminiQuiz.ts (updated imports and error handling)
+                 - src/services/ai/geminiStudy.ts (updated imports and error handling)
+             - **Acceptance Criteria**:
+                 - ✅ AI-specific error types added to ErrorType enum
+                 - ✅ AI error messages centralized in errorMessages.ts
+                 - ✅ All AI services use consistent error handling pattern
+                 - ✅ Error messages provide specific guidance for AI failures
+                 - ✅ All tests passing (44/44)
+                 - ✅ TypeScript type checking: Passed (0 errors)
+                 - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+             - **Impact**:
+                 - Consistent error handling across all AI services
+                 - User-friendly, operation-specific error messages for AI failures
+                 - Better error classification for AI-specific scenarios
+                 - Improved debugging with AI-specific error logging
+                 - Centralized error handling utility reduces code duplication
+             - **Pillars Addressed**:
+                 - Pillar 3 (Stability): Consistent error handling
+                 - Pillar 7 (Debug): Better error messages
+                 - Pillar 16 (UX/DX): User-friendly error messages
+
+           ---
+
+           ### [SANITIZER] Improve WebSocket Service Test Mocks (Issue #1261, P3) ✅
             - **Status**: ✅ **COMPLETED**
             - **Priority**: P3 (Test Infrastructure)
             - **Issue**: #1261 (CLOSED 2026-02-04)

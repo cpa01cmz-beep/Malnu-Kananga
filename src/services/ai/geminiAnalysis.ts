@@ -2,13 +2,13 @@ import { Type } from "@google/genai";
 import type { AIFeedback } from '../../types';
 import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
-import {
-  classifyError,
-  logError,
-  getUserFriendlyMessage,
-  withCircuitBreaker
-} from '../../utils/errorHandler';
+import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import {
+  getAIErrorMessage,
+  AIOperationType,
+  handleAIError
+} from '../../utils/aiErrorHandler';
 
 /**
  * Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
@@ -54,15 +54,9 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
 
     return analysis;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'analyzeClassPerformance',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    return message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Maaf, gagal menganalisis data saat ini."
-      : message;
+    const classifiedError = handleAIError(error, AIOperationType.ANALYSIS, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.ANALYSIS);
+    return message;
   }
 }
 
@@ -160,15 +154,9 @@ export async function analyzeStudentPerformance(
 
     return analysis;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'analyzeStudentPerformance',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    return message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Maaf, gagal menganalisis data performa saat ini."
-      : message;
+    const classifiedError = handleAIError(error, AIOperationType.ANALYSIS, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.ANALYSIS);
+    return message;
   }
 }
 
@@ -315,14 +303,8 @@ export async function generateAssignmentFeedback(
 
     return feedbackData;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'generateAssignmentFeedback',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Gagal membuat feedback AI. Silakan coba lagi."
-      : message);
+    const classifiedError = handleAIError(error, AIOperationType.FEEDBACK, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.FEEDBACK);
+    throw new Error(message);
   }
 }

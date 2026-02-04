@@ -3,14 +3,14 @@ import type { FeaturedProgram, LatestNews } from '../../types';
 import { getAIInstance, AI_MODELS } from './geminiClient';
 import { editorCache } from '../aiCacheService';
 import { validateAIResponse } from '../../utils/aiEditorValidator';
-import {
-  classifyError,
-  logError,
-  getUserFriendlyMessage,
-  withCircuitBreaker
-} from '../../utils/errorHandler';
+import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
 import { STORAGE_KEYS } from '../../constants';
+import {
+  getAIErrorMessage,
+  AIOperationType,
+  handleAIError
+} from '../../utils/aiErrorHandler';
 
 /**
  * Function to handle content editing requests with AI
@@ -141,14 +141,8 @@ Please provide updated JSON content following safety and content rules above.`;
 
     return result;
   } catch (error) {
-    const classifiedError = classifyError(error, {
-      operation: 'getAIEditorResponse',
-      timestamp: Date.now()
-    });
-    logError(classifiedError);
-    const message = getUserFriendlyMessage(classifiedError);
-    throw new Error(message === 'Terjadi kesalahan yang tidak terduga. Silakan coba lagi.'
-      ? "Gagal memproses respon dari AI. Mohon coba instruksi yang lebih spesifik."
-      : message);
+    const classifiedError = handleAIError(error, AIOperationType.EDITOR, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.EDITOR);
+    throw new Error(message);
   }
 }
