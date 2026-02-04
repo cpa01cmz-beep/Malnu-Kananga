@@ -1,7 +1,44 @@
-   # MA Malnu Kananga - Blueprint (Architecture & Design)
+ # MA Malnu Kananga - Blueprint (Architecture & Design)
 
- **Version**: 3.9.2
-               **Last Updated**: 2026-02-03 (Closed Duplicate GitHub Issue #1359 - Vitest poolOptions Already Fixed in #1382)
+  **Version**: 3.9.3
+                **Last Updated**: 2026-02-04 (Remove Deprecated pushNotificationService - Issue #1365 Task 1 Complete)
+
+ ---
+
+### Recent Changes (2026-02-04)
+
+### [SANITIZER] Remove Deprecated pushNotificationService (Issue #1365, P2) - Task 1 Complete ✅
+    - **Status**: ✅ **COMPLETED (Task 1 Only - Task 2 Pending)**
+    - **Priority**: P2 (Repository Hygiene)
+    - **Issue**: #1365
+    - **Effort**: 2-3 hours
+    - **Completed**: 2026-02-04
+    - **Commit**: 1b5a42a
+    - **Deliverables**:
+       - ✅ Deleted src/services/pushNotificationService.ts (257 lines)
+       - ✅ Deleted src/__tests__/pushNotifications.integration.test.ts (323 lines)
+       - ✅ Updated test mocks to use unifiedNotificationManager:
+          - ocrNotificationIntegration.test.ts (showNotification mock)
+          - ocr-validation-integration.test.ts (showNotification mock)
+          - GradingManagement.offline.test.tsx (complete mock with all methods: getUnifiedHistory, clearUnifiedHistory, getBatches, getTemplates, getAnalytics, createBatch, createNotificationFromTemplateId, createTemplate, deleteFromHistory, isPermissionDenied, isPermissionGranted, markAsRead, recordAnalytics, requestPermission, resetSettings, saveSettings, sendBatch, showLocalNotification, subscribeToPush, unsubscribeFromPush)
+    - **Acceptance Criteria (Task 1)**:
+       - ✅ pushNotificationService.ts deleted
+       - ✅ pushNotifications.integration.test.ts deleted
+       - ✅ Test mocks updated to use unifiedNotificationManager
+       - ✅ Run typecheck: Passed (0 errors)
+       - ✅ Run lint: Passed (0 errors, 0 warnings)
+       - ✅ Run affected tests: All passing (6/6, 4/4, 6/6)
+    - **Impact**:
+       - Removed 580 lines of dead code (257 + 323 from deleted files)
+       - Eliminates confusion for new developers about which notification service to use
+       - unifiedNotificationManager is now Single Source of Truth for all notification functionality
+       - All test mocks updated and passing
+    - **Pillars Addressed**:
+       - Pillar 3 (Stability): Remove dead code to prevent confusion
+       - Pillar 8 (Documentation): Single Source of Truth maintained
+       - Pillar 15 (Dynamic Coding): Eliminate deprecated wrappers
+       - Pillar 16 (UX/DX): Cleaner codebase for developers
+    - **Follow-up**: Task 2 (Branch Cleanup) to be completed in separate PR
 
 ---
 

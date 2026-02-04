@@ -1,7 +1,7 @@
  # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
- **Version**: 3.9.2
-                          **Last Updated**: 2026-02-03 (Closed Duplicate GitHub Issue #1359 - Vitest poolOptions Already Fixed in #1382)
+  **Version**: 3.9.3
+                           **Last Updated**: 2026-02-04 (Remove Deprecated pushNotificationService - Issue #1365 Task 1 Complete)
                 **Maintained By**: Lead Autonomous Engineer & System Guardian
 
 ---
@@ -602,7 +602,46 @@
        - Pillar 16 (UX/DX): Cleaner codebase for developers
 
  ---
-   - **Status**: ✅ **COMPLETED**
+
+## Recent Completed Work (2026-02-04)
+
+### [SANITIZER] Remove Deprecated pushNotificationService (Issue #1365, P2) - Task 1 Complete ✅
+    - **Status**: ✅ **COMPLETED (Task 1 Only - Task 2 Pending)**
+    - **Priority**: P2 (Repository Hygiene)
+    - **Issue**: #1365
+    - **Effort**: 2-3 hours
+    - **Completed**: 2026-02-04
+    - **Commit**: 1b5a42a
+    - **Deliverables**:
+       - ✅ Deleted src/services/pushNotificationService.ts (257 lines)
+       - ✅ Deleted src/__tests__/pushNotifications.integration.test.ts (323 lines)
+       - ✅ Updated test mocks to use unifiedNotificationManager:
+          - ocrNotificationIntegration.test.ts (showNotification mock)
+          - ocr-validation-integration.test.ts (showNotification mock)
+          - GradingManagement.offline.test.tsx (complete mock with all methods)
+    - **Acceptance Criteria (Task 1)**:
+       - ✅ pushNotificationService.ts deleted
+       - ✅ pushNotifications.integration.test.ts deleted
+       - ✅ Test mocks updated to use unifiedNotificationManager
+       - ✅ Run typecheck: Passed (0 errors)
+       - ✅ Run lint: Passed (0 errors, 0 warnings)
+       - ✅ Run affected tests: All passing
+    - **Impact**:
+       - Removed 580 lines of dead code
+       - Eliminates confusion for new developers
+       - unifiedNotificationManager is now Single Source of Truth
+    - **Pillars Addressed**:
+       - Pillar 3 (Stability): Remove dead code
+       - Pillar 8 (Documentation): Single Source of Truth
+       - Pillar 15 (Dynamic Coding): Eliminate deprecated wrappers
+       - Pillar 16 (UX/DX): Cleaner codebase
+    - **Follow-up**: Task 2 (Branch Cleanup) to be completed in separate PR
+
+---
+
+## Recent Completed Work (2026-02-03)
+
+### [SANITIZER] Fix Test Suite Bugs - React Testing Library Warnings (Issue #1382, P1) ✅   - **Status**: ✅ **COMPLETED**
    - **Priority**: P2 (Code Quality & Maintainability)
    - **Issue**: #1364
    - **Commit**: TBD (to be created with PR)
