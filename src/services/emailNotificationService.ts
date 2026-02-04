@@ -65,7 +65,8 @@ const NOTIFICATION_TEMPLATE_MAP: Record<NotificationType, string> = {
   'system': 'system-notification',
   'ocr': 'system-notification',
   'ocr_validation': 'system-notification',
-  'missing_grades': 'missing-grades-notification'
+  'missing_grades': 'missing-grades-notification',
+  'progress_report': 'system-notification'
 };
 
 class EmailNotificationService {
@@ -472,7 +473,8 @@ class EmailNotificationService {
       'system': 'Sistem',
       'ocr': 'OCR',
       'ocr_validation': 'Validasi OCR',
-      'missing_grades': 'Nilai Belum Ada'
+      'missing_grades': 'Nilai Belum Ada',
+      'progress_report': 'Laporan Progres'
     };
 
     return labels[type] || type;

@@ -186,6 +186,9 @@ export const STORAGE_KEYS = {
 
     // Activity Feed (new)
     ACTIVITY_FEED: 'malnu_activity_feed',
+    
+    // Progress Report Auto-Generation (new)
+    PROGRESS_REPORT_AUTO_GENERATION_AUDIT: 'malnu_progress_report_auto_generation_audit',
 } as const;
 
 export const USER_ROLES = {

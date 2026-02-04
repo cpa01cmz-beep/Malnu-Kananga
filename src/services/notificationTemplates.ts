@@ -87,6 +87,14 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationType, NotificationTempla
     priority: 'high',
     data: { category: 'missing_grades' },
   },
+  progress_report: {
+    type: 'progress_report',
+    titleTemplate: '📊 Laporan Progres Belajar Baru',
+    bodyTemplate: 'Laporan progres belajar untuk {studentName} telah tersedia. Rata-rata nilai: {averageScore}, Kehadiran: {attendancePercentage}%',
+    targetRoles: ['parent'],
+    priority: 'normal',
+    data: { category: 'progress_report' },
+  },
 };
 
 export class NotificationTemplateService {

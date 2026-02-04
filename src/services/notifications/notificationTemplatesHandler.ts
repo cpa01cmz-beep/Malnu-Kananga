@@ -159,6 +159,20 @@ export class NotificationTemplatesHandler {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
+      progress_report: {
+        id: 'default-progress-report',
+        name: 'Default Progress Report',
+        type: 'progress_report',
+        title: '📊 Laporan Progres Belajar Baru',
+        body: 'Laporan progres belajar untuk {{studentName}} telah tersedia. Rata-rata nilai: {{averageScore}}, Kehadiran: {{attendancePercentage}}%',
+        variables: ['studentName', 'averageScore', 'attendancePercentage'],
+        priority: 'normal',
+        isActive: true,
+        targetRoles: ['parent'],
+        createdBy: 'system',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
     };
 
     Object.values(defaults).forEach(template => {

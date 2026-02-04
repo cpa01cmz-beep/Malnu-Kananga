@@ -1,6 +1,6 @@
 import type { UserRole, UserExtraRole } from './common';
 
-export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr' | 'ocr_validation' | 'missing_grades';
+export type NotificationType = 'announcement' | 'grade' | 'ppdb' | 'event' | 'library' | 'system' | 'ocr' | 'ocr_validation' | 'missing_grades' | 'progress_report';
 
 export type NotificationPriority = 'low' | 'normal' | 'high';
 
