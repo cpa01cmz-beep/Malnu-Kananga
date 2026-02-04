@@ -1,5 +1,39 @@
 # Active Tasks Tracking
 
+### [SCRIBE] Fix AGENTS.md - Update Push Notification Service Reference (Issue #1395, P3) ✅
+    - **Mode**: SCRIBE
+    - **Issue**: #1395 (COMPLETED)
+    - **Priority**: P3 (Documentation)
+    - **Status**: Completed
+    - **Started**: 2026-02-04
+    - **Completed**: 2026-02-04
+    - **Reason**: AGENTS.md line 42 references `pushNotificationService.ts` but the actual file has been refactored to `src/services/notifications/pushNotificationHandler.ts`.
+    - **Analysis**:
+       - ✅ AGENTS.md line 42: `pushNotificationService.ts` - INCORRECT
+       - ✅ Actual file: `src/services/notifications/pushNotificationHandler.ts` - CORRECT
+       - Root cause: Issue #1365 refactored the push notification service but AGENTS.md wasn't updated
+    - **Implementation**:
+       - ✅ Updated AGENTS.md line 42 from `pushNotificationService.ts` to `pushNotificationHandler.ts (in src/services/notifications/)`
+       - ✅ Verified the change matches the actual file structure
+       - ✅ No other files incorrectly reference the old path
+    - **Files Modified**:
+       - AGENTS.md (line 42: updated push notification service reference)
+    - **Acceptance Criteria**:
+       - ✅ AGENTS.md line 42 updated to reference the correct file path
+       - ✅ The change matches the actual file structure
+       - ✅ No other files are incorrectly referenced
+       - ✅ TypeScript type checking: Passed (0 errors)
+       - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+    - **Impact**:
+       - Documentation now accurately reflects the actual file structure
+       - Developers won't be confused when looking for push notification service
+       - AGENTS.md is consistent with Issue #1365 refactoring
+    - **Pillars Addressed**:
+       - Pillar 8 (Documentation): Ensures AGENTS.md accurately reflects current project structure
+       - Pillar 16 (UX/DX): Improves developer experience with accurate documentation
+
+---
+
 ### [SANITIZER] Investigate Test Suite Timeout - Tests Pass but Slow (Issue #1394, P2) ✅
     - **Mode**: SANITIZER
     - **Issue**: #1394 (COMPLETED)

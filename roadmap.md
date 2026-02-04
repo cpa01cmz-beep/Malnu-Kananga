@@ -1,12 +1,38 @@
-        # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
+         # MA Malnu Kananga - Roadmap (Strategic Goals & Milestones)
 
 **Version**:3.10.2
-                                      **Last Updated**: 2026-02-04 (Test Suite Optimization - Issue #1394)
-                        **Maintained By**: Lead Autonomous Engineer & System Guardian
+                                       **Last Updated**: 2026-02-04 (Fix AGENTS.md - Issue #1395)
+                         **Maintained By**: Lead Autonomous Engineer & System Guardian
 
-  ---
+   ---
 
-         ### [SANITIZER] Investigate Test Suite Timeout - Tests Pass but Slow (Issue #1394, P2) ✅
+          ### [SCRIBE] Fix AGENTS.md - Update Push Notification Service Reference (Issue #1395, P3) ✅
+             - **Status**: ✅ **COMPLETED**
+             - **Priority**: P3 (Documentation)
+             - **Issue**: #1395 (COMPLETED 2026-02-04)
+             - **Effort**: 15-30 minutes
+             - **Completed**: 2026-02-04
+             - **Deliverables**:
+                - ✅ Updated AGENTS.md line 42: `pushNotificationService.ts` → `pushNotificationHandler.ts (in src/services/notifications/)`
+                - ✅ Verified the change matches the actual file structure
+                - ✅ Verified no other files are incorrectly referenced
+             - **Acceptance Criteria**:
+                - ✅ AGENTS.md line 42 updated to reference the correct file path
+                - ✅ The change matches the actual file structure
+                - ✅ No other files are incorrectly referenced
+                - ✅ TypeScript type checking: Passed (0 errors)
+                - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+             - **Impact**:
+                - Documentation now accurately reflects the actual file structure
+                - Developers won't be confused when looking for push notification service
+                - AGENTS.md is consistent with Issue #1365 refactoring
+             - **Pillars Addressed**:
+                - Pillar 8 (Documentation): Ensures AGENTS.md accurately reflects current project structure
+                - Pillar 16 (UX/DX): Improves developer experience with accurate documentation
+
+        ---
+
+          ### [SANITIZER] Investigate Test Suite Timeout - Tests Pass but Slow (Issue #1394, P2) ✅
             - **Status**: ✅ **COMPLETED**
             - **Priority**: P2 (Performance & CI Stability)
             - **Issue**: #1394 (COMPLETED 2026-02-04)

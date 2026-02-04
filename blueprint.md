@@ -146,9 +146,37 @@
 
 ---
 
-      ### Recent Changes (2026-02-04)
+       ### Recent Changes (2026-02-04)
 
-      ### [SANITIZER] Fix Test Suite Failures from Issue #1382 Follow-up ✅
+       ### [SCRIBE] Fix AGENTS.md - Update Push Notification Service Reference (Issue #1395, P3) ✅
+          - **Status**: ✅ **COMPLETED**
+          - **Priority**: P3 (Documentation)
+          - **Issue**: #1395 (COMPLETED 2026-02-04)
+          - **Effort**: 15-30 minutes
+          - **Completed**: 2026-02-04
+          - **Deliverables**:
+             - ✅ Updated AGENTS.md line 42: `pushNotificationService.ts` → `pushNotificationHandler.ts (in src/services/notifications/)`
+             - ✅ Verified the change matches the actual file structure
+             - ✅ Verified no other files are incorrectly referenced
+          - **Files Modified**:
+             - AGENTS.md (line 42: updated push notification service reference)
+          - **Acceptance Criteria**:
+             - ✅ AGENTS.md line 42 updated to reference the correct file path
+             - ✅ The change matches the actual file structure
+             - ✅ No other files are incorrectly referenced
+             - ✅ TypeScript type checking: Passed (0 errors)
+             - ✅ ESLint linting: Passed (0 errors, 0 warnings)
+          - **Impact**:
+             - Documentation now accurately reflects the actual file structure
+             - Developers won't be confused when looking for push notification service
+             - AGENTS.md is consistent with Issue #1365 refactoring
+          - **Pillars Addressed**:
+             - Pillar 8 (Documentation): Ensures AGENTS.md accurately reflects current project structure
+             - Pillar 16 (UX/DX): Improves developer experience with accurate documentation
+
+       ---
+
+       ### [SANITIZER] Fix Test Suite Failures from Issue #1382 Follow-up ✅
          - **Status**: ✅ **COMPLETED**
          - **Priority**: P2 (Code Quality & Stability)
          - **Effort**: 2-3 hours

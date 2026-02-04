@@ -39,7 +39,7 @@ Note: Tests are located in `__tests__/` directories alongside the code they test
 - `geminiService.ts` - AI/LLM integration
 - `speechRecognitionService.ts` - Voice recognition
 - `speechSynthesisService.ts` - Text-to-speech
-- `pushNotificationService.ts` - PWA notifications
+- `pushNotificationHandler.ts` (in src/services/notifications/) - PWA notifications
 - `ocrService.ts` - OCR for PPDB documents
 - `permissionService.ts` - Role-based permissions
 
