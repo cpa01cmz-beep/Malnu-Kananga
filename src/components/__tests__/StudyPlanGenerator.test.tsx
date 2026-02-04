@@ -6,7 +6,7 @@ import * as geminiService from '../../services/ai';
 import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');
-vi.mock('../../services/geminiService');
+vi.mock('../../services/ai');
 
 const mockOnBack = vi.fn();
 const mockOnShowToast = vi.fn();
