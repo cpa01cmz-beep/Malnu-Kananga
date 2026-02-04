@@ -7,6 +7,7 @@
     - **Status**: Completed
     - **Started**: 2026-02-04
     - **Completed**: 2026-02-04
+    - **Commit**: 2ec2c74
     - **Reason**: Student data is scattered across grades, attendance, PPDB, materials, and messages. This enhancement creates a unified timeline showing all student events, activities, and changes in chronological order to provide teachers and parents with a comprehensive view of student engagement and performance.
     - **Implementation**:
         - ✅ Create timeline types in src/types/timeline.ts

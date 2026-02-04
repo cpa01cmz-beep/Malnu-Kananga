@@ -13,6 +13,7 @@
        - **Issue**: #1373 (CLOSED 2026-02-04)
        - **Effort**: 4-5 hours
        - **Completed**: 2026-02-04
+       - **Commit**: 2ec2c74
        - **Deliverables**:
           - ✅ Created comprehensive timeline types system (src/types/timeline.ts)
              - 13 timeline event types: grade, assignment, submission, attendance, material_access, material_download, material_rating, material_bookmark, message_sent, message_received, announcement, event, system
