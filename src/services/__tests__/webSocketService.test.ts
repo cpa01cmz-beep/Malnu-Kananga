@@ -1,73 +1,17 @@
- 
- 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { apiService } from '../apiService';
 import { logger } from '../../utils/logger';
 import { STORAGE_KEYS } from '../../constants';
 
 /* eslint-disable no-undef */
-// Define WebSocket constants first
+// Define WebSocket constants
 const WS_CONNECTING = 0;
 const WS_OPEN = 1;
 const WS_CLOSING = 2;
 const WS_CLOSED = 3;
 
-// Mock WebSocket for tests
-// Note: createMockWebSocket function was replaced with class-based MockWebSocket
-
-// Mock WebSocket constructor properly - using class syntax for proper constructor behavior
-class MockWebSocket {
-  readyState: number = WS_CONNECTING;
-  CONNECTING = WS_CONNECTING;
-  OPEN = WS_OPEN;
-  CLOSING = WS_CLOSING;
-  CLOSED = WS_CLOSED;
-  send = vi.fn();
-  close = vi.fn();
-  addEventListener = vi.fn();
-  removeEventListener = vi.fn();
-  url: string;
-  
-  // Event handler properties
-  onopen: ((event: Event) => void) | null = null;
-  onmessage: ((event: MessageEvent) => void) | null = null;
-  onclose: ((event: CloseEvent) => void) | null = null;
-  onerror: ((event: Event) => void) | null = null;
-  
-  constructor(url: string) {
-    this.url = url;
-    logger.debug('Mock WebSocket constructor called with:', url);
-    
-    // Automatically trigger onopen after construction to resolve the init promise
-    setTimeout(() => {
-      this.readyState = WS_OPEN;
-      if (this.onopen) {
-        this.onopen(new Event('open'));
-      }
-    }, 10);
-  }
-}
-
-// Create singleton mock instance
-const mockWebSocketInstance = new MockWebSocket('ws://test');
-
-// Create spy for WebSocket constructor
-const webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation((url: string | URL) => new MockWebSocket(url.toString()));
-
-// Add constants to the mock
-Object.defineProperty(MockWebSocket, 'CONNECTING', { value: WS_CONNECTING });
-Object.defineProperty(MockWebSocket, 'OPEN', { value: WS_OPEN });
-Object.defineProperty(MockWebSocket, 'CLOSING', { value: WS_CLOSING });
-Object.defineProperty(MockWebSocket, 'CLOSED', { value: WS_CLOSED });
-
-// Also set them on the global mock
-Object.defineProperty(global.WebSocket, 'CONNECTING', { value: WS_CONNECTING });
-Object.defineProperty(global.WebSocket, 'OPEN', { value: WS_OPEN });
-Object.defineProperty(global.WebSocket, 'CLOSING', { value: WS_CLOSING });
-Object.defineProperty(global.WebSocket, 'CLOSED', { value: WS_CLOSED });
-
-// Mock MessageEvent - use proper class constructor
+// Mock MessageEvent
 class MockMessageEvent implements Event {
   readonly type: string;
   readonly data: unknown;
@@ -101,7 +45,7 @@ class MockMessageEvent implements Event {
   stopPropagation(): void {}
 }
 
-// Mock CloseEvent - use proper class constructor
+// Mock CloseEvent
 class MockCloseEvent implements Event {
   readonly type: string;
   readonly code: number;
@@ -125,7 +69,7 @@ class MockCloseEvent implements Event {
     this.type = type;
     this.code = eventInit?.code || 1000;
     this.reason = eventInit?.reason || '';
-    this.wasClean = eventInit?.wasClean || true;
+    this.wasClean = eventInit?.wasClean ?? true;
   }
 
   composedPath(): EventTarget[] { return []; }
@@ -139,10 +83,109 @@ class MockCloseEvent implements Event {
   readonly NONE = 0;
 }
 
-(global as any).MessageEvent = MockMessageEvent;
-(global as any).CloseEvent = MockCloseEvent;
+// Mock WebSocket with manual event triggering
+class MockWebSocket {
+  static CONNECTING = WS_CONNECTING;
+  static OPEN = WS_OPEN;
+  static CLOSING = WS_CLOSING;
+  static CLOSED = WS_CLOSED;
 
-// Mock dependencies
+  CONNECTING = WS_CONNECTING;
+  OPEN = WS_OPEN;
+  CLOSING = WS_CLOSING;
+  CLOSED = WS_CLOSED;
+
+  readyState: number = WS_CONNECTING;
+  url: string;
+  send = vi.fn();
+  close = vi.fn((code?: number, reason?: string) => {
+    this.readyState = WS_CLOSED;
+    if (this.onclose) {
+      this.onclose(new MockCloseEvent('close', { code, reason, wasClean: true }));
+    }
+  });
+  
+  addEventListener = vi.fn((event: string, handler: (evt: Event) => void) => {
+    (this as any)._listeners.set(event, handler);
+  });
+  
+  removeEventListener = vi.fn((event: string) => {
+    (this as any)._listeners.delete(event);
+  });
+
+  onopen: ((evt: Event) => void) | null = null;
+  onmessage: ((evt: MessageEvent) => void) | null = null;
+  onclose: ((evt: CloseEvent) => void) | null = null;
+  onerror: ((evt: Event) => void) | null = null;
+
+  private _listeners: Map<string, (evt: Event) => void> = new Map();
+  private _openTimeout: number | null = null;
+  connectAttempts: number = 0;
+
+  constructor(url: string) {
+    this.url = url;
+    this.connectAttempts++;
+    logger.debug('Mock WebSocket constructor called with:', url);
+    
+    // Auto-trigger open after delay
+    this._openTimeout = window.setTimeout(() => {
+      this.triggerOpen();
+    }, 10);
+  }
+
+  triggerOpen(): void {
+    this.readyState = WS_OPEN;
+    const event = new Event('open');
+    if (this.onopen) {
+      this.onopen(event);
+    }
+    const listener = this._listeners.get('open');
+    if (listener) {
+      listener(event);
+    }
+  }
+
+  triggerMessage(data: unknown): void {
+    if (this.readyState !== WS_OPEN) return;
+    const event = new MockMessageEvent('message', { data });
+    if (this.onmessage) {
+      this.onmessage(event as unknown as MessageEvent);
+    }
+    const listener = this._listeners.get('message');
+    if (listener) {
+      listener(event);
+    }
+  }
+
+  triggerClose(code = 1000, reason = '', wasClean = true): void {
+    this.readyState = WS_CLOSED;
+    const event = new MockCloseEvent('close', { code, reason, wasClean });
+    if (this.onclose) {
+      this.onclose(event);
+    }
+    const listener = this._listeners.get('close');
+    if (listener) {
+      listener(event);
+    }
+  }
+
+  triggerError(error: Event): void {
+    this.readyState = WS_CLOSED;
+    if (this.onerror) {
+      this.onerror(error);
+    }
+    const listener = this._listeners.get('error');
+    if (listener) {
+      listener(error);
+    }
+  }
+}
+
+let mockWebSocketInstances: MockWebSocket[] = [];
+let webSocketSpy: ReturnType<typeof vi.spyOn>;
+let mockGlobalEventListener: ReturnType<typeof vi.spyOn>;
+
+// Mock dependencies before module loads
 vi.mock('../apiService', () => ({
   apiService: {
     getAuthToken: vi.fn(),
@@ -159,111 +202,165 @@ vi.mock('../../utils/logger', () => ({
   },
 }));
 
-// Mock WebSocket instance - use the class-based instance for proper constructor behavior
-const mockWebSocket = mockWebSocketInstance;
+beforeAll(() => {
+  // Setup WebSocket mock before service loads
+  webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation((url: string | URL) => {
+    const instance = new MockWebSocket(url.toString());
+    mockWebSocketInstances.push(instance);
+    return instance as any;
+  });
 
-vi.mock('../services/webSocketService', async () => {
-  const actual = await vi.importActual('../services/webSocketService');
-  return {
-    ...actual,
-    // We'll test the actual service but mock WebSocket constructor
-  };
+  Object.defineProperty(global.WebSocket, 'CONNECTING', { value: WS_CONNECTING });
+  Object.defineProperty(global.WebSocket, 'OPEN', { value: WS_OPEN });
+  Object.defineProperty(global.WebSocket, 'CLOSING', { value: WS_CLOSING });
+  Object.defineProperty(global.WebSocket, 'CLOSED', { value: WS_CLOSED });
+  (global as any).MessageEvent = MockMessageEvent;
+  (global as any).CloseEvent = MockCloseEvent;
 });
 
+afterAll(() => {
+  webSocketSpy?.mockRestore?.();
+});
 
+function getLatestMockWebSocket(): MockWebSocket | undefined {
+  return mockWebSocketInstances[mockWebSocketInstances.length - 1];
+}
 
 describe('WebSocketService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    webSocketSpy.mockClear();
+    webSocketSpy?.mockClear?.();
     localStorage.clear();
-    mockWebSocket.readyState = WebSocket.CONNECTING;
-    mockWebSocket.send.mockClear();
-    mockWebSocket.close.mockClear();
-    mockWebSocket.addEventListener.mockClear();
+    mockWebSocketInstances = [];
     
-    // Setup default mocks
+    // Default mocks
     vi.mocked(apiService.getAuthToken).mockReturnValue('test-token');
     vi.mocked(apiService.parseJwtPayload).mockReturnValue({
       user_id: 'test-user',
       email: 'test@example.com',
       role: 'teacher',
-      exp: Date.now() / 1000 + 3600, // 1 hour from now
+      exp: Date.now() / 1000 + 3600,
       session_id: 'test-session',
     });
+
+    mockGlobalEventListener = vi.spyOn(window, 'dispatchEvent');
   });
 
   afterEach(() => {
     webSocketService.disconnect();
-  });
-
-  afterAll(() => {
-    webSocketSpy.mockRestore();
+    mockGlobalEventListener?.mockRestore?.();
   });
 
   describe('Initialization', () => {
     it('should initialize successfully with valid token', async () => {
-      // For now, just test that initialization doesn't throw
       await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       expect(global.WebSocket).toHaveBeenCalledWith(
         expect.stringContaining('/ws?token=test-token')
       );
-      // TODO: Fix WebSocket mock to properly test event handler setup
-      // expect(mockWebSocket.onopen).toEqual(expect.any(Function));
     });
 
     it('should not initialize without token', async () => {
       vi.mocked(apiService.getAuthToken).mockReturnValue(null);
 
       await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       expect(global.WebSocket).not.toHaveBeenCalled();
       expect(vi.mocked(logger.warn)).toHaveBeenCalledWith('WebSocket: No auth token available');
     });
 
     it('should start fallback polling when WebSocket disabled', async () => {
-      // Mock environment variable
       const originalViteWsEnabled = import.meta.env.VITE_WS_ENABLED;
       import.meta.env.VITE_WS_ENABLED = 'false';
 
       await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       expect(global.WebSocket).not.toHaveBeenCalled();
       expect(vi.mocked(logger.info)).toHaveBeenCalledWith('WebSocket: Disabled by environment variable');
 
-      // Restore original value
       import.meta.env.VITE_WS_ENABLED = originalViteWsEnabled;
     });
   });
 
   describe('Connection Management', () => {
-    beforeEach(() => {
-      // Auto-resolve WebSocket connection for tests
-      vi.stubGlobal('setTimeout', (cb: () => void) => {
-        cb();
-        return 1;
-      });
+    beforeEach(async () => {
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
     });
 
-    it.skip('should handle WebSocket open', async () => {
-      // TODO: Fix WebSocket mock to properly test event handler setup
-      // This test requires proper WebSocket constructor behavior
+    it('should handle WebSocket open and update connection state', async () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerOpen();
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 10));
+
+      const state = webSocketService.getConnectionState();
+      expect(state.connected).toBe(true);
+      expect(state.connecting).toBe(false);
+      expect(state.reconnecting).toBe(false);
     });
 
-    it.skip('should handle WebSocket close and attempt reconnection', async () => {
-      // TODO: Fix WebSocket mock to properly test event handler setup
+    it('should handle WebSocket close and attempt reconnection', async () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerOpen();
+        mockWs.triggerClose(1006, 'Connection lost', false);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      expect(vi.mocked(logger.warn)).toHaveBeenCalledWith(
+        'WebSocket: Connection closed unexpectedly',
+        expect.any(Number),
+        expect.any(String)
+      );
     });
 
-    it.skip('should handle WebSocket error', async () => {
-      // TODO: Fix WebSocket mock to properly test event handler setup
+    it('should handle WebSocket error', async () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerError(new Event('error'));
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 20));
+      
+      expect(vi.mocked(logger.error)).toHaveBeenCalledWith(
+        'WebSocket: Error occurred',
+        expect.any(Event)
+      );
+    });
+
+    it('should not reconnect when already connected', async () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerOpen();
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      const stateBefore = webSocketService.getConnectionState();
+      expect(stateBefore.connected).toBe(true);
+
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      const stateAfter = webSocketService.getConnectionState();
+      expect(stateAfter.connected).toBe(true);
     });
   });
 
   describe('Event Subscription', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      (mockWebSocket as any).readyState = WebSocket.OPEN;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
     it('should subscribe to real-time events', () => {
@@ -277,8 +374,33 @@ describe('WebSocketService', () => {
       expect(vi.mocked(logger.debug)).toHaveBeenCalledWith('WebSocket: Subscribed to', 'grade_updated');
     });
 
-    it.skip('should handle event messages', () => {
-      // TODO: Fix WebSocket mock to properly test event handling
+    it('should handle event messages and trigger callbacks', () => {
+      const callback = vi.fn();
+      webSocketService.subscribe({
+        eventType: 'grade_updated',
+        callback,
+      });
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const testEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'grade-123',
+          data: { id: 'grade-123', score: 95 },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'user-123',
+        };
+        mockWs.triggerMessage(JSON.stringify(testEvent));
+      }
+
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'grade_updated',
+          entityId: 'grade-123',
+        })
+      );
     });
 
     it('should filter events with custom filter function', () => {
@@ -289,22 +411,19 @@ describe('WebSocketService', () => {
         filter: (event) => event.entityId === 'target-grade',
       });
 
-      const messageCallback = mockWebSocket.addEventListener.mock.calls.find(
-        call => call[0] === 'message'
-      )?.[1];
-
-      // Event that should be filtered out
-      const filteredEvent: RealTimeEvent = {
-        type: 'grade_updated',
-        entity: 'grade',
-        entityId: 'other-grade',
-        data: { id: 'other-grade', score: 85 },
-        timestamp: new Date().toISOString(),
-        userRole: 'teacher',
-        userId: 'user-123',
-      };
-
-      messageCallback?.({ data: JSON.stringify(filteredEvent) } as MessageEvent);
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const filteredEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'other-grade',
+          data: { id: 'other-grade', score: 85 },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'user-123',
+        };
+        mockWs.triggerMessage(JSON.stringify(filteredEvent));
+      }
 
       expect(callback).not.toHaveBeenCalled();
     });
@@ -318,96 +437,348 @@ describe('WebSocketService', () => {
 
       unsubscribe();
 
-      const messageCallback = mockWebSocket.addEventListener.mock.calls.find(
-        call => call[0] === 'message'
-      )?.[1];
-
-      const testEvent: RealTimeEvent = {
-        type: 'grade_updated',
-        entity: 'grade',
-        entityId: 'grade-123',
-        data: { id: 'grade-123', score: 95 },
-        timestamp: new Date().toISOString(),
-        userRole: 'teacher',
-        userId: 'user-123',
-      };
-
-      messageCallback?.({ data: JSON.stringify(testEvent) } as MessageEvent);
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const testEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'grade-123',
+          data: { id: 'grade-123', score: 95 },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'user-123',
+        };
+        mockWs.triggerMessage(JSON.stringify(testEvent));
+      }
 
       expect(callback).not.toHaveBeenCalled();
+      expect(vi.mocked(logger.debug)).toHaveBeenCalledWith('WebSocket: Unsubscribed from', 'grade_updated');
     });
   });
 
   describe('Local Storage Updates', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      (mockWebSocket as any).readyState = WebSocket.OPEN;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
-    it.skip('should update grades in local storage', () => {
-      // TODO: Fix WebSocket mock to properly test local storage updates
+    it('should update grades in local storage', () => {
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
+        { id: 'grade-1', score: 80, studentId: 'student-1' },
+      ]));
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const updateEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'grade-1',
+          data: { id: 'grade-1', score: 85, studentId: 'student-1' },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'teacher-1',
+        };
+        mockWs.triggerMessage(JSON.stringify(updateEvent));
+      }
+
+      const grades = JSON.parse(localStorage.getItem(STORAGE_KEYS.GRADES) || '[]');
+      const updatedGrade = grades.find((g: any) => g.id === 'grade-1');
+      expect(updatedGrade?.score).toBe(85);
     });
 
-    it.skip('should add new grade to local storage', () => {
-      // TODO: Fix WebSocket mock to properly test local storage updates
+    it('should add new grade to local storage', () => {
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([]));
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const createEvent: RealTimeEvent = {
+          type: 'grade_created',
+          entity: 'grade',
+          entityId: 'grade-new',
+          data: { id: 'grade-new', score: 90, studentId: 'student-1' },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'teacher-1',
+        };
+        mockWs.triggerMessage(JSON.stringify(createEvent));
+      }
+
+      const grades = JSON.parse(localStorage.getItem(STORAGE_KEYS.GRADES) || '[]');
+      expect(grades).toHaveLength(1);
+      expect(grades[0]?.id).toBe('grade-new');
     });
 
-    it.skip('should delete grades from local storage', () => {
-      // TODO: Fix WebSocket mock to properly test local storage updates
+    it('should delete grades from local storage', () => {
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
+        { id: 'grade-1', score: 80, studentId: 'student-1' },
+      ]));
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const deleteEvent: RealTimeEvent = {
+          type: 'grade_deleted',
+          entity: 'grade',
+          entityId: 'grade-1',
+          data: { id: 'grade-1', score: 80, studentId: 'student-1' },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'teacher-1',
+        };
+        mockWs.triggerMessage(JSON.stringify(deleteEvent));
+      }
+
+      const grades = JSON.parse(localStorage.getItem(STORAGE_KEYS.GRADES) || '[]');
+      expect(grades).toHaveLength(0);
+    });
+
+    it('should update announcements in local storage', () => {
+      localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify([
+        { id: 'ann-1', title: 'Old Title', content: 'Old Content' },
+      ]));
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const updateEvent: RealTimeEvent = {
+          type: 'announcement_updated',
+          entity: 'announcement',
+          entityId: 'ann-1',
+          data: { id: 'ann-1', title: 'New Title', content: 'New Content' },
+          timestamp: new Date().toISOString(),
+          userRole: 'admin',
+          userId: 'admin-1',
+        };
+        mockWs.triggerMessage(JSON.stringify(updateEvent));
+      }
+
+      const announcements = JSON.parse(localStorage.getItem(STORAGE_KEYS.ANNOUNCEMENTS) || '[]');
+      const updatedAnn = announcements.find((a: any) => a.id === 'ann-1');
+      expect(updatedAnn?.title).toBe('New Title');
     });
   });
 
   describe('Connection State Management', () => {
-    it.skip('should persist connection state to localStorage', async () => {
-      // TODO: Fix WebSocket mock to properly test connection state persistence
+    beforeEach(async () => {
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
-    it('should load connection state from localStorage', () => {
+    it('should persist connection state to localStorage', () => {
+      webSocketService.subscribe({
+        eventType: 'grade_updated',
+        callback: vi.fn(),
+      });
+
+      const storedState = JSON.parse(localStorage.getItem(STORAGE_KEYS.WS_CONNECTION) || '{}');
+      expect(storedState.connected).toBe(true);
+      expect(storedState.subscriptions).toContain('grade_updated');
+      expect(storedState.lastConnected).toBeDefined();
+    });
+
+    it('should load connection state from localStorage', async () => {
+      webSocketService.disconnect();
+      
       const mockState = {
-        connected: true,
+        connected: false,
         connecting: false,
         reconnecting: false,
-        subscriptions: ['grade_updated'],
+        subscriptions: ['grade_updated', 'attendance_marked'],
         lastConnected: new Date().toISOString(),
         reconnectAttempts: 0,
       };
       localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(mockState));
 
       const state = webSocketService.getConnectionState();
-      expect(state.subscriptions.size).toBe(1);
       expect(state.subscriptions.has('grade_updated')).toBe(true);
+      expect(state.subscriptions.has('attendance_marked')).toBe(true);
+    });
+
+    it('should return current connection state', () => {
+      const state = webSocketService.getConnectionState();
+      expect(state.connected).toBe(true);
+      expect(state.connecting).toBe(false);
+      expect(state.reconnecting).toBe(false);
+    });
+
+    it('should report connected status correctly', () => {
+      expect(webSocketService.isConnected()).toBe(true);
     });
   });
 
   describe('Global Events', () => {
     beforeEach(async () => {
       await webSocketService.initialize();
-      (mockWebSocket as any).readyState = WebSocket.OPEN;
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
-    it.skip('should emit global custom events for real-time updates', () => {
-      // TODO: Fix WebSocket mock to properly test global event emission
+    it('should emit global custom events for real-time updates', () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const testEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'grade-123',
+          data: { id: 'grade-123', score: 95 },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'user-123',
+        };
+        mockWs.triggerMessage(JSON.stringify(testEvent));
+      }
+
+      expect(mockGlobalEventListener).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'realtime-update',
+          detail: expect.objectContaining({
+            type: 'grade_updated',
+            entityId: 'grade-123',
+          }),
+        })
+      );
     });
   });
 
   describe('Error Handling', () => {
-    it.skip('should handle malformed JSON messages', async () => {
-      // TODO: Fix WebSocket mock to properly test error handling
+    beforeEach(async () => {
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
     });
 
+    it('should handle malformed JSON messages', () => {
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerMessage('invalid json{');
+      }
+
+      expect(vi.mocked(logger.error)).toHaveBeenCalledWith(
+        'WebSocket: Failed to parse message',
+        expect.any(Error)
+      );
+    });
+
+    it('should handle subscription callback errors gracefully', () => {
+      const errorCallback = vi.fn(() => {
+        throw new Error('Callback error');
+      });
+
+      webSocketService.subscribe({
+        eventType: 'grade_updated',
+        callback: errorCallback,
+      });
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        const testEvent: RealTimeEvent = {
+          type: 'grade_updated',
+          entity: 'grade',
+          entityId: 'grade-123',
+          data: { id: 'grade-123', score: 95 },
+          timestamp: new Date().toISOString(),
+          userRole: 'teacher',
+          userId: 'user-123',
+        };
+        mockWs.triggerMessage(JSON.stringify(testEvent));
+      }
+
+      expect(vi.mocked(logger.error)).toHaveBeenCalledWith(
+        'WebSocket: Subscription callback error',
+        expect.any(Error)
+      );
+    });
+
+    it('should ignore pong messages', () => {
+      const callback = vi.fn();
+      webSocketService.subscribe({
+        eventType: 'grade_updated',
+        callback,
+      });
+
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) {
+        mockWs.triggerMessage(JSON.stringify({ type: 'pong' }));
+      }
+
+      expect(callback).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Token Expiration', () => {
     it('should handle token expiration', async () => {
       vi.mocked(apiService.parseJwtPayload).mockReturnValue({
         user_id: 'test-user',
         email: 'test@example.com',
         role: 'teacher',
-        exp: Date.now() / 1000 - 3600, // 1 hour ago (expired)
+        exp: Date.now() / 1000 - 3600,
         session_id: 'test-session',
       });
 
       await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
 
       expect(global.WebSocket).not.toHaveBeenCalled();
       expect(vi.mocked(logger.warn)).toHaveBeenCalledWith('WebSocket: Token expired, skipping connection');
+    });
+  });
+
+  describe('Disconnection', () => {
+    beforeEach(async () => {
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+
+    it('should disconnect gracefully', () => {
+      const mockWs = getLatestMockWebSocket();
+      
+      webSocketService.disconnect();
+
+      expect(mockWs?.close).toHaveBeenCalledWith(1000, 'Client disconnect');
+      expect(webSocketService.isConnected()).toBe(false);
+    });
+
+    it('should clear all intervals and timeouts on disconnect', () => {
+      webSocketService.disconnect();
+
+      const state = webSocketService.getConnectionState();
+      expect(state.connected).toBe(false);
+      expect(state.connecting).toBe(false);
+      expect(state.reconnecting).toBe(false);
+    });
+  });
+
+  describe('Reconnection', () => {
+    beforeEach(async () => {
+      await webSocketService.initialize();
+      await new Promise(resolve => setTimeout(resolve, 50));
+      const mockWs = getLatestMockWebSocket();
+      if (mockWs) mockWs.triggerOpen();
+      await new Promise(resolve => setTimeout(resolve, 10));
+    });
+
+    it('should support manual reconnection', async () => {
+      const mockWs = getLatestMockWebSocket();
+      const initialAttempts = mockWs?.connectAttempts || 0;
+
+      webSocketService.disconnect();
+
+      await webSocketService.reconnect();
+      await new Promise(resolve => setTimeout(resolve, 60));
+
+      const newMockWs = getLatestMockWebSocket();
+      expect(newMockWs?.connectAttempts).toBeGreaterThan(initialAttempts);
     });
   });
 });
