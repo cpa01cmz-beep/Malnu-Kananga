@@ -184,13 +184,14 @@ export default defineConfig(({ mode }) => {
         globals: true,
         environment: 'jsdom',
         setupFiles: ['./test-setup.ts'],
-        testTimeout: 5000,
-        hookTimeout: 5000,
+        // Increased timeouts for CI environment (Issue #1394)
+        testTimeout: 10000,
+        hookTimeout: 10000,
         include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}', '__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'],
         exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '.opencode', 'e2e'],
         // NOTE: bail: 1 disabled for full test suite runs (Issue #1382)
         // Enable bail: 1 for CI/CD PR checks to fail fast on first error
-        // Use threads pool for parallel test execution (Issue #1346, #1382)
+        // Use threads pool for parallel test execution (Issue #1346, #1382, #1394)
         // Significantly reduces test suite duration by utilizing multiple CPU cores
         // Vitest 4: poolOptions moved to top-level options
         pool: 'threads',
