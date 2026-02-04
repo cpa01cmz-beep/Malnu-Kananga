@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import type { RealTimeEvent, RealTimeEventType } from '../services/webSocketService';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import Card from './ui/Card';
@@ -40,6 +40,9 @@ interface ActivityFeedProps {
   showFilter?: boolean;
   maxActivities?: number;
   onActivityClick?: (activity: Activity) => void;
+  debounceDelay?: number;
+  paused?: boolean;
+  onPausedChange?: (paused: boolean) => void;
 }
 
 const ACTIVITY_TYPE_LABELS: Record<ActivityType, { label: string; icon: React.ReactNode }> = {
@@ -188,54 +191,100 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   showFilter = true,
   maxActivities = 50,
   onActivityClick,
+  debounceDelay = 500,
+  paused = false,
+  onPausedChange,
 }) => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [unreadCount, setUnreadCount] = useState(0);
+  const [localPaused, setLocalPaused] = useState(paused);
+  const pendingEventsRef = useRef<RealTimeEvent[]>([]);
+
+  const handlePauseToggle = useCallback(() => {
+    const newPaused = !localPaused;
+    setLocalPaused(newPaused);
+    onPausedChange?.(newPaused);
+
+    if (!newPaused && pendingEventsRef.current.length > 0) {
+      setActivities((prev) => {
+        const pending = pendingEventsRef.current;
+        const updated = pending.map((event) => ({
+          ...event,
+          id: `${event.type}-${event.entityId}-${Date.now()}`,
+          isRead: false,
+        })) as Activity[];
+
+        pendingEventsRef.current = [];
+        const combined = [...updated, ...prev].slice(0, maxActivities);
+        localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(combined));
+        return combined;
+      });
+    }
+  }, [localPaused, onPausedChange, maxActivities]);
+
+  const debouncedEventRef = useRef<RealTimeEvent | null>(null);
+  const debounceTimeoutRef = useRef<number | null>(null);
 
   const { isConnected, isConnecting } = useRealtimeEvents({
     eventTypes: eventTypes as RealTimeEventType[],
     enabled: true,
-    onEvent: (event) => {
-      const newActivity: Activity = {
-        ...event,
-        id: `${event.type}-${event.entityId}-${Date.now()}`,
-        isRead: false,
-      };
-
-      setActivities((prev) => {
-        const updated = [newActivity, ...prev].slice(0, maxActivities);
-        localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(updated));
-        return updated;
-      });
-
-      const settings = unifiedNotificationManager.getUnifiedSettings();
-      if (settings.enabled) {
-        const notificationType = ACTIVITY_NOTIFICATION_CONFIG.getNotificationType(event.type);
-        const shouldTrigger = ACTIVITY_NOTIFICATION_CONFIG.shouldTriggerNotification(event.type, settings);
-
-        if (shouldTrigger) {
-          const priority = ACTIVITY_NOTIFICATION_CONFIG.getPriority(event.type);
-          const notification = {
-            id: `activity-${event.type}-${event.entityId}-${Date.now()}`,
-            type: notificationType,
-            title: generateNotificationTitle(event),
-            body: generateNotificationBody(event),
-            timestamp: new Date().toISOString(),
-            read: false,
-            priority: priority === 'high' ? 'high' : priority === 'normal' ? 'normal' : 'low' as 'high' | 'normal' | 'low',
-            targetRoles: undefined,
-            data: {
-              activityId: event.type,
-              entityType: event.entity,
-              entityId: event.entityId,
-              event,
-            },
-          };
-          unifiedNotificationManager.showNotification(notification);
-          logger.debug(`Notification triggered for event: ${event.type}`);
-        }
+    onEvent: (event: RealTimeEvent) => {
+      if (localPaused) {
+        pendingEventsRef.current.push(event);
+        return;
       }
+
+      debouncedEventRef.current = event;
+
+      if (debounceTimeoutRef.current) {
+        window.clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = window.setTimeout(() => {
+        const eventToProcess = debouncedEventRef.current;
+        if (!eventToProcess) return;
+
+        const newActivity: Activity = {
+          ...eventToProcess,
+          id: `${eventToProcess.type}-${eventToProcess.entityId}-${Date.now()}`,
+          isRead: false,
+        };
+
+        setActivities((prev) => {
+          const updated = [newActivity, ...prev].slice(0, maxActivities);
+          localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(updated));
+          return updated;
+        });
+
+        const settings = unifiedNotificationManager.getUnifiedSettings();
+        if (settings.enabled) {
+          const notificationType = ACTIVITY_NOTIFICATION_CONFIG.getNotificationType(eventToProcess.type);
+          const shouldTrigger = ACTIVITY_NOTIFICATION_CONFIG.shouldTriggerNotification(eventToProcess.type, settings);
+
+          if (shouldTrigger) {
+            const priority = ACTIVITY_NOTIFICATION_CONFIG.getPriority(eventToProcess.type);
+            const notification = {
+              id: `activity-${eventToProcess.type}-${eventToProcess.entityId}-${Date.now()}`,
+              type: notificationType,
+              title: generateNotificationTitle(eventToProcess),
+              body: generateNotificationBody(eventToProcess),
+              timestamp: new Date().toISOString(),
+              read: false,
+              priority: priority === 'high' ? 'high' : priority === 'normal' ? 'normal' : 'low' as 'high' | 'normal' | 'low',
+              targetRoles: undefined,
+              data: {
+                activityId: eventToProcess.type,
+                entityType: eventToProcess.entity,
+                entityId: eventToProcess.entityId,
+                event: eventToProcess,
+              },
+            };
+            unifiedNotificationManager.showNotification(notification);
+            logger.debug(`Notification triggered for event: ${eventToProcess.type}`);
+          }
+        }
+      }, debounceDelay);
     },
   });
 
@@ -244,17 +293,29 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
     if (cachedActivities) {
       try {
         const parsed: Activity[] = JSON.parse(cachedActivities);
-        setActivities(parsed);
+        setActivities(parsed.slice(0, maxActivities));
       } catch (error) {
         logger.error('Error parsing cached activities:', error);
       }
     }
-  }, []);
+  }, [maxActivities]);
+
+  useEffect(() => {
+    setLocalPaused(paused);
+  }, [paused]);
 
   useEffect(() => {
     const count = activities.filter((a) => !a.isRead).length;
     setUnreadCount(count);
   }, [activities]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        window.clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleMarkAsRead = (activityId: string) => {
     setActivities((prev) =>
@@ -295,8 +356,19 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
             {unreadCount > 0 && (
               <Badge variant="blue">{unreadCount} baru</Badge>
             )}
+            {localPaused && (
+              <Badge variant="yellow">Jeda</Badge>
+            )}
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              size="sm"
+              variant={localPaused ? 'primary' : 'ghost'}
+              onClick={handlePauseToggle}
+              title={localPaused ? 'Lanjutkan update' : 'Jeda update'}
+            >
+              {localPaused ? '▶' : '⏸'}
+            </Button>
             <div
               className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
               title={isConnected ? 'Terhubung' : 'Terputus'}

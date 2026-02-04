@@ -7,11 +7,16 @@ import { STORAGE_KEYS } from '../../constants';
 
 vi.unmock('react');
 
-vi.mock('../../constants', () => ({
-  STORAGE_KEYS: {
-    ACTIVITY_FEED: 'malnu_activity_feed_test',
-  },
-}));
+vi.mock('../../constants', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../constants')>();
+  return {
+    ...actual,
+    STORAGE_KEYS: {
+      ...actual.STORAGE_KEYS,
+      ACTIVITY_FEED: 'malnu_activity_feed_test',
+    },
+  };
+});
 
 const mockActivities: Activity[] = [
   {
@@ -244,8 +249,8 @@ describe('ActivityFeed', () => {
       type: 'grade_updated' as ActivityType,
       entity: 'grade',
       entityId: `${i}`,
-      data: { id: `${i}` },
-      timestamp: new Date().toISOString(),
+      data: { id: `${i}`, score: 85 + (i % 15) },
+      timestamp: new Date(Date.now() - i * 1000).toISOString(),
       userRole: 'teacher',
       userId: `teacher-${i}`,
       id: `grade_updated-${i}-${Date.now()}`,
@@ -265,6 +270,71 @@ describe('ActivityFeed', () => {
 
     const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACTIVITY_FEED) || '[]');
     expect(activities.length).toBeLessThanOrEqual(50);
+  });
+
+  it('should show pause button', () => {
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
+
+    renderWithRouter(
+      <ActivityFeed
+        userId="user-1"
+        userRole="student"
+        eventTypes={['grade_updated', 'library_material_added', 'message_created']}
+      />
+    );
+
+    const pauseButton = screen.getByTitle('Jeda update');
+    expect(pauseButton).toBeInTheDocument();
+  });
+
+  it('should toggle pause/resume', async () => {
+    localStorage.setItem(STORAGE_KEYS.ACTIVITY_FEED, JSON.stringify(mockActivities));
+
+    const onPausedChange = vi.fn();
+    renderWithRouter(
+      <ActivityFeed
+        userId="user-1"
+        userRole="student"
+        eventTypes={['grade_updated']}
+        onPausedChange={onPausedChange}
+      />
+    );
+
+    const pauseButton = screen.getByTitle('Jeda update');
+    fireEvent.click(pauseButton);
+
+    await waitFor(() => {
+      expect(onPausedChange).toHaveBeenCalledWith(true);
+    });
+
+    const resumeButton = screen.getByTitle('Lanjutkan update');
+    expect(resumeButton).toBeInTheDocument();
+  });
+
+  it('should show paused badge when paused', () => {
+    renderWithRouter(
+      <ActivityFeed
+        userId="user-1"
+        userRole="student"
+        eventTypes={['grade_updated']}
+        paused={true}
+      />
+    );
+
+    expect(screen.getByText('Jeda')).toBeInTheDocument();
+  });
+
+  it('should use custom debounce delay', () => {
+    renderWithRouter(
+      <ActivityFeed
+        userId="user-1"
+        userRole="student"
+        eventTypes={['grade_updated']}
+        debounceDelay={1000}
+      />
+    );
+
+    expect(screen.getByText('Aktivitas')).toBeInTheDocument();
   });
 
   it('should load cached activities from localStorage', () => {

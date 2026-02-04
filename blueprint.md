@@ -1,11 +1,53 @@
-     # MA Malnu Kananga - Blueprint (Architecture & Design)
+      # MA Malnu Kananga - Blueprint (Architecture & Design)
 
-      **Version**:3.9.7
-                    **Last Updated**: 2026-02-04 (Add Cleanup for Event Listeners - Issue #1368 Complete)
+       **Version**:3.9.8
+                     **Last Updated**: 2026-02-04 (Connect Activity Feed to WebSocket - Issue #1375)
 
-    ---
+     ---
 
-     ### Recent Changes (2026-02-04)
+      ### Recent Changes (2026-02-04)
+
+      ### [BUILDER] Connect Activity Feed to WebSocket for Real-Time Updates (Issue #1375, P2) 🟡
+         - **Status**: 🟡 **IN PROGRESS**
+         - **Priority**: P2 (Enhancement)
+         - **Issue**: #1375
+         - **Effort**: 3-4 hours
+         - **Started**: 2026-02-04
+         - **Deliverables**:
+            - ✅ Add `debounceDelay` prop to ActivityFeed component (default: 500ms)
+            - ✅ Add `paused` and `onPausedChange` props for pause/resume control
+            - ✅ Implement debounce logic for event processing to optimize performance during high-activity periods
+            - ✅ Add pause/resume button with emoji indicators (⏸/▶)
+            - ✅ Add "Jeda" badge when paused
+            - ✅ Store pending events during paused state and process on resume
+            - ✅ Limit loaded activities to maxActivities on initial load
+            - ✅ Update ActivityFeed.test.tsx mock to use importOriginal
+            - ✅ Add tests for pause/resume and debounce features (5 new tests, 13/18 passing)
+         - **Acceptance Criteria**:
+            - ✅ Activity feed updates in real-time via WebSocket (already implemented via useRealtimeEvents)
+            - ✅ Configurable update frequency (debounceDelay prop)
+            - ✅ Optimize updates to avoid performance issues (debounce for high-activity periods)
+            - ✅ Show "X new activities" indicator (already implemented)
+            - ✅ Filter activities by relevance to user (already implemented)
+            - ✅ Pause/resume real-time updates (paused state, pause button, pending event buffering)
+            - ✅ Offline mode shows cached activities (already implemented)
+            - ⏳ Fix remaining 5 failing tests (test data timing issues, query selector issues)
+            - ⏳ Add documentation for debounceDelay and paused props
+         - **Impact**:
+            - Users can pause/resume real-time activity updates
+            - Performance optimized during high-activity periods with debouncing
+            - Configurable debounce delay for different use cases
+            - Better user control over activity feed updates
+         - **Files Modified**:
+            - src/components/ActivityFeed.tsx (added debounceDelay, paused, onPausedChange props, pause button, debounce logic, pending events buffering)
+            - src/components/__tests__/ActivityFeed.test.tsx (updated mock, added 5 new tests for pause/resume/debounce)
+         - **Pillars Addressed**:
+            - Pillar 1 (Flow): Optimized event processing flow with debounce
+            - Pillar 9 (Feature Ops): Enhanced Activity Feed with pause/resume and debounce
+            - Pillar 13 (Performance): Debounce for high-activity periods
+            - Pillar 16 (UX/DX): Better user control and performance
+
+      ---
 
      ### [OPTIMIZER] Add Cleanup for Event Listeners in Singleton Services (Issue #1368, P3) ✅
         - **Status**: ✅ **COMPLETED**
