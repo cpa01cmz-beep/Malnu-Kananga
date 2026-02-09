@@ -3,6 +3,8 @@
  * Advanced typography hierarchy and readability improvements
  */
 
+import { EXTERNAL_URLS } from '../constants';
+
 export const TYPOGRAPHY_SYSTEM = `
 /* Enhanced Font Loading */
 @font-face {
@@ -10,7 +12,7 @@ export const TYPOGRAPHY_SYSTEM = `
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+  src: url('${EXTERNAL_URLS.GOOGLE_FONTS_INTER}');
 }
 
 @font-face {
@@ -18,7 +20,7 @@ export const TYPOGRAPHY_SYSTEM = `
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
-  src: url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap');
+  src: url('${EXTERNAL_URLS.GOOGLE_FONTS_JETBRAINS}');
 }
 
 /* Typography Scale with Enhanced Readability */

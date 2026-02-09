@@ -228,6 +228,9 @@ export const EXTERNAL_URLS = {
     KEMENAG: 'https://kemenag.go.id',
     EMIS: 'https://emis.kemenag.go.id',
     SIMPATIKA: 'https://simpatika.kemenag.go.id',
+    // Google Fonts - Flexy: Never hardcode external URLs!
+    GOOGLE_FONTS_INTER: 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
+    GOOGLE_FONTS_JETBRAINS: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
 } as const;
 
 export const VOICE_CONFIG = {
@@ -591,6 +594,27 @@ export const CACHE_LIMITS = {
     NOTIFICATION_HISTORY_SIZE: 100,
     VOICE_NOTIFICATION_QUEUE_SIZE: 10,
     VOICE_NOTIFICATION_HISTORY_SIZE: 50,
+} as const;
+
+// Cache versioning - Flexy: Never hardcode cache versions!
+export const CACHE_VERSIONS = {
+    OFFLINE_DATA: '1.0',
+    STORAGE_SCHEMA: '1.0',
+} as const;
+
+// ID Formatting Constants - Flexy: Never hardcode ID formatting rules!
+export const ID_FORMAT = {
+    PAD_LENGTH: 2,
+    PAD_LENGTH_NIS: 4,
+    PAD_STRING: '0',
+} as const;
+
+// Time Formatting Constants - Flexy: Never hardcode time formatting!
+export const TIME_FORMAT = {
+    HOURS_PAD_LENGTH: 2,
+    MINUTES_PAD_LENGTH: 2,
+    SEPARATOR: ':',
+    PAD_STRING: '0',
 } as const;
 
 // API Configuration - Centralized to avoid circular dependencies
@@ -1261,6 +1285,21 @@ export const DATE_LOCALE = {
     INDONESIAN_DAYS: [
         'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
     ] as const,
+    // Month name to number mapping (lowercase) - Flexy: Never hardcode month mappings!
+    INDONESIAN_MONTHS_MAP: {
+        'januari': '01',
+        'februari': '02',
+        'maret': '03',
+        'april': '04',
+        'mei': '05',
+        'juni': '06',
+        'juli': '07',
+        'agustus': '08',
+        'september': '09',
+        'oktober': '10',
+        'november': '11',
+        'desember': '12'
+    } as const,
 } as const;
 
 // Default class configuration for new students
@@ -1301,6 +1340,10 @@ export const PPDB_CONFIG = {
         APPROVED: EMAIL_COLORS.STATUS_SUCCESS,
         REJECTED: EMAIL_COLORS.STATUS_ERROR,
     },
+    // NIS Generation - Flexy: Never hardcode ID formatting rules!
+    NIS_PADDING_LENGTH: 4,
+    NIS_COUNTER_RADIX: 10,
+    NIS_INITIAL_COUNTER: 0,
 } as const;
 
 // Quiz configuration constants

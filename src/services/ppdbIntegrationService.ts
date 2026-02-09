@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -102,20 +102,20 @@ class PPDBIntegrationService {
     try {
       const now = new Date();
       const year = now.getFullYear();
-      
-      // Get current counter from localStorage
+
+      // Get current counter from localStorage - Flexy: Use constants for formatting!
       const counterKey = STORAGE_KEYS.PPDB_NIS_COUNTER;
-      let counter = parseInt(localStorage.getItem(counterKey) || '0', 10);
-      
+      let counter = parseInt(localStorage.getItem(counterKey) || PPDB_CONFIG.NIS_INITIAL_COUNTER.toString(), PPDB_CONFIG.NIS_COUNTER_RADIX);
+
       // Increment counter
       counter += 1;
       localStorage.setItem(counterKey, counter.toString());
-      
-      // Generate NIS: YEAR + CLASS + 4-digit sequence
+
+      // Generate NIS: YEAR + CLASS + padded sequence
       const classCode = DEFAULT_CLASS_CONFIG.NEW_STUDENT_CODE;
-      const sequence = counter.toString().padStart(4, '0');
+      const sequence = counter.toString().padStart(PPDB_CONFIG.NIS_PADDING_LENGTH, ID_FORMAT.PAD_STRING);
       const nis = `${year}${classCode}${sequence}`;
-      
+
       logger.info('Generated NIS', { nis, year, classCode, counter });
       return nis;
     } catch (error) {
