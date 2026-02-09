@@ -126,6 +126,34 @@ describe('Input Component', () => {
       expect(input).toHaveAttribute('aria-invalid', 'false');
     });
 
+    it('renders tooltip icon when tooltip prop is provided', () => {
+      render(
+        <Input
+          label="Password"
+          tooltip="Minimal 8 karakter dengan huruf dan angka"
+        />
+      );
+      
+      // Tooltip button should be present with the tooltip text as aria-label
+      const tooltipButton = screen.getByLabelText('Minimal 8 karakter dengan huruf dan angka');
+      expect(tooltipButton).toBeInTheDocument();
+      expect(tooltipButton.tagName.toLowerCase()).toBe('button');
+    });
+
+    it('does not render tooltip icon when tooltip prop is not provided', () => {
+      render(<Input label="Name" />);
+      
+      // Should only have the label text, no tooltip buttons
+      const label = screen.getByText('Name');
+      expect(label).toBeInTheDocument();
+      
+      // Query all buttons (tooltip icon is a button)
+      const buttons = screen.queryAllByRole('button');
+      // Filter out any clear buttons that might be present
+      const iconButtons = buttons.filter(btn => btn.getAttribute('aria-label') !== 'Bersihkan input');
+      expect(iconButtons.length).toBe(0);
+    });
+
     it('supports fullWidth prop', () => {
       render(<Input fullWidth />);
       const input = screen.getByRole('textbox');
