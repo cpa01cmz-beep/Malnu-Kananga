@@ -1,4 +1,5 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef, useCallback } from 'react';
+import { XMarkIcon } from '../icons/MaterialIcons';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';
@@ -12,6 +13,8 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   fullWidth?: boolean;
   options?: Array<{ value: string; label: string; disabled?: boolean }>;
   placeholder?: string;
+  showClearButton?: boolean;
+  onClear?: () => void;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer";
@@ -50,13 +53,45 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   fullWidth = false,
   options,
   placeholder,
+  showClearButton = false,
+  onClear,
   className = '',
+  value,
+  onChange,
   ...props
 }, ref) => {
+  const internalRef = useRef<HTMLSelectElement>(null);
+  const selectRef = (ref as React.RefObject<HTMLSelectElement>) || internalRef;
   const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${selectId}-helper` : undefined;
   const errorTextId = errorText ? `${selectId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+
+  // Check if there's a value to show clear button
+  const hasValue = value !== undefined && value !== '';
+  const shouldShowClearButton = showClearButton && hasValue && !props.disabled;
+
+  // Handle clear action
+  const handleClear = useCallback(() => {
+    // Create synthetic event to clear value
+    const syntheticEvent = {
+      target: { value: '' }
+    } as React.ChangeEvent<HTMLSelectElement>;
+    
+    if (onChange) {
+      onChange(syntheticEvent);
+    }
+    
+    // Call custom onClear handler if provided
+    if (onClear) {
+      onClear();
+    }
+    
+    // Focus back on select after clearing
+    if (selectRef.current) {
+      selectRef.current.focus();
+    }
+  }, [onChange, onClear, selectRef]);
 
   const selectClasses = `
     ${baseClasses}
@@ -83,11 +118,13 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
 
       <div className="relative">
         <select
-          ref={ref}
+          ref={selectRef}
           id={selectId}
           className={selectClasses}
           aria-describedby={describedBy}
           aria-invalid={state === 'error'}
+          value={value}
+          onChange={onChange}
           {...props}
         >
           {placeholder && (
@@ -107,7 +144,20 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           {props.children}
         </select>
 
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 dark:text-neutral-500" aria-hidden="true">
+        {/* Clear button - appears when there's a value and showClearButton is true */}
+        {shouldShowClearButton && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10`}
+            aria-label="Bersihkan pilihan"
+            title="Bersihkan pilihan"
+          >
+            <XMarkIcon className={iconSize} aria-hidden="true" />
+          </button>
+        )}
+
+        <div className={`absolute top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 dark:text-neutral-500 ${shouldShowClearButton ? 'right-10' : 'right-3'}`} aria-hidden="true">
           <svg className={iconSize} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
