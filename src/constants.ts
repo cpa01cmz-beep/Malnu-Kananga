@@ -720,6 +720,22 @@ export const CACHE_TTL = {
     CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
 } as const;
 
+// Storage limits for various services - centralized to avoid hardcoded limits
+export const STORAGE_LIMITS = {
+    EMAIL_HISTORY_MAX: 1000,
+    NOTIFICATION_HISTORY_MAX: 1000,
+    LOG_ENTRIES_MAX: 1000,
+    METRICS_MAX: 1000,
+    DELIVERY_HISTORY_MAX: 1000,
+} as const;
+
+// Email configuration constants
+export const EMAIL_CONFIG = {
+    MAX_RETRY_ATTEMPTS: 3,
+    RETRY_DELAYS: [TIME_MS.ONE_MINUTE, 5 * TIME_MS.ONE_MINUTE, 15 * TIME_MS.ONE_MINUTE], // 1min, 5min, 15min
+    ANALYTICS_DAYS: 30,
+} as const;
+
 // Byte conversion constants
 export const BYTES_PER_KB = 1024;
 
