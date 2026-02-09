@@ -2,6 +2,7 @@
 
 import * as Sentry from '@sentry/react';
 import { logger, LogLevel } from '../utils/logger';
+import { COMPONENT_TIMEOUTS } from '../constants';
 
 // ============================================
 // TYPES
@@ -227,7 +228,7 @@ class ErrorMonitoringService {
   /**
    * Flush pending events
    */
-  async flush(timeout: number = 2000): Promise<boolean> {
+  async flush(timeout: number = COMPONENT_TIMEOUTS.ERROR_FLUSH): Promise<boolean> {
     try {
       if (!this.isEnabled()) return true;
       return Sentry.flush(timeout);
