@@ -1,6 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS } from '../constants';
+import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS } from '../constants';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -224,18 +224,13 @@ class OCRService {
   }
 
   private looksLikeSchoolName(text: string): boolean {
-    const schoolKeywords = ['SMP', 'MTs', 'SD', 'MI', 'SMA', 'MA', 'SMK'];
-    return schoolKeywords.some(keyword => text.toUpperCase().includes(keyword));
+    // Flexy: Using centralized OCR_SCHOOL_KEYWORDS constant
+    return OCR_SCHOOL_KEYWORDS.some(keyword => text.toUpperCase().includes(keyword));
   }
 
   private isValidSubject(subject: string): boolean {
-    const validSubjects = [
-      'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'IPA', 'IPS',
-      'Fisika', 'Kimia', 'Biologi', 'Sejarah', 'Geografi',
-      'Sosiologi', 'Ekonomi', 'PKN', 'Agama', 'Seni Budaya',
-      'Penjaskes', 'TIK', 'Bahasa Arab', 'Fiqih', 'Aqidah Akhlak',
-      'Bahasa Jawa', 'Muatan Lokal'
-    ];
+    // Flexy: Using centralized ACADEMIC_SUBJECTS constant instead of hardcoded array
+    const validSubjects = Object.values(ACADEMIC_SUBJECTS);
 
     const normalizedSubject = subject.toLowerCase();
     return validSubjects.some(s => s.toLowerCase().includes(normalizedSubject) || normalizedSubject.includes(s.toLowerCase()));
