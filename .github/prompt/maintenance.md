@@ -81,18 +81,14 @@
           Make every PR safely mergable and merge it without conflicts.
 
           PROCESS:
-          1. Sort PRs by urgency:
-             a. Merge conflict present
-             b. CI failing
-             c. Ready to merge
-             d. Draft
+          1. Sort PRs by time created, choose latest.
 
           2. For each PR (one at a time):
              - Checkout PR branch
              - Fetch latest DEFAULT_BRANCH
              - Rebase or merge DEFAULT_BRANCH INTO PR branch
              - Resolve conflicts ONLY if trivial and deterministic
-               - If not trivial → comment with explanation and STOP on that PR
+               - If not trivial → comment with explanation and CLOSE that PR
              - All comments must be resolved.
              - Run build and test suite
              - BEFORE fixing, analyze issues using tools:
