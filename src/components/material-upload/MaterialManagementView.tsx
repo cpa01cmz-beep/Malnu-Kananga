@@ -288,7 +288,26 @@ export function MaterialManagementView({
                     ? `Belum ada materi di folder "${selectedFolder.name}".`
                     : 'Belum ada materi yang diunggah.'
                 }
+                icon={<DocumentTextIcon />}
                 size="md"
+                suggestedActions={getActiveFilterCount() > 0 ? [
+                  {
+                    label: 'Hapus Filter',
+                    onClick: onClearFilters,
+                    variant: 'primary',
+                  },
+                  {
+                    label: 'Lihat Semua Folder',
+                    onClick: () => onFolderSelect(undefined),
+                    variant: 'secondary',
+                  }
+                ] : selectedFolder ? [
+                  {
+                    label: 'Lihat Semua Folder',
+                    onClick: () => onFolderSelect(undefined),
+                    variant: 'primary',
+                  }
+                ] : undefined}
               />
             </div>
           )}
