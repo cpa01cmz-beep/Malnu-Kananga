@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -445,12 +445,12 @@ class PPDBIntegrationService {
             name: registrant.parentName,
           },
         ],
-        subject: 'Selamat! Siswa Diterima di MA Malnu Kananga',
+        subject: `Selamat! Siswa Diterima di ${APP_CONFIG.SCHOOL_NAME}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
-            <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di MA Malnu Kananga.</p>
+            <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di ${APP_CONFIG.SCHOOL_NAME}.</p>
             
             <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Data Siswa</h3>
@@ -469,10 +469,10 @@ class PPDBIntegrationService {
             
             <p>Silakan login ke portal orang tua untuk melihat jadwal, nilai, dan informasi lainnya.</p>
             <p>Terima kasih,</p>
-            <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+            <p><strong>Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}</strong></p>
           </div>
         `,
-        text: `Selamat! ${registrant.fullName} telah diterima di MA Malnu Kananga.\n\nNIS: ${nis}\n\nAkun Orang Tua:\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nSilakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB MA Malnu Kananga`,
+        text: `Selamat! ${registrant.fullName} telah diterima di ${APP_CONFIG.SCHOOL_NAME}.\n\nNIS: ${nis}\n\nAkun Orang Tua:\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nSilakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
         data: {
           templateId: 'enrollment_confirmation',
           registrantId: registrant.id,
@@ -518,7 +518,7 @@ class PPDBIntegrationService {
         },
         accepted: {
           title: 'Selamat! Anda Diterima',
-          body: 'Selamat! Anda telah diterima di MA Malnu Kananga. Tunggu informasi pendaftaran ulang.',
+          body: `Selamat! Anda telah diterima di ${APP_CONFIG.SCHOOL_NAME}. Tunggu informasi pendaftaran ulang.`,
         },
         enrolled: {
           title: 'Pendaftaran Selesai',
@@ -827,10 +827,10 @@ class PPDBIntegrationService {
             
             <p>Akun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.</p>
             <p>Terima kasih,</p>
-            <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+            <p><strong>Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}</strong></p>
           </div>
         `,
-        text: `Selamat! Akun siswa untuk ${registrant.fullName} telah dibuat secara otomatis.\n\nNIS: ${nis}\n\nAkun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB MA Malnu Kananga`,
+        text: `Selamat! Akun siswa untuk ${registrant.fullName} telah dibuat secara otomatis.\n\nNIS: ${nis}\n\nAkun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
         data: {
           templateId: 'auto_creation_confirmation',
           registrantId: registrant.id,

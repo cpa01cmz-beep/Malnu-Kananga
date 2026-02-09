@@ -3,7 +3,7 @@ import { getAIInstance, DEFAULT_API_BASE_URL, AI_MODELS } from './geminiClient';
 import { chatCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { AI_CONFIG } from '../../constants';
+import { AI_CONFIG, APP_CONFIG } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -20,7 +20,7 @@ export interface LocalContext {
 }
 
 // Initial greeting for AI chat
-export const initialGreeting = "Assalamualaikum! Saya Asisten AI MA Malnu Kananga. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?";
+export const initialGreeting = `Assalamualaikum! Saya Asisten AI ${APP_CONFIG.SCHOOL_NAME}. Ada yang bisa saya bantu terkait informasi sekolah, pendaftaran, atau kegiatan?`;
 
 /**
  * This function implements RAG pattern with optional Thinking Mode
@@ -90,7 +90,7 @@ ${message}
 `;
 
   // System instruction
-  const baseInstruction = `Anda adalah 'Asisten MA Malnu Kananga'.
+  const baseInstruction = `Anda adalah 'Asisten ${APP_CONFIG.SCHOOL_NAME}'.
 PANDUAN MENJAWAB:
 1. Jawablah berdasarkan data [INFORMASI AKTUAL WEBSITE] dan [DATABASE PENGETAHUAN SEKOLAH].
 2. Gunakan Bahasa Indonesia yang sopan.

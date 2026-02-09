@@ -3,6 +3,8 @@
  * Single source of truth for all user-facing error messages
  */
 
+import { APP_CONFIG } from '../constants';
+
 export const ERROR_MESSAGES = {
   // Error Type Messages (from ErrorType enum)
   NETWORK_ERROR: 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.',
@@ -216,8 +218,8 @@ export const SUCCESS_MESSAGES = {
   // Role/Permission success
   ROLE_CHANGED: 'Peran pengguna berhasil diubah',
   ROLE_CHANGE_NOTIFICATION: 'Peran Anda telah diubah. Silakan login kembali.',
-  WELCOME_NEW_USER: 'Selamat datang di sistem MA Malnu Kananga.',
-  WELCOME_USER: 'Akun Anda telah dibuat. Selamat menggunakan sistem MA Malnu Kananga.',
+  WELCOME_NEW_USER: `Selamat datang di sistem ${APP_CONFIG.SCHOOL_NAME}.`,
+  WELCOME_USER: `Akun Anda telah dibuat. Selamat menggunakan sistem ${APP_CONFIG.SCHOOL_NAME}.`,
   ROLE_CHANGE_TITLE: 'Perubahan Hak Akses',
   ROLE_CHANGE_BODY: (role: string, extraRole?: string): string => `Peran Anda telah diubah menjadi ${role}${extraRole ? ` (${extraRole})` : ''}`,
 
