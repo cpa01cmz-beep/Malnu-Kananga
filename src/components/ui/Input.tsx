@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MaskOptions } from '../../utils/inputMasks';
 import { createFormatter } from '../../utils/inputMasks';
+import { XMarkIcon } from '../icons/MaterialIcons';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -26,6 +27,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   inputMask?: 'nisn' | 'phone' | 'date' | 'year' | 'class' | 'grade';
   customType?: InputType;
   clearOnEscape?: boolean;
+  showClearButton?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -77,6 +79,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   inputMask,
   customType = 'text',
   clearOnEscape = false,
+  showClearButton = false,
   value,
   onChange,
   onBlur,
@@ -160,8 +163,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                         validation.state.errors[0] : errorText;
 
   // Icon spacing adjustments
+  const hasClearButton = showClearButton && value && String(value).length > 0;
   const leftIconSpacing = leftIcon || inputMask === 'phone' || inputMask === 'nisn' ? 'pl-11' : '';
-  const rightIconSpacing = rightIcon ? 'pr-11' : '';
+  const rightIconSpacing = rightIcon || hasClearButton ? 'pr-11' : '';
 
   const inputClasses = `
     ${baseClasses}
@@ -252,8 +256,32 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           </div>
         )}
 
+        {/* Clear button - appears when there's a value and showClearButton is true */}
+        {hasClearButton && !validation.state.isValidating && (
+          <button
+            type="button"
+            onClick={() => {
+              const syntheticEvent = {
+                target: { value: '' }
+              } as React.ChangeEvent<HTMLInputElement>;
+              handleMaskedChange(syntheticEvent);
+              // Focus back on input after clearing
+              if (inputRef.current) {
+                inputRef.current.focus();
+              }
+            }}
+            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+              rightIcon ? 'right-10' : 'right-3'
+            }`}
+            aria-label="Bersihkan input"
+            title="Bersihkan input"
+          >
+            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+          </button>
+        )}
+
         {validation.state.isValidating && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <div className={`absolute top-1/2 -translate-y-1/2 ${rightIcon ? 'right-10' : hasClearButton ? 'right-10' : 'right-3'}`}>
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
           </div>
         )}

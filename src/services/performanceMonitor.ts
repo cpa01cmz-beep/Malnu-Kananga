@@ -1,6 +1,7 @@
 // performanceMonitor.ts - API performance monitoring and metrics
 
 import { logger } from '../utils/logger';
+import { STORAGE_LIMITS } from '../constants';
 
 // Type declarations for Web API
 declare global {
@@ -61,7 +62,7 @@ class PerformanceMonitor {
     consecutiveFailures: 5,
   };
   private consecutiveFailures: number = 0;
-  private readonly maxMetrics: number = 1000;
+  private readonly maxMetrics: number = STORAGE_LIMITS.METRICS_MAX;
   private monitoringEnabled: boolean = false;
 
   /**
