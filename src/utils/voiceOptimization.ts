@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { logger } from './logger';
+import { VOICE_CONFIG, TIME_MS, CONVERSION } from '../constants';
 
 /**
  * Performance optimization utilities for voice features
@@ -88,7 +89,7 @@ class VoiceCache<T> {
   private maxSize: number;
   private ttl: number; // Time to live in milliseconds
   
-  constructor(maxSize: number = 50, ttl: number = 300000) {
+  constructor(maxSize: number = VOICE_CONFIG.MAX_VOICE_CACHE_SIZE, ttl: number = TIME_MS.FIVE_MINUTES) {
     this.cache = new Map();
     this.maxSize = maxSize;
     this.ttl = ttl;
@@ -145,7 +146,7 @@ class VoiceCache<T> {
 /**
  * Hook for managing voice cache
  */
-export function useVoiceCache<T>(maxSize: number = 50, ttl: number = 300000) {
+export function useVoiceCache<T>(maxSize: number = VOICE_CONFIG.MAX_VOICE_CACHE_SIZE, ttl: number = TIME_MS.FIVE_MINUTES) {
   const cacheRef = useRef(new VoiceCache<T>(maxSize, ttl));
   
   const get = useCallback((key: string) => {
@@ -198,9 +199,9 @@ export const performanceMetrics = {
   checkMemoryUsage: () => {
     if (typeof window.performance !== 'undefined' && window.performance.memory) {
       const memory = window.performance.memory;
-      const usedMB = memory.usedJSHeapSize / (1024 * 1024);
-      const totalMB = memory.totalJSHeapSize / (1024 * 1024);
-      const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
+      const usedMB = memory.usedJSHeapSize / CONVERSION.BYTES_PER_MB;
+      const totalMB = memory.totalJSHeapSize / CONVERSION.BYTES_PER_MB;
+      const limitMB = memory.jsHeapSizeLimit / CONVERSION.BYTES_PER_MB;
 
       logger.debug(`Memory: ${usedMB.toFixed(2)}MB / ${totalMB.toFixed(2)}MB (Limit: ${limitMB.toFixed(2)}MB)`);
 

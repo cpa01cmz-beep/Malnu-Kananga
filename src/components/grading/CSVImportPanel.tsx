@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Papa from 'papaparse';
 import { CSV_MESSAGES } from '../../utils/errorMessages';
 import { validateCSVImport } from '../../utils/teacherValidation';
+import Button from '../ui/Button';
 
 export interface CSVImportPanelProps {
   csvError: string | null;
@@ -31,9 +32,13 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
   setConfirmDialog,
   onShowToast,
 }) => {
+  const [isImporting, setIsImporting] = useState(false);
+
   const handleCSVImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    setIsImporting(true);
 
     Papa.parse<Record<string, string>>(file, {
       header: true,
@@ -87,9 +92,12 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
             }
         } catch (_err) {
           onShowToast(CSV_MESSAGES.IMPORT_FAILED, 'error');
+        } finally {
+          setIsImporting(false);
         }
       },
       error: (_err: Error) => {
+        setIsImporting(false);
         onShowToast(CSV_MESSAGES.PARSE_FAILED, 'error');
       }
     });
@@ -109,12 +117,22 @@ const CSVImportPanel: React.FC<CSVImportPanelProps> = ({
         className="hidden"
         id="csv-import-input"
       />
-      <button
+      <Button
         onClick={() => document.getElementById('csv-import-input')?.click()}
-        className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+        variant="warning"
+        size="md"
+        isLoading={isImporting}
+        ariaLabel={isImporting ? 'Memproses file CSV...' : 'Import nilai dari file CSV'}
+        disabled={isImporting}
+        icon={
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+        }
+        iconPosition="left"
       >
         Import CSV
-      </button>
+      </Button>
     </div>
   );
 };

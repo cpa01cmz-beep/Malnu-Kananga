@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { User } from '../types';
 import { authAPI } from '../services/apiService';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS } from '../constants';
 
 export interface UseAuthResult {
   user: User | null;
@@ -67,7 +67,7 @@ export const useAuth = (): UseAuthResult => {
      */
     const interval = setInterval(() => {
       refreshAuth();
-    }, 5000); // Check every 5 seconds
+    }, SCHEDULER_INTERVALS.AUTH_CHECK); // Check every 5 seconds
 
     // Add event listeners
     window.addEventListener('storage', handleStorageChange);
