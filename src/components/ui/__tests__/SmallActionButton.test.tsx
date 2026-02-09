@@ -152,29 +152,116 @@ describe('SmallActionButton', () => {
       expect(spinner).toHaveClass('animate-spin');
     });
 
-  it('should be keyboard accessible', () => {
-    const handleClick = vi.fn();
-    render(<SmallActionButton onClick={handleClick}>Keyboard Test</SmallActionButton>);
-    
-    const button = screen.getByRole('button');
-    button.focus();
-    
-    expect(button).toHaveFocus();
-    
-    fireEvent.click(button);
-    
-    expect(handleClick).toHaveBeenCalledTimes(1);
-  });
+    it('should render loading text when provided', () => {
+      render(<SmallActionButton isLoading loadingText="Menyimpan...">Simpan</SmallActionButton>);
+      
+      expect(screen.getByText('Menyimpan...')).toBeInTheDocument();
+    });
 
-  it('should render with fullWidth and icon', () => {
-    const handleClick = vi.fn();
-    render(<SmallActionButton fullWidth icon={<MockIcon />} onClick={handleClick}>With Icon</SmallActionButton>);
-    
-    const button = screen.getByRole('button', { name: 'With Icon' });
-    expect(button).toHaveClass('flex-1');
-    expect(screen.getByTestId('mock-icon')).toBeInTheDocument();
+    it('should render children when loading without loadingText', () => {
+      render(<SmallActionButton isLoading>Simpan</SmallActionButton>);
+      
+      expect(screen.getByText('Simpan')).toBeInTheDocument();
+    });
+
+    it('should show tooltip on hover', () => {
+      render(<SmallActionButton tooltip="Click to save">Simpan</SmallActionButton>);
+      
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('Click to save')).toBeInTheDocument();
+    });
+
+    it('should hide tooltip on mouse leave', () => {
+      render(<SmallActionButton tooltip="Click to save">Simpan</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('opacity-100', 'scale-100');
+
+      fireEvent.mouseLeave(button);
+      expect(tooltip).toHaveClass('opacity-0', 'scale-95');
+    });
+
+    it('should have aria-describedby when tooltip is provided', () => {
+      render(<SmallActionButton tooltip="Helpful tip">Button</SmallActionButton>);
+      
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-describedby');
+    });
+
+    it('should not have aria-describedby when tooltip is not provided', () => {
+      render(<SmallActionButton>No Tooltip</SmallActionButton>);
+      
+      const button = screen.getByRole('button');
+      expect(button).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should show tooltip on focus', () => {
+      render(<SmallActionButton tooltip="Focus tooltip">Button</SmallActionButton>);
+      
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    it('should hide tooltip on blur', () => {
+      render(<SmallActionButton tooltip="Focus tooltip">Button</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('opacity-100', 'scale-100');
+
+      fireEvent.blur(button);
+      expect(tooltip).toHaveClass('opacity-0', 'scale-95');
+    });
+
+    it('should position tooltip at different positions', () => {
+      const { rerender } = render(<SmallActionButton tooltip="Top" tooltipPosition="top">Button</SmallActionButton>);
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      let tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('bottom-full');
+      
+      rerender(<SmallActionButton tooltip="Right" tooltipPosition="right">Button</SmallActionButton>);
+      fireEvent.mouseEnter(screen.getByRole('button'));
+      tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('left-full');
+      
+      rerender(<SmallActionButton tooltip="Left" tooltipPosition="left">Button</SmallActionButton>);
+      fireEvent.mouseEnter(screen.getByRole('button'));
+      tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('right-full');
+    });
+
+    it('should be keyboard accessible', () => {
+      const handleClick = vi.fn();
+      render(<SmallActionButton onClick={handleClick}>Keyboard Test</SmallActionButton>);
+      
+      const button = screen.getByRole('button');
+      button.focus();
+      
+      expect(button).toHaveFocus();
+      
+      fireEvent.click(button);
+      
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('should render with fullWidth and icon', () => {
+      const handleClick = vi.fn();
+      render(<SmallActionButton fullWidth icon={<MockIcon />} onClick={handleClick}>With Icon</SmallActionButton>);
+      
+      const button = screen.getByRole('button', { name: 'With Icon' });
+      expect(button).toHaveClass('flex-1');
+      expect(screen.getByTestId('mock-icon')).toBeInTheDocument();
+    });
   });
-});
 
   describe('Dark Mode', () => {
     it('should apply dark mode styles for info variant', () => {

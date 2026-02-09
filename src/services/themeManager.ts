@@ -1,6 +1,6 @@
 import { Theme, themes, getThemeById } from '../config/themes';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, THEME_COLOR_PALETTE } from '../constants';
 
 export class ThemeManager {
   private static instance: ThemeManager;
@@ -177,7 +177,7 @@ export class ThemeManager {
     });
 
     // Generate and apply pink scale
-    const pinkScale = this.generateColorScale('#db2777', 10);
+    const pinkScale = this.generateColorScale(THEME_COLOR_PALETTE.PINK, 10);
     Object.entries(pinkScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-pink-${key}`, value);
@@ -185,7 +185,7 @@ export class ThemeManager {
     });
 
     // Generate and apply cyan scale
-    const cyanScale = this.generateColorScale('#06b6d4', 10);
+    const cyanScale = this.generateColorScale(THEME_COLOR_PALETTE.CYAN, 10);
     Object.entries(cyanScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-cyan-${key}`, value);
@@ -193,7 +193,7 @@ export class ThemeManager {
     });
 
     // Generate and apply emerald scale
-    const emeraldScale = this.generateColorScale('#10b981', 10);
+    const emeraldScale = this.generateColorScale(THEME_COLOR_PALETTE.EMERALD, 10);
     Object.entries(emeraldScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-emerald-${key}`, value);
@@ -201,7 +201,7 @@ export class ThemeManager {
     });
 
     // Generate and apply sky scale
-    const skyScale = this.generateColorScale('#0ea5e9', 10);
+    const skyScale = this.generateColorScale(THEME_COLOR_PALETTE.SKY, 10);
     Object.entries(skyScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-sky-${key}`, value);
@@ -209,7 +209,7 @@ export class ThemeManager {
     });
 
     // Generate and apply amber scale
-    const amberScale = this.generateColorScale('#f59e0b', 10);
+    const amberScale = this.generateColorScale(THEME_COLOR_PALETTE.AMBER, 10);
     Object.entries(amberScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-amber-${key}`, value);
@@ -217,7 +217,7 @@ export class ThemeManager {
     });
 
     // Generate and apply teal scale
-    const tealScale = this.generateColorScale('#14b8a6', 10);
+    const tealScale = this.generateColorScale(THEME_COLOR_PALETTE.TEAL, 10);
     Object.entries(tealScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-teal-${key}`, value);
@@ -225,7 +225,7 @@ export class ThemeManager {
     });
 
     // Generate and apply rose scale
-    const roseScale = this.generateColorScale('#f43f5e', 10);
+    const roseScale = this.generateColorScale(THEME_COLOR_PALETTE.ROSE, 10);
     Object.entries(roseScale).forEach(([key, value]) => {
       if (key !== 'DEFAULT') {
         root.style.setProperty(`--theme-rose-${key}`, value);

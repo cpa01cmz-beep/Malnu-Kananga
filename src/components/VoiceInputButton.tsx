@@ -51,6 +51,12 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   const [transcriptBuffer, setTranscriptBuffer] = useState('');
   const [lastActivityTime, setLastActivityTime] = useState(Date.now());
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transcriptBufferRef = useRef('');
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    transcriptBufferRef.current = transcriptBuffer;
+  }, [transcriptBuffer]);
 
   useEffect(() => {
     const loadContinuousMode = () => {
@@ -88,11 +94,11 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
 
   useEffect(() => {
     if (continuous && isListening && state === 'processing' && transcript) {
-      const currentBuffer = transcriptBuffer + ' ' + transcript;
+      const currentBuffer = transcriptBufferRef.current + ' ' + transcript;
       setTranscriptBuffer(currentBuffer.trim());
       setLastActivityTime(Date.now());
     }
-  }, [transcript, state, isListening, continuous, transcriptBuffer]);
+  }, [transcript, state, isListening, continuous]);
 
   useEffect(() => {
     if (continuous && isListening) {

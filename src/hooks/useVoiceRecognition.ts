@@ -33,7 +33,7 @@ export const useVoiceRecognition = (
   options: UseVoiceRecognitionOptions = {}
 ): UseVoiceRecognitionReturn => {
   const { onTranscript, onError, autoStart = false } = options;
-  
+
   const [transcript, setTranscript] = useState('');
   const [state, setState] = useState<SpeechRecognitionState>('idle');
   const [isListening, setIsListening] = useState(false);
@@ -41,8 +41,16 @@ export const useVoiceRecognition = (
   const [language, setLanguage] = useState<VoiceLanguage>(VoiceLanguage.Indonesian);
   const [continuous, setContinuous] = useState(false);
   const [permissionState, setPermissionState] = useState<'granted' | 'denied' | 'prompt' | 'unknown'>('unknown');
-  
+
   const serviceRef = useRef<SpeechRecognitionService | null>(null);
+  const onTranscriptRef = useRef(onTranscript);
+  const onErrorRef = useRef(onError);
+
+  // Keep refs up to date
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+    onErrorRef.current = onError;
+  }, [onTranscript, onError]);
 
   useEffect(() => {
     serviceRef.current = new SpeechRecognitionService({
@@ -58,13 +66,13 @@ export const useVoiceRecognition = (
 
     service.onResult((transcriptResult, isFinal) => {
       setTranscript(transcriptResult);
-      onTranscript?.(transcriptResult, isFinal);
+      onTranscriptRef.current?.(transcriptResult, isFinal);
     });
 
     service.onError((error) => {
       setState('error');
       setPermissionState(service.getPermissionState());
-      onError?.(error);
+      onErrorRef.current?.(error);
     });
 
     service.onStart(() => {
@@ -96,7 +104,7 @@ export const useVoiceRecognition = (
     return () => {
       service?.cleanup();
     };
-  }, [language, continuous, onTranscript, onError, autoStart]);
+  }, [language, continuous, autoStart]);
 
   useEffect(() => {
     if (serviceRef.current) {

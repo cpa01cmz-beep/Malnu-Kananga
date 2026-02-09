@@ -7,6 +7,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 import type { ActionType } from '../services/offlineActionQueueService';
+import { DEBOUNCE_DELAYS } from '../constants';
 
 export interface AutoSaveConfig<T> {
   /** Debounce delay in milliseconds (default: 2000) */
@@ -242,7 +243,7 @@ export function useAutoSave<T extends object>(
     
     saveTimeoutRef.current = setTimeout(() => {
       performSave(updatedData);
-    }, 100); // Small delay to batch rapid changes
+    }, DEBOUNCE_DELAYS.RAPID_CHANGE_BATCH); // Small delay to batch rapid changes
   }, [data, storageKey, performSave]);
 
   // Force save now

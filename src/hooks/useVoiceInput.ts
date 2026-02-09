@@ -4,6 +4,7 @@ import SpeechSynthesisService from '../services/speechSynthesisService';
 import type { ValidationRule } from '../utils/validation';
 import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
+import { NUMBER_WORDS } from '../constants';
 
 export interface VoiceInputFieldType {
   type: 'text' | 'number' | 'email' | 'phone' | 'textarea';
@@ -257,71 +258,21 @@ function toTitleCase(str: string): string {
 }
 
 function textToNumber(text: string, language: VoiceLanguage): string {
+  // Merge all number word mappings from constants
   const digitMap: Record<string, string> = {
-    'nol': '0',
-    'satu': '1',
-    'dua': '2',
-    'tiga': '3',
-    'empat': '4',
-    'lima': '5',
-    'enam': '6',
-    'tujuh': '7',
-    'delapan': '8',
-    'sembilan': '9',
-    'zero': '0',
-    'one': '1',
-    'two': '2',
-    'three': '3',
-    'four': '4',
-    'five': '5',
-    'six': '6',
-    'seven': '7',
-    'eight': '8',
-    'nine': '9',
+    ...NUMBER_WORDS.DIGITS.INDONESIAN,
+    ...NUMBER_WORDS.DIGITS.ENGLISH,
   };
 
   const englishMap: Record<string, string> = {
-    'ten': '10',
-    'eleven': '11',
-    'twelve': '12',
-    'thirteen': '13',
-    'fourteen': '14',
-    'fifteen': '15',
-    'sixteen': '16',
-    'seventeen': '17',
-    'eighteen': '18',
-    'nineteen': '19',
-    'twenty': '20',
-    'thirty': '30',
-    'forty': '40',
-    'fifty': '50',
-    'sixty': '60',
-    'seventy': '70',
-    'eighty': '80',
-    'ninety': '90',
-    'hundred': '100',
+    ...NUMBER_WORDS.TEENS.ENGLISH,
+    ...NUMBER_WORDS.TENS.ENGLISH,
+    ...NUMBER_WORDS.SCALE.ENGLISH,
   };
 
   const indonesianCompoundMap: Record<string, string> = {
-    'sepuluh': '10',
-    'sebelas': '11',
-    'dua belas': '12',
-    'tiga belas': '13',
-    'empat belas': '14',
-    'lima belas': '15',
-    'enam belas': '16',
-    'tujuh belas': '17',
-    'delapan belas': '18',
-    'sembilan belas': '19',
-    'dua puluh': '20',
-    'tiga puluh': '30',
-    'empat puluh': '40',
-    'lima puluh': '50',
-    'enam puluh': '60',
-    'tujuh puluh': '70',
-    'delapan puluh': '80',
-    'sembilan puluh': '90',
-    'seratus': '100',
+    ...NUMBER_WORDS.COMPOUND_INDONESIAN,
+    ...NUMBER_WORDS.SCALE.INDONESIAN,
   };
 
   if (language === VoiceLanguage.Indonesian) {

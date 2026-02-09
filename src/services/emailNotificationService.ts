@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, EMAIL_COLORS } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -266,7 +266,7 @@ class EmailNotificationService {
       
       const context: EmailTemplateContext = {
         recipientName,
-        schoolName: 'MA Malnu Kananga',
+        schoolName: `${APP_CONFIG.SCHOOL_NAME}`,
         ...notification.data as Record<string, string | number>
       };
 
@@ -323,7 +323,7 @@ class EmailNotificationService {
       templateId,
       context: {
         recipientName,
-        schoolName: 'MA Malnu Kananga',
+        schoolName: `${APP_CONFIG.SCHOOL_NAME}`,
         ...notification.data as Record<string, string | number>
       }
     };
@@ -381,6 +381,7 @@ class EmailNotificationService {
 
       const groupedByType = this.groupNotificationsByType(items);
       
+      const EC = EMAIL_COLORS;
       let htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -388,13 +389,13 @@ class EmailNotificationService {
           <meta charset="utf-8">
           <title>Email Notifikasi - ${new Date().toLocaleDateString('id-ID')}</title>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-            .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-            .section { margin: 15px 0; padding: 10px; background: #e0f2fe; border-radius: 5px; }
-            .notification { margin: 10px 0; padding: 8px; background: white; border-left: 3px solid #2563eb; }
-            .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+            .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+            .section { margin: 15px 0; padding: 10px; background: ${EC.INFO}; border-radius: 5px; }
+            .notification { margin: 10px 0; padding: 8px; background: white; border-left: 3px solid ${EC.PRIMARY}; }
+            .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
           </style>
         </head>
         <body>
@@ -485,9 +486,8 @@ class EmailNotificationService {
       const history = this.loadDeliveryHistory();
       history.push(delivery);
 
-      const maxHistorySize = 1000;
-      if (history.length > maxHistorySize) {
-        history.splice(0, history.length - maxHistorySize);
+      if (history.length > STORAGE_LIMITS.NOTIFICATION_HISTORY_MAX) {
+        history.splice(0, history.length - STORAGE_LIMITS.NOTIFICATION_HISTORY_MAX);
       }
 
       localStorage.setItem(this.deliveryHistoryKey, JSON.stringify(history));

@@ -245,19 +245,27 @@ export const VOICE_CONFIG = {
     SPEECH_RECOGNITION_TIMEOUT: 5000,
     DEBOUNCE_DELAY: 500,
     MAX_VOICE_CACHE_SIZE: 50,
-CONTINUOUS_MODE_TIMEOUT: 10000,
+    CONTINUOUS_MODE_TIMEOUT: 10000,
     COMMAND_DETECTION_THRESHOLD: 0.7,
     MESSAGE_QUEUE_MAX_SIZE: 50,
+    MAX_SPEAK_ATTEMPTS: 3,
+    PREFERRED_LANGUAGE: 'id-ID',
+    FALLBACK_LANGUAGE: 'en-US',
+    RATE_BOUNDS: { MIN: 0.1, MAX: 10 },
+    PITCH_BOUNDS: { MIN: 0, MAX: 2 },
+    VOLUME_BOUNDS: { MIN: 0, MAX: 1 },
 } as const;
 
 export const ERROR_MESSAGES = {
     VOICE_NOT_SUPPORTED: 'Browser Anda tidak mendukung fitur suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.',
     MICROPHONE_DENIED: 'Izin mikrofon ditolak. Silakan izinkan akses mikrofon di pengaturan browser Anda.',
+    MICROPHONE_ACCESS_ERROR: 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.',
     NO_SPEECH_DETECTED: 'Tidak ada suara terdeteksi. Silakan coba lagi.',
     SPEECH_PROCESSING_FAILED: 'Gagal memproses suara. Silakan coba lagi.',
     TTS_NOT_SUPPORTED: 'Browser Anda tidak mendukung fitur suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.',
     COMMAND_NOT_RECOGNIZED: 'Perintah tidak dikenali. Silakan coba lagi.',
     QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
+    NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
 } as const;
 
 export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
@@ -592,8 +600,123 @@ export const API_CONFIG = {
     ENDPOINTS: {
         CHAT: '/api/chat',
         LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        USERS: '/api/users',
+        USER_PASSWORD: '/api/users/:userId/password',
     },
 } as const;
+
+// Language and Locale Codes - Flexy: Never hardcode language codes!
+export const LANGUAGE_CODES = {
+    INDONESIAN: 'id-ID',
+    ENGLISH_US: 'en-US',
+    ENGLISH_UK: 'en-GB',
+    JAVANESE: 'jv-ID',
+    DEFAULT: 'id-ID',
+} as const;
+
+// File Type Extensions - Flexy: Never hardcode file extensions!
+export const FILE_EXTENSIONS = {
+    DOCUMENTS: ['.pdf', '.doc', '.docx', '.ppt', '.pptx'] as const,
+    IMAGES: ['.jpg', '.jpeg', '.png', '.gif', '.webp'] as const,
+    VIDEOS: ['.mp4', '.avi', '.mov', '.mkv'] as const,
+    AUDIO: ['.mp3', '.wav', '.ogg', '.m4a'] as const,
+    SPREADSHEETS: ['.xls', '.xlsx', '.csv'] as const,
+    ARCHIVES: ['.zip', '.rar', '.7z'] as const,
+} as const;
+
+// All accepted file extensions (for FileUpload component)
+export const ACCEPTED_FILE_EXTENSIONS = [
+    ...FILE_EXTENSIONS.DOCUMENTS,
+    ...FILE_EXTENSIONS.IMAGES,
+    '.mp4', // Video (commonly used)
+] as const;
+
+// Scheduler Intervals (milliseconds) - Flexy: Never hardcode intervals!
+export const SCHEDULER_INTERVALS = {
+    EMAIL_DIGEST_CHECK: 5 * 60 * 1000, // 5 minutes
+    PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
+    NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
+    AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
+    OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
+    WEBSOCKET_PING: 30 * 1000, // 30 seconds
+    AUTH_CHECK: 5 * 1000, // 5 seconds
+} as const;
+
+// Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
+export const PERFORMANCE_THRESHOLDS = {
+    SLOW_REQUEST_MS: 3000, // 3 seconds
+    ERROR_RATE_ALERT_PERCENT: 10, // 10%
+    AVG_RESPONSE_TIME_ALERT_MS: 5000, // 5 seconds
+    CONSECUTIVE_FAILURES_ALERT: 5,
+    MEMORY_WARNING_PERCENT: 80, // 80%
+    CPU_WARNING_PERCENT: 70, // 70%
+} as const;
+
+// Test Timeout Delays (milliseconds) - Flexy: Never hardcode test delays!
+export const TEST_DELAYS = {
+    SHORT: 10,
+    MEDIUM: 50,
+    LONG: 100,
+    VERY_LONG: 500,
+} as const;
+
+// Hash Algorithm Configuration
+export const HASH_CONFIG = {
+    DEFAULT_ALGORITHM: 'simple',
+    HASH_SHIFT_BITS: 5,
+    OUTPUT_BASE: 36,
+    DEFAULT_RANDOM_LENGTH: 9,
+} as const;
+
+// UI ID Configuration
+export const UI_ID_CONFIG = {
+    RANDOM_SUFFIX_LENGTH: 9,
+    DEFAULT_SEPARATOR: '_',
+} as const;
+
+// Conversion Utilities
+export const CONVERSION = {
+    BYTES_PER_KB: 1024,
+    BYTES_PER_MB: 1024 * 1024,
+    BYTES_PER_GB: 1024 * 1024 * 1024,
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 60 * 1000,
+    MS_PER_HOUR: 60 * 60 * 1000,
+} as const;
+
+/**
+ * Convert megabytes to bytes
+ * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
+ */
+export function mbToBytes(mb: number): number {
+    return mb * CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert bytes to megabytes
+ */
+export function bytesToMb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert minutes to milliseconds
+ * Flexy says: Use this instead of hardcoded `minutes * 60 * 1000`
+ */
+export function minutesToMs(minutes: number): number {
+    return minutes * CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert hours to milliseconds
+ */
+export function hoursToMs(hours: number): number {
+    return hours * CONVERSION.MS_PER_HOUR;
+}
 
 // Validation regex patterns - Centralized to avoid hardcoded regex
 export const VALIDATION_PATTERNS = {
@@ -603,6 +726,13 @@ export const VALIDATION_PATTERNS = {
     SEARCH_TERM: /^[a-zA-Z0-9\s.-]+$/,
     PHONE: /^[0-9+\-\s()]+$/,
     URL_PROTOCOLS: ['http://', 'https://'] as const,
+} as const;
+
+// Email validation constants - Flexy: Never hardcode email validation limits!
+export const EMAIL_VALIDATION = {
+    MAX_LOCAL_LENGTH: 64,
+    MAX_DOMAIN_LENGTH: 253,
+    MIN_PASSWORD_LENGTH: 6,
 } as const;
 
 // Search configuration constants
@@ -673,6 +803,7 @@ export const ACADEMIC = {
         MAX: 20,
     } as const,
     NISN_LENGTH: 10,
+    MAJOR_EXAM_TYPES: ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'] as const,
 } as const;
 
 // File validation constants
@@ -684,6 +815,28 @@ export const FILE_VALIDATION = {
     MATERIAL_TITLE_MAX_LENGTH: 200,
     MATERIAL_TITLE_MIN_LENGTH: 3,
     ADDRESS_MAX_LENGTH: 200,
+    // Windows reserved file names - Flexy: Never hardcode reserved names!
+    RESERVED_NAMES: [
+        'CON', 'PRN', 'AUX', 'NUL',
+        'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+        'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+    ] as const,
+} as const;
+
+// XSS Protection Configuration - Flexy: Security constants must be centralized!
+export const XSS_CONFIG = {
+    DANGEROUS_TAGS: [
+        'script', 'iframe', 'object', 'embed', 'form', 'input',
+        'button', 'textarea', 'select', 'option', 'link', 'style',
+    ] as const,
+    DANGEROUS_ATTRIBUTES: [
+        'onerror', 'onload', 'onmouseover', 'onmouseout', 'onclick',
+        'ondblclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup',
+        'onfocus', 'onblur', 'javascript', 'data', 'vbscript',
+    ] as const,
+    INVALID_FILENAME_CHARS: /[<>:"|?*]/g,
+    PATH_TRAVERSAL_PATTERN: /\.\.[/\\]/g,
+    NULL_BYTE_PATTERN: /\0/g,
 } as const;
 
 // AI/Gemini configuration constants
@@ -703,11 +856,23 @@ export const OCR_CONFIG = {
     CONFIDENCE_WARNING_THRESHOLD: 0.7,
     COMPARISON_TEXT_MAX: 200,
     INPUT_LOG_MAX: 500,
+    ATTENDANCE_CONFIDENCE_THRESHOLD: 60, // Minimum average confidence for attendance OCR
 } as const;
+
+// OCR School Name Detection Keywords - Flexy: Never hardcode institution types!
+export const OCR_SCHOOL_KEYWORDS = [
+    'SMP', 'MTs', 'SD', 'MI', 'SMA', 'MA', 'SMK'
+] as const;
 
 // ID generation constants
 export const ID_GENERATION = {
     RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// UI Accessibility constants - Flexy: Never hardcode accessibility values!
+export const UI_ACCESSIBILITY = {
+    OFFSCREEN_POSITION: '-9999px',
+    SCREEN_READER_TIMEOUT: 1000,
 } as const;
 
 // Cache TTL constants in milliseconds
@@ -720,6 +885,22 @@ export const CACHE_TTL = {
     CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
 } as const;
 
+// Storage limits for various services - centralized to avoid hardcoded limits
+export const STORAGE_LIMITS = {
+    EMAIL_HISTORY_MAX: 1000,
+    NOTIFICATION_HISTORY_MAX: 1000,
+    LOG_ENTRIES_MAX: 1000,
+    METRICS_MAX: 1000,
+    DELIVERY_HISTORY_MAX: 1000,
+} as const;
+
+// Email configuration constants
+export const EMAIL_CONFIG = {
+    MAX_RETRY_ATTEMPTS: 3,
+    RETRY_DELAYS: [TIME_MS.ONE_MINUTE, 5 * TIME_MS.ONE_MINUTE, 15 * TIME_MS.ONE_MINUTE], // 1min, 5min, 15min
+    ANALYTICS_DAYS: 30,
+} as const;
+
 // Byte conversion constants
 export const BYTES_PER_KB = 1024;
 
@@ -729,6 +910,7 @@ export const DEBOUNCE_DELAYS = {
     FIELD_VALIDATION: 300,
     SEARCH_INPUT: 300,
     AI_CACHE_REFRESH: 5000,
+    RAPID_CHANGE_BATCH: 100, // Short delay to batch rapid changes
 } as const;
 
 // Component timeout constants
@@ -983,4 +1165,673 @@ export const OCR_ENHANCEMENT_CONFIG = {
 // Permission service constants
 export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
+} as const;
+
+// Email template colors - Flexy: Never hardcode colors in email templates!
+export const EMAIL_COLORS = {
+    PRIMARY: '#2563eb',
+    SUCCESS: '#059669',
+    SUCCESS_LIGHT: '#dcfce7',
+    WARNING: '#dc2626',
+    INFO: '#dbeafe',
+    LIBRARY: '#7c3aed',
+    PPDB: '#ea580c',
+    BACKGROUND: '#f9fafb',
+    TEXT_PRIMARY: '#333',
+    TEXT_DARK: '#1f2937',
+    HIGHLIGHT: '#dbeafe',
+    STATUS_SUCCESS: '#d1fae5',
+    STATUS_WARNING: '#fef3c7',
+    STATUS_INFO: '#dbeafe',
+    STATUS_ERROR: '#fee2e2',
+    GRAY_BG: '#f3f4f6',
+    GREEN_SUCCESS: '#10b981',
+    // Additional email colors - Flexy: Centralized from hardcoded values
+    BORDER: '#e5e7eb',
+    TEXT_SUCCESS_DARK: '#065f46',
+    TEXT_WARNING_DARK: '#92400e',
+    TEXT_INFO_DARK: '#1e40af',
+    TEXT_ERROR_DARK: '#991b1b',
+    MATERIAL_BG: '#ede9fe',
+    STATUS_BG: '#ffedd5',
+} as const;
+
+// Phone format constants - Flexy: Never hardcode phone formats!
+export const PHONE_FORMAT = {
+    INDONESIA_PREFIX: '628',
+    INDONESIA_LOCAL_PREFIX: '0',
+    INDONESIA_MIN_LENGTH: 10,
+    INDONESIA_MAX_LENGTH: 15,
+} as const;
+
+// Input mask patterns - Flexy: Never hardcode mask patterns!
+export const INPUT_MASKS = {
+    NISN: '9999999999',
+    PHONE: '999-9999-99999',
+    DATE: '99-99-9999',
+    NIS: '9999999999',
+} as const;
+
+// ID Prefixes - Flexy: Never hardcode ID prefixes!
+export const ID_PREFIXES = {
+    TEMPLATE: 'template',
+    NOTIFICATION: 'notif',
+    AUDIT: 'audit',
+    EMAIL: 'email',
+    STUDY_PLAN: 'study_plan',
+    SESSION: 'session',
+    USER: 'user',
+    GRADE: 'grade',
+    MATERIAL: 'material',
+    ANNOUNCEMENT: 'announcement',
+    OFFLINE: 'offline',
+} as const;
+
+// Academic subjects - Flexy: Never hardcode subject names!
+export const ACADEMIC_SUBJECTS = {
+    MATHEMATICS: 'Matematika',
+    INDONESIAN: 'Bahasa Indonesia',
+    ENGLISH: 'Bahasa Inggris',
+    PHYSICS: 'Fisika',
+    CHEMISTRY: 'Kimia',
+    BIOLOGY: 'Biologi',
+    HISTORY: 'Sejarah',
+    GEOGRAPHY: 'Geografi',
+    ECONOMICS: 'Ekonomi',
+    SOCIOLOGY: 'Sosiologi',
+    CIVICS: 'PPKn',
+    RELIGION: 'Pendidikan Agama',
+    ARTS: 'Seni Budaya',
+    PE: 'Penjasorkes',
+    ENTREPRENEURSHIP: 'Kewirausahaan',
+} as const;
+
+// Indonesian month names - Flexy: Never hardcode locale-specific data!
+export const DATE_LOCALE = {
+    INDONESIAN_MONTHS: [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ] as const,
+    INDONESIAN_SHORT_MONTHS: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ] as const,
+    INDONESIAN_DAYS: [
+        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+    ] as const,
+} as const;
+
+// Default class configuration for new students
+export const DEFAULT_CLASS_CONFIG = {
+    NEW_STUDENT_CODE: '10',
+    NEW_STUDENT_NAME: 'Kelas 10',
+} as const;
+
+// Email domain constants
+export const EMAIL_DOMAINS = {
+    ADMIN: 'admin@malnu-kananga.sch.id',
+    INFO: 'info@ma-malnukananga.sch.id',
+    TEACHER: 'guru.staff@malnu.sch.id',
+    STUDENT: 'siswa.osis@malnu.sch.id',
+} as const;
+
+// Demo user data - Flexy: Demo data should be centralized!
+export const DEMO_USERS = {
+    ADMIN: {
+        name: 'Ahmad Dahlan',
+        email: EMAIL_DOMAINS.ADMIN,
+    },
+    TEACHER: {
+        name: 'Siti Aminah, S.Pd.',
+        email: EMAIL_DOMAINS.TEACHER,
+    },
+    STUDENT: {
+        name: 'Budi Santoso',
+        email: 'budi.santoso@malnu.sch.id',
+    },
+} as const;
+
+// PPDB Committee configuration
+export const PPDB_CONFIG = {
+    COMMITTEE_NAME: `Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
+    DEFAULT_STATUS_COLORS: {
+        PENDING: EMAIL_COLORS.STATUS_WARNING,
+        APPROVED: EMAIL_COLORS.STATUS_SUCCESS,
+        REJECTED: EMAIL_COLORS.STATUS_ERROR,
+    },
+} as const;
+
+// Quiz configuration constants
+export const QUIZ_CONFIG = {
+    DEFAULT_DURATION_MINUTES: 30,
+    PASSING_SCORE: 70,
+} as const;
+
+// Study plan configuration constants
+export const STUDY_PLAN_CONFIG = {
+    DEFAULT_DURATION_WEEKS: 4,
+} as const;
+
+// Parent notification configuration constants
+export const PARENT_NOTIFICATION_CONFIG = {
+    DEFAULT_GRADE_THRESHOLD: 70,
+    MISSING_GRADE_DAYS: 7,
+    DEFAULT_QUIET_HOURS: {
+        START: '22:00',
+        END: '07:00',
+    },
+} as const;
+
+// Grade frequency constants
+export const GRADE_FREQUENCY = {
+    MAJOR_EXAM_DAYS: 30,
+    QUIZ_DAYS: 14,
+    HOMEWORK_DAYS: 7,
+} as const;
+
+// Document types mapping
+export const DOCUMENT_TYPES = {
+    AKTA_KELAHIRAN: { key: 'akta_kelahiran', label: 'Akta Kelahiran' },
+    KARTU_KELUARGA: { key: 'kartu_keluarga', label: 'Kartu Keluarga' },
+    IJAZAH: { key: 'ijazah', label: 'Ijazah' },
+    SKHU: { key: 'skhu', label: 'SKHU' },
+    PAS_FOTO: { key: 'pas_foto', label: 'Pas Foto' },
+    RAPORT: { key: 'raport', label: 'Raport' },
+    KIP: { key: 'kip', label: 'KIP' },
+    KPS: { key: 'kps', label: 'KPS' },
+    KKS: { key: 'kks', label: 'KKS' },
+    PKH: { key: 'pkh', label: 'PKH' },
+} as const;
+
+// AI Prompts - Centralized prompts for consistency
+export const AI_PROMPTS = {
+    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk MA Malnu Kananga, sebuah madrasah aliyah di Indonesia. 
+Berikan respons yang:
+1. Sopan dan profesional
+2. Menggunakan Bahasa Indonesia yang baik dan benar
+3. Islami dan edukatif
+4. Terkait dengan dunia pendidikan dan kemadrasahan`,
+} as const;
+
+// Alert thresholds for monitoring
+export const ALERT_THRESHOLDS = {
+    ERROR_RATE_PERCENT: 10,
+    RESPONSE_TIME_MS: 5000,
+    SLOW_CONNECTION_MS: 3000,
+} as const;
+
+// Backoff configuration
+export const BACKOFF_CONFIG = {
+    DEFAULT_MULTIPLIER: 2,
+    DEFAULT_INITIAL_DELAY_MS: 1000,
+    DEFAULT_MAX_DELAY_MS: 5000,
+} as const;
+
+// Voice Service Configuration - Centralized retry and circuit breaker settings
+// Flexy: Never hardcode voice service config!
+export const VOICE_SERVICE_CONFIG = {
+    RECOGNITION: {
+        MAX_START_ATTEMPTS: 3,
+        MAX_STOP_ATTEMPTS: 3,
+    },
+    SYNTHESIS: {
+        MAX_SPEAK_ATTEMPTS: 3,
+    },
+    CIRCUIT_BREAKER: {
+        FAILURE_THRESHOLD: 5,
+        RESET_TIMEOUT_MS: 60000,
+        MONITORING_PERIOD_MS: 10000,
+    },
+    RETRY: {
+        INITIAL_DELAY_MS: 1000,
+        MAX_DELAY_MS: 5000,
+        BACKOFF_MULTIPLIER: 2,
+    },
+} as const;
+
+// Number word mappings for voice input - Flexy: Never hardcode number words!
+export const NUMBER_WORDS = {
+    DIGITS: {
+        INDONESIAN: {
+            'nol': '0', 'satu': '1', 'dua': '2', 'tiga': '3', 'empat': '4',
+            'lima': '5', 'enam': '6', 'tujuh': '7', 'delapan': '8', 'sembilan': '9'
+        },
+        ENGLISH: {
+            'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+            'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
+        },
+    },
+    TEENS: {
+        ENGLISH: {
+            'ten': '10', 'eleven': '11', 'twelve': '12', 'thirteen': '13', 'fourteen': '14',
+            'fifteen': '15', 'sixteen': '16', 'seventeen': '17', 'eighteen': '18', 'nineteen': '19'
+        },
+    },
+    TENS: {
+        ENGLISH: {
+            'twenty': '20', 'thirty': '30', 'forty': '40', 'fifty': '50',
+            'sixty': '60', 'seventy': '70', 'eighty': '80', 'ninety': '90'
+        },
+    },
+    COMPOUND_INDONESIAN: {
+        'sebelas': '11', 'dua belas': '12', 'tiga belas': '13', 'empat belas': '14',
+        'lima belas': '15', 'enam belas': '16', 'tujuh belas': '17', 'delapan belas': '18', 'sembilan belas': '19',
+        'dua puluh': '20', 'tiga puluh': '30', 'empat puluh': '40', 'lima puluh': '50',
+        'enam puluh': '60', 'tujuh puluh': '70', 'delapan puluh': '80', 'sembilan puluh': '90'
+    },
+    SCALE: {
+        ENGLISH: {
+            'hundred': '100'
+        },
+        INDONESIAN: {
+            'seratus': '100'
+        },
+    },
+} as const;
+
+// OCR Service Configuration - Flexy: Never hardcode OCR limits!
+export const OCR_SERVICE_CONFIG = {
+    MAX_CACHED_EVENTS: 100,
+    VALIDATION_LOG_MAX: 100,
+    QUALITY: {
+        HIGH_THRESHOLD: 70,
+        MEDIUM_THRESHOLD: 50,
+    },
+    ATTENDANCE: {
+        MIN_CONFIDENCE_THRESHOLD: 60,
+    },
+} as const;
+
+// Voice Command Parser Configuration - Flexy: Never hardcode command thresholds!
+export const VOICE_COMMAND_CONFIG = {
+    SIMILARITY: {
+        MATCH_THRESHOLD: 0.7,
+        HIGH_THRESHOLD: 0.8,
+    },
+    QUERY: {
+        MIN_LENGTH: 2,
+    },
+    NAME: {
+        MIN_LENGTH: 2,
+    },
+} as const;
+
+// Storage Key Patterns - Flexy: Use these for filtered searches!
+export const STORAGE_KEY_PATTERNS = {
+    STUDY_PLAN_RECOMMENDATIONS: 'malnu_study_plan_material_recommendations_',
+    QUIZ_ATTEMPTS: 'malnu_quiz_attempts_',
+} as const;
+
+// Grade Color Thresholds - Flexy: Never hardcode grade colors!
+export const GRADE_COLOR_THRESHOLDS = {
+    EXCELLENT: { min: 90, color: 'text-green-600' },
+    GOOD: { min: 80, color: 'text-blue-600' },
+    AVERAGE: { min: 70, color: 'text-yellow-600' },
+    BELOW_AVERAGE: { min: 60, color: 'text-orange-600' },
+    POOR: { min: 0, color: 'text-red-600' },
+} as const;
+
+// Notification emojis for template strings
+export const NOTIFICATION_EMOJIS = {
+    GENERAL: '📢',
+    GRADE: '📊',
+    PPDB: '🎓',
+    EVENT: '🎉',
+    MATERIAL: '📚',
+    SYSTEM: '⚙️',
+    OCR: '📄',
+    SEARCH: '🔍',
+    ANNOUNCEMENT: '📢',
+    WARNING: '⚠️',
+    SUCCESS: '✅',
+    ERROR: '❌',
+    INFO: 'ℹ️',
+} as const;
+
+// PPDB Pipeline Status - Flexy: Never hardcode status strings!
+export const PPDB_STATUS = {
+    REGISTERED: 'registered',
+    DOCUMENT_REVIEW: 'document_review',
+    INTERVIEW_SCHEDULED: 'interview_scheduled',
+    INTERVIEW_COMPLETED: 'interview_completed',
+    ACCEPTED: 'accepted',
+    ENROLLED: 'enrolled',
+    REJECTED: 'rejected',
+} as const;
+
+export type PPDBPipelineStatus = typeof PPDB_STATUS[keyof typeof PPDB_STATUS];
+
+// Design System Tokens - Centralized for consistency
+export const DESIGN_TOKENS = {
+    // Responsive Breakpoints
+    BREAKPOINTS: {
+        sm: '640px',   // Phone landscape
+        md: '768px',   // Tablet portrait  
+        lg: '1024px',  // Tablet landscape/Desktop
+        xl: '1280px',  // Desktop
+        '2xl': '1536px' // Large desktop
+    } as const,
+    
+    // Spacing Scale
+    SPACING: {
+        xs: '0.25rem',   // 4px
+        sm: '0.5rem',    // 8px
+        md: '1rem',      // 16px
+        lg: '1.5rem',    // 24px
+        xl: '2rem',      // 32px
+        '2xl': '3rem',   // 48px
+        '3xl': '4rem',   // 64px
+    } as const,
+    
+    // Border Radius
+    BORDER_RADIUS: {
+        sm: '0.25rem',   // 4px
+        md: '0.5rem',    // 8px
+        lg: '1rem',      // 16px
+        xl: '1.5rem',    // 24px
+        full: '9999px'
+    } as const,
+    
+    // Shadows
+    SHADOWS: {
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    } as const,
+    
+    // Animations
+    ANIMATIONS: {
+        micro: 'transition-all duration-150 ease-out',
+        base: 'transition-all duration-200 ease-out',
+        smooth: 'transition-all duration-300 ease-out',
+        slow: 'transition-all duration-500 ease-out',
+    } as const,
+    
+    // Button Sizing
+    BUTTON_SIZES: {
+        sm: { min: 'h-9', px: 'px-3', text: 'text-sm', radius: 'rounded-md' },
+        md: { min: 'h-10', px: 'px-4', text: 'text-sm', radius: 'rounded-md' },
+        lg: { min: 'h-12', px: 'px-6', text: 'text-base', radius: 'rounded-lg' },
+        xl: { min: 'h-14', px: 'px-8', text: 'text-lg', radius: 'rounded-lg' }
+    } as const,
+    
+    // Typography Scale
+    TYPOGRAPHY: {
+        xs: 'text-xs',    // 12px
+        sm: 'text-sm',    // 14px
+        base: 'text-base', // 16px
+        lg: 'text-lg',    // 18px
+        xl: 'text-xl',    // 20px
+        '2xl': 'text-2xl', // 24px
+        '3xl': 'text-3xl', // 30px
+        '4xl': 'text-4xl', // 36px
+    } as const,
+    
+    // Touch Targets (Mobile-First)
+    TOUCH_TARGETS: {
+        min: 'min-h-11 min-w-11', // 44px minimum
+        sm: 'min-h-12 min-w-12',  // 48px comfortable
+        md: 'min-h-14 min-w-14',  // 56px large
+        lg: 'min-h-16 min-w-16',  // 64px extra large
+        padding: {
+            tight: 'p-2',   // 8px
+            normal: 'p-3',  // 12px
+            loose: 'p-4',   // 16px
+        }
+    } as const,
+    
+    // Focus Management
+    FOCUS: {
+        ring: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        ringPrimary: 'focus-visible:ring-primary-500',
+        ringOffset: 'focus-visible:ring-offset-background',
+        enhanced: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2'
+    } as const,
+    
+    // Z-Index Scale
+    Z_INDEX: {
+        base: 0,
+        raised: 10,
+        dropdown: 20,
+        sticky: 30,
+        modal: 40,
+        notification: 50,
+        tooltip: 60,
+        maximum: 9999,
+    } as const,
+} as const;
+
+// Enhanced Animation Constants
+export const ENHANCED_ANIMATIONS = {
+    // Micro-interactions
+    SCALE_SUBTLE: 'hover:scale-[1.02] active:scale-[0.98]',
+    SCALE_MEDIUM: 'hover:scale-[1.05] active:scale-[0.95]',
+    LIFT_SUBTLE: 'hover:-translate-y-1 active:translate-y-0',
+    LIFT_MEDIUM: 'hover:-translate-y-2 active:-translate-y-1',
+    
+    // State transitions
+    FADE_IN: 'animate-fade-in',
+    SLIDE_UP: 'animate-fade-in-up',
+    SCALE_IN: 'animate-scale-in',
+    
+    // Loading states
+    PULSE_SLOW: 'animate-pulse-slow',
+    SHIMMER: 'animate-shimmer skeleton-enhanced',
+    
+    // Interactive elements
+    BUTTON_HOVER: 'hover-lift btn-hover-primary',
+    CARD_HOVER: 'card-hover-enhanced hover-lift',
+    ICON_HOVER: 'icon-hover',
+    
+    // Accessibility
+    REDUCED_MOTION: 'motion-reduce:transition-none motion-reduce:transform-none',
+} as const;
+
+// Mobile-First Responsive Patterns
+export const RESPONSIVE_PATTERNS = {
+    // Grid patterns
+    GRID_SINGLE: 'grid grid-cols-1',
+    GRID_SM: 'grid grid-cols-1 sm:grid-cols-2',
+    GRID_MD: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    GRID_LG: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    
+    // Text responsive patterns
+    TEXT_RESPONSIVE: 'text-sm sm:text-base',
+    TITLE_RESPONSIVE: 'text-xl sm:text-2xl lg:text-3xl',
+    
+    // Spacing responsive
+    PADDING_RESPONSIVE: 'p-4 sm:p-6 lg:p-8',
+    GAP_RESPONSIVE: 'gap-2 sm:gap-4 lg:gap-6',
+    
+    // Component sizing
+    CONTAINER_RESPONSIVE: 'w-full max-w-md sm:max-w-lg lg:max-w-xl',
+    
+    // Navigation patterns
+    NAV_MOBILE: 'flex flex-col sm:flex-row',
+    NAV_STACKED: 'space-y-2 sm:space-y-0 sm:space-x-4',
+} as const;
+
+// Accessibility Enhancements
+export const ACCESSIBILITY_ENHANCEMENTS = {
+    // Screen reader utilities
+    SCREEN_READER_ONLY: 'sr-only',
+    SCREEN_READER_FOCUSABLE: 'sr-only focus:not-sr-only focus:absolute focus:z-50',
+    
+    // Focus management
+    FOCUS_VISIBLE: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+    FOCUS_TRAP: 'focus-trap',
+    
+    // High contrast support
+    HIGH_CONTRAST: 'enhanced-contrast',
+    
+    // Reduced motion
+    REDUCED_MOTION: 'motion-reduce:transition-none motion-reduce:animate-none',
+    
+    // Touch enhancements
+    TOUCH_OPTIMIZED: 'touch-manipulation safe-area-padding',
+    TOUCH_TARGET: 'touch-target',
+    
+    // Skip links
+    SKIP_LINK: 'absolute top-4 left-4 z-50 -translate-y-full focus:translate-y-0 bg-primary-500 text-white px-4 py-2 rounded-md',
+} as const;
+
+// PPDB Status Display Labels
+export const PPDB_STATUS_LABELS = {
+    [PPDB_STATUS.REGISTERED]: 'Terdaftar',
+    [PPDB_STATUS.DOCUMENT_REVIEW]: 'Review Dokumen',
+    [PPDB_STATUS.INTERVIEW_SCHEDULED]: 'Jadwal Wawancara',
+    [PPDB_STATUS.INTERVIEW_COMPLETED]: 'Wawancara Selesai',
+    [PPDB_STATUS.ACCEPTED]: 'Diterima',
+    [PPDB_STATUS.ENROLLED]: 'Terdaftar sebagai Siswa',
+    [PPDB_STATUS.REJECTED]: 'Ditolak',
+} as const;
+
+// Theme Color Palette - Flexy: Never hardcode theme colors!
+export const THEME_COLOR_PALETTE = {
+    PINK: '#db2777',
+    CYAN: '#06b6d4',
+    EMERALD: '#10b981',
+    SKY: '#0ea5e9',
+    AMBER: '#f59e0b',
+    TEAL: '#14b8a6',
+    ROSE: '#f43f5e',
+    VIOLET: '#8b5cf6',
+    INDIGO: '#6366f1',
+    FUCHSIA: '#d946ef',
+    LIME: '#84cc16',
+    ORANGE: '#f97316',
+} as const;
+
+// Z-Index Scale - Flexy: Never hardcode z-index values!
+export const Z_INDEX = {
+    MODAL_OVERLAY: 50,
+    MODAL_CONTENT: 51,
+    HEADER: 40,
+    NOTIFICATION_CENTER: 45,
+    DROPDOWN: 30,
+    TOOLTIP: 35,
+    STICKY_HEADER: 20,
+    STICKY_TABLE: 10,
+    BASE: 0,
+    BEHIND: -1,
+} as const;
+
+// API Endpoints - Flexy: Centralize all API endpoints!
+export const API_ENDPOINTS = {
+    // Auth
+    AUTH: {
+        LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        REFRESH_TOKEN: '/api/auth/refresh',
+    },
+    // Users
+    USERS: {
+        BASE: '/api/users',
+        PASSWORD: (userId: string) => `/api/users/${userId}/password`,
+        PROFILE: '/api/users/profile',
+    },
+    // Students
+    STUDENTS: {
+        BASE: '/api/students',
+        BY_ID: (id: string) => `/api/students/${id}`,
+    },
+    // Teachers
+    TEACHERS: {
+        BASE: '/api/teachers',
+        BY_ID: (id: string) => `/api/teachers/${id}`,
+    },
+    // Academic
+    ACADEMIC: {
+        SUBJECTS: '/api/subjects',
+        CLASSES: '/api/classes',
+        SCHEDULES: '/api/schedules',
+        GRADES: '/api/grades',
+        ATTENDANCE: '/api/attendance',
+    },
+    // Events
+    EVENTS: {
+        BASE: '/api/school_events',
+        REGISTRATIONS: '/api/event_registrations',
+    },
+    // PPDB
+    PPDB: {
+        REGISTRANTS: '/api/ppdb_registrants',
+        PIPELINE: '/api/ppdb/pipeline',
+        METRICS: '/api/ppdb/metrics',
+    },
+    // Library
+    LIBRARY: {
+        MATERIALS: '/api/e_library',
+        CATEGORIES: '/api/e_library/categories',
+        FAVORITES: '/api/e_library/favorites',
+    },
+    // Inventory
+    INVENTORY: {
+        BASE: '/api/inventory',
+        CATEGORIES: '/api/inventory/categories',
+    },
+    // Announcements
+    ANNOUNCEMENTS: {
+        BASE: '/api/announcements',
+        BY_ID: (id: string) => `/api/announcements/${id}`,
+    },
+    // Payments
+    PAYMENTS: {
+        CREATE: '/api/payments/create',
+        STATUS: '/api/payments/status',
+        HISTORY: '/api/payments/history',
+    },
+    // Messaging
+    MESSAGING: {
+        PARENT_CHILDREN: '/api/parent/children',
+        MESSAGES: '/api/messages',
+        CONVERSATIONS: '/api/conversations',
+    },
+    // AI
+    AI: {
+        CHAT: '/api/chat',
+        STUDENT_ANALYSIS: '/api/ai/student-analysis',
+        GRADE_PREDICTION: '/api/ai/grade-prediction',
+    },
+    // Email
+    EMAIL: {
+        SEND: '/api/email/send',
+        TEMPLATES: '/api/email/templates',
+        QUEUE: '/api/email/queue',
+    },
+    // OCR
+    OCR: {
+        PROCESS: '/api/ocr/process',
+        VALIDATE: '/api/ocr/validate',
+    },
+    // Quiz
+    QUIZ: {
+        BASE: '/api/quizzes',
+        ATTEMPTS: '/api/quiz/attempts',
+        GENERATE: '/api/quiz/generate',
+    },
+    // WebSocket
+    WEBSOCKET: {
+        CONNECT: '/ws',
+    },
+} as const;
+
+// Attendance Status Labels - Flexy: Use these for display!
+export const ATTENDANCE_STATUS_LABELS = {
+    [ACADEMIC.ATTENDANCE_STATUSES.PRESENT]: 'Hadir',
+    [ACADEMIC.ATTENDANCE_STATUSES.SICK]: 'Sakit',
+    [ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]: 'Izin',
+    [ACADEMIC.ATTENDANCE_STATUSES.ABSENT]: 'Alpa',
+} as const;
+
+// SVG Namespaces - Flexy: Never hardcode XML namespaces!
+export const XML_NAMESPACES = {
+    SVG: 'http://www.w3.org/2000/svg',
+    XLINK: 'http://www.w3.org/1999/xlink',
+    XML: 'http://www.w3.org/XML/1998/namespace',
 } as const;

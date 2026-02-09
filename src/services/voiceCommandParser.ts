@@ -1,4 +1,4 @@
-import { VOICE_COMMANDS } from '../constants';
+import { VOICE_COMMANDS, VOICE_COMMAND_CONFIG } from '../constants';
 import type { VoiceCommand } from '../types';
 import { VoiceLanguage } from '../types';
 import { logger } from '../utils/logger';
@@ -458,7 +458,7 @@ class VoiceCommandParser {
         for (const pattern of command.patterns) {
           const similarity = this.calculateSimilarity(normalizedTranscript, pattern);
 
-          if (similarity > highestScore && similarity >= 0.7) {
+          if (similarity > highestScore && similarity >= VOICE_COMMAND_CONFIG.SIMILARITY.MATCH_THRESHOLD) {
             highestScore = similarity;
             
             // Extract data based on command type
@@ -533,7 +533,7 @@ class VoiceCommandParser {
       query = query.trim();
       
       // Return query only if it contains meaningful content
-      if (query.length > 2) {
+      if (query.length > VOICE_COMMAND_CONFIG.QUERY.MIN_LENGTH) {
         return this.restoreOriginalCase(query, transcript);
       }
     }
@@ -565,7 +565,7 @@ class VoiceCommandParser {
     }
 
     name = name.trim();
-    if (name.length > 2) {
+    if (name.length > VOICE_COMMAND_CONFIG.NAME.MIN_LENGTH) {
       return this.restoreOriginalCase(name, transcript);
     }
 

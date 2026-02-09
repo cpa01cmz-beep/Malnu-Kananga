@@ -268,3 +268,55 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
     }
   };
 }
+
+/**
+ * Check if an error is a network error
+ */
+export function isNetworkError(error: Error): boolean {
+  const networkErrorMessages = [
+    'Network Error',
+    'fetch failed',
+    'Failed to fetch',
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'ENOTFOUND',
+    'EAI_AGAIN'
+  ];
+
+  return networkErrorMessages.some(msg => error.message.includes(msg));
+}
+
+/**
+ * Check if an error is a rate limit error
+ */
+export function isRateLimitError(error: Error): boolean {
+  return error.message.includes('429') ||
+         error.message.toLowerCase().includes('rate limit') ||
+         error.message.toLowerCase().includes('too many requests');
+}
+
+/**
+ * Check if an error is a server error
+ */
+export function isServerError(error: Error): boolean {
+  const serverErrorStatuses = [500, 502, 503, 504];
+  return serverErrorStatuses.some(status =>
+    error.message.includes(`status ${status}`) ||
+    error.message.includes(`${status}`)
+  );
+}
+
+/**
+ * Check if an error is retryable
+ */
+export function isRetryableError(error: Error): boolean {
+  return isNetworkError(error) || isRateLimitError(error) || isServerError(error);
+}
+
+/**
+ * Calculate retry delay with exponential backoff
+ */
+export function getRetryDelay(attempt: number, initialDelay: number = RETRY_CONFIG.DEFAULT_INITIAL_DELAY, maxDelay: number = RETRY_CONFIG.DEFAULT_MAX_DELAY): number {
+  const backoffDelay = initialDelay * Math.pow(2, attempt - 1);
+  return Math.min(backoffDelay, maxDelay);
+}

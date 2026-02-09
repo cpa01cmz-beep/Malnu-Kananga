@@ -6,7 +6,21 @@ import { STORAGE_KEYS } from '../../constants';
 
 vi.mock('../../services/apiService');
 vi.mock('../../services/permissionService');
-vi.mock('../../services/webSocketService');
+vi.mock('../../services/webSocketService', () => ({
+  webSocketService: {
+    initialize: vi.fn(() => Promise.resolve()),
+    getConnectionState: vi.fn(() => ({
+      connected: true,
+      connecting: false,
+      reconnecting: false,
+      reconnectAttempts: 0,
+      subscriptions: new Set(),
+    })),
+    subscribe: vi.fn(() => vi.fn()),
+    disconnect: vi.fn(),
+    isConnected: vi.fn(() => true),
+  },
+}));
 vi.mock('../../hooks/useUnifiedNotifications');
 vi.mock('../../utils/networkStatus');
 vi.mock('../../services/pdfExportService');

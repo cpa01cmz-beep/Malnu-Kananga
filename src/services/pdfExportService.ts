@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { UserOptions } from 'jspdf-autotable';
+import { APP_CONFIG } from '../constants';
 
 export interface PDFReportData {
   title: string;
@@ -33,7 +34,7 @@ class PDFExportService {
   private schoolAddress?: string;
 
   constructor() {
-    this.schoolName = 'MA Malnu Kananga';
+    this.schoolName = APP_CONFIG.SCHOOL_NAME;
     this.schoolAddress = 'Indonesia';
   }
 
