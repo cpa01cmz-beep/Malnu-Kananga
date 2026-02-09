@@ -7265,6 +7265,25 @@ html {
   animation: success-pulse 0.6s ease-out both;
 }
 
+/* Auto-save success pop animation */
+.animate-success-pop {
+  animation: success-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes success-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 /* Respect user's motion preference for loading animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
@@ -7279,7 +7298,8 @@ html {
   .page-transition-exit-active,
   .progress-bar-animated::after,
   .animate-input-shake,
-  .animate-success-pulse {
+  .animate-success-pulse,
+  .animate-success-pop {
     animation: none;
     transition: none;
   }
