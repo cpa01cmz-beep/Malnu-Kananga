@@ -14,7 +14,8 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       logger.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
-  }, [key, initialValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
   const [storedValue, setStoredValue] = useState<T>(readValue);
 
