@@ -52,7 +52,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, remainingTime, isPaused, onClose]);
 
-  // Progress bar animation
+  // Progress bar animation - use ref to avoid dependency cycle
   useEffect(() => {
     if (isVisible && !isPaused) {
       startTimeRef.current = Date.now() - ((100 - progress) / 100) * duration;
@@ -75,7 +75,8 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         }
       };
     }
-  }, [isVisible, isPaused, duration, progress]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible, isPaused, duration]);
 
   useEffect(() => {
     if (isVisible) {
