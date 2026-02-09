@@ -1,5 +1,6 @@
 import React from 'react';
 import { createIcon, iconSizeClasses, iconColorClasses, iconVariantClasses } from './iconUtils';
+import { XML_NAMESPACES } from '../../constants';
 import type { IconProps } from './types';
 
 // Enhanced Status Icons
@@ -50,7 +51,7 @@ export const LoadingIcon: React.FC<IconProps> = ({
   ...props
 }) => (
   <svg
-    xmlns="http://www.w3.org/2000/svg"
+    xmlns={XML_NAMESPACES.SVG}
     fill="none"
     viewBox="0 0 24 24"
     className={`${iconSizeClasses[size]} ${className} animate-spin`}
@@ -147,7 +148,7 @@ export const Icon: React.FC<IconProps & { children: React.ReactNode }> = ({
 
   return (
     <svg
-      xmlns="http://www.w3.org/2000/svg"
+      xmlns={XML_NAMESPACES.SVG}
       viewBox="0 0 24 24"
       className={classes.join(' ')}
       aria-hidden={ariaHidden}

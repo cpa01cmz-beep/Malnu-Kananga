@@ -1,4 +1,5 @@
 import React from 'react';
+import { XML_NAMESPACES } from '../../constants';
 import { IconProps } from './types';
 
 export type { IconProps };
@@ -61,7 +62,7 @@ export const createIcon = (paths: React.ReactNode | React.ReactNode[]) => {
 
     return (
       <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns={XML_NAMESPACES.SVG}
         viewBox="0 0 24 24"
         className={classes.join(' ')}
         aria-hidden={ariaHidden}
