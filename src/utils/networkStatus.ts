@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
+import { NETWORK_TIMING } from '../config/timing';
 
 export interface NetworkStatus {
   isOnline: boolean;
   isSlow: boolean;
   lastCheck: Date;
 }
-
-const SLOW_CONNECTION_THRESHOLD = 3000;
 
 export function useNetworkStatus(): NetworkStatus {
   const [isOnline, setIsOnline] = useState(true);
@@ -70,7 +69,7 @@ export async function checkConnectionSpeed(): Promise<{ isSlow: boolean; latency
     const latency = Date.now() - start;
 
     return {
-      isSlow: latency > SLOW_CONNECTION_THRESHOLD || !response.ok,
+      isSlow: latency > NETWORK_TIMING.SLOW_CONNECTION_THRESHOLD || !response.ok,
       latency
     };
   } catch {

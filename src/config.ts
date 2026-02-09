@@ -1,21 +1,17 @@
 
-// Menggunakan Environment Variable untuk URL Backend
-// Di Cloudflare Pages, set Variable 'VITE_API_BASE_URL' ke URL Anda.
-// Jika tidak diset, gunakan localhost atau fallback url.
+// Re-export API configuration from centralized location
+// This file is kept for backward compatibility
+// Use src/config/api.ts for new code
 
-// Use type assertion safely to avoid TypeScript errors if vite/client types are missing
-const env: { VITE_API_BASE_URL?: string } = import.meta.env || {};
+export {
+  DEFAULT_API_BASE_URL,
+  API_BASE_URL,
+  DEFAULT_WS_BASE_URL,
+  WS_BASE_URL,
+  LEGACY_ENDPOINTS as WORKER_CHAT_ENDPOINT,
+  LEGACY_ENDPOINTS as WORKER_LOGIN_ENDPOINT,
+  FEATURE_FLAGS,
+} from './config/api';
 
-export const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
-
-export const API_BASE_URL = env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
-
-export const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
-
-// API Endpoints (Legacy - Use services/api instead)
-export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
-export const WORKER_LOGIN_ENDPOINT = `${API_BASE_URL}/api/auth/login`;
-
-// Feature Flags
-export const ENABLE_BACKEND_API = true; // Set to true to use real backend instead of localStorage
+export const ENABLE_BACKEND_API = true;
 export const ENABLE_AUTH_JWT = true;

@@ -14,10 +14,8 @@ import {
 } from './auth';
 import { getIsRefreshing, setIsRefreshing, subscribeTokenRefresh, onTokenRefreshed } from './refreshState';
 import { queueOfflineRequest } from './offline';
+import { DEFAULT_API_BASE_URL } from '../../config/api';
 
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
-// See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
 export interface ApiResponse<T> {

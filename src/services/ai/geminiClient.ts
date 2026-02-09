@@ -1,10 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { createError, ErrorType, classifyError, logError } from "../../utils/errorHandler";
 import { logger } from "../../utils/logger";
-
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
-// See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+import { DEFAULT_API_BASE_URL } from "../../config/api";
 
 // Model Constants
 export const AI_MODELS = {

@@ -1,40 +1,12 @@
 import { logger } from './logger';
+import {
+  DEFAULT_RETRY_OPTIONS,
+  RETRYABLE_NETWORK_ERRORS,
+  SERVER_ERROR_STATUS_CODES,
+} from '../config/retry';
+import type { RetryOptions, RetryResult } from '../config/retry';
 
-export interface RetryOptions {
-  maxRetries?: number;
-  initialDelay?: number;
-  maxDelay?: number;
-  backoffMultiplier?: number;
-  shouldRetry?: (error: Error) => boolean;
-  onRetry?: (attempt: number, error: Error) => void;
-}
-
-export interface RetryResult<T> {
-  data: T;
-  attempts: number;
-  lastError?: Error;
-}
-
-const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
-  maxRetries: 3,
-  initialDelay: 1000,
-  maxDelay: 10000,
-  backoffMultiplier: 2,
-  shouldRetry: (error: Error) => {
-    const retryableStatuses = [408, 429, 500, 502, 503, 504];
-    const isNetworkError = error.message.includes('Network Error') ||
-                        error.message.includes('fetch failed') ||
-                        error.message.includes('ECONNREFUSED') ||
-                        error.message.includes('ETIMEDOUT');
-    const isRetryableStatus = retryableStatuses.some(status =>
-      error.message.includes(`status ${status}`) ||
-      error.message.includes(`${status}`)
-    );
-
-    return isNetworkError || isRetryableStatus;
-  },
-  onRetry: () => {}
-};
+export { RetryOptions, RetryResult };
 
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
@@ -78,17 +50,7 @@ export async function retryWithBackoff<T>(
 }
 
 export function isNetworkError(error: Error): boolean {
-  const networkErrorMessages = [
-    'Network Error',
-    'fetch failed',
-    'Failed to fetch',
-    'ECONNREFUSED',
-    'ETIMEDOUT',
-    'ENOTFOUND',
-    'EAI_AGAIN'
-  ];
-
-  return networkErrorMessages.some(msg => error.message.includes(msg));
+  return RETRYABLE_NETWORK_ERRORS.some((msg: string) => error.message.includes(msg));
 }
 
 export function isRateLimitError(error: Error): boolean {
@@ -98,8 +60,7 @@ export function isRateLimitError(error: Error): boolean {
 }
 
 export function isServerError(error: Error): boolean {
-  const serverErrorStatuses = [500, 502, 503, 504];
-  return serverErrorStatuses.some(status =>
+  return SERVER_ERROR_STATUS_CODES.some((status: number) =>
     error.message.includes(`status ${status}`) ||
     error.message.includes(`${status}`)
   );
@@ -109,7 +70,7 @@ export function isRetryableError(error: Error): boolean {
   return isNetworkError(error) || isRateLimitError(error) || isServerError(error);
 }
 
-export function getRetryDelay(attempt: number, initialDelay: number = 1000, maxDelay: number = 10000): number {
-  const backoffDelay = initialDelay * Math.pow(2, attempt - 1);
+export function getRetryDelay(attempt: number, initialDelay: number = DEFAULT_RETRY_OPTIONS.initialDelay, maxDelay: number = DEFAULT_RETRY_OPTIONS.maxDelay): number {
+  const backoffDelay = initialDelay * Math.pow(DEFAULT_RETRY_OPTIONS.backoffMultiplier, attempt - 1);
   return Math.min(backoffDelay, maxDelay);
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
 import { OPACITY_TOKENS } from '../constants';
+import { TOAST_TIMING } from '../config/timing';
 
 export type ToastType = 'success' | 'info' | 'error' | 'warning';
 
@@ -13,7 +14,7 @@ interface ToastProps {
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = TOAST_TIMING.DEFAULT_DURATION }) => {
   const toastRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);

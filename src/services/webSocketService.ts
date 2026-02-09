@@ -6,13 +6,11 @@
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
   import { logger } from '../utils/logger';
   import type { Grade, Attendance, Announcement, SchoolEvent, User, ELibrary, PushNotification, DirectMessage, Conversation } from '../types';
+  import { DEFAULT_API_BASE_URL, DEFAULT_WS_BASE_URL } from '../config/api';
+  import { WEBSOCKET_LIMITS } from '../config/limits';
+import { WEBSOCKET_TIMING } from '../config/timing';;
 
   /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
-
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
-// See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
-const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
 
 
 
@@ -62,12 +60,12 @@ export interface RealTimeSubscription {
 export const WS_CONFIG = {
   WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
     (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || DEFAULT_WS_BASE_URL),
-  MAX_RECONNECT_ATTEMPTS: 5,
-  RECONNECT_DELAY: 5000,
-  CONNECTION_TIMEOUT: 10000,
-  PING_INTERVAL: 30000,
-  FALLBACK_POLLING_INTERVAL: 30000,
-  SUBSCRIPTION_TTL: 3600000, // 1 hour
+  MAX_RECONNECT_ATTEMPTS: WEBSOCKET_LIMITS.MAX_RECONNECT_ATTEMPTS,
+  RECONNECT_DELAY: WEBSOCKET_TIMING.RECONNECT_DELAY,
+  CONNECTION_TIMEOUT: WEBSOCKET_TIMING.CONNECTION_TIMEOUT,
+  PING_INTERVAL: WEBSOCKET_TIMING.PING_INTERVAL,
+  FALLBACK_POLLING_INTERVAL: WEBSOCKET_TIMING.FALLBACK_POLLING_INTERVAL,
+  SUBSCRIPTION_TTL: WEBSOCKET_LIMITS.MAX_SUBSCRIPTION_TTL_MS, // 1 hour
 } as const;
 
 /**
