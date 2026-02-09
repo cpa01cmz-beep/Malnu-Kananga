@@ -86,6 +86,6 @@ jobs:
         uses: ./.github/actions/opencode-run
         with:
           prompt-file: .github/prompt/maintenance.md
-          model: opencode/glm-4.7-free
+          model: opencode/big-pickle
           share: 'false'
           continue-on-error: 'true'
