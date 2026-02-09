@@ -295,17 +295,30 @@ const FileUpload: React.FC<FileUploadProps> = ({
       )}
 
       {files.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-2" role="region" aria-label="Uploaded files">
           <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
             Uploaded Files ({files.length}/{maxFiles})
           </p>
+          <p className="sr-only">
+            Tip: Press Delete key on a focused file to quickly remove it
+          </p>
+          <div role="list" className="space-y-2">
           {files.map((file) => (
             <div
               key={file.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-shadow"
+              tabIndex={0}
+              role="listitem"
+              aria-label={`File: ${file.name}, ${formatFileSize(file.size)}`}
+              onKeyDown={(e) => {
+                if (e.key === 'Delete' && !disabled) {
+                  e.preventDefault();
+                  handleDelete(file);
+                }
+              }}
+              className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <span className="text-2xl">{getFileIcon(file.type)}</span>
+                <span className="text-2xl" aria-hidden="true">{getFileIcon(file.type)}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-neutral-900 dark:text-white truncate">
                     {file.name}
@@ -323,7 +336,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   disabled={disabled}
                   iconOnly
                   icon={<ArrowDownTrayIcon className="w-4 h-4" />}
-                  aria-label="Download file"
+                  aria-label={`Download ${file.name}`}
+                  title="Download file"
                 />
                 <Button
                   variant="danger"
@@ -332,11 +346,13 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   disabled={disabled}
                   iconOnly
                   icon={<TrashIcon className="w-4 h-4" />}
-                  aria-label="Delete file"
+                  aria-label={`Delete ${file.name}`}
+                  title={`Delete file (Press Delete key)`}
                 />
               </div>
             </div>
           ))}
+          </div>
         </div>
       )}
     </div>
