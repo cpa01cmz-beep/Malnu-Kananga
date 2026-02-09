@@ -51,6 +51,8 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   const [transcriptBuffer, setTranscriptBuffer] = useState('');
   const [lastActivityTime, setLastActivityTime] = useState(Date.now());
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transcriptBufferRef = useRef(transcriptBuffer);
+  const lastActivityTimeRef = useRef(lastActivityTime);
 
   useEffect(() => {
     const loadContinuousMode = () => {
@@ -88,20 +90,33 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
 
   useEffect(() => {
     if (continuous && isListening && state === 'processing' && transcript) {
-      const currentBuffer = transcriptBuffer + ' ' + transcript;
-      setTranscriptBuffer(currentBuffer.trim());
+      setTranscriptBuffer(prev => {
+        const currentBuffer = prev ? prev + ' ' + transcript : transcript;
+        return currentBuffer.trim();
+      });
       setLastActivityTime(Date.now());
     }
-  }, [transcript, state, isListening, continuous, transcriptBuffer]);
+  }, [transcript, state, isListening, continuous]);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    transcriptBufferRef.current = transcriptBuffer;
+  }, [transcriptBuffer]);
+
+  useEffect(() => {
+    lastActivityTimeRef.current = lastActivityTime;
+  }, [lastActivityTime]);
 
   useEffect(() => {
     if (continuous && isListening) {
       timeoutRef.current = setTimeout(() => {
-        if (Date.now() - lastActivityTime > 10000 && transcriptBuffer) {
-          const isCmd = isCommand(transcriptBuffer);
+        const currentBuffer = transcriptBufferRef.current;
+        const currentLastActivity = lastActivityTimeRef.current;
+        if (Date.now() - currentLastActivity > 10000 && currentBuffer) {
+          const isCmd = isCommand(currentBuffer);
           
           if (!isCmd) {
-            onTranscript(transcriptBuffer);
+            onTranscript(currentBuffer);
           }
           
           setTranscriptBuffer('');
@@ -115,7 +130,7 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
         }
       };
     }
-  }, [continuous, isListening, lastActivityTime, transcriptBuffer, onTranscript, isCommand]);
+  }, [continuous, isListening, onTranscript, isCommand]);
 
   const handleClick = () => {
     if (!isSupported) {

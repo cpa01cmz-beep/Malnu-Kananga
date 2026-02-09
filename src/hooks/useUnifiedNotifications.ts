@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   PushNotification,
   NotificationHistoryItem,
@@ -441,7 +441,7 @@ export const usePushNotifications = useUnifiedNotifications;
 export const useEventNotifications = () => {
   const unified = useUnifiedNotifications();
   
-  return {
+  return useMemo(() => ({
     notifyGradeUpdate: unified.notifyGradeUpdate,
     notifyPPDBStatus: unified.notifyPPDBStatus,
     notifyLibraryUpdate: unified.notifyLibraryUpdate,
@@ -453,5 +453,5 @@ export const useEventNotifications = () => {
     notifyOCRValidation: unified.notifyOCRValidation,
     useMonitorLocalStorage: unified.useMonitorLocalStorage,
     useOCRValidationMonitor: unified.useOCRValidationMonitor,
-  };
+  }), [unified]);
 };
