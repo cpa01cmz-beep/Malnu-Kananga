@@ -5,6 +5,7 @@ import {
   logError, 
   createValidationError
 } from '../utils/errorHandler';
+import { API_CONFIG } from '../constants';
 
 export interface User {
   id?: string;
@@ -67,7 +68,7 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/forgot-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.FORGOT_PASSWORD}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ export class AuthService {
 
   async verifyResetToken(token: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/verify-reset-token`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.VERIFY_RESET_TOKEN}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +112,7 @@ export class AuthService {
 
   async resetPassword(token: string, password: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/reset-password`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.RESET_PASSWORD}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +135,7 @@ export class AuthService {
   async updateProfile(userId: string, profileData: Partial<User>): Promise<{ success: boolean; message?: string; data?: User; error?: string }> {
     try {
       const token = authAPI.getAuthToken();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.USERS}/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +159,8 @@ export class AuthService {
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
       const token = authAPI.getAuthToken();
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${userId}/password`, {
+      const endpoint = API_CONFIG.ENDPOINTS.USER_PASSWORD.replace(':userId', userId);
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -422,4 +422,183 @@ describe('Modal', () => {
       expect(backdrop).toHaveClass('backdrop-blur-sm');
     });
   });
+
+  describe('Focus Management', () => {
+    it('returns focus to trigger button when modal is closed', async () => {
+      const handleClose = vi.fn();
+      
+      const { rerender } = render(
+        <>
+          <button type="button" data-testid="trigger-button">Open Modal</button>
+          <Modal isOpen={true} onClose={handleClose}>Modal Content</Modal>
+        </>
+      );
+      
+      const triggerButton = screen.getByTestId('trigger-button');
+      triggerButton.focus();
+      
+      rerender(
+        <>
+          <button type="button" data-testid="trigger-button">Open Modal</button>
+          <Modal isOpen={false} onClose={handleClose}>Modal Content</Modal>
+        </>
+      );
+      
+      expect(triggerButton).toHaveFocus();
+    });
+
+    it('returns focus to previously focused element when modal closes', async () => {
+      const handleClose = vi.fn();
+      
+      const { rerender } = render(
+        <>
+          <input type="text" data-testid="text-input" />
+          <Modal isOpen={true} onClose={handleClose}>Modal Content</Modal>
+        </>
+      );
+      
+      const textInput = screen.getByTestId('text-input');
+      textInput.focus();
+      
+      rerender(
+        <>
+          <input type="text" data-testid="text-input" />
+          <Modal isOpen={false} onClose={handleClose}>Modal Content</Modal>
+        </>
+      );
+      
+      expect(textInput).toHaveFocus();
+    });
+
+    it('maintains focus trap while modal is open', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      
+      render(
+        <Modal isOpen={true} onClose={handleClose}>
+          <button type="button">First Action</button>
+          <button type="button">Second Action</button>
+        </Modal>
+      );
+      
+      const firstButton = screen.getByRole('button', { name: 'First Action' });
+      const secondButton = screen.getByRole('button', { name: 'Second Action' });
+      const closeButton = screen.getByRole('button', { name: 'Close modal' });
+      
+      firstButton.focus();
+      expect(firstButton).toHaveFocus();
+      
+      await user.tab();
+      expect(secondButton).toHaveFocus();
+      
+      await user.tab();
+      expect(closeButton).toHaveFocus();
+      
+      await user.tab();
+      expect(firstButton).toHaveFocus();
+    });
+
+    it('auto-focuses close button when modal opens', () => {
+      const handleClose = vi.fn();
+      
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const closeButton = screen.getByRole('button', { name: 'Close modal' });
+      expect(closeButton).toHaveFocus();
+    });
+
+    it('focuses first focusable element when no close button', () => {
+      const handleClose = vi.fn();
+      
+      render(
+        <Modal isOpen={true} onClose={handleClose} showCloseButton={false}>
+          <button type="button">Action Button</button>
+        </Modal>
+      );
+      
+      const actionButton = screen.getByRole('button', { name: 'Action Button' });
+      expect(actionButton).toHaveFocus();
+    });
+
+    it('handles shift+tab navigation in focus trap', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      
+      render(
+        <Modal isOpen={true} onClose={handleClose}>
+          <button type="button">First Action</button>
+          <button type="button">Second Action</button>
+        </Modal>
+      );
+      
+      const firstButton = screen.getByRole('button', { name: 'First Action' });
+      const secondButton = screen.getByRole('button', { name: 'Second Action' });
+      const closeButton = screen.getByRole('button', { name: 'Close modal' });
+      
+      firstButton.focus();
+      
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      expect(closeButton).toHaveFocus();
+      
+      await user.keyboard('{Shift>}{Tab}{/Shift}');
+      expect(secondButton).toHaveFocus();
+    });
+
+    it('gracefully handles focus return when trigger element is removed', () => {
+      const handleClose = vi.fn();
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      
+      const tempTrigger = document.createElement('button');
+      tempTrigger.textContent = 'Temp';
+      document.body.appendChild(tempTrigger);
+      tempTrigger.focus();
+      
+      const { rerender } = render(
+        <Modal isOpen={true} onClose={handleClose}>Content</Modal>,
+        { container }
+      );
+      
+      // Remove trigger before closing modal
+      tempTrigger.remove();
+      
+      expect(() => {
+        rerender(<Modal isOpen={false} onClose={handleClose}>Content</Modal>);
+      }).not.toThrow();
+      
+      // Cleanup
+      container.remove();
+    });
+
+    it('preserves focus order after modal close and reopen', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      
+      const { rerender } = render(
+        <>
+          <button type="button" data-testid="button-1">Button 1</button>
+          <button type="button" data-testid="button-2">Button 2</button>
+          <Modal isOpen={true} onClose={handleClose}>Content</Modal>
+        </>
+      );
+      
+      const button1 = screen.getByTestId('button-1');
+      const button2 = screen.getByTestId('button-2');
+      
+      button1.focus();
+      
+      rerender(
+        <>
+          <button type="button" data-testid="button-1">Button 1</button>
+          <button type="button" data-testid="button-2">Button 2</button>
+          <Modal isOpen={false} onClose={handleClose}>Content</Modal>
+        </>
+      );
+      
+      expect(button1).toHaveFocus();
+      
+      await user.tab();
+      expect(button2).toHaveFocus();
+    });
+  });
 });

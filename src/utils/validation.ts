@@ -1,3 +1,5 @@
+import { UI_ACCESSIBILITY } from '../constants';
+
 /**
  * Validation utilities for form inputs
  * Indonesian language error messages
@@ -157,7 +159,7 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   announcement.setAttribute('role', 'alert');
   announcement.setAttribute('aria-live', 'polite');
   announcement.style.position = 'absolute';
-  announcement.style.left = '-10000px';
+  announcement.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
   announcement.style.width = '1px';
   announcement.style.height = '1px';
   announcement.style.overflow = 'hidden';
@@ -167,5 +169,5 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   
   setTimeout(() => {
     document.body.removeChild(announcement);
-  }, 1000);
+  }, UI_ACCESSIBILITY.SCREEN_READER_TIMEOUT);
 }

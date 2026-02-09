@@ -1,6 +1,9 @@
 import type { EmailTemplate, EmailTemplateContext } from '../types/email.types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, EMAIL_COLORS, APP_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+
+// Flexy: Email color aliases for template readability
+const EC = EMAIL_COLORS;
 
 class EmailTemplatesService {
   private templates: Map<string, EmailTemplate> = new Map();
@@ -50,13 +53,13 @@ class EmailTemplatesService {
   <meta charset="utf-8">
   <title>Update Nilai</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .grade { background: #dbeafe; padding: 15px; border-radius: 5px; margin: 10px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
-    .button { display: inline-block; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+    .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .grade { background: ${EC.HIGHLIGHT}; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .button { display: inline-block; padding: 10px 20px; background: ${EC.PRIMARY}; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
   </style>
 </head>
 <body>
@@ -719,7 +722,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
       return null;
     }
 
-    const schoolName = context.schoolName || 'MA Malnu Kananga';
+    const schoolName = context.schoolName || APP_CONFIG.SCHOOL_NAME;
 
     const html = this.interpolate(template.htmlContent, { ...context, schoolName });
     const text = this.interpolate(template.textContent || '', { ...context, schoolName });
