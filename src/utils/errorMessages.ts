@@ -104,6 +104,39 @@ export const VALIDATION_MESSAGES = {
   CATEGORY_NAME_MIN_LENGTH: 'Nama kategori minimal 3 karakter',
   CATEGORY_NAME_MAX_LENGTH: 'Nama kategori maksimal 50 karakter',
   CATEGORY_INVALID_CHARS: 'Nama kategori hanya boleh berisi huruf, angka, dan spasi',
+
+  // NIS validation messages
+  NIS_EMPTY: 'NIS tidak boleh kosong',
+  NIS_NUMERIC_ONLY: 'NIS hanya boleh berisi angka',
+  NIS_LENGTH_INVALID: (min: number, max: number): string => `NIS harus antara ${min}-${max} digit`,
+
+  // Gender validation messages
+  GENDER_INVALID: 'Jenis kelamin tidak valid',
+
+  // Address validation messages
+  ADDRESS_MAX_LENGTH_EXCEEDED: (max: number): string => `Alamat maksimal ${max} karakter`,
+
+  // Material validation messages (additional)
+  MATERIAL_TITLE_EMPTY: 'Judul materi tidak boleh kosong',
+  MATERIAL_TITLE_MIN_LENGTH_MSG: (min: number): string => `Judul materi minimal ${min} karakter`,
+  MATERIAL_TITLE_MAX_LENGTH_MSG: (max: number): string => `Judul materi maksimal ${max} karakter`,
+  MATERIAL_DESCRIPTION_EMPTY_WARNING: 'Deskripsi materi kosong, pertimbangkan menambahkannya',
+  MATERIAL_DESCRIPTION_MAX_LENGTH_MSG: (max: number): string => `Deskripsi materi maksimal ${max} karakter`,
+  MATERIAL_CATEGORY_EMPTY: 'Kategori materi tidak boleh kosong',
+  MATERIAL_FILE_SIZE_MAX: (maxSize: string): string => `Ukuran file maksimal ${maxSize}`,
+  MATERIAL_FILE_TYPE_NOT_DETECTED: 'Tipe file tidak terdeteksi',
+
+  // Batch operation messages
+  BATCH_NO_STUDENTS_SELECTED: 'Tidak ada siswa yang dipilih',
+  BATCH_MANY_STUDENTS_WARNING: 'Memproses banyak siswa dapat memakan waktu lama',
+  BATCH_OPERATION_CONFIRMATION_REQUIRED: (operation: string): string => `Konfirmasi diperlukan untuk operasi ${operation}`,
+
+  // Search validation messages
+  SEARCH_TERM_MAX_LENGTH_MSG: (max: number): string => `Kata pencarian maksimal ${max} karakter`,
+  SEARCH_TERM_SIMPLIFY: 'Gunakan kata pencarian yang lebih sederhana',
+
+  // Attendance validation messages
+  ATTENDANCE_INVALID_STATUS: 'Status kehadiran tidak valid',
 } as const;
 
 export const API_ERROR_MESSAGES = {

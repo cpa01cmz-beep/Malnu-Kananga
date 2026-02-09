@@ -1,4 +1,6 @@
 import type { Grade, Subject, Attendance, Student } from '../types';
+import { VALID_ATTENDANCE_STATUSES } from '../constants';
+import { VALIDATION_MESSAGES } from './errorMessages';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -159,8 +161,8 @@ export function validateAttendance(attendance: Attendance): ValidationResult {
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
-    errors.push('Invalid attendance status');
+  if (!VALID_ATTENDANCE_STATUSES.includes(attendance.status as typeof VALID_ATTENDANCE_STATUSES[number])) {
+    errors.push(VALIDATION_MESSAGES.ATTENDANCE_INVALID_STATUS);
   }
 
   return {

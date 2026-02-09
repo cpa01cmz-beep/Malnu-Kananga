@@ -3,6 +3,8 @@
  * Indonesian language error messages
  */
 
+import { VALIDATION_LIMITS } from '../constants';
+
 export interface ValidationRule {
   validate: (value: string) => boolean;
   message: string;
@@ -28,7 +30,7 @@ export const emailValidation: ValidationRule = {
     
     if (parts.length !== 2) return false;
     if (parts[0].length === 0 || parts[1].length === 0) return false;
-    if (parts[0].length > 64 || parts[1].length > 253) return false;
+    if (parts[0].length > VALIDATION_LIMITS.EMAIL_LOCAL_PART_MAX || parts[1].length > VALIDATION_LIMITS.EMAIL_DOMAIN_MAX) return false;
     if (parts[0].startsWith('.') || parts[0].endsWith('.')) return false;
     
     return true;
@@ -40,10 +42,10 @@ export const emailValidation: ValidationRule = {
 export const passwordValidation: ValidationRule = {
   validate: (password: string) => {
     if (!password || password.length === 0) return false;
-    if (password.length < 6) return false; // Minimum 6 characters
+    if (password.length < VALIDATION_LIMITS.PASSWORD_MIN_LENGTH) return false;
     return true;
   },
-  message: 'Password minimal 6 karakter'
+  message: `Password minimal ${VALIDATION_LIMITS.PASSWORD_MIN_LENGTH} karakter`
 };
 
 export const getPasswordRequirements = (password: string): {
@@ -52,9 +54,9 @@ export const getPasswordRequirements = (password: string): {
   status: 'met' | 'unmet';
 }[] => [
   {
-    met: password.length >= 6,
-    requirement: 'Minimal 6 karakter',
-    status: password.length >= 6 ? 'met' : 'unmet'
+    met: password.length >= VALIDATION_LIMITS.PASSWORD_MIN_LENGTH,
+    requirement: `Minimal ${VALIDATION_LIMITS.PASSWORD_MIN_LENGTH} karakter`,
+    status: password.length >= VALIDATION_LIMITS.PASSWORD_MIN_LENGTH ? 'met' : 'unmet'
   },
   {
     met: password.length > 0,
@@ -91,7 +93,7 @@ export function validatePasswordRealtime(password: string): ValidationResult {
     return { isValid: false, errors };
   }
   
-  if (password.length < 6) {
+  if (password.length < VALIDATION_LIMITS.PASSWORD_MIN_LENGTH) {
     errors.push(passwordValidation.message);
   }
   

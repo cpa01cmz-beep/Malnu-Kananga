@@ -534,12 +534,42 @@ export const GRADE_LIMITS = {
     PASS_THRESHOLD: 40,
 } as const;
 
+// Attendance status values - single source of truth
+export const ATTENDANCE_STATUSES = {
+    HADIR: 'hadir',
+    SAKIT: 'sakit',
+    IZIN: 'izin',
+    ALPA: 'alpa',
+} as const;
+
+// Valid attendance status array for validation
+export const VALID_ATTENDANCE_STATUSES = [
+    ATTENDANCE_STATUSES.HADIR,
+    ATTENDANCE_STATUSES.SAKIT,
+    ATTENDANCE_STATUSES.IZIN,
+    ATTENDANCE_STATUSES.ALPA,
+] as const;
+
 // Validation length limits
 export const VALIDATION_LIMITS = {
     NOTIFICATION_BODY_MAX: 1000,
+    NOTIFICATION_TITLE_MAX: 200,
     DESCRIPTION_MAX: 1000,
     AI_PROMPT_MAX: 1000,
     TITLE_MAX: 255,
+    EMAIL_LOCAL_PART_MAX: 64,
+    EMAIL_DOMAIN_MAX: 253,
+    PASSWORD_MIN_LENGTH: 6,
+    STUDENT_NAME_MIN_LENGTH: 3,
+    STUDENT_NAME_MAX_LENGTH: 100,
+    NIS_MIN_LENGTH: 5,
+    NIS_MAX_LENGTH: 20,
+    ADDRESS_MAX_LENGTH: 200,
+    MATERIAL_TITLE_MIN_LENGTH: 3,
+    MATERIAL_TITLE_MAX_LENGTH: 200,
+    MATERIAL_DESCRIPTION_MAX_LENGTH: 1000,
+    BATCH_STUDENT_LIMIT: 50,
+    SEARCH_TERM_MAX_LENGTH: 100,
 } as const;
 
 // UI delays in milliseconds

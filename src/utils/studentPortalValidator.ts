@@ -2,6 +2,7 @@
 // Validates grades, schedules, materials, attendance, and offline data consistency
 
 import type { Grade, Schedule, Attendance, Student, Bookmark } from '../types';
+import { VALID_ATTENDANCE_STATUSES } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -38,7 +39,6 @@ export interface FavoriteItem {
 const GRADE_WEIGHTS = { assignment: 0.3, mid: 0.3, final: 0.4 };
 const MIN_SCORE = 0;
 const MAX_SCORE = 100;
-const VALID_ATTENDANCE_STATUSES = ['hadir', 'sakit', 'izin', 'alpa'];
 
 export class StudentPortalValidator {
   static validateGradeDisplay(grade: Grade | { [key: string]: unknown }): ValidationResult {
@@ -317,7 +317,7 @@ export class StudentPortalValidator {
       }
     }
 
-    if (!status || typeof status !== 'string' || !VALID_ATTENDANCE_STATUSES.includes(status.toLowerCase())) {
+    if (!status || typeof status !== 'string' || !VALID_ATTENDANCE_STATUSES.includes(status.toLowerCase() as typeof VALID_ATTENDANCE_STATUSES[number])) {
       errors.push(`Status kehadiran "${status}" tidak valid. Status yang valid: ${VALID_ATTENDANCE_STATUSES.join(', ')}`);
     }
 

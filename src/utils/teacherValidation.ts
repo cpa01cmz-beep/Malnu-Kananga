@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_LIMITS, VALID_ATTENDANCE_STATUSES } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -141,31 +141,31 @@ export const validateClassData = (data: Partial<ClassFormData>): ValidationResul
   // Validate name
   if (!data.name || data.name.trim().length === 0) {
     errors.push(VALIDATION_MESSAGES.STUDENT_NAME_REQUIRED);
-  } else if (data.name.trim().length < 3) {
-    errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MIN_LENGTH);
-  } else if (data.name.trim().length > 100) {
-    errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MAX_LENGTH);
+  } else if (data.name.trim().length < VALIDATION_LIMITS.STUDENT_NAME_MIN_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.MIN_LENGTH('Nama siswa', VALIDATION_LIMITS.STUDENT_NAME_MIN_LENGTH));
+  } else if (data.name.trim().length > VALIDATION_LIMITS.STUDENT_NAME_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.MAX_LENGTH('Nama siswa', VALIDATION_LIMITS.STUDENT_NAME_MAX_LENGTH));
   } else if (!/^[a-zA-Z\s.'-]+$/.test(data.name.trim())) {
     warnings.push(VALIDATION_MESSAGES.STUDENT_NAME_UNUSUAL_CHARS);
   }
 
   // Validate NIS
   if (!data.nis || data.nis.trim().length === 0) {
-    errors.push('NIS tidak boleh kosong');
+    errors.push(VALIDATION_MESSAGES.NIS_EMPTY);
   } else if (!/^\d+$/.test(data.nis.trim())) {
-    errors.push('NIS hanya boleh berisi angka');
-  } else if (data.nis.length < 5 || data.nis.length > 20) {
-    errors.push('NIS harus antara 5-20 digit');
+    errors.push(VALIDATION_MESSAGES.NIS_NUMERIC_ONLY);
+  } else if (data.nis.length < VALIDATION_LIMITS.NIS_MIN_LENGTH || data.nis.length > VALIDATION_LIMITS.NIS_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.NIS_LENGTH_INVALID(VALIDATION_LIMITS.NIS_MIN_LENGTH, VALIDATION_LIMITS.NIS_MAX_LENGTH));
   }
 
   // Validate gender
   if (data.gender && !['L', 'P'].includes(data.gender)) {
-    errors.push('Jenis kelamin tidak valid');
+    errors.push(VALIDATION_MESSAGES.GENDER_INVALID);
   }
 
   // Validate address
-  if (data.address && data.address.trim().length > 200) {
-    errors.push('Alamat maksimal 200 karakter');
+  if (data.address && data.address.trim().length > VALIDATION_LIMITS.ADDRESS_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.ADDRESS_MAX_LENGTH_EXCEEDED(VALIDATION_LIMITS.ADDRESS_MAX_LENGTH));
   }
 
   return {
@@ -184,34 +184,34 @@ export const validateMaterialData = (data: Partial<MaterialFormData>): Validatio
 
   // Validate title
   if (!data.title || data.title.trim().length === 0) {
-    errors.push('Judul materi tidak boleh kosong');
-  } else if (data.title.trim().length < 3) {
-    errors.push('Judul materi minimal 3 karakter');
-  } else if (data.title.trim().length > 200) {
-    errors.push('Judul materi maksimal 200 karakter');
+    errors.push(VALIDATION_MESSAGES.MATERIAL_TITLE_EMPTY);
+  } else if (data.title.trim().length < VALIDATION_LIMITS.MATERIAL_TITLE_MIN_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.MATERIAL_TITLE_MIN_LENGTH_MSG(VALIDATION_LIMITS.MATERIAL_TITLE_MIN_LENGTH));
+  } else if (data.title.trim().length > VALIDATION_LIMITS.MATERIAL_TITLE_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.MATERIAL_TITLE_MAX_LENGTH_MSG(VALIDATION_LIMITS.MATERIAL_TITLE_MAX_LENGTH));
   }
 
   // Validate description
   if (!data.description || data.description.trim().length === 0) {
-    warnings.push('Deskripsi materi kosong, pertimbangkan menambahkannya');
-  } else if (data.description.length > 1000) {
-    errors.push('Deskripsi materi maksimal 1000 karakter');
+    warnings.push(VALIDATION_MESSAGES.MATERIAL_DESCRIPTION_EMPTY_WARNING);
+  } else if (data.description.length > VALIDATION_LIMITS.MATERIAL_DESCRIPTION_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.MATERIAL_DESCRIPTION_MAX_LENGTH_MSG(VALIDATION_LIMITS.MATERIAL_DESCRIPTION_MAX_LENGTH));
   }
 
   // Validate category
   if (!data.category || data.category.trim().length === 0) {
-    errors.push('Kategori materi tidak boleh kosong');
+    errors.push(VALIDATION_MESSAGES.MATERIAL_CATEGORY_EMPTY);
   }
 
   // Validate file
   if (data.fileUrl && data.fileSize) {
     const maxSize = FILE_SIZE_LIMITS.MATERIAL_DEFAULT; // 50MB
     if (data.fileSize > maxSize) {
-      errors.push('Ukuran file maksimal 50MB');
+      errors.push(VALIDATION_MESSAGES.MATERIAL_FILE_SIZE_MAX('50MB'));
     }
 
     if (!data.fileType) {
-      warnings.push('Tipe file tidak terdeteksi');
+      warnings.push(VALIDATION_MESSAGES.MATERIAL_FILE_TYPE_NOT_DETECTED);
     }
   }
 
@@ -230,15 +230,15 @@ export const validateBatchOperation = (studentIds: string[], operation: string):
   const warnings: string[] = [];
 
   if (studentIds.length === 0) {
-    errors.push('Tidak ada siswa yang dipilih');
+    errors.push(VALIDATION_MESSAGES.BATCH_NO_STUDENTS_SELECTED);
   }
 
-  if (studentIds.length > 50) {
-    warnings.push('Memproses banyak siswa dapat memakan waktu lama');
+  if (studentIds.length > VALIDATION_LIMITS.BATCH_STUDENT_LIMIT) {
+    warnings.push(VALIDATION_MESSAGES.BATCH_MANY_STUDENTS_WARNING);
   }
 
   if (operation === 'delete' || operation === 'archive') {
-    errors.push(`Konfirmasi diperlukan untuk operasi ${operation}`);
+    errors.push(VALIDATION_MESSAGES.BATCH_OPERATION_CONFIRMATION_REQUIRED(operation));
   }
 
   return {
@@ -255,12 +255,12 @@ export const validateSearchInput = (searchTerm: string): ValidationResult => {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  if (searchTerm.length > 100) {
-    errors.push('Kata pencarian maksimal 100 karakter');
+  if (searchTerm.length > VALIDATION_LIMITS.SEARCH_TERM_MAX_LENGTH) {
+    errors.push(VALIDATION_MESSAGES.SEARCH_TERM_MAX_LENGTH_MSG(VALIDATION_LIMITS.SEARCH_TERM_MAX_LENGTH));
   }
 
   if (searchTerm && !/^[a-zA-Z0-9\s.-]+$/.test(searchTerm)) {
-    warnings.push('Gunakan kata pencarian yang lebih sederhana');
+    warnings.push(VALIDATION_MESSAGES.SEARCH_TERM_SIMPLIFY);
   }
 
   return {
@@ -293,8 +293,8 @@ export const validateAttendance = (attendance: Attendance): ValidationResult => 
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
-    errors.push('Invalid attendance status');
+  if (!VALID_ATTENDANCE_STATUSES.includes(attendance.status as typeof VALID_ATTENDANCE_STATUSES[number])) {
+    errors.push(VALIDATION_MESSAGES.ATTENDANCE_INVALID_STATUS);
   }
 
   if (!attendance.recordedBy || attendance.recordedBy.trim() === '') {
@@ -621,8 +621,8 @@ export function validateAttendanceTyped(attendance: Attendance): ValidationResul
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
-    errors.push('Invalid attendance status');
+  if (!VALID_ATTENDANCE_STATUSES.includes(attendance.status as typeof VALID_ATTENDANCE_STATUSES[number])) {
+    errors.push(VALIDATION_MESSAGES.ATTENDANCE_INVALID_STATUS);
   }
 
   if (!attendance.recordedBy || attendance.recordedBy.trim() === '') {
