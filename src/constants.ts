@@ -807,6 +807,28 @@ export const FILE_VALIDATION = {
     MATERIAL_TITLE_MAX_LENGTH: 200,
     MATERIAL_TITLE_MIN_LENGTH: 3,
     ADDRESS_MAX_LENGTH: 200,
+    // Windows reserved file names - Flexy: Never hardcode reserved names!
+    RESERVED_NAMES: [
+        'CON', 'PRN', 'AUX', 'NUL',
+        'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+        'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+    ] as const,
+} as const;
+
+// XSS Protection Configuration - Flexy: Security constants must be centralized!
+export const XSS_CONFIG = {
+    DANGEROUS_TAGS: [
+        'script', 'iframe', 'object', 'embed', 'form', 'input',
+        'button', 'textarea', 'select', 'option', 'link', 'style',
+    ] as const,
+    DANGEROUS_ATTRIBUTES: [
+        'onerror', 'onload', 'onmouseover', 'onmouseout', 'onclick',
+        'ondblclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup',
+        'onfocus', 'onblur', 'javascript', 'data', 'vbscript',
+    ] as const,
+    INVALID_FILENAME_CHARS: /[<>:"|?*]/g,
+    PATH_TRAVERSAL_PATTERN: /\.\.[/\\]/g,
+    NULL_BYTE_PATTERN: /\0/g,
 } as const;
 
 // AI/Gemini configuration constants
@@ -828,6 +850,11 @@ export const OCR_CONFIG = {
     INPUT_LOG_MAX: 500,
     ATTENDANCE_CONFIDENCE_THRESHOLD: 60, // Minimum average confidence for attendance OCR
 } as const;
+
+// OCR School Name Detection Keywords - Flexy: Never hardcode institution types!
+export const OCR_SCHOOL_KEYWORDS = [
+    'SMP', 'MTs', 'SD', 'MI', 'SMA', 'MA', 'SMK'
+] as const;
 
 // ID generation constants
 export const ID_GENERATION = {
@@ -1150,6 +1177,14 @@ export const EMAIL_COLORS = {
     STATUS_ERROR: '#fee2e2',
     GRAY_BG: '#f3f4f6',
     GREEN_SUCCESS: '#10b981',
+    // Additional email colors - Flexy: Centralized from hardcoded values
+    BORDER: '#e5e7eb',
+    TEXT_SUCCESS_DARK: '#065f46',
+    TEXT_WARNING_DARK: '#92400e',
+    TEXT_INFO_DARK: '#1e40af',
+    TEXT_ERROR_DARK: '#991b1b',
+    MATERIAL_BG: '#ede9fe',
+    STATUS_BG: '#ffedd5',
 } as const;
 
 // Phone format constants - Flexy: Never hardcode phone formats!

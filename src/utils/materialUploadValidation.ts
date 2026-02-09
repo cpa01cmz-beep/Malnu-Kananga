@@ -10,7 +10,7 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS, FILE_VALIDATION } from '../constants';
+import { FILE_SIZE_LIMITS, FILE_VALIDATION, XSS_CONFIG, CONVERSION } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -93,16 +93,9 @@ export interface FileValidationOptions {
 
 // XSS sanitization utilities
 export class XSSSanitizer {
-  private static dangerousTags = [
-    'script', 'iframe', 'object', 'embed', 'form', 'input',
-    'button', 'textarea', 'select', 'option', 'link', 'style',
-  ] as const;
-
-  private static dangerousAttributes = [
-    'onerror', 'onload', 'onmouseover', 'onmouseout', 'onclick',
-    'ondblclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup',
-    'onfocus', 'onblur', 'javascript', 'data', 'vbscript',
-  ] as const;
+  // Flexy: Using centralized XSS_CONFIG constants for security
+  private static dangerousTags = XSS_CONFIG.DANGEROUS_TAGS;
+  private static dangerousAttributes = XSS_CONFIG.DANGEROUS_ATTRIBUTES;
 
   static sanitizeFileName(fileName: string): string {
     let sanitized = fileName;
@@ -198,11 +191,8 @@ export class FileTypeDetector {
 
 // File name validation
 export class FileNameValidator {
-  private static RESERVED_NAMES = [
-    'CON', 'PRN', 'AUX', 'NUL',
-    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
-    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
-  ];
+  // Flexy: Using centralized FILE_VALIDATION.RESERVED_NAMES constant
+  private static RESERVED_NAMES = FILE_VALIDATION.RESERVED_NAMES;
 
   static validate(fileName: string): ValidationResult {
     const errors: string[] = [];
@@ -219,7 +209,7 @@ export class FileNameValidator {
 
     // Check for reserved names
     const nameWithoutExtension = fileName.split('.')[0].toUpperCase();
-    if (this.RESERVED_NAMES.includes(nameWithoutExtension)) {
+    if ((this.RESERVED_NAMES as readonly string[]).includes(nameWithoutExtension)) {
       errors.push(`"${nameWithoutExtension}" adalah nama yang tidak diizinkan`);
     }
 
@@ -546,7 +536,7 @@ export class MaterialUploadValidator {
 // Utility functions
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
-  const k = 1024;
+  const k = CONVERSION.BYTES_PER_KB;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
