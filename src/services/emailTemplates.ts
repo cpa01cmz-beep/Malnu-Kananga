@@ -130,16 +130,16 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Laporan Kehadiran</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
     .status { padding: 10px; border-radius: 5px; margin: 10px 0; }
-    .status-hadir { background: #d1fae5; color: #065f46; }
-    .status-sakit { background: #fef3c7; color: #92400e; }
-    .status-izin { background: #dbeafe; color: #1e40af; }
-    .status-alpa { background: #fee2e2; color: #991b1b; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .status-hadir { background: ${EC.STATUS_SUCCESS}; color: #065f46; }
+    .status-sakit { background: ${EC.STATUS_WARNING}; color: #92400e; }
+    .status-izin { background: ${EC.STATUS_INFO}; color: #1e40af; }
+    .status-alpa { background: ${EC.STATUS_ERROR}; color: #991b1b; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -200,13 +200,13 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Laporan Progress</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .info { background: #e0e7ff; padding: 15px; border-radius: 5px; margin: 15px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
-    .button { display: inline-block; padding: 10px 20px; background: #2563eb; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
+    .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .info { background: ${EC.HIGHLIGHT}; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .button { display: inline-block; padding: 10px 20px; background: ${EC.PRIMARY}; color: white; text-decoration: none; border-radius: 5px; margin: 10px 0; }
   </style>
 </head>
 <body>
@@ -276,12 +276,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Pengingat Acara</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .event { background: #dbeafe; padding: 15px; border-radius: 5px; margin: 15px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .event { background: ${EC.HIGHLIGHT}; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -344,12 +344,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Notifikasi Sistem</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #1f2937; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .message { background: #e0e7ff; padding: 15px; border-radius: 5px; margin: 15px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .header { background: ${EC.TEXT_DARK}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .message { background: ${EC.HIGHLIGHT}; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -401,12 +401,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Pengumuman Baru</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #059669; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .announcement { background: #dcfce7; padding: 15px; border-radius: 5px; margin: 10px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .header { background: ${EC.SUCCESS}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .announcement { background: ${EC.SUCCESS_LIGHT}; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -464,12 +464,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Materi Baru</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #7c3aed; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .header { background: ${EC.LIBRARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
     .material { background: #ede9fe; padding: 15px; border-radius: 5px; margin: 10px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -529,12 +529,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Notifikasi PPDB</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #ea580c; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
+    .header { background: ${EC.PPDB}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
     .status { background: #ffedd5; padding: 15px; border-radius: 5px; margin: 10px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
@@ -590,12 +590,12 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Nilai Belum Lengkap</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #dc2626; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-    .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
-    .alert { background: #fee2e2; padding: 15px; border-radius: 5px; margin: 10px 0; }
-    .footer { background: #1f2937; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
+    .header { background: ${EC.WARNING}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+    .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }
+    .alert { background: ${EC.STATUS_ERROR}; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .footer { background: ${EC.TEXT_DARK}; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 5px 5px; }
   </style>
 </head>
 <body>
