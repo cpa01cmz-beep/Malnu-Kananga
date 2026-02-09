@@ -2219,9 +2219,6 @@
     }
   }
 }
-    user-select: none;
-    -webkit-user-select: none;
-  }
   
   .safe-area-padding {
     padding-left: env(safe-area-inset-left);
@@ -2543,7 +2540,6 @@
   .mobile-spacing-loose {
     gap: 20px;
   }
-}
 
 /* Hide scrollbar for mobile */
 .scrollbar-hide {
