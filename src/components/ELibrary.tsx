@@ -1558,7 +1558,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           ))
         ) : (
           <div className="col-span-full">
-            <EmptyState 
+            <EmptyState
               message="Tidak ada materi ditemukan untuk filter ini"
               icon={
                 <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
@@ -1567,6 +1567,26 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               }
               size="lg"
               ariaLabel="Tidak ada materi ditemukan"
+              suggestedActions={[
+                {
+                  label: 'Hapus Semua Filter',
+                  onClick: () => {
+                    setFilterSubject('Semua');
+                    setSearch('');
+                    setFilterTeacher('');
+                    setFilterDateRange('all');
+                    setFilterRating(0);
+                    setShowOnlyFavorites(false);
+                    setSortBy('date');
+                  },
+                  variant: 'primary'
+                },
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
             />
           </div>
         )}

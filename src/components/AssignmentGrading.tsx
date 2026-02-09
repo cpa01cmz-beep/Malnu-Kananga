@@ -355,6 +355,18 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
             <EmptyState
               icon={<DocumentTextIcon className="w-12 h-12 text-gray-400" />}
               message="Anda belum memiliki tugas untuk dinilai"
+              suggestedActions={[
+                {
+                  label: 'Refresh',
+                  onClick: fetchAssignments,
+                  variant: 'primary'
+                },
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
             />
           ) : (
             assignments.map((assignment) => (

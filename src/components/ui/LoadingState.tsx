@@ -24,6 +24,13 @@ interface LoadingStateProps {
   className?: string;
 }
 
+export interface SuggestedAction {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  icon?: ReactNode;
+}
+
 export interface EmptyStateProps {
   message: string;
   submessage?: string;
@@ -34,6 +41,7 @@ export interface EmptyStateProps {
     label: string;
     onClick: () => void;
   };
+  suggestedActions?: SuggestedAction[];
   size?: LoadingStateSize;
   variant?: 'default' | 'minimal' | 'illustrated';
   ariaLabel?: string;
@@ -64,6 +72,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   icon,
   action,
+  suggestedActions,
   size = 'md',
   variant = 'default',
   ariaLabel
@@ -80,7 +89,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   }
 
   return (
-    <div 
+    <div
       className={`${sizeClasses[size]} ${variantClasses[variant]}`}
       role="status"
       aria-live="polite"
@@ -113,6 +122,26 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           >
             {action.label}
           </Button>
+        )}
+        {suggestedActions && suggestedActions.length > 0 && (
+          <div
+            className="flex flex-wrap items-center justify-center gap-3 mt-2"
+            role="group"
+            aria-label="Suggested actions"
+          >
+            {suggestedActions.map((suggestedAction, index) => (
+              <Button
+                key={index}
+                variant={suggestedAction.variant || 'primary'}
+                onClick={suggestedAction.onClick}
+                size={size === 'lg' ? 'lg' : 'md'}
+                icon={suggestedAction.icon}
+                iconPosition="left"
+              >
+                {suggestedAction.label}
+              </Button>
+            ))}
+          </div>
         )}
       </div>
     </div>
