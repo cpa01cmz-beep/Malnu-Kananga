@@ -414,6 +414,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                     src={file.preview}
                     alt={file.name}
                     className="w-10 h-10 object-cover rounded"
+                    width={40}
+                    height={40}
                   />
                 ) : (
                   <span className="text-2xl">{getFileIcon(file.type)}</span>
