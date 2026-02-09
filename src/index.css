@@ -184,6 +184,8 @@
   --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-wave: wave 2s linear infinite;
   --animate-shimmer: shimmer 1.5s linear infinite;
+  --animate-input-shake: input-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-success-pulse: success-pulse 0.6s ease-out both;
 }
 
 :root {
@@ -429,6 +431,42 @@
   }
   100% {
     background-position: 1000px 0;
+  }
+}
+
+/* Input validation animations */
+@keyframes input-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes success-pulse {
+  0% {
+    transform: scale(1);
+    border-color: rgb(var(--color-green-500));
+  }
+  50% {
+    transform: scale(1.02);
+    border-color: rgb(var(--color-green-400));
+  }
+  100% {
+    transform: scale(1);
+    border-color: rgb(var(--color-green-300));
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .animate-input-shake,
+  .animate-success-pulse {
+    animation: none !important;
   }
 }
 
@@ -7091,6 +7129,15 @@ html {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Input validation animation utility classes */
+.animate-input-shake {
+  animation: input-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.animate-success-pulse {
+  animation: success-pulse 0.6s ease-out both;
+}
+
 /* Respect user's motion preference for loading animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in,
@@ -7103,7 +7150,9 @@ html {
   .page-transition-enter-active,
   .page-transition-exit,
   .page-transition-exit-active,
-  .progress-bar-animated::after {
+  .progress-bar-animated::after,
+  .animate-input-shake,
+  .animate-success-pulse {
     animation: none;
     transition: none;
   }
