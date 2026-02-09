@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -293,7 +293,7 @@ export const validateAttendance = (attendance: Attendance): ValidationResult => 
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
+  if (!ACADEMIC.ATTENDANCE_STATUS_LIST.includes(attendance.status as typeof ACADEMIC.ATTENDANCE_STATUS_LIST[number])) {
     errors.push('Invalid attendance status');
   }
 
@@ -526,7 +526,7 @@ export function validateStudent(student: Student): ValidationResult {
     if (isNaN(dob.getTime())) {
       errors.push('Invalid date of birth');
     } else {
-      const age = Math.floor((new Date().getTime() - dob.getTime()) / 31557600000);
+      const age = Math.floor((new Date().getTime() - dob.getTime()) / TIME_MS.ONE_YEAR);
       if (age < ACADEMIC.AGE_LIMITS.STUDENT_MIN || age > ACADEMIC.AGE_LIMITS.STUDENT_MAX) {
         errors.push(`Student age must be between ${ACADEMIC.AGE_LIMITS.STUDENT_MIN} and ${ACADEMIC.AGE_LIMITS.STUDENT_MAX} years old`);
       } else if (age < ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MIN || age > ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MAX) {
@@ -874,8 +874,8 @@ export function validateClassCompletion(grades: StudentGrade[]): ClassValidation
   const studentsWithGrades = grades.length - studentsWithoutGradesList.length;
 
   if (studentsWithoutGradesList.length > 0) {
-    warnings.push(
-      `${studentsWithoutGradesList.length} siswa belum memiliki nilai: ${studentsWithoutGradesList.slice(0, 5).join(', ')}${studentsWithoutGradesList.length > 5 ? '...' : ''}`
+      warnings.push(
+      `${studentsWithoutGradesList.length} siswa belum memiliki nilai: ${studentsWithoutGradesList.slice(0, VALIDATION_LIMITS.MAX_DISPLAY_ITEMS).join(', ')}${studentsWithoutGradesList.length > VALIDATION_LIMITS.MAX_DISPLAY_ITEMS ? '...' : ''}`
     );
   }
 

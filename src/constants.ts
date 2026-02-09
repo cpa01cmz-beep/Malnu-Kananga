@@ -482,12 +482,15 @@ export const OPACITY_TOKENS = {
 export const TIME_MS = {
     ONE_SECOND: 1000,
     ONE_MINUTE: 60 * 1000,
+    FIVE_MINUTES: 5 * 60 * 1000,
+    THIRTY_MINUTES: 30 * 60 * 1000,
     ONE_HOUR: 60 * 60 * 1000,
     SIX_HOURS: 6 * 60 * 60 * 1000,
     TWELVE_HOURS: 12 * 60 * 60 * 1000,
     ONE_DAY: 24 * 60 * 60 * 1000,
     ONE_WEEK: 7 * 24 * 60 * 60 * 1000,
     THIRTY_DAYS: 30 * 24 * 60 * 60 * 1000,
+    ONE_YEAR: 31557600000, // 365.25 days in milliseconds (accounts for leap years)
 } as const;
 
 // File size limits in bytes
@@ -532,14 +535,34 @@ export const GRADE_LIMITS = {
     MIN: 0,
     MAX: 100,
     PASS_THRESHOLD: 40,
+    MIN_PASS: 60,
+} as const;
+
+// Grade thresholds for letter calculation
+export const GRADE_THRESHOLDS = {
+    A_PLUS: 90,
+    A: 85,
+    A_MINUS: 80,
+    B_PLUS: 78,
+    B: 75,
+    B_MINUS: 72,
+    C_PLUS: 68,
+    C: 60,
+    D: 0,
 } as const;
 
 // Validation length limits
 export const VALIDATION_LIMITS = {
     NOTIFICATION_BODY_MAX: 1000,
+    NOTIFICATION_TITLE_MAX: 200,
     DESCRIPTION_MAX: 1000,
     AI_PROMPT_MAX: 1000,
     TITLE_MAX: 255,
+    IMAGE_URL_MAX: 500,
+    URL_MAX: 500,
+    PREVIEW_LENGTH: 200,
+    MAX_DISPLAY_ITEMS: 5,
+    MAX_SUGGESTIONS: 5,
 } as const;
 
 // UI delays in milliseconds
@@ -579,6 +602,19 @@ export const VALIDATION_PATTERNS = {
     NISN: /^\d{10}$/,
     SEARCH_TERM: /^[a-zA-Z0-9\s.-]+$/,
     PHONE: /^[0-9+\-\s()]+$/,
+    URL_PROTOCOLS: ['http://', 'https://'] as const,
+} as const;
+
+// Search configuration constants
+export const SEARCH_CONFIG = {
+    DEFAULT_MAX_RESULTS: 20,
+    MAX_SUGGESTED_QUERIES: 5,
+    MAX_RELATED_CONCEPTS: 8,
+    MAX_SIMILAR_ITEMS: 5,
+    MAX_KEYWORDS: 10,
+    MIN_RELEVANCE_SCORE: 0.3,
+    HIGH_RELEVANCE_SCORE: 0.8,
+    OCR_TEXT_MAX: 500,
 } as const;
 
 // Academic constants - Centralized academic year related values
@@ -591,6 +627,7 @@ export const ACADEMIC = {
         PERMITTED: 'izin',
         ABSENT: 'alpa',
     } as const,
+    ATTENDANCE_STATUS_LIST: ['hadir', 'sakit', 'izin', 'alpa'] as const,
     GRADE_WEIGHTS: {
         ASSIGNMENT: 0.3,
         MID_EXAM: 0.3,
@@ -601,6 +638,23 @@ export const ACADEMIC = {
         B: 75,
         C: 60,
         MIN_PASS: 60,
+    } as const,
+    GRADE_THRESHOLDS_DETAILED: {
+        A_PLUS: 90,
+        A: 85,
+        A_MINUS: 80,
+        B_PLUS: 78,
+        B: 75,
+        B_MINUS: 72,
+        C_PLUS: 68,
+        C: 60,
+        D: 0,
+    } as const,
+    GRADE_MIN_SCORES: {
+        A: 85,
+        B: 75,
+        C: 60,
+        D: 0,
     } as const,
     AGE_LIMITS: {
         STUDENT_MIN: 6,
@@ -618,6 +672,7 @@ export const ACADEMIC = {
         MIN: 5,
         MAX: 20,
     } as const,
+    NISN_LENGTH: 10,
 } as const;
 
 // File validation constants
@@ -629,6 +684,40 @@ export const FILE_VALIDATION = {
     MATERIAL_TITLE_MAX_LENGTH: 200,
     MATERIAL_TITLE_MIN_LENGTH: 3,
     ADDRESS_MAX_LENGTH: 200,
+} as const;
+
+// AI/Gemini configuration constants
+export const AI_CONFIG = {
+    THINKING_BUDGET: 32768,
+    DEFAULT_CONFIDENCE_SCORE: 0.85,
+    JSON_MIME_TYPE: 'application/json',
+    MATERIAL_CONTENT_MAX: 500,
+} as const;
+
+// OCR configuration constants
+export const OCR_CONFIG = {
+    SIMILARITY_THRESHOLD: 0.8,
+    LOW_SIMILARITY_SCORE: 0.3,
+    SHORT_TEXT_PENALTY: 0.8,
+    CONFIDENCE_LOW_THRESHOLD: 0.5,
+    CONFIDENCE_WARNING_THRESHOLD: 0.7,
+    COMPARISON_TEXT_MAX: 200,
+    INPUT_LOG_MAX: 500,
+} as const;
+
+// ID generation constants
+export const ID_GENERATION = {
+    RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// Cache TTL constants in milliseconds
+export const CACHE_TTL = {
+    CATEGORY: 30 * 60 * 1000, // 30 minutes
+    AI_CACHE: 30 * 60 * 1000, // 30 minutes
+    AI_CHAT: 20 * 60 * 1000, // 20 minutes
+    AI_EDITOR: 15 * 60 * 1000, // 15 minutes
+    AI_OCR: 45 * 60 * 1000, // 45 minutes
+    CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
 } as const;
 
 // HTTP constants
@@ -646,4 +735,19 @@ export const HTTP = {
         DELETE: 'DELETE',
         HEAD: 'HEAD',
     } as const,
+    STATUS_CODES: {
+        BAD_REQUEST: 400,
+        UNAUTHORIZED: 401,
+        FORBIDDEN: 403,
+        NOT_FOUND: 404,
+        CONFLICT: 409,
+        UNPROCESSABLE_ENTITY: 422,
+        TOO_MANY_REQUESTS: 429,
+        INTERNAL_SERVER_ERROR: 500,
+        BAD_GATEWAY: 502,
+        SERVICE_UNAVAILABLE: 503,
+        GATEWAY_TIMEOUT: 504,
+    } as const,
+    RETRYABLE_STATUSES: [408, 429, 500, 502, 503, 504] as const,
+    SERVER_ERROR_STATUSES: [500, 502, 503, 504] as const,
 } as const;
