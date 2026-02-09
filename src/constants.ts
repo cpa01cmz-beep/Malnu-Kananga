@@ -259,11 +259,13 @@ export const VOICE_CONFIG = {
 export const ERROR_MESSAGES = {
     VOICE_NOT_SUPPORTED: 'Browser Anda tidak mendukung fitur suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.',
     MICROPHONE_DENIED: 'Izin mikrofon ditolak. Silakan izinkan akses mikrofon di pengaturan browser Anda.',
+    MICROPHONE_ACCESS_ERROR: 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.',
     NO_SPEECH_DETECTED: 'Tidak ada suara terdeteksi. Silakan coba lagi.',
     SPEECH_PROCESSING_FAILED: 'Gagal memproses suara. Silakan coba lagi.',
     TTS_NOT_SUPPORTED: 'Browser Anda tidak mendukung fitur suara. Silakan gunakan Chrome, Edge, atau Safari terbaru.',
     COMMAND_NOT_RECOGNIZED: 'Perintah tidak dikenali. Silakan coba lagi.',
     QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
+    NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
 } as const;
 
 export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
@@ -1319,6 +1321,110 @@ export const BACKOFF_CONFIG = {
     DEFAULT_MULTIPLIER: 2,
     DEFAULT_INITIAL_DELAY_MS: 1000,
     DEFAULT_MAX_DELAY_MS: 5000,
+} as const;
+
+// Voice Service Configuration - Centralized retry and circuit breaker settings
+// Flexy: Never hardcode voice service config!
+export const VOICE_SERVICE_CONFIG = {
+    RECOGNITION: {
+        MAX_START_ATTEMPTS: 3,
+        MAX_STOP_ATTEMPTS: 3,
+    },
+    SYNTHESIS: {
+        MAX_SPEAK_ATTEMPTS: 3,
+    },
+    CIRCUIT_BREAKER: {
+        FAILURE_THRESHOLD: 5,
+        RESET_TIMEOUT_MS: 60000,
+        MONITORING_PERIOD_MS: 10000,
+    },
+    RETRY: {
+        INITIAL_DELAY_MS: 1000,
+        MAX_DELAY_MS: 5000,
+        BACKOFF_MULTIPLIER: 2,
+    },
+} as const;
+
+// Number word mappings for voice input - Flexy: Never hardcode number words!
+export const NUMBER_WORDS = {
+    DIGITS: {
+        INDONESIAN: {
+            'nol': '0', 'satu': '1', 'dua': '2', 'tiga': '3', 'empat': '4',
+            'lima': '5', 'enam': '6', 'tujuh': '7', 'delapan': '8', 'sembilan': '9'
+        },
+        ENGLISH: {
+            'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+            'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9'
+        },
+    },
+    TEENS: {
+        ENGLISH: {
+            'ten': '10', 'eleven': '11', 'twelve': '12', 'thirteen': '13', 'fourteen': '14',
+            'fifteen': '15', 'sixteen': '16', 'seventeen': '17', 'eighteen': '18', 'nineteen': '19'
+        },
+    },
+    TENS: {
+        ENGLISH: {
+            'twenty': '20', 'thirty': '30', 'forty': '40', 'fifty': '50',
+            'sixty': '60', 'seventy': '70', 'eighty': '80', 'ninety': '90'
+        },
+    },
+    COMPOUND_INDONESIAN: {
+        'sebelas': '11', 'dua belas': '12', 'tiga belas': '13', 'empat belas': '14',
+        'lima belas': '15', 'enam belas': '16', 'tujuh belas': '17', 'delapan belas': '18', 'sembilan belas': '19',
+        'dua puluh': '20', 'tiga puluh': '30', 'empat puluh': '40', 'lima puluh': '50',
+        'enam puluh': '60', 'tujuh puluh': '70', 'delapan puluh': '80', 'sembilan puluh': '90'
+    },
+    SCALE: {
+        ENGLISH: {
+            'hundred': '100'
+        },
+        INDONESIAN: {
+            'seratus': '100'
+        },
+    },
+} as const;
+
+// OCR Service Configuration - Flexy: Never hardcode OCR limits!
+export const OCR_SERVICE_CONFIG = {
+    MAX_CACHED_EVENTS: 100,
+    VALIDATION_LOG_MAX: 100,
+    QUALITY: {
+        HIGH_THRESHOLD: 70,
+        MEDIUM_THRESHOLD: 50,
+    },
+    ATTENDANCE: {
+        MIN_CONFIDENCE_THRESHOLD: 60,
+    },
+} as const;
+
+// Voice Command Parser Configuration - Flexy: Never hardcode command thresholds!
+export const VOICE_COMMAND_CONFIG = {
+    SIMILARITY: {
+        MATCH_THRESHOLD: 0.7,
+        HIGH_THRESHOLD: 0.8,
+    },
+    QUERY: {
+        MIN_LENGTH: 2,
+    },
+    NAME: {
+        MIN_LENGTH: 2,
+    },
+} as const;
+
+// Storage Key Patterns - Flexy: Use these for filtered searches!
+export const STORAGE_KEY_PATTERNS = {
+    STUDY_PLAN_RECOMMENDATIONS: 'malnu_study_plan_material_recommendations_',
+    QUIZ_ATTEMPTS: 'malnu_quiz_attempts_',
+} as const;
+
+// Grade Color Thresholds - Flexy: Never hardcode grade colors!
+export const GRADE_COLOR_THRESHOLDS = {
+    EXCELLENT: { min: 90, color: 'text-green-600' },
+    GOOD: { min: 80, color: 'text-blue-600' },
+    AVERAGE: { min: 70, color: 'text-yellow-600' },
+    BELOW_AVERAGE: { min: 60, color: 'text-orange-600' },
+    POOR: { min: 0, color: 'text-red-600' },
 } as const;
 
 // Notification emojis for template strings

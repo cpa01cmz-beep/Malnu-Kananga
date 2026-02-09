@@ -11,7 +11,7 @@ import type {
   SpeechSynthesisEvent,
   SpeechSynthesisVoice,
 } from '../types';
-import { VOICE_CONFIG } from '../constants';
+import { VOICE_CONFIG, LANGUAGE_CODES, VOICE_SERVICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { validateSpeechSynthesisConfig } from '../utils/voiceSettingsValidation';
 import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
@@ -27,7 +27,7 @@ class SpeechSynthesisService {
   private voices: SpeechSynthesisVoice[] = [];
   private errorRecovery: ErrorRecoveryStrategy;
   private speakAttempts: number = 0;
-  private readonly maxSpeakAttempts: number = 3;
+  private readonly maxSpeakAttempts: number = VOICE_SERVICE_CONFIG.SYNTHESIS.MAX_SPEAK_ATTEMPTS;
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
     const partialConfig = {
@@ -50,18 +50,18 @@ class SpeechSynthesisService {
     this.errorRecovery = new ErrorRecoveryStrategy(
       {
         maxAttempts: this.maxSpeakAttempts,
-        initialDelay: 1000,
-        maxDelay: 5000,
-        backoffFactor: 2,
+        initialDelay: VOICE_SERVICE_CONFIG.RETRY.INITIAL_DELAY_MS,
+        maxDelay: VOICE_SERVICE_CONFIG.RETRY.MAX_DELAY_MS,
+        backoffFactor: VOICE_SERVICE_CONFIG.RETRY.BACKOFF_MULTIPLIER,
         shouldRetry: (error: Error, attempt: number) => {
           const shouldRetry = this.shouldRetrySpeakError(error, attempt);
           return shouldRetry;
         },
       },
       {
-        failureThreshold: 5,
-        resetTimeout: 60000,
-        monitoringPeriod: 10000,
+        failureThreshold: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.FAILURE_THRESHOLD,
+        resetTimeout: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.RESET_TIMEOUT_MS,
+        monitoringPeriod: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.MONITORING_PERIOD_MS,
       }
     );
 
@@ -146,8 +146,8 @@ class SpeechSynthesisService {
   }
 
   private setDefaultVoice(): void {
-    const preferredLanguage = 'id-ID';
-    const fallbackLanguage = 'en-US';
+    const preferredLanguage = LANGUAGE_CODES.INDONESIAN;
+    const fallbackLanguage = LANGUAGE_CODES.ENGLISH_US;
 
     let voice = this.voices.find((v: SpeechSynthesisVoice) => v.lang === preferredLanguage && v.localService);
 
