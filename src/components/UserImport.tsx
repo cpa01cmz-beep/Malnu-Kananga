@@ -14,6 +14,7 @@ import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
+import { BYTES_PER_KB } from '../constants';
 
 export interface CSVRow {
   [key: string]: string;
@@ -333,7 +334,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
                     {file.name}
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    {(file.size / 1024).toFixed(2)} KB
+                    {(file.size / BYTES_PER_KB).toFixed(2)} KB
                   </p>
                 </div>
               </div>
