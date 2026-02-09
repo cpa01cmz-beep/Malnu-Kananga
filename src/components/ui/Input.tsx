@@ -32,7 +32,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   showClearButton?: boolean;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced";
 
 const sizeClasses: Record<InputSize, string> = {
   sm: "px-3 py-2 text-sm min-h-[2.75rem]",
