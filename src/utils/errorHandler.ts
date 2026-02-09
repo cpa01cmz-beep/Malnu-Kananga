@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import { ADMIN_EMAIL, RETRY_CONFIG } from '../constants';
+import { ADMIN_EMAIL, RETRY_CONFIG, HTTP } from '../constants';
 import { ERROR_MESSAGES as CENTRALIZED_ERROR_MESSAGES } from './errorMessages';
 
 export enum ErrorType {
@@ -112,7 +112,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
     );
   }
 
-  if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) || errorMessage.includes('rate limit')) {
     return new AppError(
       CENTRALIZED_ERROR_MESSAGES.RATE_LIMIT_ERROR,
       ErrorType.RATE_LIMIT_ERROR,
@@ -122,7 +122,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
     );
   }
 
-  if (errorMessage.includes('api key') || errorMessage.includes('unauthorized') || errorMessage.includes('401') || errorMessage.includes('403')) {
+  if (errorMessage.includes('api key') || errorMessage.includes('unauthorized') || errorMessage.includes(String(HTTP.STATUS_CODES.UNAUTHORIZED)) || errorMessage.includes(String(HTTP.STATUS_CODES.FORBIDDEN))) {
     return new AppError(
       CENTRALIZED_ERROR_MESSAGES.API_KEY_ERROR,
       ErrorType.API_KEY_ERROR,
@@ -202,7 +202,7 @@ export function classifyError(error: unknown, context: ErrorContext): AppError {
     );
   }
 
-  if (errorMessage.includes('conflict') || errorMessage.includes('konflik') || errorMessage.includes('409')) {
+  if (errorMessage.includes('conflict') || errorMessage.includes('konflik') || errorMessage.includes(String(HTTP.STATUS_CODES.CONFLICT))) {
     return new AppError(
       CENTRALIZED_ERROR_MESSAGES.CONFLICT_ERROR,
       ErrorType.CONFLICT_ERROR,

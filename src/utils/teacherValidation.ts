@@ -79,8 +79,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai tugas'));
     } else if (isNaN(grade.assignment)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.assignment < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.assignment < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.assignment > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.assignment < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.assignment > 0) {
@@ -94,8 +94,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UTS'));
     } else if (isNaN(grade.midExam)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.midExam < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.midExam < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.midExam > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.midExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.midExam > 0) {
@@ -109,8 +109,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UAS'));
     } else if (isNaN(grade.finalExam)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.finalExam < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.finalExam < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.finalExam > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.finalExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.finalExam > 0) {
@@ -378,7 +378,7 @@ export const calculateGradeLetter = getGradeLetter;
 // Legacy function for backward compatibility
 export function validateGradeInputLegacy(score: number, fieldName: string, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (typeof score !== 'number' || isNaN(score)) {
     errors.push(`${fieldName} must be a valid number`);
@@ -404,7 +404,7 @@ export function validateGrade(
   options: GradeValidationOptions = {}
 ): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (!grade.studentId || grade.studentId.trim() === '') {
     errors.push('Student ID is required');
@@ -487,8 +487,8 @@ export function validateStudent(student: Student): ValidationResult {
 
   if (!student.nisn || student.nisn.trim() === '') {
     errors.push('NISN is required');
-  } else if (student.nisn.length !== 10) {
-    errors.push('NISN must be exactly 10 digits');
+  } else if (student.nisn.length !== ACADEMIC.NISN_LENGTH) {
+    errors.push(`NISN must be exactly ${ACADEMIC.NISN_LENGTH} digits`);
   }
 
   if (!student.nis || student.nis.trim() === '') {
