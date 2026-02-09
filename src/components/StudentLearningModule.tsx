@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { UserExtraRole } from '../types';
-import { GoogleGenAI } from '@google/genai';
 import { withCircuitBreaker, classifyError, logError, getUserFriendlyMessage } from '../utils/errorHandler';
+// GoogleGenAI is dynamically imported in generateAIQuiz to reduce bundle size
 import LoadingSpinner from './ui/LoadingSpinner';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
@@ -90,14 +90,14 @@ const StudentLearningModule: React.FC<StudentLearningModuleProps> = ({ onShowToa
         { id: '1', front: 'Question', back: 'Answer', mastered: false }
     ]);
 
-    // Initialize Google AI
-    const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
-
     // Generate AI Quiz questions
     const generateAIQuiz = async (topic: Topic) => {
         setAIQuizState(prev => ({ ...prev, isGenerating: true }));
         
         try {
+            const { GoogleGenAI } = await import('@google/genai');
+            const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
+            
             const systemInstruction = `Anda adalah seorang guru yang ahli dalam ${topic.title}. 
             Buatkan 5 soal pilihan ganda tentang ${topic.title} dengan format JSON berikut:
             
