@@ -1501,6 +1501,182 @@ export const PPDB_STATUS = {
 
 export type PPDBPipelineStatus = typeof PPDB_STATUS[keyof typeof PPDB_STATUS];
 
+// Design System Tokens - Centralized for consistency
+export const DESIGN_TOKENS = {
+    // Responsive Breakpoints
+    BREAKPOINTS: {
+        sm: '640px',   // Phone landscape
+        md: '768px',   // Tablet portrait  
+        lg: '1024px',  // Tablet landscape/Desktop
+        xl: '1280px',  // Desktop
+        '2xl': '1536px' // Large desktop
+    } as const,
+    
+    // Spacing Scale
+    SPACING: {
+        xs: '0.25rem',   // 4px
+        sm: '0.5rem',    // 8px
+        md: '1rem',      // 16px
+        lg: '1.5rem',    // 24px
+        xl: '2rem',      // 32px
+        '2xl': '3rem',   // 48px
+        '3xl': '4rem',   // 64px
+    } as const,
+    
+    // Border Radius
+    BORDER_RADIUS: {
+        sm: '0.25rem',   // 4px
+        md: '0.5rem',    // 8px
+        lg: '1rem',      // 16px
+        xl: '1.5rem',    // 24px
+        full: '9999px'
+    } as const,
+    
+    // Shadows
+    SHADOWS: {
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+    } as const,
+    
+    // Animations
+    ANIMATIONS: {
+        micro: 'transition-all duration-150 ease-out',
+        base: 'transition-all duration-200 ease-out',
+        smooth: 'transition-all duration-300 ease-out',
+        slow: 'transition-all duration-500 ease-out',
+    } as const,
+    
+    // Button Sizing
+    BUTTON_SIZES: {
+        sm: { min: 'h-9', px: 'px-3', text: 'text-sm', radius: 'rounded-md' },
+        md: { min: 'h-10', px: 'px-4', text: 'text-sm', radius: 'rounded-md' },
+        lg: { min: 'h-12', px: 'px-6', text: 'text-base', radius: 'rounded-lg' },
+        xl: { min: 'h-14', px: 'px-8', text: 'text-lg', radius: 'rounded-lg' }
+    } as const,
+    
+    // Typography Scale
+    TYPOGRAPHY: {
+        xs: 'text-xs',    // 12px
+        sm: 'text-sm',    // 14px
+        base: 'text-base', // 16px
+        lg: 'text-lg',    // 18px
+        xl: 'text-xl',    // 20px
+        '2xl': 'text-2xl', // 24px
+        '3xl': 'text-3xl', // 30px
+        '4xl': 'text-4xl', // 36px
+    } as const,
+    
+    // Touch Targets (Mobile-First)
+    TOUCH_TARGETS: {
+        min: 'min-h-11 min-w-11', // 44px minimum
+        sm: 'min-h-12 min-w-12',  // 48px comfortable
+        md: 'min-h-14 min-w-14',  // 56px large
+        lg: 'min-h-16 min-w-16',  // 64px extra large
+        padding: {
+            tight: 'p-2',   // 8px
+            normal: 'p-3',  // 12px
+            loose: 'p-4',   // 16px
+        }
+    } as const,
+    
+    // Focus Management
+    FOCUS: {
+        ring: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        ringPrimary: 'focus-visible:ring-primary-500',
+        ringOffset: 'focus-visible:ring-offset-background',
+        enhanced: 'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2'
+    } as const,
+    
+    // Z-Index Scale
+    Z_INDEX: {
+        base: 0,
+        raised: 10,
+        dropdown: 20,
+        sticky: 30,
+        modal: 40,
+        notification: 50,
+        tooltip: 60,
+        maximum: 9999,
+    } as const,
+} as const;
+
+// Enhanced Animation Constants
+export const ENHANCED_ANIMATIONS = {
+    // Micro-interactions
+    SCALE_SUBTLE: 'hover:scale-[1.02] active:scale-[0.98]',
+    SCALE_MEDIUM: 'hover:scale-[1.05] active:scale-[0.95]',
+    LIFT_SUBTLE: 'hover:-translate-y-1 active:translate-y-0',
+    LIFT_MEDIUM: 'hover:-translate-y-2 active:-translate-y-1',
+    
+    // State transitions
+    FADE_IN: 'animate-fade-in',
+    SLIDE_UP: 'animate-fade-in-up',
+    SCALE_IN: 'animate-scale-in',
+    
+    // Loading states
+    PULSE_SLOW: 'animate-pulse-slow',
+    SHIMMER: 'animate-shimmer skeleton-enhanced',
+    
+    // Interactive elements
+    BUTTON_HOVER: 'hover-lift btn-hover-primary',
+    CARD_HOVER: 'card-hover-enhanced hover-lift',
+    ICON_HOVER: 'icon-hover',
+    
+    // Accessibility
+    REDUCED_MOTION: 'motion-reduce:transition-none motion-reduce:transform-none',
+} as const;
+
+// Mobile-First Responsive Patterns
+export const RESPONSIVE_PATTERNS = {
+    // Grid patterns
+    GRID_SINGLE: 'grid grid-cols-1',
+    GRID_SM: 'grid grid-cols-1 sm:grid-cols-2',
+    GRID_MD: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    GRID_LG: 'grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4',
+    
+    // Text responsive patterns
+    TEXT_RESPONSIVE: 'text-sm sm:text-base',
+    TITLE_RESPONSIVE: 'text-xl sm:text-2xl lg:text-3xl',
+    
+    // Spacing responsive
+    PADDING_RESPONSIVE: 'p-4 sm:p-6 lg:p-8',
+    GAP_RESPONSIVE: 'gap-2 sm:gap-4 lg:gap-6',
+    
+    // Component sizing
+    CONTAINER_RESPONSIVE: 'w-full max-w-md sm:max-w-lg lg:max-w-xl',
+    
+    // Navigation patterns
+    NAV_MOBILE: 'flex flex-col sm:flex-row',
+    NAV_STACKED: 'space-y-2 sm:space-y-0 sm:space-x-4',
+} as const;
+
+// Accessibility Enhancements
+export const ACCESSIBILITY_ENHANCEMENTS = {
+    // Screen reader utilities
+    SCREEN_READER_ONLY: 'sr-only',
+    SCREEN_READER_FOCUSABLE: 'sr-only focus:not-sr-only focus:absolute focus:z-50',
+    
+    // Focus management
+    FOCUS_VISIBLE: 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+    FOCUS_TRAP: 'focus-trap',
+    
+    // High contrast support
+    HIGH_CONTRAST: 'enhanced-contrast',
+    
+    // Reduced motion
+    REDUCED_MOTION: 'motion-reduce:transition-none motion-reduce:animate-none',
+    
+    // Touch enhancements
+    TOUCH_OPTIMIZED: 'touch-manipulation safe-area-padding',
+    TOUCH_TARGET: 'touch-target',
+    
+    // Skip links
+    SKIP_LINK: 'absolute top-4 left-4 z-50 -translate-y-full focus:translate-y-0 bg-primary-500 text-white px-4 py-2 rounded-md',
+} as const;
+
 // PPDB Status Display Labels
 export const PPDB_STATUS_LABELS = {
     [PPDB_STATUS.REGISTERED]: 'Terdaftar',
