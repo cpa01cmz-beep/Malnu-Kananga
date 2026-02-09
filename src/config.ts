@@ -3,14 +3,17 @@
 // Di Cloudflare Pages, set Variable 'VITE_API_BASE_URL' ke URL Anda.
 // Jika tidak diset, gunakan localhost atau fallback url.
 
+import { API_CONFIG } from './constants';
+
 // Use type assertion safely to avoid TypeScript errors if vite/client types are missing
 const env: { VITE_API_BASE_URL?: string } = import.meta.env || {};
 
-export const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
+// Re-export from constants to maintain single source of truth
+export const DEFAULT_API_BASE_URL = API_CONFIG.DEFAULT_BASE_URL;
 
 export const API_BASE_URL = env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
-export const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
+export const DEFAULT_WS_BASE_URL = API_BASE_URL.replace('https://', 'wss://') + API_CONFIG.WS_PATH;
 
 // API Endpoints (Legacy - Use services/api instead)
 export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
