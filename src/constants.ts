@@ -571,3 +571,79 @@ export const API_CONFIG = {
         LOGIN: '/api/auth/login',
     },
 } as const;
+
+// Validation regex patterns - Centralized to avoid hardcoded regex
+export const VALIDATION_PATTERNS = {
+    NAME: /^[a-zA-Z\s.'-]+$/,
+    NIS: /^\d+$/,
+    NISN: /^\d{10}$/,
+    SEARCH_TERM: /^[a-zA-Z0-9\s.-]+$/,
+    PHONE: /^[0-9+\-\s()]+$/,
+} as const;
+
+// Academic constants - Centralized academic year related values
+export const ACADEMIC = {
+    SEMESTERS: ['1', '2'] as const,
+    DAYS_OF_WEEK: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const,
+    ATTENDANCE_STATUSES: {
+        PRESENT: 'hadir',
+        SICK: 'sakit',
+        PERMITTED: 'izin',
+        ABSENT: 'alpa',
+    } as const,
+    GRADE_WEIGHTS: {
+        ASSIGNMENT: 0.3,
+        MID_EXAM: 0.3,
+        FINAL_EXAM: 0.4,
+    } as const,
+    GRADE_THRESHOLDS: {
+        A: 85,
+        B: 75,
+        C: 60,
+        MIN_PASS: 60,
+    } as const,
+    AGE_LIMITS: {
+        STUDENT_MIN: 6,
+        STUDENT_MAX: 25,
+        STUDENT_TYPICAL_MIN: 12,
+        STUDENT_TYPICAL_MAX: 20,
+    } as const,
+    CREDIT_HOURS: {
+        MIN: 1,
+        MAX: 6,
+        TYPICAL_MIN: 2,
+        TYPICAL_MAX: 4,
+    } as const,
+    NIS_LENGTH: {
+        MIN: 5,
+        MAX: 20,
+    } as const,
+} as const;
+
+// File validation constants
+export const FILE_VALIDATION = {
+    FILENAME_MAX_LENGTH: 255,
+    FILENAME_MIN_LENGTH: 1,
+    FILENAME_WARNING_LENGTH: 100,
+    SEARCH_MAX_LENGTH: 100,
+    MATERIAL_TITLE_MAX_LENGTH: 200,
+    MATERIAL_TITLE_MIN_LENGTH: 3,
+    ADDRESS_MAX_LENGTH: 200,
+} as const;
+
+// HTTP constants
+export const HTTP = {
+    HEADERS: {
+        CONTENT_TYPE_JSON: 'application/json',
+        CONTENT_TYPE_PDF: 'application/pdf',
+        CONTENT_TYPE_FORM_DATA: 'multipart/form-data',
+    } as const,
+    METHODS: {
+        GET: 'GET',
+        POST: 'POST',
+        PUT: 'PUT',
+        PATCH: 'PATCH',
+        DELETE: 'DELETE',
+        HEAD: 'HEAD',
+    } as const,
+} as const;
