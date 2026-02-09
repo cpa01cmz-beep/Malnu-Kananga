@@ -1,5 +1,6 @@
 import { ocrService, OCRExtractionResult, OCRProgress } from './ocrService';
 import { logger } from '../utils/logger';
+import { OCR_CONFIG } from '../constants';
 
 export interface AttendanceStudentInfo {
   id: string;
@@ -497,8 +498,8 @@ class AttendanceOCRService {
       ? data.studentAttendance.reduce((sum, att) => sum + att.confidence, 0) / data.studentAttendance.length
       : 0;
     
-    if (avgConfidence < 60) {
-      warnings.push('Rata-rata confidence rendah (< 60%), perlu verifikasi manual');
+    if (avgConfidence < OCR_CONFIG.ATTENDANCE_CONFIDENCE_THRESHOLD) {
+      warnings.push(`Rata-rata confidence rendah (< ${OCR_CONFIG.ATTENDANCE_CONFIDENCE_THRESHOLD}%), perlu verifikasi manual`);
     }
 
     return {
