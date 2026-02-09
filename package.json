@@ -91,7 +91,7 @@
       "eslint --fix"
     ],
     "*.{json,md,yml,yaml}": [
-      "prettier --write"
+      "eslint --fix"
     ]
   },
   "lastUpdated": "2026-02-04"
