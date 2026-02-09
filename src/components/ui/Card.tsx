@@ -67,7 +67,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300 touch-manipulation relative overflow-hidden group";
+const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300 touch-manipulation relative overflow-hidden group focus-visible-enhanced";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
