@@ -245,9 +245,15 @@ export const VOICE_CONFIG = {
     SPEECH_RECOGNITION_TIMEOUT: 5000,
     DEBOUNCE_DELAY: 500,
     MAX_VOICE_CACHE_SIZE: 50,
-CONTINUOUS_MODE_TIMEOUT: 10000,
+    CONTINUOUS_MODE_TIMEOUT: 10000,
     COMMAND_DETECTION_THRESHOLD: 0.7,
     MESSAGE_QUEUE_MAX_SIZE: 50,
+    MAX_SPEAK_ATTEMPTS: 3,
+    PREFERRED_LANGUAGE: 'id-ID',
+    FALLBACK_LANGUAGE: 'en-US',
+    RATE_BOUNDS: { MIN: 0.1, MAX: 10 },
+    PITCH_BOUNDS: { MIN: 0, MAX: 2 },
+    VOLUME_BOUNDS: { MIN: 0, MAX: 1 },
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -592,6 +598,12 @@ export const API_CONFIG = {
     ENDPOINTS: {
         CHAT: '/api/chat',
         LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        USERS: '/api/users',
+        USER_PASSWORD: '/api/users/:userId/password',
     },
 } as const;
 
@@ -673,6 +685,7 @@ export const ACADEMIC = {
         MAX: 20,
     } as const,
     NISN_LENGTH: 10,
+    MAJOR_EXAM_TYPES: ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'] as const,
 } as const;
 
 // File validation constants
@@ -999,4 +1012,87 @@ export const OCR_ENHANCEMENT_CONFIG = {
 // Permission service constants
 export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
+} as const;
+
+// Quiz configuration constants
+export const QUIZ_CONFIG = {
+    DEFAULT_DURATION_MINUTES: 30,
+    PASSING_SCORE: 70,
+} as const;
+
+// Study plan configuration constants
+export const STUDY_PLAN_CONFIG = {
+    DEFAULT_DURATION_WEEKS: 4,
+} as const;
+
+// Parent notification configuration constants
+export const PARENT_NOTIFICATION_CONFIG = {
+    DEFAULT_GRADE_THRESHOLD: 70,
+    MISSING_GRADE_DAYS: 7,
+    DEFAULT_QUIET_HOURS: {
+        START: '22:00',
+        END: '07:00',
+    },
+} as const;
+
+// Grade frequency constants
+export const GRADE_FREQUENCY = {
+    MAJOR_EXAM_DAYS: 30,
+    QUIZ_DAYS: 14,
+    HOMEWORK_DAYS: 7,
+} as const;
+
+// Document types mapping
+export const DOCUMENT_TYPES = {
+    AKTA_KELAHIRAN: { key: 'akta_kelahiran', label: 'Akta Kelahiran' },
+    KARTU_KELUARGA: { key: 'kartu_keluarga', label: 'Kartu Keluarga' },
+    IJAZAH: { key: 'ijazah', label: 'Ijazah' },
+    SKHU: { key: 'skhu', label: 'SKHU' },
+    PAS_FOTO: { key: 'pas_foto', label: 'Pas Foto' },
+    RAPORT: { key: 'raport', label: 'Raport' },
+    KIP: { key: 'kip', label: 'KIP' },
+    KPS: { key: 'kps', label: 'KPS' },
+    KKS: { key: 'kks', label: 'KKS' },
+    PKH: { key: 'pkh', label: 'PKH' },
+} as const;
+
+// AI Prompts - Centralized prompts for consistency
+export const AI_PROMPTS = {
+    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk MA Malnu Kananga, sebuah madrasah aliyah di Indonesia. 
+Berikan respons yang:
+1. Sopan dan profesional
+2. Menggunakan Bahasa Indonesia yang baik dan benar
+3. Islami dan edukatif
+4. Terkait dengan dunia pendidikan dan kemadrasahan`,
+} as const;
+
+// Alert thresholds for monitoring
+export const ALERT_THRESHOLDS = {
+    ERROR_RATE_PERCENT: 10,
+    RESPONSE_TIME_MS: 5000,
+    SLOW_CONNECTION_MS: 3000,
+} as const;
+
+// Backoff configuration
+export const BACKOFF_CONFIG = {
+    DEFAULT_MULTIPLIER: 2,
+    DEFAULT_INITIAL_DELAY_MS: 1000,
+    DEFAULT_MAX_DELAY_MS: 5000,
+} as const;
+
+// Notification emojis for template strings
+export const NOTIFICATION_EMOJIS = {
+    GENERAL: '📢',
+    GRADE: '📊',
+    PPDB: '🎓',
+    EVENT: '🎉',
+    MATERIAL: '📚',
+    SYSTEM: '⚙️',
+    OCR: '📄',
+    SEARCH: '🔍',
+    ANNOUNCEMENT: '📢',
+    WARNING: '⚠️',
+    SUCCESS: '✅',
+    ERROR: '❌',
+    INFO: 'ℹ️',
 } as const;

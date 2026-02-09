@@ -11,7 +11,7 @@
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
-import { isNetworkError } from '../utils/retry';
+import { isNetworkError } from '../utils/errorRecovery';
 
 // Define ApiResponse locally to avoid circular dependency
 export interface ApiResponse<T> {
