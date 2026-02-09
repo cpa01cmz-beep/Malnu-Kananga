@@ -2,7 +2,8 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MaskOptions } from '../../utils/inputMasks';
 import { createFormatter } from '../../utils/inputMasks';
-import { XMarkIcon } from '../icons/MaterialIcons';
+import { XMarkIcon, InformationCircleIcon } from '../icons/MaterialIcons';
+import IconButton from './IconButton';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -12,6 +13,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   label?: string;
   helperText?: string;
   errorText?: string;
+  tooltip?: string;
   size?: InputSize;
   state?: InputState;
   leftIcon?: React.ReactNode;
@@ -67,6 +69,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   label,
   helperText,
   errorText,
+  tooltip,
   size = 'md',
   state = errorText ? 'error' : 'default',
   leftIcon,
@@ -194,6 +197,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
         >
           {label}
+          {tooltip && (
+            <IconButton
+              icon={<InformationCircleIcon className={sizeIconClasses[size]} />}
+              ariaLabel={tooltip}
+              tooltip={tooltip}
+              size="sm"
+              variant="ghost"
+              className="ml-1 inline-flex align-middle"
+              tabIndex={-1}
+            />
+          )}
           {props.required && (
             <span className="text-red-500 ml-1" aria-label="wajib diisi">
               *
