@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB } from '../constants';
 import type { User } from '../types';
 import { logger } from '../utils/logger';
 
@@ -40,8 +40,8 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        logger.warn('Ukuran file maksimal 10MB');
+      if (selectedFile.size > FILE_SIZE_LIMITS.MATERIAL_DEFAULT) {
+        logger.warn('Ukuran file maksimal 50MB');
         return;
       }
       setFile(selectedFile);
@@ -112,7 +112,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span className="truncate text-blue-800">{file.name}</span>
-          <span className="text-gray-500">({(file.size / 1024).toFixed(1)} KB)</span>
+          <span className="text-gray-500">({(file.size / BYTES_PER_KB).toFixed(1)} KB)</span>
           <button
             type="button"
             onClick={handleRemoveFile}

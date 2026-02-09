@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -485,9 +485,8 @@ class EmailNotificationService {
       const history = this.loadDeliveryHistory();
       history.push(delivery);
 
-      const maxHistorySize = 1000;
-      if (history.length > maxHistorySize) {
-        history.splice(0, history.length - maxHistorySize);
+      if (history.length > STORAGE_LIMITS.NOTIFICATION_HISTORY_MAX) {
+        history.splice(0, history.length - STORAGE_LIMITS.NOTIFICATION_HISTORY_MAX);
       }
 
       localStorage.setItem(this.deliveryHistoryKey, JSON.stringify(history));

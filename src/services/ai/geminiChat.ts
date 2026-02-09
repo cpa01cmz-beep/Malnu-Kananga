@@ -3,6 +3,7 @@ import { getAIInstance, DEFAULT_API_BASE_URL, AI_MODELS } from './geminiClient';
 import { chatCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import { AI_CONFIG } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -108,7 +109,7 @@ PANDUAN MENJAWAB:
   };
 
   if (useThinkingMode) {
-    config.thinkingConfig = { thinkingBudget: 32768 }; // Max budget for Gemini 3 Pro
+    config.thinkingConfig = { thinkingBudget: AI_CONFIG.THINKING_BUDGET }; // Max budget for Gemini 3 Pro
     // Note: Do not set maxOutputTokens when thinkingBudget is set, per guidelines
   }
 

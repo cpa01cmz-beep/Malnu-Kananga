@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, BYTES_PER_KB } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { emailService } from '../services/emailService';
@@ -997,7 +997,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                         <Card key={doc.id} className="bg-neutral-100 dark:bg-neutral-700 rounded-lg p-4">
                           <div className="flex items-center justify-between mb-2">
                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300 truncate">{doc.name}</span>
-                            <span className="text-xs text-neutral-500">{(doc.size / 1024).toFixed(1)} KB</span>
+                            <span className="text-xs text-neutral-500">{(doc.size / BYTES_PER_KB).toFixed(1)} KB</span>
                           </div>
                           <div className="h-64 overflow-hidden bg-white dark:bg-neutral-800 rounded-lg">
                             {doc.type === 'image' ? (

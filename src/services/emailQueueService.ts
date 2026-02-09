@@ -1,11 +1,11 @@
 import type { EmailData, EmailQueueItem } from '../types/email.types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, EMAIL_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 
 class EmailQueueService {
   private storageKey = STORAGE_KEYS.EMAIL_QUEUE || 'malnu_email_queue';
-  private maxRetryAttempts = 3;
-  private retryDelays = [60000, 300000, 900000];
+  private maxRetryAttempts = EMAIL_CONFIG.MAX_RETRY_ATTEMPTS;
+  private retryDelays = EMAIL_CONFIG.RETRY_DELAYS;
 
   constructor() {
     logger.info('EmailQueueService initialized');

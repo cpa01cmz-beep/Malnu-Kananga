@@ -14,6 +14,7 @@ import { useNetworkStatus } from '../utils/networkStatus';
 import ProgressBar from './ui/ProgressBar';
 import { UserRole, UserExtraRole } from '../types';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { FILE_SIZE_LIMITS } from '../constants';
 
 interface AttendanceManagementProps {
   onBack: () => void;
@@ -100,8 +101,8 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
     }
 
     // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      onShowToast('Ukuran file terlalu besar (maksimal 10MB).', 'error');
+    if (file.size > FILE_SIZE_LIMITS.MATERIAL_DEFAULT) {
+      onShowToast('Ukuran file terlalu besar (maksimal 50MB).', 'error');
       return;
     }
 
