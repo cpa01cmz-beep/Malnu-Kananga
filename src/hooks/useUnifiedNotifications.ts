@@ -334,7 +334,7 @@ export function useUnifiedNotifications() {
       return () => {
         window.removeEventListener('ocrValidation', handleOCRValidation);
       };
-    });
+    }, []);
   };
 
   // Template Getters
