@@ -92,7 +92,7 @@ export function isNetworkError(error: Error): boolean {
 }
 
 export function isRateLimitError(error: Error): boolean {
-  return error.message.includes('429') ||
+  return error.message.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) ||
          error.message.toLowerCase().includes('rate limit') ||
          error.message.toLowerCase().includes('too many requests');
 }

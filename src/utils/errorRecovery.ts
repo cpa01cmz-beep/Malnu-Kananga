@@ -1,4 +1,4 @@
-import { RETRY_CONFIG } from "../constants";
+import { RETRY_CONFIG, HTTP } from "../constants";
 export interface RetryOptions {
   maxAttempts: number;
   initialDelay: number;
@@ -290,7 +290,7 @@ export function isNetworkError(error: Error): boolean {
  * Check if an error is a rate limit error
  */
 export function isRateLimitError(error: Error): boolean {
-  return error.message.includes('429') ||
+  return error.message.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) ||
          error.message.toLowerCase().includes('rate limit') ||
          error.message.toLowerCase().includes('too many requests');
 }
@@ -299,8 +299,7 @@ export function isRateLimitError(error: Error): boolean {
  * Check if an error is a server error
  */
 export function isServerError(error: Error): boolean {
-  const serverErrorStatuses = [500, 502, 503, 504];
-  return serverErrorStatuses.some(status =>
+  return HTTP.SERVER_ERROR_STATUSES.some(status =>
     error.message.includes(`status ${status}`) ||
     error.message.includes(`${status}`)
   );

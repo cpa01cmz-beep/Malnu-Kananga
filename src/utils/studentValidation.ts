@@ -1,5 +1,5 @@
 import type { Grade, Subject, Attendance, Student } from '../types';
-import { ACADEMIC, TIME_MS, GRADE_THRESHOLDS } from '../constants';
+import { ACADEMIC, TIME_MS, GRADE_THRESHOLDS, GRADE_LIMITS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -14,7 +14,7 @@ export interface GradeValidationOptions {
 
 export function validateStudentGrade(grade: Grade, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (!grade.studentId || grade.studentId.trim() === '') {
     errors.push('Student ID is required');
@@ -188,8 +188,8 @@ export function validateStudentProgress(goal: {
 
   if (typeof goal.currentGrade !== 'number' || isNaN(goal.currentGrade)) {
     errors.push('Current grade must be a valid number');
-  } else if (goal.currentGrade < 0 || goal.currentGrade > 100) {
-    errors.push('Current grade must be between 0 and 100');
+  } else if (goal.currentGrade < GRADE_LIMITS.MIN || goal.currentGrade > GRADE_LIMITS.MAX) {
+    errors.push(`Current grade must be between ${GRADE_LIMITS.MIN} and ${GRADE_LIMITS.MAX}`);
   }
 
   if (!goal.deadline || goal.deadline.trim() === '') {
@@ -226,7 +226,7 @@ export function calculateFinalScore(assignment: number, midExam: number, finalEx
 
 export function validateGradeInput(score: number, fieldName: string, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (typeof score !== 'number' || isNaN(score)) {
     errors.push(`${fieldName} must be a valid number`);
@@ -248,7 +248,7 @@ export function validateGradeInput(score: number, fieldName: string, options: Gr
 
 export function validateAndSanitizeGrade(score: string | number): number {
   const numValue = typeof score === 'string' ? parseFloat(score) : score;
-  return isNaN(numValue) ? 0 : Math.min(100, Math.max(0, numValue));
+  return isNaN(numValue) ? GRADE_LIMITS.MIN : Math.min(GRADE_LIMITS.MAX, Math.max(GRADE_LIMITS.MIN, numValue));
 }
 
 export function getGradeMinScore(grade: string): number {
