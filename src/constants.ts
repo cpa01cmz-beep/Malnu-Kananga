@@ -595,6 +595,114 @@ export const API_CONFIG = {
     },
 } as const;
 
+// Language and Locale Codes - Flexy: Never hardcode language codes!
+export const LANGUAGE_CODES = {
+    INDONESIAN: 'id-ID',
+    ENGLISH_US: 'en-US',
+    ENGLISH_UK: 'en-GB',
+    JAVANESE: 'jv-ID',
+    DEFAULT: 'id-ID',
+} as const;
+
+// File Type Extensions - Flexy: Never hardcode file extensions!
+export const FILE_EXTENSIONS = {
+    DOCUMENTS: ['.pdf', '.doc', '.docx', '.ppt', '.pptx'] as const,
+    IMAGES: ['.jpg', '.jpeg', '.png', '.gif', '.webp'] as const,
+    VIDEOS: ['.mp4', '.avi', '.mov', '.mkv'] as const,
+    AUDIO: ['.mp3', '.wav', '.ogg', '.m4a'] as const,
+    SPREADSHEETS: ['.xls', '.xlsx', '.csv'] as const,
+    ARCHIVES: ['.zip', '.rar', '.7z'] as const,
+} as const;
+
+// All accepted file extensions (for FileUpload component)
+export const ACCEPTED_FILE_EXTENSIONS = [
+    ...FILE_EXTENSIONS.DOCUMENTS,
+    ...FILE_EXTENSIONS.IMAGES,
+    '.mp4', // Video (commonly used)
+] as const;
+
+// Scheduler Intervals (milliseconds) - Flexy: Never hardcode intervals!
+export const SCHEDULER_INTERVALS = {
+    EMAIL_DIGEST_CHECK: 5 * 60 * 1000, // 5 minutes
+    PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
+    NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
+    AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
+    OFFLINE_SYNC_CHECK: 60 * 1000, // 1 minute
+    WEBSOCKET_PING: 30 * 1000, // 30 seconds
+} as const;
+
+// Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
+export const PERFORMANCE_THRESHOLDS = {
+    SLOW_REQUEST_MS: 3000, // 3 seconds
+    ERROR_RATE_ALERT_PERCENT: 10, // 10%
+    AVG_RESPONSE_TIME_ALERT_MS: 5000, // 5 seconds
+    CONSECUTIVE_FAILURES_ALERT: 5,
+    MEMORY_WARNING_PERCENT: 80, // 80%
+    CPU_WARNING_PERCENT: 70, // 70%
+} as const;
+
+// Test Timeout Delays (milliseconds) - Flexy: Never hardcode test delays!
+export const TEST_DELAYS = {
+    SHORT: 10,
+    MEDIUM: 50,
+    LONG: 100,
+    VERY_LONG: 500,
+} as const;
+
+// Hash Algorithm Configuration
+export const HASH_CONFIG = {
+    DEFAULT_ALGORITHM: 'simple',
+    HASH_SHIFT_BITS: 5,
+    OUTPUT_BASE: 36,
+    DEFAULT_RANDOM_LENGTH: 9,
+} as const;
+
+// UI ID Configuration
+export const UI_ID_CONFIG = {
+    RANDOM_SUFFIX_LENGTH: 9,
+    DEFAULT_SEPARATOR: '_',
+} as const;
+
+// Conversion Utilities
+export const CONVERSION = {
+    BYTES_PER_KB: 1024,
+    BYTES_PER_MB: 1024 * 1024,
+    BYTES_PER_GB: 1024 * 1024 * 1024,
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 60 * 1000,
+    MS_PER_HOUR: 60 * 60 * 1000,
+} as const;
+
+/**
+ * Convert megabytes to bytes
+ * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
+ */
+export function mbToBytes(mb: number): number {
+    return mb * CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert bytes to megabytes
+ */
+export function bytesToMb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert minutes to milliseconds
+ * Flexy says: Use this instead of hardcoded `minutes * 60 * 1000`
+ */
+export function minutesToMs(minutes: number): number {
+    return minutes * CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert hours to milliseconds
+ */
+export function hoursToMs(hours: number): number {
+    return hours * CONVERSION.MS_PER_HOUR;
+}
+
 // Validation regex patterns - Centralized to avoid hardcoded regex
 export const VALIDATION_PATTERNS = {
     NAME: /^[a-zA-Z\s.'-]+$/,
