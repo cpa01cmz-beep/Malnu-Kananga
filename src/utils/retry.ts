@@ -1,4 +1,5 @@
 import { logger } from './logger';
+import { RETRY_CONFIG } from '../constants';
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -17,8 +18,8 @@ export interface RetryResult<T> {
 
 const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
   maxRetries: 3,
-  initialDelay: 1000,
-  maxDelay: 10000,
+  initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+  maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
   backoffMultiplier: 2,
   shouldRetry: (error: Error) => {
     const retryableStatuses = [408, 429, 500, 502, 503, 504];
@@ -109,7 +110,7 @@ export function isRetryableError(error: Error): boolean {
   return isNetworkError(error) || isRateLimitError(error) || isServerError(error);
 }
 
-export function getRetryDelay(attempt: number, initialDelay: number = 1000, maxDelay: number = 10000): number {
+export function getRetryDelay(attempt: number, initialDelay: number = RETRY_CONFIG.DEFAULT_INITIAL_DELAY, maxDelay: number = RETRY_CONFIG.DEFAULT_MAX_DELAY): number {
   const backoffDelay = initialDelay * Math.pow(2, attempt - 1);
   return Math.min(backoffDelay, maxDelay);
 }

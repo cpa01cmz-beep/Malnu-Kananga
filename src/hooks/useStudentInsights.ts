@@ -5,7 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { useRealtimeEvent } from './useWebSocket';
 import type { RealTimeEvent } from '../services/webSocketService';
 
@@ -76,7 +76,7 @@ interface UseStudentInsightsReturn {
 
 export const useStudentInsights = ({
   autoRefresh = true,
-  refreshInterval = 24 * 60 * 60 * 1000, // 24 hours
+  refreshInterval = TIME_MS.ONE_DAY, // 24 hours
   enabled = true
 }: UseStudentInsightsOptions = {}): UseStudentInsightsReturn => {
   const [insights, setInsights] = useState<StudentInsights | null>(null);

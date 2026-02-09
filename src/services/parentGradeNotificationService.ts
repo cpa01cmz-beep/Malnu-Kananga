@@ -3,7 +3,7 @@
 
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { gradesAPI } from './apiService';
 import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
@@ -648,9 +648,9 @@ class ParentGradeNotificationService {
     const id = `digest-${frequency}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const now = Date.now();
     
-    const scheduledFor = frequency === 'daily' 
-      ? now + (24 * 60 * 60 * 1000) // 24 hours
-      : now + (7 * 24 * 60 * 60 * 1000); // 7 days
+    const scheduledFor = frequency === 'daily'
+      ? now + TIME_MS.ONE_DAY // 24 hours
+      : now + TIME_MS.ONE_WEEK; // 7 days
 
     const notification: QueuedNotification = {
       id,
@@ -671,12 +671,12 @@ class ParentGradeNotificationService {
     // Setup daily digest timer
     const dailyTimer = setInterval(() => {
       this.processDigestNotifications('daily');
-    }, 24 * 60 * 60 * 1000); // Daily
+    }, TIME_MS.ONE_DAY); // Daily
 
     // Setup weekly digest timer  
     const weeklyTimer = setInterval(() => {
       this.processDigestNotifications('weekly');
-    }, 7 * 24 * 60 * 60 * 1000); // Weekly
+    }, TIME_MS.ONE_WEEK); // Weekly
 
     this.digestTimers.set('daily', dailyTimer);
     this.digestTimers.set('weekly', weeklyTimer);
@@ -688,7 +688,7 @@ class ParentGradeNotificationService {
     setInterval(() => {
       this.processScheduledNotifications();
       this.processQueuedOCRValidations(); // Also process OCR validation queue
-    }, 60 * 1000); // Every minute
+    }, TIME_MS.ONE_MINUTE); // Every minute
   }
 
   // Process notifications that are scheduled to be sent now

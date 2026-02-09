@@ -9,7 +9,7 @@
 // initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
 
@@ -196,7 +196,7 @@ class OfflineActionQueueService {
    * Clear completed actions (older than 1 hour)
    */
   public clearCompletedActions(): void {
-    const oneHourAgo = Date.now() - (60 * 60 * 1000);
+    const oneHourAgo = Date.now() - TIME_MS.ONE_HOUR;
     const initialLength = this.queue.length;
     
     this.queue = this.queue.filter(action => {

@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import type { CacheConfig, CacheEntry, CacheKeyParams, CacheStats, SerializedCacheData } from './aiCache.types';
 
 class AIResponseCache {
@@ -206,7 +206,7 @@ class AIResponseCache {
       const cacheData = JSON.parse(stored);
       
       // Don't load if cache is too old (older than 1 hour)
-      if (Date.now() - cacheData.timestamp > 60 * 60 * 1000) {
+      if (Date.now() - cacheData.timestamp > TIME_MS.ONE_HOUR) {
         localStorage.removeItem(STORAGE_KEYS.AI_CACHE);
         return;
       }
@@ -346,7 +346,7 @@ export const chatCache = new AIResponseCache({
 
 export const analysisCache = new AIResponseCache({
   maxSize: 30,
-  ttl: 60 * 60 * 1000 // 1 hour for analysis results
+  ttl: TIME_MS.ONE_HOUR // 1 hour for analysis results
 });
 
 export const editorCache = new AIResponseCache({
