@@ -2,6 +2,7 @@
 // Validates grades, schedules, materials, attendance, and offline data consistency
 
 import type { Grade, Schedule, Attendance, Student, Bookmark } from '../types';
+import { ACADEMIC, TIME_MS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -35,10 +36,13 @@ export interface FavoriteItem {
   addedAt?: string;
 }
 
-const GRADE_WEIGHTS = { assignment: 0.3, mid: 0.3, final: 0.4 };
+const GRADE_WEIGHTS = { 
+  assignment: ACADEMIC.GRADE_WEIGHTS.ASSIGNMENT, 
+  mid: ACADEMIC.GRADE_WEIGHTS.MID_EXAM, 
+  final: ACADEMIC.GRADE_WEIGHTS.FINAL_EXAM 
+};
 const MIN_SCORE = 0;
 const MAX_SCORE = 100;
-const VALID_ATTENDANCE_STATUSES = ['hadir', 'sakit', 'izin', 'alpa'];
 
 export class StudentPortalValidator {
   static validateGradeDisplay(grade: Grade | { [key: string]: unknown }): ValidationResult {
@@ -214,8 +218,7 @@ export class StudentPortalValidator {
 
     const { dayOfWeek, startTime, endTime, subjectId, room } = schedule;
 
-    const validDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-    if (!dayOfWeek || !validDays.includes(dayOfWeek as string)) {
+    if (!dayOfWeek || !ACADEMIC.DAYS_OF_WEEK.includes(dayOfWeek as typeof ACADEMIC.DAYS_OF_WEEK[number])) {
       errors.push(`Hari "${dayOfWeek}" tidak valid`);
     }
 
@@ -317,8 +320,8 @@ export class StudentPortalValidator {
       }
     }
 
-    if (!status || typeof status !== 'string' || !VALID_ATTENDANCE_STATUSES.includes(status.toLowerCase())) {
-      errors.push(`Status kehadiran "${status}" tidak valid. Status yang valid: ${VALID_ATTENDANCE_STATUSES.join(', ')}`);
+    if (!status || typeof status !== 'string' || !ACADEMIC.ATTENDANCE_STATUS_LIST.includes(status.toLowerCase() as typeof ACADEMIC.ATTENDANCE_STATUS_LIST[number])) {
+      errors.push(`Status kehadiran "${status}" tidak valid. Status yang valid: ${ACADEMIC.ATTENDANCE_STATUS_LIST.join(', ')}`);
     }
 
     if (!studentId || typeof studentId !== 'string') {
@@ -353,7 +356,7 @@ export class StudentPortalValidator {
       errors.push('Tanggal perekaman tidak valid');
     } else {
       const attendanceDate = new Date(attendance.date);
-      const daysDiff = Math.abs(recordedDate.getTime() - attendanceDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysDiff = Math.abs(recordedDate.getTime() - attendanceDate.getTime()) / TIME_MS.ONE_DAY;
 
       if (daysDiff > 7) {
         warnings.push(`Perekaman kehadiran dilambatkan ${Math.floor(daysDiff)} hari setelah tanggal kehadiran`);
@@ -411,15 +414,15 @@ export class StudentPortalValidator {
     const age = now - cacheTimestamp;
     const timeToExpiry = expiryTimestamp - now;
     const isExpired = now > expiryTimestamp;
-    const isFresh = !isExpired && age < 12 * 60 * 60 * 1000;
+    const isFresh = !isExpired && age < TIME_MS.TWELVE_HOURS;
 
     let message = '';
 
     if (isExpired) {
       message = 'Data offline kadaluarsa. Silakan sinkronkan.';
-    } else if (timeToExpiry < 60 * 60 * 1000) {
+    } else if (timeToExpiry < TIME_MS.ONE_HOUR) {
       message = 'Data offline akan kadaluarsa dalam kurang dari 1 jam.';
-    } else if (timeToExpiry < 6 * 60 * 60 * 1000) {
+    } else if (timeToExpiry < TIME_MS.SIX_HOURS) {
       message = 'Data offline akan kadaluarsa dalam beberapa jam.';
     } else if (isFresh) {
       message = 'Data offline masih segar.';
@@ -458,7 +461,7 @@ export class StudentPortalValidator {
         } else if (isDateField) {
           const onlineDate = new Date(onlineValue as string | number | Date);
           const offlineDate = new Date(offlineValue as string | number | Date);
-          const hoursDiff = Math.abs(onlineDate.getTime() - offlineDate.getTime()) / (1000 * 60 * 60);
+          const hoursDiff = Math.abs(onlineDate.getTime() - offlineDate.getTime()) / TIME_MS.ONE_HOUR;
           severity = hoursDiff > 24 ? 'error' : 'warning';
         }
 
