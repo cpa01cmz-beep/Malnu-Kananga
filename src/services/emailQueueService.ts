@@ -1,6 +1,7 @@
 import type { EmailData, EmailQueueItem } from '../types/email.types';
 import { STORAGE_KEYS, EMAIL_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+import { generateId, ID_CONFIG } from '../utils/idGenerator';
 
 class EmailQueueService {
   private storageKey = STORAGE_KEYS.EMAIL_QUEUE || 'malnu_email_queue';
@@ -30,7 +31,7 @@ class EmailQueueService {
   }
 
   private generateId(): string {
-    return `email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return generateId({ prefix: ID_CONFIG.PREFIXES.NOTIFICATION });
   }
 
   enqueue(emailData: EmailData, scheduledFor?: Date): EmailQueueItem {

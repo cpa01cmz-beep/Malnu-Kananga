@@ -22,8 +22,7 @@ import { gradesAPI, attendanceAPI, subjectsAPI, authAPI } from '../services/apiS
 import { Grade, Attendance, Subject, SubjectPerformance, AttendanceGradeCorrelation, Goal } from '../types';
 import { logger } from '../utils/logger';
 import { validateStudentProgress, getGradeStatus } from '../utils/studentValidation';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+// jsPDF and autoTable are dynamically imported in exportToPDF to reduce bundle size
 import { STORAGE_KEYS } from '../constants';
 import { getGradientClass, DARK_GRADIENT_CLASSES } from '../config/gradients';
 import { CHART_COLORS } from '../config/chartColors';
@@ -266,8 +265,12 @@ const ProgressAnalytics: React.FC<ProgressAnalyticsProps> = ({ onBack, onShowToa
     }
   };
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+      ]);
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
 
