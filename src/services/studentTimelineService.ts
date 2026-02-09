@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CONVERSION, GRADE_COLOR_THRESHOLDS } from '../constants';
 import {
   type Grade,
   type Attendance,
@@ -32,7 +32,7 @@ import type {
   EventEventData,
 } from '../types/timeline';
 
-const TIMELINE_CACHE_TTL = 300000;
+const TIMELINE_CACHE_TTL = TIME_MS.FIVE_MINUTES;
 
 interface TimelineCache {
   events: TimelineEvent[];
@@ -422,11 +422,11 @@ class StudentTimelineService {
     const percentage = (score / maxScore) * 100;
 
     let color = 'text-gray-600';
-    if (percentage >= 90) color = 'text-green-600';
-    else if (percentage >= 80) color = 'text-blue-600';
-    else if (percentage >= 70) color = 'text-yellow-600';
-    else if (percentage >= 60) color = 'text-orange-600';
-    else color = 'text-red-600';
+    if (percentage >= GRADE_COLOR_THRESHOLDS.EXCELLENT.min) color = GRADE_COLOR_THRESHOLDS.EXCELLENT.color;
+    else if (percentage >= GRADE_COLOR_THRESHOLDS.GOOD.min) color = GRADE_COLOR_THRESHOLDS.GOOD.color;
+    else if (percentage >= GRADE_COLOR_THRESHOLDS.AVERAGE.min) color = GRADE_COLOR_THRESHOLDS.AVERAGE.color;
+    else if (percentage >= GRADE_COLOR_THRESHOLDS.BELOW_AVERAGE.min) color = GRADE_COLOR_THRESHOLDS.BELOW_AVERAGE.color;
+    else color = GRADE_COLOR_THRESHOLDS.POOR.color;
 
     return {
       id: `grade-${grade.id}`,
@@ -766,10 +766,9 @@ class StudentTimelineService {
 
   private formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
-    const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
+    return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
   }
 
   private getItem<T>(key: string): T | null {
