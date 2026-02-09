@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, CACHE_TTL } from '../constants';
 import {
   type Grade,
   type Attendance,
@@ -32,7 +32,7 @@ import type {
   EventEventData,
 } from '../types/timeline';
 
-const TIMELINE_CACHE_TTL = 300000;
+const TIMELINE_CACHE_TTL = CACHE_TTL.TIMELINE;
 
 interface TimelineCache {
   events: TimelineEvent[];

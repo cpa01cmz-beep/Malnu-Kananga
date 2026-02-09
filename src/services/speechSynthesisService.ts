@@ -11,7 +11,7 @@ import type {
   SpeechSynthesisEvent,
   SpeechSynthesisVoice,
 } from '../types';
-import { VOICE_CONFIG } from '../constants';
+import { VOICE_CONFIG, RETRY_CONFIG, BACKOFF_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { validateSpeechSynthesisConfig } from '../utils/voiceSettingsValidation';
 import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
@@ -27,7 +27,7 @@ class SpeechSynthesisService {
   private voices: SpeechSynthesisVoice[] = [];
   private errorRecovery: ErrorRecoveryStrategy;
   private speakAttempts: number = 0;
-  private readonly maxSpeakAttempts: number = 3;
+  private readonly maxSpeakAttempts: number = VOICE_CONFIG.MAX_SPEAK_ATTEMPTS;
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
     const partialConfig = {
@@ -50,18 +50,18 @@ class SpeechSynthesisService {
     this.errorRecovery = new ErrorRecoveryStrategy(
       {
         maxAttempts: this.maxSpeakAttempts,
-        initialDelay: 1000,
-        maxDelay: 5000,
-        backoffFactor: 2,
+        initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+        maxDelay: BACKOFF_CONFIG.DEFAULT_MAX_DELAY_MS,
+        backoffFactor: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
         shouldRetry: (error: Error, attempt: number) => {
           const shouldRetry = this.shouldRetrySpeakError(error, attempt);
           return shouldRetry;
         },
       },
       {
-        failureThreshold: 5,
-        resetTimeout: 60000,
-        monitoringPeriod: 10000,
+        failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+        resetTimeout: RETRY_CONFIG.CIRCUIT_BREAKER_TIMEOUT,
+        monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
       }
     );
 

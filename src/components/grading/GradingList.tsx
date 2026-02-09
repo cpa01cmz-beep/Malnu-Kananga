@@ -5,6 +5,7 @@ import { calculateFinalGrade, calculateGradeLetter, validateGradeInput } from '.
 import { VoiceLanguage } from '../../types';
 import Button from '../ui/Button';
 import { logger } from '../../utils/logger';
+import { GRADE_LIMITS } from '../../constants';
 
 export interface GradingListProps {
   grades: Array<{
@@ -92,8 +93,8 @@ const GradingList: React.FC<GradingListProps> = ({
                           type="number"
                           value={student.assignment}
                           onChange={(e) => onGradeEdit(student.id, 'assignment', e.target.value)}
-                          min="0"
-                          max="100"
+                           min={GRADE_LIMITS.MIN}
+                          max={GRADE_LIMITS.MAX}
                           aria-label={`Nilai assignment untuk ${student.name}`}
                           className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                             inlineErrors[student.id]?.assignment
@@ -125,8 +126,8 @@ const GradingList: React.FC<GradingListProps> = ({
                           type="number"
                           value={student.midExam}
                           onChange={(e) => onGradeEdit(student.id, 'midExam', e.target.value)}
-                          min="0"
-                          max="100"
+                           min={GRADE_LIMITS.MIN}
+                          max={GRADE_LIMITS.MAX}
                           aria-label={`Nilai UTS untuk ${student.name}`}
                           className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                             inlineErrors[student.id]?.midExam
@@ -158,8 +159,8 @@ const GradingList: React.FC<GradingListProps> = ({
                           type="number"
                           value={student.finalExam}
                           onChange={(e) => onGradeEdit(student.id, 'finalExam', e.target.value)}
-                          min="0"
-                          max="100"
+                           min={GRADE_LIMITS.MIN}
+                          max={GRADE_LIMITS.MAX}
                           aria-label={`Nilai UAS untuk ${student.name}`}
                           className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                             inlineErrors[student.id]?.finalExam

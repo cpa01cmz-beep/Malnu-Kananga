@@ -24,6 +24,7 @@ import GradingList from './GradingList';
 import AIPanel from './AIPanel';
 import OCRPanel from './OCRPanel';
 import { calculateFinalGrade } from '../../utils/teacherValidation';
+import { GRADE_LIMITS } from '../../constants';
 
 export interface GradingManagementProps {
   onBack: () => void;
@@ -421,8 +422,8 @@ const BatchOperations: React.FC<BatchOperationsProps> = ({
           type="number"
           id="batch-assignment-input"
           placeholder="Assignment"
-          min="0"
-          max="100"
+          min={GRADE_LIMITS.MIN}
+          max={GRADE_LIMITS.MAX}
           aria-label="Nilai Assignment untuk batch"
           onChange={(e) => handleBatchGradeInput('assignment', e.target.value)}
           className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
@@ -443,8 +444,8 @@ const BatchOperations: React.FC<BatchOperationsProps> = ({
           type="number"
           id="batch-uts-input"
           placeholder="UTS"
-          min="0"
-          max="100"
+          min={GRADE_LIMITS.MIN}
+          max={GRADE_LIMITS.MAX}
           aria-label="Nilai UTS untuk batch"
           onChange={(e) => handleBatchGradeInput('midExam', e.target.value)}
           className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"
@@ -465,8 +466,8 @@ const BatchOperations: React.FC<BatchOperationsProps> = ({
           type="number"
           id="batch-uas-input"
           placeholder="UAS"
-          min="0"
-          max="100"
+          min={GRADE_LIMITS.MIN}
+          max={GRADE_LIMITS.MAX}
           aria-label="Nilai UAS untuk batch"
           onChange={(e) => handleBatchGradeInput('finalExam', e.target.value)}
           className="w-24 px-2 py-1 rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500"

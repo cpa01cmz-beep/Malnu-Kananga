@@ -3,6 +3,7 @@ import React from 'react';
 import FieldVoiceInput from '../FieldVoiceInput';
 import { calculateFinalGrade, calculateGradeLetter } from '../../utils/teacherValidation';
 import { VoiceLanguage } from '../../types';
+import { GRADE_LIMITS } from '../../constants';
 
 export interface GradeInputRowProps {
   student: {
@@ -31,8 +32,8 @@ const GradeInputRow: React.FC<GradeInputRowProps> = ({ student, _isEditing, inli
               type="number"
               value={student.assignment}
               onChange={(e) => onInputChange(student.id, 'assignment', e.target.value)}
-              min="0"
-              max="100"
+              min={GRADE_LIMITS.MIN}
+              max={GRADE_LIMITS.MAX}
               aria-label={`Nilai assignment untuk ${student.name}`}
               className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                 inlineErrors?.assignment
@@ -64,8 +65,8 @@ const GradeInputRow: React.FC<GradeInputRowProps> = ({ student, _isEditing, inli
               type="number"
               value={student.midExam}
               onChange={(e) => onInputChange(student.id, 'midExam', e.target.value)}
-              min="0"
-              max="100"
+              min={GRADE_LIMITS.MIN}
+              max={GRADE_LIMITS.MAX}
               aria-label={`Nilai UTS untuk ${student.name}`}
               className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                 inlineErrors?.midExam
@@ -97,8 +98,8 @@ const GradeInputRow: React.FC<GradeInputRowProps> = ({ student, _isEditing, inli
               type="number"
               value={student.finalExam}
               onChange={(e) => onInputChange(student.id, 'finalExam', e.target.value)}
-              min="0"
-              max="100"
+              min={GRADE_LIMITS.MIN}
+              max={GRADE_LIMITS.MAX}
               aria-label={`Nilai UAS untuk ${student.name}`}
               className={`w-full sm:max-w-16 text-center p-1 rounded border bg-white dark:bg-neutral-800 focus:ring-2 ${
                 inlineErrors?.finalExam

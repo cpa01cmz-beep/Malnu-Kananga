@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS, bytesToMb } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -79,8 +79,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai tugas'));
     } else if (isNaN(grade.assignment)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.assignment < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.assignment < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.assignment > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.assignment < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.assignment > 0) {
@@ -94,8 +94,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UTS'));
     } else if (isNaN(grade.midExam)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.midExam < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.midExam < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.midExam > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.midExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.midExam > 0) {
@@ -109,8 +109,8 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.INVALID_NUMBER('Nilai UAS'));
     } else if (isNaN(grade.finalExam)) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
-    } else if (grade.finalExam < 0) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
+    } else if (grade.finalExam < GRADE_LIMITS.MIN) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.finalExam > GRADE_LIMITS.MAX) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
     } else if (grade.finalExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.finalExam > 0) {
@@ -378,12 +378,12 @@ export const calculateGradeLetter = getGradeLetter;
 // Legacy function for backward compatibility
 export function validateGradeInputLegacy(score: number, fieldName: string, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (typeof score !== 'number' || isNaN(score)) {
     errors.push(`${fieldName} must be a valid number`);
-  } else if (score < 0) {
-    errors.push(`${fieldName} cannot be negative`);
+  } else if (score < GRADE_LIMITS.MIN) {
+    errors.push(`${fieldName} cannot be less than ${GRADE_LIMITS.MIN}`);
   } else if (score > maxScore) {
     errors.push(`${fieldName} cannot exceed ${maxScore}`);
   } else if (!allowZero && score === 0) {
@@ -404,7 +404,7 @@ export function validateGrade(
   options: GradeValidationOptions = {}
 ): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (!grade.studentId || grade.studentId.trim() === '') {
     errors.push('Student ID is required');
@@ -428,11 +428,11 @@ export function validateGrade(
 
   if (typeof grade.assignment !== 'number' || isNaN(grade.assignment)) {
     errors.push('Assignment score must be a valid number');
-  } else if (grade.assignment < 0) {
-    errors.push('Assignment score cannot be negative');
+  } else if (grade.assignment < GRADE_LIMITS.MIN) {
+    errors.push(`Assignment score cannot be less than ${GRADE_LIMITS.MIN}`);
   } else if (grade.assignment > maxScore) {
     errors.push(`Assignment score cannot exceed ${maxScore}`);
-  } else if (!allowZero && grade.assignment === 0) {
+  } else if (!allowZero && grade.assignment === GRADE_LIMITS.MIN) {
     errors.push('Assignment score is required');
   } else if (grade.assignment < requireMinScore) {
     errors.push(`Assignment score must be at least ${requireMinScore}`);
@@ -440,11 +440,11 @@ export function validateGrade(
 
   if (typeof grade.midExam !== 'number' || isNaN(grade.midExam)) {
     errors.push('Mid exam score must be a valid number');
-  } else if (grade.midExam < 0) {
-    errors.push('Mid exam score cannot be negative');
+  } else if (grade.midExam < GRADE_LIMITS.MIN) {
+    errors.push(`Mid exam score cannot be less than ${GRADE_LIMITS.MIN}`);
   } else if (grade.midExam > maxScore) {
     errors.push(`Mid exam score cannot exceed ${maxScore}`);
-  } else if (!allowZero && grade.midExam === 0) {
+  } else if (!allowZero && grade.midExam === GRADE_LIMITS.MIN) {
     errors.push('Mid exam score is required');
   } else if (grade.midExam < requireMinScore) {
     errors.push(`Mid exam score must be at least ${requireMinScore}`);
@@ -452,11 +452,11 @@ export function validateGrade(
 
   if (typeof grade.finalExam !== 'number' || isNaN(grade.finalExam)) {
     errors.push('Final exam score must be a valid number');
-  } else if (grade.finalExam < 0) {
-    errors.push('Final exam score cannot be negative');
+  } else if (grade.finalExam < GRADE_LIMITS.MIN) {
+    errors.push(`Final exam score cannot be less than ${GRADE_LIMITS.MIN}`);
   } else if (grade.finalExam > maxScore) {
     errors.push(`Final exam score cannot exceed ${maxScore}`);
-  } else if (!allowZero && grade.finalExam === 0) {
+  } else if (!allowZero && grade.finalExam === GRADE_LIMITS.MIN) {
     errors.push('Final exam score is required');
   } else if (grade.finalExam < requireMinScore) {
     errors.push(`Final exam score must be at least ${requireMinScore}`);
@@ -487,8 +487,8 @@ export function validateStudent(student: Student): ValidationResult {
 
   if (!student.nisn || student.nisn.trim() === '') {
     errors.push('NISN is required');
-  } else if (student.nisn.length !== 10) {
-    errors.push('NISN must be exactly 10 digits');
+  } else if (student.nisn.length !== ACADEMIC.NISN_LENGTH) {
+    errors.push(`NISN must be exactly ${ACADEMIC.NISN_LENGTH} digits`);
   }
 
   if (!student.nis || student.nis.trim() === '') {
@@ -713,7 +713,7 @@ export function validateELibrary(material: ELibrary): ValidationResult {
   } else if (material.fileSize <= 0) {
     errors.push('Material file size must be greater than 0');
   } else if (material.fileSize > FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX) {
-    errors.push(`Material file size cannot exceed ${FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX / (1024 * 1024)}MB`);
+    errors.push(`Material file size cannot exceed ${bytesToMb(FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX)}MB`);
   }
 
   if (!material.subjectId || material.subjectId.trim() === '') {

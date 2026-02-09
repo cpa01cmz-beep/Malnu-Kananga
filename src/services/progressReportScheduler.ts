@@ -3,7 +3,7 @@ import { parentProgressReportService, type ProgressReportSettings, type Progress
 import { getEmailNotificationService } from './emailNotificationService';
 import { gradesAPI, attendanceAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, STORAGE_LIMITS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, STORAGE_LIMITS, SCHEDULER_INTERVALS } from '../constants';
 import type { PushNotification } from '../types';
 
 export interface ProgressReportAuditLog {
@@ -20,7 +20,6 @@ export interface ProgressReportAuditLog {
 
 class ProgressReportScheduler {
   private schedulerInterval: number | null = null;
-  private readonly CHECK_INTERVAL_MINUTES = 60;
 
   start(): void {
     if (this.schedulerInterval !== null) {
@@ -30,7 +29,7 @@ class ProgressReportScheduler {
 
     this.schedulerInterval = window.setInterval(() => {
       this.processScheduledReports();
-    }, this.CHECK_INTERVAL_MINUTES * 60 * 1000);
+    }, SCHEDULER_INTERVALS.PROGRESS_REPORT_CHECK);
 
     logger.info('Progress report scheduler started (runs every hour)');
   }

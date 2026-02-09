@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, TIME_MS } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -116,11 +116,9 @@ class EmailNotificationService {
   }
 
   private initializeDigestScheduler(): void {
-    const interval = 5 * 60 * 1000; // Check every 5 minutes
-    
     this.digestInterval = window.setInterval(() => {
       this.processDigestQueues();
-    }, interval);
+    }, TIME_MS.FIVE_MINUTES);
 
     logger.info('Email digest scheduler initialized');
   }
@@ -529,7 +527,7 @@ class EmailNotificationService {
   } {
     const history = this.getDeliveryHistory(userId);
     const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - TIME_MS.THIRTY_DAYS);
 
     const recent = history.filter(
       d => new Date(d.timestamp) >= thirtyDaysAgo

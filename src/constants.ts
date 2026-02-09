@@ -846,6 +846,7 @@ export const CACHE_TTL = {
     AI_EDITOR: 15 * 60 * 1000, // 15 minutes
     AI_OCR: 45 * 60 * 1000, // 45 minutes
     CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
+    TIMELINE: 5 * 60 * 1000, // 5 minutes
 } as const;
 
 // Storage limits for various services - centralized to avoid hardcoded limits

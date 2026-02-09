@@ -14,7 +14,7 @@ import type {
   SpeechWindow,
   SpeechRecognitionConstructor,
 } from '../types';
-import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
+import { VOICE_CONFIG, ERROR_MESSAGES, RETRY_CONFIG, BACKOFF_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import {
   classifyError,
@@ -35,7 +35,7 @@ class SpeechRecognitionService {
   private permissionChangeListener: ((this: globalThis.PermissionStatus, ev: Event) => unknown) | null = null;
   private errorRecovery: ErrorRecoveryStrategy;
   private startAttempts: number = 0;
-  private readonly maxStartAttempts: number = 3;
+  private readonly maxStartAttempts: number = VOICE_CONFIG.MAX_SPEAK_ATTEMPTS;
 
   constructor(config?: Partial<SpeechRecognitionConfig>) {
     this.config = {
@@ -50,18 +50,18 @@ class SpeechRecognitionService {
     this.errorRecovery = new ErrorRecoveryStrategy(
       {
         maxAttempts: this.maxStartAttempts,
-        initialDelay: 1000,
-        maxDelay: 5000,
-        backoffFactor: 2,
+        initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+        maxDelay: BACKOFF_CONFIG.DEFAULT_MAX_DELAY_MS,
+        backoffFactor: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
         shouldRetry: (error: Error, attempt: number) => {
           const shouldRetry = this.shouldRetryStartError(error, attempt);
           return shouldRetry;
         },
       },
       {
-        failureThreshold: 5,
-        resetTimeout: 60000,
-        monitoringPeriod: 10000,
+        failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+        resetTimeout: RETRY_CONFIG.CIRCUIT_BREAKER_TIMEOUT,
+        monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
       }
     );
 

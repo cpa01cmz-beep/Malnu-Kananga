@@ -555,7 +555,7 @@ class OfflineDataService {
     // Check sync status every 5 minutes
     this.syncInterval = setInterval(() => {
       this.notifySyncStatusChange();
-    }, 5 * 60 * 1000);
+    }, TIME_MS.FIVE_MINUTES);
   }
 
   private notifySyncStatusChange(): void {

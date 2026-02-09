@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
+import { TIME_MS } from '../../constants';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Tab from '../ui/Tab';
@@ -28,7 +29,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
 
   const loadAuditLogs = useCallback(() => {
     const logs = permissionService.getAuditLogs({
-      startDate: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
+      startDate: new Date(Date.now() - TIME_MS.ONE_DAY) // Last 24 hours
     });
     setAuditLogs(logs);
   }, []);
