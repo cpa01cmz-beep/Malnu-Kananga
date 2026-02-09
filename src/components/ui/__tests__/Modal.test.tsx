@@ -127,7 +127,7 @@ describe('Modal', () => {
       render(<Modal isOpen={true} onClose={handleClose} className="custom-class">Preserved Classes</Modal>);
       const modal = screen.getByText('Preserved Classes').closest('[role="dialog"]');
       expect(modal).toBeInTheDocument();
-      expect(modal).toHaveClass('bg-white', 'dark:bg-neutral-800', 'rounded-xl', 'shadow-float', 'custom-class');
+      expect(modal).toHaveClass('bg-white/95', 'dark:bg-neutral-800/95', 'rounded-xl', 'shadow-2xl', 'custom-class');
     });
   });
 
@@ -319,14 +319,14 @@ describe('Modal', () => {
       render(<Modal isOpen={true} onClose={handleClose}>Dark Mode Modal</Modal>);
       const modal = screen.getByText('Dark Mode Modal').closest('[role="dialog"]');
       expect(modal).toBeInTheDocument();
-      expect(modal).toHaveClass('dark:bg-neutral-800', 'dark:border-neutral-700');
+      expect(modal).toHaveClass('dark:bg-neutral-800/95', 'dark:border-neutral-700/60');
     });
 
     it('close button has dark mode hover classes', () => {
       const handleClose = vi.fn();
       render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
       const closeButton = screen.getByRole('button', { name: 'Close modal' });
-      expect(closeButton).toHaveClass('dark:hover:bg-neutral-700', 'dark:text-neutral-400', 'dark:hover:text-neutral-200');
+      expect(closeButton).toHaveClass('dark:hover:bg-neutral-700/60', 'dark:text-neutral-400', 'dark:hover:text-neutral-200');
     });
   });
 
@@ -412,14 +412,14 @@ describe('Modal', () => {
       const handleClose = vi.fn();
       render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
       const backdrop = screen.getByRole('presentation');
-      expect(backdrop).toHaveClass('transition-opacity', 'duration-300');
+      expect(backdrop).toHaveClass('transition-all', 'duration-300');
     });
 
     it('renders with backdrop blur', () => {
       const handleClose = vi.fn();
       render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
       const backdrop = screen.getByRole('presentation');
-      expect(backdrop).toHaveClass('backdrop-blur-sm');
+      expect(backdrop).toHaveClass('backdrop-blur-md');
     });
   });
 
