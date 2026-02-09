@@ -15,7 +15,7 @@ import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced";
 
 const NavLinks = () => (
     <>
@@ -252,16 +252,18 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700 safe-area-padding enhanced-mobile-spacing`}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-5 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect nav-polished`}
                 >
                     <nav
                         id="mobile-menu"
-                        className="flex flex-col gap-3 sm:gap-4 font-medium text-center"
+                        className="flex flex-col gap-4 sm:gap-5 font-medium text-center"
                         role="navigation"
                         aria-label="Menu navigasi utama"
                     >
-                        <NavLinks />
-                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
+                        <div className="mobile-nav-enhanced">
+                            <NavLinks />
+                        </div>
+                            <div className="pt-5 border-t border-neutral-200/40 dark:border-neutral-700/40 flex flex-col gap-4">
                                   {isLoggedIn ? (
                                      <>
                                            <Button
@@ -269,7 +271,7 @@ const Header: React.FC<HeaderProps> = ({
                                                onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }}
                                                fullWidth
                                                size="lg"
-                                               className="touch-manipulation min-h-[44px]"
+                                               className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
                                            >
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                            </Button>
@@ -278,7 +280,7 @@ const Header: React.FC<HeaderProps> = ({
                                                onClick={() => { onLogout(); setIsMenuOpen(false); }}
                                                fullWidth
                                                size="lg"
-                                               className="touch-manipulation min-h-[44px]"
+                                               className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
                                            >
                                                Logout
                                            </Button>
@@ -289,7 +291,7 @@ const Header: React.FC<HeaderProps> = ({
                                               onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
                                               fullWidth
                                               size="lg"
-                                              className="touch-manipulation min-h-[44px]"
+                                              className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
                                           >
                                               Login
                                           </Button>

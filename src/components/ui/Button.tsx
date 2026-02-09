@@ -17,7 +17,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover",

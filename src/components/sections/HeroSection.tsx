@@ -24,11 +24,11 @@ const HeroSection: React.FC = () => {
           weight="bold"
           tracking="tight"
           leading="leading-[1.1]"
-          className="sm:text-6xl md:text-7xl lg:text-8xl mb-6 sm:mb-8 animate-scale-in bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent dark:from-primary-400 dark:via-primary-500 dark:to-primary-600 reading-enhanced"
+          className="text-hero sm:text-6xl md:text-7xl lg:text-8xl mb-6 sm:mb-8 animate-scale-in bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent dark:from-primary-400 dark:via-primary-500 dark:to-primary-600 reading-enhanced"
         >
           MA Malnu Kananga
         </Heading>
-        <p className="max-w-3xl mx-auto text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 leading-relaxed animate-fade-in font-medium tracking-[-0.01em] prose text-body reading-enhanced text-reveal">
+        <p className="text-subtitle max-w-3xl mx-auto text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 leading-relaxed animate-fade-in font-medium tracking-[-0.01em] prose reading-comfortable text-reveal">
           Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
         </p>
         <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 justify-center items-center animate-fade-in-up enhanced-mobile-spacing">
