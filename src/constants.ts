@@ -477,3 +477,97 @@ export const OPACITY_TOKENS = {
     BACKDROP_BLUR_SM: 'backdrop-blur-sm',
     BACKDROP_BLUR_XL: 'backdrop-blur-xl',
 } as const;
+
+// Time constants in milliseconds - use these instead of hardcoded calculations
+export const TIME_MS = {
+    ONE_SECOND: 1000,
+    ONE_MINUTE: 60 * 1000,
+    ONE_HOUR: 60 * 60 * 1000,
+    SIX_HOURS: 6 * 60 * 60 * 1000,
+    TWELVE_HOURS: 12 * 60 * 60 * 1000,
+    ONE_DAY: 24 * 60 * 60 * 1000,
+    ONE_WEEK: 7 * 24 * 60 * 60 * 1000,
+    THIRTY_DAYS: 30 * 24 * 60 * 60 * 1000,
+} as const;
+
+// File size limits in bytes
+export const FILE_SIZE_LIMITS = {
+    MATERIAL_DEFAULT: 50 * 1024 * 1024, // 50MB
+    MATERIAL_LARGE: 200 * 1024 * 1024,  // 200MB
+    PPDB_DOCUMENT: 10 * 1024 * 1024,    // 10MB
+    IMAGE_MIN: 10 * 1024,               // 10KB
+    PROFILE_IMAGE: 5 * 1024 * 1024,     // 5MB
+    BATCH_TOTAL: 500 * 1024 * 1024,     // 500MB
+    TEACHER_MATERIAL_MAX: 100 * 1024 * 1024, // 100MB
+} as const;
+
+// Pagination defaults
+export const PAGINATION_DEFAULTS = {
+    NOTIFICATIONS: 20,
+    MESSAGES: 50,
+    EMAIL_HISTORY: 50,
+    TIMELINE_ITEMS: 20,
+    MAX_LOG_ENTRIES: 1000,
+    MAX_VISIBLE_PAGES: 5,
+} as const;
+
+// Retry and timeout configuration
+export const RETRY_CONFIG = {
+    DEFAULT_INITIAL_DELAY: 1000,
+    DEFAULT_MAX_DELAY: 10000,
+    DEFAULT_RESET_TIMEOUT: 60000,
+    DEFAULT_MONITORING_PERIOD: 10000,
+    WEBSOCKET_RECONNECT_DELAY: 5000,
+    WEBSOCKET_CONNECTION_TIMEOUT: 10000,
+    WEBSOCKET_PING_INTERVAL: 30000,
+    WEBSOCKET_FALLBACK_POLLING_INTERVAL: 30000,
+    WEBSOCKET_SUBSCRIPTION_TTL: 3600000,
+    NETWORK_SLOW_CONNECTION_THRESHOLD: 3000,
+    CIRCUIT_BREAKER_FAILURE_THRESHOLD: 5,
+    CIRCUIT_BREAKER_TIMEOUT: 60000,
+} as const;
+
+// Grade validation limits
+export const GRADE_LIMITS = {
+    MIN: 0,
+    MAX: 100,
+    PASS_THRESHOLD: 40,
+} as const;
+
+// Validation length limits
+export const VALIDATION_LIMITS = {
+    NOTIFICATION_BODY_MAX: 1000,
+    DESCRIPTION_MAX: 1000,
+    AI_PROMPT_MAX: 1000,
+    TITLE_MAX: 255,
+} as const;
+
+// UI delays in milliseconds
+export const UI_DELAYS = {
+    DEBOUNCE_DEFAULT: 1000,
+    DEBOUNCE_SHORT: 200,
+    DEBOUNCE_LONG: 5000,
+    LOADING_INDICATOR: 1500,
+    REDIRECT_DELAY: 3000,
+    USER_IMPORT_DELAY: 100,
+} as const;
+
+// Cache and storage limits
+export const CACHE_LIMITS = {
+    VOICE_CACHE_SIZE: 50,
+    VOICE_CACHE_TTL: 5 * 60 * 1000, // 5 minutes
+    MESSAGE_QUEUE_SIZE: 50,
+    NOTIFICATION_HISTORY_SIZE: 100,
+    VOICE_NOTIFICATION_QUEUE_SIZE: 10,
+    VOICE_NOTIFICATION_HISTORY_SIZE: 50,
+} as const;
+
+// API Configuration - Centralized to avoid circular dependencies
+export const API_CONFIG = {
+    DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
+    WS_PATH: '/ws',
+    ENDPOINTS: {
+        CHAT: '/api/chat',
+        LOGIN: '/api/auth/login',
+    },
+} as const;
