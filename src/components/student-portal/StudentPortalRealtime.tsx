@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Student } from '../../types';
 import { gradesAPI, attendanceAPI } from '../../services/apiService';
 import { logger } from '../../utils/logger';
@@ -103,42 +103,46 @@ export const useStudentPortalRealtime = ({
     }
   }, [isOnline, onSetRefreshingData]);
 
+  const eventTypes = useMemo(() => [
+    'grade_updated',
+    'grade_created',
+    'attendance_marked',
+    'attendance_updated',
+    'library_material_added',
+    'library_material_updated',
+  ] as RealTimeEventType[], []);
+
+  const handleEvent = useCallback((event: unknown) => {
+    if (!studentData) return;
+
+    const typedEvent = event as Record<string, unknown>;
+    const entity = typedEvent.entity as string;
+    const data = typedEvent.data as Record<string, unknown> | undefined;
+
+    if (!entity || typeof entity !== 'string') {
+      logger.warn('Invalid real-time event: missing or invalid entity', { event });
+      return;
+    }
+
+    if (entity === 'grade') {
+      const dataStudentId = data?.studentId as string;
+      if (dataStudentId && dataStudentId === studentData.id) {
+        refreshGrades();
+      }
+    } else if (entity === 'attendance') {
+      const dataStudentId = data?.studentId as string;
+      if (dataStudentId && dataStudentId === studentData.id) {
+        refreshAttendance();
+      }
+    } else if (entity === 'library_material') {
+      refreshMaterials();
+    }
+  }, [studentData, refreshGrades, refreshAttendance, refreshMaterials]);
+
   const { isConnected, isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'grade_updated',
-      'grade_created',
-      'attendance_marked',
-      'attendance_updated',
-      'library_material_added',
-      'library_material_updated',
-    ] as RealTimeEventType[],
+    eventTypes,
     enabled: isOnline,
-    onEvent: useCallback((event: unknown) => {
-      if (!studentData) return;
-
-      const typedEvent = event as Record<string, unknown>;
-      const entity = typedEvent.entity as string;
-      const data = typedEvent.data as Record<string, unknown> | undefined;
-
-      if (!entity || typeof entity !== 'string') {
-        logger.warn('Invalid real-time event: missing or invalid entity', { event });
-        return;
-      }
-
-      if (entity === 'grade') {
-        const dataStudentId = data?.studentId as string;
-        if (dataStudentId && dataStudentId === studentData.id) {
-          refreshGrades();
-        }
-      } else if (entity === 'attendance') {
-        const dataStudentId = data?.studentId as string;
-        if (dataStudentId && dataStudentId === studentData.id) {
-          refreshAttendance();
-        }
-      } else if (entity === 'library_material') {
-        refreshMaterials();
-      }
-    }, [studentData, refreshGrades, refreshAttendance, refreshMaterials]),
+    onEvent: handleEvent,
   });
 
   return { isConnected, isConnecting };

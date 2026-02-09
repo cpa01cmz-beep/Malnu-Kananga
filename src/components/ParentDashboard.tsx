@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { UserIcon } from './icons/UserIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
@@ -403,26 +403,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     }
   }, [networkStatus.isOnline, offlineData, offlineDataService, onShowToast]);
 
-  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'grade_updated',
-      'grade_created',
-      'attendance_marked',
-      'attendance_updated',
-      'announcement_created',
-      'announcement_updated',
-      'event_created',
-      'event_updated',
-    ] as RealTimeEventType[],
-    enabled: networkStatus.isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; data: { studentId: string } };
-      if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
-        if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
-          refreshChildData(selectedChild.studentId);
-        }
+  const parentEventTypes = useMemo(() => [
+    'grade_updated',
+    'grade_created',
+    'attendance_marked',
+    'attendance_updated',
+    'announcement_created',
+    'announcement_updated',
+    'event_created',
+    'event_updated',
+  ] as RealTimeEventType[], []);
+
+  const handleParentRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; data: { studentId: string } };
+    if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
+      if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
+        refreshChildData(selectedChild.studentId);
       }
-    }, [selectedChild, refreshChildData]),
+    }
+  }, [selectedChild, refreshChildData]);
+
+  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
+    eventTypes: parentEventTypes,
+    enabled: networkStatus.isOnline,
+    onEvent: handleParentRealtimeEvent,
   });
 
   

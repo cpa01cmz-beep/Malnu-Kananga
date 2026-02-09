@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { UsersIcon } from './icons/UsersIcon';
 import ClipboardDocumentCheckIcon from './icons/ClipboardDocumentCheckIcon';
@@ -280,26 +280,30 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     }
   }, [isOnline]);
 
+  const teacherEventTypes = useMemo(() => [
+    'grade_updated',
+    'grade_created',
+    'announcement_created',
+    'announcement_updated',
+    'event_created',
+    'event_updated',
+    'message_created',
+    'message_updated',
+  ] as RealTimeEventType[], []);
+
+  const handleRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; type: string };
+    if (typedEvent.entity === 'grade' || typedEvent.entity === 'announcement' || typedEvent.entity === 'event') {
+      refreshDashboardData();
+    } else if (typedEvent.entity === 'message' && typedEvent.type === 'message_created') {
+      handleToast('Pesan baru diterima', 'success');
+    }
+  }, [refreshDashboardData, handleToast]);
+
   const { isConnected, isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'grade_updated',
-      'grade_created',
-      'announcement_created',
-      'announcement_updated',
-      'event_created',
-      'event_updated',
-      'message_created',
-      'message_updated',
-    ] as RealTimeEventType[],
+    eventTypes: teacherEventTypes,
     enabled: isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; type: string };
-      if (typedEvent.entity === 'grade' || typedEvent.entity === 'announcement' || typedEvent.entity === 'event') {
-        refreshDashboardData();
-      } else if (typedEvent.entity === 'message' && typedEvent.type === 'message_created') {
-        handleToast('Pesan baru diterima', 'success');
-      }
-    }, [refreshDashboardData, handleToast]),
+    onEvent: handleRealtimeEvent,
   });
 
   // Check permissions for teacher role with extra role

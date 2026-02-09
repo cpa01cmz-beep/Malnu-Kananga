@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { UsersIcon } from './icons/UsersIcon';
 
@@ -34,6 +34,7 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { RealTimeEventType } from '../services/webSocketService';
 import { WebSocketStatus } from './WebSocketStatus';
 
 interface AdminDashboardProps {
@@ -75,32 +76,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
      isSyncing: isActionQueueSyncing
    } = useOfflineActionQueue();
 
-   const { isConnected, isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'user_role_changed',
-      'user_status_changed',
-      'announcement_created',
-      'announcement_updated',
-      'notification_created',
-      'grade_updated',
-      'attendance_updated',
-      'message_created',
-      'message_updated',
-    ],
-    enabled: isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; type: string; data?: Record<string, unknown> };
+  const adminEventTypes = useMemo(() => [
+    'user_role_changed',
+    'user_status_changed',
+    'announcement_created',
+    'announcement_updated',
+    'notification_created',
+    'grade_updated',
+    'attendance_updated',
+    'message_created',
+    'message_updated',
+  ] as RealTimeEventType[], []);
 
-      if (typedEvent.entity === 'user') {
-        logger.info('Real-time event: user updated');
-        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
-      } else if (typedEvent.entity === 'announcement') {
-        logger.info('Real-time event: announcement updated');
-        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
-      } else if (typedEvent.type === 'notification_created') {
-        logger.info('Real-time event: notification created');
-      }
-    }, []),
+  const handleAdminRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; type: string; data?: Record<string, unknown> };
+
+    if (typedEvent.entity === 'user') {
+      logger.info('Real-time event: user updated');
+      setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+    } else if (typedEvent.entity === 'announcement') {
+      logger.info('Real-time event: announcement updated');
+      setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+    } else if (typedEvent.type === 'notification_created') {
+      logger.info('Real-time event: notification created');
+    }
+  }, []);
+
+  const { isConnected, isConnecting } = useRealtimeEvents({
+    eventTypes: adminEventTypes,
+    enabled: isOnline,
+    onEvent: handleAdminRealtimeEvent,
   });
 
   const getCurrentUserId = (): string => {
