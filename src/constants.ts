@@ -720,6 +720,30 @@ export const CACHE_TTL = {
     CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
 } as const;
 
+// Byte conversion constants
+export const BYTES_PER_KB = 1024;
+
+// Component-specific debounce delays
+export const DEBOUNCE_DELAYS = {
+    ACTIVITY_FEED: 500,
+    FIELD_VALIDATION: 300,
+    SEARCH_INPUT: 300,
+    AI_CACHE_REFRESH: 5000,
+} as const;
+
+// Component timeout constants
+export const COMPONENT_TIMEOUTS = {
+    TOAST_DEFAULT: 3000,
+    VOICE_MESSAGE: 30000,
+    PASSWORD_REQUIREMENTS_HIDE: 3000,
+    PAGE_RELOAD: 1500,
+} as const;
+
+// Animation constants
+export const ANIMATION_CONFIG = {
+    TOAST_EASING: 'cubic-bezier(0.4, 0, 0.2, 1)',
+} as const;
+
 // HTTP constants
 export const HTTP = {
     HEADERS: {
