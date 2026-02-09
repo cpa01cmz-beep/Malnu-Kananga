@@ -643,6 +643,7 @@ export const SCHEDULER_INTERVALS = {
     AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
     OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
     WEBSOCKET_PING: 30 * 1000, // 30 seconds
+    AUTH_CHECK: 5 * 1000, // 5 seconds
 } as const;
 
 // Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
@@ -909,6 +910,7 @@ export const DEBOUNCE_DELAYS = {
     FIELD_VALIDATION: 300,
     SEARCH_INPUT: 300,
     AI_CACHE_REFRESH: 5000,
+    RAPID_CHANGE_BATCH: 100, // Short delay to batch rapid changes
 } as const;
 
 // Component timeout constants
