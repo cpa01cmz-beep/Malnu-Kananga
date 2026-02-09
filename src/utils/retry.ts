@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import { RETRY_CONFIG } from '../constants';
+import { RETRY_CONFIG, RETRYABLE_STATUS_CODES } from '../constants';
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -22,12 +22,11 @@ const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
   maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
   backoffMultiplier: 2,
   shouldRetry: (error: Error) => {
-    const retryableStatuses = [408, 429, 500, 502, 503, 504];
     const isNetworkError = error.message.includes('Network Error') ||
                         error.message.includes('fetch failed') ||
                         error.message.includes('ECONNREFUSED') ||
                         error.message.includes('ETIMEDOUT');
-    const isRetryableStatus = retryableStatuses.some(status =>
+    const isRetryableStatus = RETRYABLE_STATUS_CODES.some(status =>
       error.message.includes(`status ${status}`) ||
       error.message.includes(`${status}`)
     );
@@ -99,7 +98,7 @@ export function isRateLimitError(error: Error): boolean {
 }
 
 export function isServerError(error: Error): boolean {
-  const serverErrorStatuses = [500, 502, 503, 504];
+  const serverErrorStatuses = RETRYABLE_STATUS_CODES.filter(status => status >= 500);
   return serverErrorStatuses.some(status =>
     error.message.includes(`status ${status}`) ||
     error.message.includes(`${status}`)

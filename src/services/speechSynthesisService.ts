@@ -11,7 +11,13 @@ import type {
   SpeechSynthesisEvent,
   SpeechSynthesisVoice,
 } from '../types';
-import { VOICE_CONFIG } from '../constants';
+import {
+  VOICE_CONFIG,
+  VOICE_SERVICE_CONFIG,
+  RETRY_CONFIG,
+  CIRCUIT_BREAKER_CONFIG,
+  SPEECH_LIMITS,
+} from '../constants';
 import { logger } from '../utils/logger';
 import { validateSpeechSynthesisConfig } from '../utils/voiceSettingsValidation';
 import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
@@ -27,7 +33,7 @@ class SpeechSynthesisService {
   private voices: SpeechSynthesisVoice[] = [];
   private errorRecovery: ErrorRecoveryStrategy;
   private speakAttempts: number = 0;
-  private readonly maxSpeakAttempts: number = 3;
+  private readonly maxSpeakAttempts: number = VOICE_SERVICE_CONFIG.MAX_SPEAK_ATTEMPTS;
 
   constructor(config?: Partial<SpeechSynthesisConfig>) {
     const partialConfig = {
@@ -50,8 +56,8 @@ class SpeechSynthesisService {
     this.errorRecovery = new ErrorRecoveryStrategy(
       {
         maxAttempts: this.maxSpeakAttempts,
-        initialDelay: 1000,
-        maxDelay: 5000,
+        initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+        maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
         backoffFactor: 2,
         shouldRetry: (error: Error, attempt: number) => {
           const shouldRetry = this.shouldRetrySpeakError(error, attempt);
@@ -59,9 +65,9 @@ class SpeechSynthesisService {
         },
       },
       {
-        failureThreshold: 5,
-        resetTimeout: 60000,
-        monitoringPeriod: 10000,
+        failureThreshold: CIRCUIT_BREAKER_CONFIG.DEFAULT_FAILURE_THRESHOLD,
+        resetTimeout: CIRCUIT_BREAKER_CONFIG.DEFAULT_RESET_TIMEOUT_MS,
+        monitoringPeriod: CIRCUIT_BREAKER_CONFIG.DEFAULT_MONITORING_PERIOD_MS,
       }
     );
 
@@ -146,8 +152,8 @@ class SpeechSynthesisService {
   }
 
   private setDefaultVoice(): void {
-    const preferredLanguage = 'id-ID';
-    const fallbackLanguage = 'en-US';
+    const preferredLanguage = VOICE_SERVICE_CONFIG.LANGUAGES.PREFERRED;
+    const fallbackLanguage = VOICE_SERVICE_CONFIG.LANGUAGES.FALLBACK;
 
     let voice = this.voices.find((v: SpeechSynthesisVoice) => v.lang === preferredLanguage && v.localService);
 
@@ -435,8 +441,8 @@ class SpeechSynthesisService {
   }
 
   public setRate(rate: number): void {
-    if (rate < 0.1 || rate > 10) {
-      logger.warn('Rate must be between 0.1 and 10');
+    if (rate < SPEECH_LIMITS.RATE.MIN || rate > SPEECH_LIMITS.RATE.MAX) {
+      logger.warn(`Rate must be between ${SPEECH_LIMITS.RATE.MIN} and ${SPEECH_LIMITS.RATE.MAX}`);
       return;
     }
 
@@ -445,8 +451,8 @@ class SpeechSynthesisService {
   }
 
   public setPitch(pitch: number): void {
-    if (pitch < 0 || pitch > 2) {
-      logger.warn('Pitch must be between 0 and 2');
+    if (pitch < SPEECH_LIMITS.PITCH.MIN || pitch > SPEECH_LIMITS.PITCH.MAX) {
+      logger.warn(`Pitch must be between ${SPEECH_LIMITS.PITCH.MIN} and ${SPEECH_LIMITS.PITCH.MAX}`);
       return;
     }
 
@@ -455,8 +461,8 @@ class SpeechSynthesisService {
   }
 
   public setVolume(volume: number): void {
-    if (volume < 0 || volume > 1) {
-      logger.warn('Volume must be between 0 and 1');
+    if (volume < SPEECH_LIMITS.VOLUME.MIN || volume > SPEECH_LIMITS.VOLUME.MAX) {
+      logger.warn(`Volume must be between ${SPEECH_LIMITS.VOLUME.MIN} and ${SPEECH_LIMITS.VOLUME.MAX}`);
       return;
     }
 

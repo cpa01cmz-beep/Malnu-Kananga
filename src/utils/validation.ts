@@ -3,6 +3,8 @@
  * Indonesian language error messages
  */
 
+import { HTTP_STATUS, VALIDATION_RULES, SCREEN_READER_STYLES } from '../constants';
+
 export interface ValidationRule {
   validate: (value: string) => boolean;
   message: string;
@@ -28,7 +30,8 @@ export const emailValidation: ValidationRule = {
     
     if (parts.length !== 2) return false;
     if (parts[0].length === 0 || parts[1].length === 0) return false;
-    if (parts[0].length > 64 || parts[1].length > 253) return false;
+    if (parts[0].length > VALIDATION_RULES.EMAIL_LOCAL_MAX_LENGTH ||
+        parts[1].length > VALIDATION_RULES.EMAIL_DOMAIN_MAX_LENGTH) return false;
     if (parts[0].startsWith('.') || parts[0].endsWith('.')) return false;
     
     return true;
@@ -40,7 +43,7 @@ export const emailValidation: ValidationRule = {
 export const passwordValidation: ValidationRule = {
   validate: (password: string) => {
     if (!password || password.length === 0) return false;
-    if (password.length < 6) return false; // Minimum 6 characters
+    if (password.length < VALIDATION_RULES.PASSWORD_MIN_LENGTH) return false;
     return true;
   },
   message: 'Password minimal 6 karakter'
@@ -52,9 +55,9 @@ export const getPasswordRequirements = (password: string): {
   status: 'met' | 'unmet';
 }[] => [
   {
-    met: password.length >= 6,
+    met: password.length >= VALIDATION_RULES.PASSWORD_MIN_LENGTH,
     requirement: 'Minimal 6 karakter',
-    status: password.length >= 6 ? 'met' : 'unmet'
+    status: password.length >= VALIDATION_RULES.PASSWORD_MIN_LENGTH ? 'met' : 'unmet'
   },
   {
     met: password.length > 0,
@@ -91,7 +94,7 @@ export function validatePasswordRealtime(password: string): ValidationResult {
     return { isValid: false, errors };
   }
   
-  if (password.length < 6) {
+  if (password.length < VALIDATION_RULES.PASSWORD_MIN_LENGTH) {
     errors.push(passwordValidation.message);
   }
   
@@ -131,18 +134,18 @@ export function classifyLoginError(error: unknown): string {
   }
   
   // Authentication errors
-  if (errorMessage.includes('401') || errorMessage.includes('unauthorized') || 
+  if (errorMessage.includes(String(HTTP_STATUS.UNAUTHORIZED)) || errorMessage.includes('unauthorized') ||
       errorMessage.includes('kredensial') || errorMessage.includes('login gagal')) {
     return 'Email atau password salah. Periksa kembali data Anda.';
   }
-  
+
   // Server errors
-  if (errorMessage.includes('500') || errorMessage.includes('server error')) {
+  if (errorMessage.includes(String(HTTP_STATUS.INTERNAL_SERVER_ERROR)) || errorMessage.includes('server error')) {
     return 'Server sedang bermasalah. Silakan coba beberapa saat lagi.';
   }
-  
+
   // Rate limiting
-  if (errorMessage.includes('429') || errorMessage.includes('rate limit') || 
+  if (errorMessage.includes(String(HTTP_STATUS.TOO_MANY_REQUESTS)) || errorMessage.includes('rate limit') ||
       errorMessage.includes('terlalu banyak')) {
     return 'Terlalu banyak percobaan login. Tunggu sebentar lalu coba lagi.';
   }
@@ -157,8 +160,8 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   announcement.setAttribute('role', 'alert');
   announcement.setAttribute('aria-live', 'polite');
   announcement.style.position = 'absolute';
-  announcement.style.left = '-10000px';
-  announcement.style.width = '1px';
+  announcement.style.left = SCREEN_READER_STYLES.VISUALLY_HIDDEN.position;
+  announcement.style.width = SCREEN_READER_STYLES.VISUALLY_HIDDEN.width;
   announcement.style.height = '1px';
   announcement.style.overflow = 'hidden';
   

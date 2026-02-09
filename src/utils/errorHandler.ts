@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import { ADMIN_EMAIL, RETRY_CONFIG } from '../constants';
+import { ADMIN_EMAIL, RETRY_CONFIG, CIRCUIT_BREAKER_CONFIG } from '../constants';
 import { ERROR_MESSAGES as CENTRALIZED_ERROR_MESSAGES } from './errorMessages';
 
 export enum ErrorType {
@@ -417,7 +417,10 @@ export class CircuitBreaker {
   }
 }
 
-const DEFAULT_CIRCUIT_BREAKER = new CircuitBreaker(5, 60000);
+const DEFAULT_CIRCUIT_BREAKER = new CircuitBreaker(
+  CIRCUIT_BREAKER_CONFIG.DEFAULT_FAILURE_THRESHOLD,
+  CIRCUIT_BREAKER_CONFIG.DEFAULT_RESET_TIMEOUT_MS
+);
 
 export function withCircuitBreaker<T>(
   operation: () => Promise<T>,

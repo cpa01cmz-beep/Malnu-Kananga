@@ -10,7 +10,12 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS } from '../constants';
+import {
+  FILE_SIZE_LIMITS,
+  VALIDATION_RULES,
+  WINDOWS_RESERVED_FILENAMES,
+  XSS_PATTERNS,
+} from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -93,16 +98,9 @@ export interface FileValidationOptions {
 
 // XSS sanitization utilities
 export class XSSSanitizer {
-  private static dangerousTags = [
-    'script', 'iframe', 'object', 'embed', 'form', 'input',
-    'button', 'textarea', 'select', 'option', 'link', 'style',
-  ] as const;
+  private static dangerousTags = XSS_PATTERNS.DANGEROUS_TAGS;
 
-  private static dangerousAttributes = [
-    'onerror', 'onload', 'onmouseover', 'onmouseout', 'onclick',
-    'ondblclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup',
-    'onfocus', 'onblur', 'javascript', 'data', 'vbscript',
-  ] as const;
+  private static dangerousAttributes = XSS_PATTERNS.DANGEROUS_ATTRIBUTES;
 
   static sanitizeFileName(fileName: string): string {
     let sanitized = fileName;
@@ -198,13 +196,9 @@ export class FileTypeDetector {
 
 // File name validation
 export class FileNameValidator {
-  private static MAX_LENGTH = 255;
-  private static MIN_LENGTH = 1;
-  private static RESERVED_NAMES = [
-    'CON', 'PRN', 'AUX', 'NUL',
-    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
-    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
-  ];
+  private static MAX_LENGTH = VALIDATION_RULES.FILENAME.MAX_LENGTH;
+  private static MIN_LENGTH = VALIDATION_RULES.FILENAME.MIN_LENGTH;
+  private static RESERVED_NAMES = WINDOWS_RESERVED_FILENAMES;
 
   static validate(fileName: string): ValidationResult {
     const errors: string[] = [];
@@ -221,7 +215,7 @@ export class FileNameValidator {
 
     // Check for reserved names
     const nameWithoutExtension = fileName.split('.')[0].toUpperCase();
-    if (this.RESERVED_NAMES.includes(nameWithoutExtension)) {
+    if (this.RESERVED_NAMES.includes(nameWithoutExtension as typeof WINDOWS_RESERVED_FILENAMES[number])) {
       errors.push(`"${nameWithoutExtension}" adalah nama yang tidak diizinkan`);
     }
 
@@ -242,7 +236,7 @@ export class FileNameValidator {
     }
 
     // Warnings
-    if (fileName.length > 100) {
+    if (fileName.length > VALIDATION_RULES.FILENAME.WARNING_THRESHOLD) {
       warnings.push('Nama file panjang dapat menyulitkan pengelolaan');
     }
 

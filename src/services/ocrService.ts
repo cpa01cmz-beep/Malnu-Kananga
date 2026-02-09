@@ -1,6 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, OCR_CONFIG, GRADE_LIMITS } from '../constants';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -210,7 +210,9 @@ class OCRService {
 
   private looksLikeName(text: string): boolean {
     const words = text.split(' ');
-    return words.length >= 2 && words.length <= 4 && words.every(word => /^[A-Z][a-z]+$/.test(word));
+    return words.length >= OCR_CONFIG.NAME_WORD_MIN &&
+           words.length <= OCR_CONFIG.NAME_WORD_MAX &&
+           words.every(word => /^[A-Z][a-z]+$/.test(word));
   }
 
   private looksLikeNISN(text: string): boolean {
@@ -243,7 +245,9 @@ class OCRService {
 
   private isValidGrade(grade: string): boolean {
     const numericGrade = parseInt(grade, 10);
-    return !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 100;
+    return !isNaN(numericGrade) &&
+           numericGrade >= GRADE_LIMITS.MIN &&
+           numericGrade <= GRADE_LIMITS.MAX;
   }
 
   private assessTextQuality(text: string, confidence: number): OCRTextQuality {
@@ -253,13 +257,17 @@ class OCRService {
     
     // Estimate accuracy based on confidence and text characteristics
     let estimatedAccuracy = confidence;
-    if (wordCount < 10) estimatedAccuracy *= 0.8; // Penalize very short texts
-    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= 0.9; // Suspicious numbers
-    
+    if (wordCount < OCR_CONFIG.MIN_WORDS_FOR_ACCURACY) {
+      estimatedAccuracy *= OCR_CONFIG.ACCURACY_PENALTIES.SHORT_TEXT;
+    }
+    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) {
+      estimatedAccuracy *= OCR_CONFIG.ACCURACY_PENALTIES.SUSPICIOUS_NUMBERS;
+    }
+
     estimatedAccuracy = Math.max(0, Math.min(100, estimatedAccuracy));
-    
-    const isHighQuality = confidence >= 70 && wordCount >= 20;
-    const isSearchable = confidence >= 50 && wordCount >= 5;
+
+    const isHighQuality = confidence >= OCR_CONFIG.CONFIDENCE.HIGH && wordCount >= OCR_CONFIG.MIN_WORD_COUNT;
+    const isSearchable = confidence >= OCR_CONFIG.CONFIDENCE.MEDIUM && wordCount >= 5;
     
     // Determine document type
     let documentType: OCRTextQuality['documentType'] = 'unknown';
@@ -330,10 +338,10 @@ class OCRService {
       // Store event in localStorage for event monitoring system
       const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS) || '[]');
       events.push(event);
-      
-      // Keep only last 100 events
-      if (events.length > 100) {
-        events.splice(0, events.length - 100);
+
+      // Keep only last N events
+      if (events.length > OCR_CONFIG.MAX_VALIDATION_EVENTS) {
+        events.splice(0, events.length - OCR_CONFIG.MAX_VALIDATION_EVENTS);
       }
       
       localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS, JSON.stringify(events));
@@ -354,36 +362,36 @@ class OCRService {
 
   private detectValidationIssues(quality: OCRTextQuality, confidence: number): { issues: string[]; severity: 'failure' | 'warning' | 'success' } {
     const issues: string[] = [];
-    
-    if (confidence < 50) {
-      issues.push('Confidence terlalu rendah (< 50%)');
-    } else if (confidence < 70) {
-      issues.push('Confidence rendah (< 70%)');
+
+    if (confidence < OCR_CONFIG.CONFIDENCE.MEDIUM) {
+      issues.push(`Confidence terlalu rendah (< ${OCR_CONFIG.CONFIDENCE.MEDIUM}%)`);
+    } else if (confidence < OCR_CONFIG.CONFIDENCE.HIGH) {
+      issues.push(`Confidence rendah (< ${OCR_CONFIG.CONFIDENCE.HIGH}%)`);
     }
-    
+
     if (!quality.isHighQuality) {
       issues.push('Kualitas teks tidak memenuhi standar tinggi');
     }
-    
+
     if (!quality.isSearchable) {
       issues.push('Teks tidak dapat dicari dengan baik');
     }
-    
+
     if (!quality.hasMeaningfulContent) {
       issues.push('Teks tidak memiliki konten yang berarti');
     }
-    
-    if (quality.wordCount < 20) {
-      issues.push('Jumlah kata terlalu sedikit (< 20)');
+
+    if (quality.wordCount < OCR_CONFIG.MIN_WORD_COUNT) {
+      issues.push(`Jumlah kata terlalu sedikit (< ${OCR_CONFIG.MIN_WORD_COUNT})`);
     }
-    
+
     if (quality.documentType === 'unknown') {
       issues.push('Tipe dokumen tidak dapat diidentifikasi');
     }
-    
+
     // Determine severity
-    const hasCriticalIssue = confidence < 50 || !quality.isSearchable || !quality.hasMeaningfulContent;
-    const hasWarningIssue = confidence < 70 || !quality.isHighQuality || quality.wordCount < 20;
+    const hasCriticalIssue = confidence < OCR_CONFIG.CONFIDENCE.MEDIUM || !quality.isSearchable || !quality.hasMeaningfulContent;
+    const hasWarningIssue = confidence < OCR_CONFIG.CONFIDENCE.HIGH || !quality.isHighQuality || quality.wordCount < OCR_CONFIG.MIN_WORD_COUNT;
     
     if (hasCriticalIssue) {
       return { issues, severity: 'failure' };

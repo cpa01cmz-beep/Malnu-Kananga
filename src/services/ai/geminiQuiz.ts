@@ -8,6 +8,7 @@ import {
   AIOperationType,
   handleAIError
 } from '../../utils/aiErrorHandler';
+import { QUIZ_CONFIG, AI_CONFIG, OCR_CONFIG } from '../../constants';
 
 /**
  * Generate quiz from learning materials
@@ -75,7 +76,7 @@ export async function generateQuiz(
   }
 
   const materialsText = materials.map(m =>
-    `Judul: ${m.title}\nKategori: ${m.category}\n${m.content ? `Konten: ${m.content.substring(0, 500)}` : ''}`
+    `Judul: ${m.title}\nKategori: ${m.category}\n${m.content ? `Konten: ${m.content.substring(0, OCR_CONFIG.CACHE_KEY_MAX_LENGTH)}` : ''}`
   ).join('\n\n---\n\n');
 
   const prompt = `
@@ -87,7 +88,7 @@ export async function generateQuiz(
   3. Tingkat kesulitan: ${options.difficulty}
   4. Pastikan pertanyaan tidak terlalu mudah atau terlalu sulit
   5. Berikan penjelasan yang membantu siswa memahami jawaban benar
-  6. Distribusikan poin secara merata (total poin: ${options.totalPoints || options.questionCount * 10})
+    6. Distribusikan poin secara merata (total poin: ${options.totalPoints || options.questionCount * QUIZ_CONFIG.DEFAULT_POINTS_PER_QUESTION})
   7. ${options.focusAreas?.length ? 'Fokus pada topik: ' + options.focusAreas.join(', ') : 'Cakup semua materi secara merata'}
 
   MATERI PEMBELAJARAN:
@@ -112,8 +113,8 @@ export async function generateQuiz(
       }
     ],
     "totalPoints": 100,
-    "duration": 30,
-    "passingScore": 70
+    "duration": ${QUIZ_CONFIG.DEFAULT_DURATION_MINUTES},
+    "passingScore": ${QUIZ_CONFIG.DEFAULT_PASSING_SCORE}
   }
 
   JENIS PERTANYAAN YANG DIDUKUNG:
@@ -164,7 +165,7 @@ export async function generateQuiz(
         config: {
           responseMimeType: "application/json",
           responseSchema: schema,
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.GEMINI_THINKING_BUDGET }
         },
       });
     });
@@ -173,7 +174,7 @@ export async function generateQuiz(
     const quizData = JSON.parse(jsonText);
 
     quizData.aiGenerated = true;
-    quizData.aiConfidence = 0.85;
+    quizData.aiConfidence = AI_CONFIG.DEFAULT_CONFIDENCE_THRESHOLD;
 
     analysisCache.set(cacheKey, quizData);
 

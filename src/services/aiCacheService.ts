@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, AI_CACHE_CONFIG, OCR_CONFIG, AI_CONFIG } from '../constants';
 import type { CacheConfig, CacheEntry, CacheKeyParams, CacheStats, SerializedCacheData } from './aiCache.types';
 
 class AIResponseCache {
@@ -19,8 +19,8 @@ class AIResponseCache {
 
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
-      maxSize: 100,
-      ttl: 30 * 60 * 1000, // 30 minutes default
+      maxSize: AI_CACHE_CONFIG.DEFAULT.MAX_SIZE,
+      ttl: AI_CACHE_CONFIG.DEFAULT.TTL_MS,
       ...config
     };
     
@@ -41,7 +41,7 @@ class AIResponseCache {
   private generateKey(params: CacheKeyParams): string {
     const keyData = {
       op: params.operation,
-      input: params.input.substring(0, 500), // Limit input length
+      input: params.input.substring(0, OCR_CONFIG.CACHE_KEY_MAX_LENGTH), // Limit input length
       ctx: params.context || '',
       model: params.model || 'default',
       thinking: params.thinkingMode || false
@@ -165,7 +165,7 @@ class AIResponseCache {
    * Start automatic cleanup interval
    */
   private startCleanupInterval(): void {
-    this.cleanupIntervalId = setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    this.cleanupIntervalId = setInterval(() => this.cleanup(), AI_CONFIG.CACHE_CLEANUP_INTERVAL_MS);
   }
 
   /**
@@ -340,22 +340,22 @@ class AIResponseCache {
 export { AIResponseCache };
 
 export const chatCache = new AIResponseCache({
-  maxSize: 50,
-  ttl: 20 * 60 * 1000 // 20 minutes for chat
+  maxSize: AI_CACHE_CONFIG.CHAT.MAX_SIZE,
+  ttl: AI_CACHE_CONFIG.CHAT.TTL_MS
 });
 
 export const analysisCache = new AIResponseCache({
-  maxSize: 30,
-  ttl: TIME_MS.ONE_HOUR // 1 hour for analysis results
+  maxSize: AI_CACHE_CONFIG.QUIZ.MAX_SIZE,
+  ttl: AI_CACHE_CONFIG.QUIZ.TTL_MS
 });
 
 export const editorCache = new AIResponseCache({
-  maxSize: 20,
-  ttl: 15 * 60 * 1000 // 15 minutes for editor responses
+  maxSize: AI_CACHE_CONFIG.EDITOR.MAX_SIZE,
+  ttl: AI_CACHE_CONFIG.EDITOR.TTL_MS
 });
 
 export const ocrCache = new AIResponseCache({
-  maxSize: 40,
-  ttl: 45 * 60 * 1000 // 45 minutes for OCR processing results
+  maxSize: AI_CACHE_CONFIG.OCR.MAX_SIZE,
+  ttl: AI_CACHE_CONFIG.OCR.TTL_MS
 });
 

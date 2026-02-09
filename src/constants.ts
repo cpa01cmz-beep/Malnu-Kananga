@@ -571,3 +571,183 @@ export const API_CONFIG = {
         LOGIN: '/api/auth/login',
     },
 } as const;
+
+// HTTP Status Codes - Use these instead of hardcoded numbers
+export const HTTP_STATUS = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    REQUEST_TIMEOUT: 408,
+    CONFLICT: 409,
+    TOO_MANY_REQUESTS: 429,
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_GATEWAY: 502,
+    SERVICE_UNAVAILABLE: 503,
+    GATEWAY_TIMEOUT: 504,
+} as const;
+
+// Retryable HTTP status codes for automatic retry logic
+export const RETRYABLE_STATUS_CODES = [
+    HTTP_STATUS.REQUEST_TIMEOUT,
+    HTTP_STATUS.TOO_MANY_REQUESTS,
+    HTTP_STATUS.INTERNAL_SERVER_ERROR,
+    HTTP_STATUS.BAD_GATEWAY,
+    HTTP_STATUS.SERVICE_UNAVAILABLE,
+    HTTP_STATUS.GATEWAY_TIMEOUT,
+] as const;
+
+// API Endpoints - Centralized path definitions
+export const API_ENDPOINTS = {
+    AUTH: {
+        LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        REFRESH: '/api/auth/refresh',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        REGISTER: '/api/auth/register',
+        VERIFY_EMAIL: '/api/auth/verify-email',
+    },
+    USERS: {
+        BASE: '/api/users',
+        PROFILE: '/api/users/profile',
+        PASSWORD: '/api/users/password',
+    },
+} as const;
+
+// Circuit Breaker Configuration
+export const CIRCUIT_BREAKER_CONFIG = {
+    DEFAULT_FAILURE_THRESHOLD: 5,
+    DEFAULT_RESET_TIMEOUT_MS: 60000,
+    DEFAULT_MONITORING_PERIOD_MS: 10000,
+} as const;
+
+// Performance Monitoring Thresholds
+export const PERFORMANCE_THRESHOLDS = {
+    MAX_RESPONSE_TIME_MS: 5000,
+    SLOW_CONNECTION_THRESHOLD_MS: 3000,
+    MAX_ERROR_RATE_PERCENT: 10,
+    MAX_CONSECUTIVE_FAILURES: 5,
+    MAX_METRICS_HISTORY: 1000,
+} as const;
+
+// AI/LLM Configuration
+export const AI_CONFIG = {
+    GEMINI_THINKING_BUDGET: 32768,
+    DEFAULT_CONFIDENCE_THRESHOLD: 0.85,
+    MIN_CONFIDENCE_THRESHOLD: 0.7,
+    CACHE_CLEANUP_INTERVAL_MS: 5 * 60 * 1000, // 5 minutes
+} as const;
+
+// AI Cache Configuration by feature
+export const AI_CACHE_CONFIG = {
+    DEFAULT: {
+        MAX_SIZE: 100,
+        TTL_MS: 30 * 60 * 1000, // 30 minutes
+    },
+    CHAT: {
+        MAX_SIZE: 50,
+        TTL_MS: 20 * 60 * 1000, // 20 minutes
+    },
+    EDITOR: {
+        MAX_SIZE: 20,
+        TTL_MS: 15 * 60 * 1000, // 15 minutes
+    },
+    OCR: {
+        MAX_SIZE: 40,
+        TTL_MS: 45 * 60 * 1000, // 45 minutes
+    },
+    QUIZ: {
+        MAX_SIZE: 30,
+        TTL_MS: TIME_MS.ONE_HOUR,
+    },
+} as const;
+
+// Quiz Configuration
+export const QUIZ_CONFIG = {
+    DEFAULT_DURATION_MINUTES: 30,
+    DEFAULT_PASSING_SCORE: 70,
+    DEFAULT_POINTS_PER_QUESTION: 10,
+    MIN_DURATION_MINUTES: 5,
+    MAX_DURATION_MINUTES: 180,
+} as const;
+
+// OCR Configuration
+export const OCR_CONFIG = {
+    CONFIDENCE: {
+        HIGH: 70,
+        MEDIUM: 50,
+        LOW: 30,
+    },
+    MIN_WORD_COUNT: 20,
+    NAME_WORD_MIN: 2,
+    NAME_WORD_MAX: 4,
+    MIN_WORDS_FOR_ACCURACY: 10,
+    ACCURACY_PENALTIES: {
+        SHORT_TEXT: 0.8,
+        SUSPICIOUS_NUMBERS: 0.9,
+    },
+    CACHE_KEY_MAX_LENGTH: 500,
+    MAX_VALIDATION_EVENTS: 100,
+} as const;
+
+// Speech Synthesis Limits
+export const SPEECH_LIMITS = {
+    RATE: { MIN: 0.1, MAX: 10, DEFAULT: 1.0 },
+    PITCH: { MIN: 0, MAX: 2, DEFAULT: 1.0 },
+    VOLUME: { MIN: 0, MAX: 1, DEFAULT: 1.0 },
+} as const;
+
+// Voice Service Configuration
+export const VOICE_SERVICE_CONFIG = {
+    MAX_START_ATTEMPTS: 3,
+    MAX_SPEAK_ATTEMPTS: 3,
+    LANGUAGES: {
+        PREFERRED: 'id-ID',
+        FALLBACK: 'en-US',
+    },
+} as const;
+
+// Validation Rules
+export const VALIDATION_RULES = {
+    PASSWORD_MIN_LENGTH: 6,
+    EMAIL_LOCAL_MAX_LENGTH: 64,
+    EMAIL_DOMAIN_MAX_LENGTH: 253,
+    FILENAME: {
+        MIN_LENGTH: 1,
+        MAX_LENGTH: 255,
+        WARNING_THRESHOLD: 100,
+    },
+} as const;
+
+// Windows Reserved Filenames (cannot be used as filenames)
+export const WINDOWS_RESERVED_FILENAMES = [
+    'CON', 'PRN', 'AUX', 'NUL',
+    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
+    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
+] as const;
+
+// XSS Prevention - Dangerous tags and attributes
+export const XSS_PATTERNS = {
+    DANGEROUS_TAGS: ['script', 'iframe', 'object', 'embed', 'form', 'input', 'textarea'],
+    DANGEROUS_ATTRIBUTES: ['onerror', 'onload', 'onclick', 'onmouseover', 'eval', 'javascript:'],
+} as const;
+
+// Screen Reader Helper Styles
+export const SCREEN_READER_STYLES = {
+    VISUALLY_HIDDEN: {
+        position: '-10000px',
+        width: '1px',
+    },
+} as const;
+
+// School Name Keywords for OCR detection
+export const SCHOOL_NAME_KEYWORDS = ['madrasah', 'ma.', 'ma ', 'malnu', 'kananga'] as const;
+
+// Random ID Generation
+export const ID_GENERATION = {
+    RANDOM_SUFFIX_LENGTH: 9,
+} as const;

@@ -6,7 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_CONFIG } from '../../constants';
+import { API_CONFIG, HTTP_STATUS } from '../../constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -179,7 +179,7 @@ export async function request<T>(
 
     performanceMonitor.recordResponse(endpoint, method, Date.now() - startReqTime, response.status);
 
-    if (response.status === 401 && !getIsRefreshing() && getAuthToken()) {
+    if (response.status === HTTP_STATUS.UNAUTHORIZED && !getIsRefreshing() && getAuthToken()) {
       if (!getIsRefreshing()) {
         setIsRefreshing(true);
         try {
@@ -193,7 +193,7 @@ export async function request<T>(
       }
     }
 
-    if (response.status === 403) {
+    if (response.status === HTTP_STATUS.FORBIDDEN) {
       const classifiedError = classifyError(new Error('Forbidden access'), {
         operation: `API ${method} ${endpoint}`,
         timestamp: Date.now()
