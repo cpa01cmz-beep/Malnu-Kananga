@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { chatCache, analysisCache, editorCache } from '../services/aiCacheService';
 import type { CacheStats } from '../services/aiCache.types';
 import { logger } from '../utils/logger';
+import { DEBOUNCE_DELAYS } from '../constants';
 
 interface UseAICacheReturn {
   stats: {
@@ -26,7 +27,7 @@ interface UseAICacheReturn {
   refresh: () => void;
 }
 
-export function useAICache(refreshInterval: number = 5000): UseAICacheReturn {
+export function useAICache(refreshInterval: number = DEBOUNCE_DELAYS.AI_CACHE_REFRESH): UseAICacheReturn {
   const [stats, setStats] = useState<UseAICacheReturn['stats']>({
     chat: { totalEntries: 0, hitRate: 0, totalHits: 0, totalMisses: 0, memoryUsage: 0 },
     analysis: { totalEntries: 0, hitRate: 0, totalHits: 0, totalMisses: 0, memoryUsage: 0 },
