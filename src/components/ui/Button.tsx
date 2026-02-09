@@ -1,10 +1,18 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid' | 'outline';
+// New simplified variants
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'outline';
+export type ButtonIntent = 'default' | 'success' | 'warning' | 'info';
+
+// Legacy variants for backward compatibility
+type LegacyButtonVariant = 'danger' | 'success' | 'info' | 'warning' | 'indigo' | 'green-solid' | 'blue-solid' | 'purple-solid' | 'red-solid' | 'orange-solid' | 'teal-solid';
+
+export type AllButtonVariant = ButtonVariant | LegacyButtonVariant;
 export type ButtonSize = 'icon' | 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: ButtonVariant;
+  variant?: AllButtonVariant;
+  intent?: ButtonIntent;
   size?: ButtonSize;
   isLoading?: boolean;
   fullWidth?: boolean;
@@ -23,36 +31,34 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover",
   secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth",
   ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05] transition-bounce",
-  danger: "bg-red-700 text-white dark:bg-red-600 dark:text-white hover:bg-red-800 dark:hover:bg-red-700 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  success: "bg-green-700 text-white dark:bg-green-600 dark:text-white hover:bg-green-800 dark:hover:bg-green-700 focus:ring-green-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  warning: "bg-orange-600 text-white dark:bg-orange-500 dark:text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  indigo: "bg-indigo-700 text-white dark:bg-indigo-600 dark:text-white hover:bg-indigo-800 dark:hover:bg-indigo-700 focus:ring-indigo-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'green-solid': "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'blue-solid': "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'purple-solid': "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
-  'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
   outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth",
 };
 
+const intentClasses: Record<ButtonIntent, string> = {
+  default: "",
+  success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50",
+  warning: "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50",
+  info: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50",
+};
+
 const sizeClasses: Record<ButtonSize, string> = {
-  icon: "px-2 py-2 text-sm min-w-[2.5rem] min-h-[2.5rem]",
-  sm: "px-3 py-2 text-sm min-h-[2.75rem]",
-  md: "px-4 py-2.5 text-sm sm:text-base min-h-[3rem]",
-  lg: "px-6 py-3 text-base sm:text-lg min-h-[3.5rem]",
+  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px]",
+  sm: "px-4 py-3 text-sm min-h-[44px]",
+  md: "px-4 py-3 text-sm sm:text-base min-h-[44px]",
+  lg: "px-6 py-4 text-base sm:text-lg min-h-[48px]",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
-  icon: "p-1.5",
-  sm: "p-1.5",
-  md: "p-2",
-  lg: "p-2.5",
+  icon: "p-3",
+  sm: "p-3",
+  md: "p-3",
+  lg: "p-4",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   variant = 'primary',
+  intent = 'default',
   size = 'md',
   isLoading = false,
   fullWidth = false,
@@ -66,9 +72,64 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   disabledReason,
   ...props
 }, ref) => {
+  // Map legacy variants to new ones
+  const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
+    // Map legacy solid colors to new intent system
+    if (variant === 'green-solid') return 'primary';
+    if (variant === 'blue-solid') return 'primary';
+    if (variant === 'purple-solid') return 'primary';
+    if (variant === 'red-solid' || variant === 'danger') return 'destructive';
+    if (variant === 'orange-solid' || variant === 'warning') return 'primary';
+    if (variant === 'teal-solid' || variant === 'success') return 'primary';
+    if (variant === 'info' || variant === 'indigo') return 'primary';
+    
+    // Return if already a valid new variant
+    return variant as ButtonVariant;
+  };
+
+  // Determine intent from legacy variant if not explicitly provided
+  const getIntent = (): ButtonIntent => {
+    if (intent !== 'default') return intent;
+    
+    // Extract intent from legacy solid variants
+    if (variant === 'green-solid' || variant === 'success') return 'success';
+    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo') return 'info';
+    if (variant === 'red-solid' || variant === 'danger') return 'default';
+    if (variant === 'orange-solid' || variant === 'warning') return 'warning';
+    if (variant === 'purple-solid') return 'info';
+    if (variant === 'teal-solid') return 'success';
+    
+    return 'default';
+  };
+
+  const normalizedVariant = normalizeVariant(variant);
+  const determinedIntent = getIntent();
+
+  const getVariantClasses = () => {
+    // For variants with intents, combine them appropriately
+    if (normalizedVariant === 'secondary' && determinedIntent !== 'default') {
+      return `bg-white dark:bg-neutral-800 text-${determinedIntent}-600 dark:text-${determinedIntent}-400 border-2 border-${determinedIntent}-200 dark:border-${determinedIntent}-700 hover:bg-${determinedIntent}-50 dark:hover:bg-${determinedIntent}-900/20 hover:border-${determinedIntent}-500 focus:ring-${determinedIntent}-500/50 hover:scale-[1.02] transition-smooth`;
+    }
+    
+    if (normalizedVariant === 'outline' && determinedIntent !== 'default') {
+      return `bg-transparent text-${determinedIntent}-600 dark:text-${determinedIntent}-400 border-2 border-${determinedIntent}-300 dark:border-${determinedIntent}-600 hover:bg-${determinedIntent}-50 dark:hover:bg-${determinedIntent}-900/20 hover:border-${determinedIntent}-500 focus:ring-${determinedIntent}-500/50 hover:scale-[1.02] transition-smooth`;
+    }
+    
+    if (normalizedVariant === 'ghost' && determinedIntent !== 'default') {
+      return `bg-transparent text-${determinedIntent}-600 dark:text-${determinedIntent}-400 hover:bg-${determinedIntent}-50 dark:hover:bg-${determinedIntent}-900/20 focus:ring-${determinedIntent}-500/50 hover:scale-[1.05] transition-bounce`;
+    }
+    
+    // Use intent classes for primary variant when intent is specified
+    if (normalizedVariant === 'primary' && determinedIntent !== 'default') {
+      return `${baseClasses} ${intentClasses[determinedIntent]} shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover focus-visible-enhanced hover-glow-enhanced`;
+    }
+    
+    return variantClasses[normalizedVariant];
+  };
+
   const classes = `
     ${baseClasses}
-    ${variantClasses[variant]}
+    ${getVariantClasses()}
     ${iconOnly ? iconOnlySizes[size] : sizeClasses[size]}
     ${fullWidth ? 'w-full' : ''}
     ${isLoading ? 'cursor-wait' : ''}

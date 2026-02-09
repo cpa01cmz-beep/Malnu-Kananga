@@ -14,18 +14,25 @@ import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
+import { useFocusTrap } from '../hooks/useKeyboardNavigation';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced";
+const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 ease-out";
 
-const NavLinks = () => (
-    <>
-        <a href="#home" className={navLinkClass}>{HEADER_NAV_STRINGS.HOME}</a>
-        <a href="#profil" className={navLinkClass}>{HEADER_NAV_STRINGS.PROFILE}</a>
-        <a href="#berita" className={navLinkClass}>{HEADER_NAV_STRINGS.NEWS}</a>
-        <a href="#download" className={navLinkClass}>{HEADER_NAV_STRINGS.DOWNLOAD}</a>
-        <a href="#login-email" className={navLinkClass}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</a>
-    </>
-);
+const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-300 ease-out border-b border-neutral-100 dark:border-neutral-800";
+
+const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
+    const linkClass = isMobile ? mobileNavLinkClass : navLinkClass;
+    
+    return (
+        <>
+            <a href="#home" className={linkClass}>{HEADER_NAV_STRINGS.HOME}</a>
+            <a href="#profil" className={linkClass}>{HEADER_NAV_STRINGS.PROFILE}</a>
+            <a href="#berita" className={linkClass}>{HEADER_NAV_STRINGS.NEWS}</a>
+            <a href="#download" className={linkClass}>{HEADER_NAV_STRINGS.DOWNLOAD}</a>
+            <a href="#login-email" className={linkClass}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</a>
+        </>
+    );
+};
 
 interface HeaderProps {
     onLoginClick: () => void;
@@ -57,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
-    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const _mobileMenuRef = useRef<HTMLDivElement>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
@@ -92,6 +99,8 @@ const Header: React.FC<HeaderProps> = ({
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    const mobileMenuFocusRef = useFocusTrap(isMenuOpen) as React.RefObject<HTMLDivElement>;
+
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape' && isMenuOpen) {
@@ -100,38 +109,12 @@ const Header: React.FC<HeaderProps> = ({
             }
         };
 
-        const handleTab = (e: KeyboardEvent) => {
-            if (!isMenuOpen || !mobileMenuRef.current) return;
-
-            const focusableElements = mobileMenuRef.current.querySelectorAll(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            );
-            const firstElement = focusableElements[0] as HTMLElement;
-            const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-
-            if (e.key === 'Tab') {
-                if (e.shiftKey && document.activeElement === firstElement) {
-                    e.preventDefault();
-                    lastElement.focus();
-                } else if (!e.shiftKey && document.activeElement === lastElement) {
-                    e.preventDefault();
-                    firstElement.focus();
-                }
-            }
-        };
-
         if (isMenuOpen) {
             document.addEventListener('keydown', handleEscape);
-            document.addEventListener('keydown', handleTab);
-            const firstFocusable = mobileMenuRef.current?.querySelector(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            ) as HTMLElement;
-            firstFocusable?.focus();
         }
 
         return () => {
             document.removeEventListener('keydown', handleEscape);
-            document.removeEventListener('keydown', handleTab);
         };
     }, [isMenuOpen]);
 
@@ -196,14 +179,14 @@ const Header: React.FC<HeaderProps> = ({
                                       </Badge>
                                   )}
 
-                                 {userRole === USER_ROLES.ADMIN && (
-                                     <Button
-                                         variant="indigo"
-                                         onClick={onEditClick}
-                                          icon={<SparklesIcon aria-hidden="true" />}
-                                         iconPosition="left"
-                                         title={HEADER_NAV_STRINGS.AI_EDITOR_OPEN}
-                                     >
+{userRole === USER_ROLES.ADMIN && (
+                                      <Button
+                                          variant="primary"
+                                          onClick={onEditClick}
+                                           icon={<SparklesIcon aria-hidden="true" />}
+                                          iconPosition="left"
+                                          title={HEADER_NAV_STRINGS.AI_EDITOR_OPEN}
+                                      >
                                          <span className="hidden lg:inline">{HEADER_NAV_STRINGS.AI_EDITOR}</span>
                                      </Button>
                                   )}
@@ -215,13 +198,13 @@ const Header: React.FC<HeaderProps> = ({
                                       {isPublicView ? HEADER_NAV_STRINGS.VIEW_DASHBOARD : HEADER_NAV_STRINGS.VIEW_WEBSITE}
                                   </Button>
 
-                                <Button variant="danger" onClick={onLogout}>
+                                <Button variant="destructive" onClick={onLogout}>
                                     Logout
                                 </Button>
                             </div>
                           ) : (
                               <div className="hidden sm:flex items-center gap-2">
-                                    <Button variant="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
+                                    <Button variant="outline" intent="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
                                          <span>{HEADER_NAV_STRINGS.AI_ASK}</span>
                                      </Button>
                                     <Button onClick={onLoginClick}>
@@ -251,19 +234,22 @@ const Header: React.FC<HeaderProps> = ({
 
             {isMenuOpen && (
                 <div
-                    ref={mobileMenuRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-5 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect nav-polished`}
+                    ref={mobileMenuFocusRef}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect nav-polished`}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Menu navigasi mobile"
                 >
                     <nav
                         id="mobile-menu"
-                        className="flex flex-col gap-4 sm:gap-5 font-medium text-center"
+                        className="flex flex-col gap-2 font-medium"
                         role="navigation"
                         aria-label="Menu navigasi utama"
                     >
                         <div className="mobile-nav-enhanced">
-                            <NavLinks />
+                            <NavLinks isMobile={true} />
                         </div>
-                            <div className="pt-5 border-t border-neutral-200/40 dark:border-neutral-700/40 flex flex-col gap-4">
+                            <div className="pt-6 border-t border-neutral-200/60 dark:border-neutral-700/60 flex flex-col gap-4">
                                   {isLoggedIn ? (
                                      <>
                                            <Button
@@ -275,13 +261,13 @@ const Header: React.FC<HeaderProps> = ({
                                            >
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                            </Button>
-                                           <Button
-                                               variant="danger"
-                                               onClick={() => { onLogout(); setIsMenuOpen(false); }}
-                                               fullWidth
-                                               size="lg"
-                                               className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
-                                           >
+<Button
+                                                variant="destructive"
+                                                onClick={() => { onLogout(); setIsMenuOpen(false); }}
+                                                fullWidth
+                                                size="lg"
+                                                className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
+                                            >
                                                Logout
                                            </Button>
                                       </>

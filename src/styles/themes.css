@@ -209,6 +209,10 @@ body,
     --theme-neutral-50: 220 10% 98%;
     --theme-primary-600: 142 90% 30%;
     --theme-primary-900: 142 90% 20%;
+    --theme-primary-500: 142 85% 25%;
+    --theme-green-600: 142 85% 25%;
+    --theme-red-600: 0 85% 35%;
+    --theme-blue-600: 217 85% 40%;
   }
 
   .dark {
@@ -217,7 +221,40 @@ body,
     --theme-neutral-800: 220 10% 98%;
     --theme-primary-400: 142 90% 70%;
     --theme-primary-600: 142 90% 50%;
+    --theme-primary-500: 142 75% 45%;
+    --theme-green-500: 142 75% 45%;
+    --theme-red-500: 0 75% 55%;
+    --theme-blue-500: 217 75% 60%;
   }
+}
+
+/* Enhanced contrast improvements for better accessibility */
+:root {
+  /* Improved text contrast ratios */
+  --theme-neutral-600: 215 20% 30%; /* Increased from 35% for better contrast */
+  --theme-neutral-700: 219 30% 18%;  /* Increased from 22% for better contrast */
+  --theme-primary-500: 142 72% 35%; /* Increased from 30% for better contrast */
+  --theme-primary-600: 142 72% 40%; /* Increased from 42% for better contrast */
+  
+  /* Better contrast for semantic colors */
+  --theme-green-600: 142 72% 35%; /* Increased from 30% */
+  --theme-red-600: 0 72% 45%;     /* Increased from 51% */
+  --theme-blue-600: 221 83% 48%;   /* Increased from 53% */
+  --theme-orange-600: 24 95% 45%;  /* Increased from 53% */
+}
+
+.dark {
+  /* Better dark mode contrast */
+  --theme-neutral-300: 220 10% 75%; /* Increased from 71% */
+  --theme-neutral-400: 220 10% 65%; /* Increased from 60% */
+  --theme-primary-400: 142 70% 65%; /* Increased from 58% */
+  --theme-primary-500: 142 72% 50%; /* Increased from 42% */
+  
+  /* Better contrast for semantic colors in dark mode */
+  --theme-green-400: 142 70% 65%; /* Increased from 58% */
+  --theme-red-400: 0 89% 65%;     /* Increased from 74% */
+  --theme-blue-400: 217 91% 70%; /* Increased from 67% */
+  --theme-orange-400: 24 97% 65%; /* Increased from 58% */
 }
 
 /* Note: All scrollbar styles use Tailwind v4 CSS variables (hsl(var(--color-*)))

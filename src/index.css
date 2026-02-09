@@ -890,29 +890,55 @@
   background-color: hsl(var(--color-neutral-600));
 }
 
-/* Improved contrast text utilities */
+/* Improved contrast text utilities with WCAG AA compliance */
 .text-high-contrast {
-  color: hsl(var(--color-neutral-900));
+  color: hsl(var(--color-neutral-950));
 }
 
 .dark .text-high-contrast {
-  color: hsl(var(--color-neutral-100));
+  color: hsl(var(--color-neutral-50));
 }
 
 .text-medium-contrast {
-  color: hsl(var(--color-neutral-700));
+  color: hsl(var(--color-neutral-800));
 }
 
 .dark .text-medium-contrast {
-  color: hsl(var(--color-neutral-300));
+  color: hsl(var(--color-neutral-200));
 }
 
 .text-low-contrast {
-  color: hsl(var(--color-neutral-500));
+  color: hsl(var(--color-neutral-600));
 }
 
 .dark .text-low-contrast {
   color: hsl(var(--color-neutral-400));
+}
+
+/* Enhanced contrast utilities for better accessibility */
+.text-accessible-primary {
+  color: hsl(var(--color-neutral-900));
+}
+
+.dark .text-accessible-primary {
+  color: hsl(var(--color-neutral-100));
+}
+
+.text-accessible-secondary {
+  color: hsl(var(--color-neutral-700));
+}
+
+.dark .text-accessible-secondary {
+  color: hsl(var(--color-neutral-300));
+}
+
+/* Ensure better contrast for interactive elements */
+.interactive-text {
+  color: hsl(var(--color-primary-700));
+}
+
+.dark .interactive-text {
+  color: hsl(var(--color-primary-400));
 }
 
 /* Focus color utilities */
@@ -936,52 +962,52 @@
   outline-offset: 2px;
 }
 
-/* Enhanced state colors with better contrast */
+/* Enhanced state colors with better contrast ratios (WCAG AA compliant) */
 .state-success {
   background-color: hsl(var(--color-green-50));
-  color: hsl(var(--color-green-800));
-  border-color: hsl(var(--color-green-200));
+  color: hsl(var(--color-green-900));
+  border-color: hsl(var(--color-green-300));
 }
 
 .dark .state-success {
-  background-color: hsl(var(--color-green-900) / 0.5);
-  color: hsl(var(--color-green-200));
+  background-color: hsl(var(--color-green-950) / 0.8);
+  color: hsl(var(--color-green-100));
   border-color: hsl(var(--color-green-700));
 }
 
 .state-warning {
-  background-color: hsl(var(--color-orange-50));
-  color: hsl(var(--color-orange-800));
-  border-color: hsl(var(--color-orange-200));
+  background-color: hsl(var(--color-amber-50));
+  color: hsl(var(--color-amber-900));
+  border-color: hsl(var(--color-amber-300));
 }
 
 .dark .state-warning {
-  background-color: hsl(var(--color-orange-900) / 0.5);
-  color: hsl(var(--color-orange-200));
+  background-color: hsl(var(--color-orange-950) / 0.8);
+  color: hsl(var(--color-amber-100));
   border-color: hsl(var(--color-orange-700));
 }
 
 .state-danger {
   background-color: hsl(var(--color-red-50));
-  color: hsl(var(--color-red-800));
-  border-color: hsl(var(--color-red-200));
+  color: hsl(var(--color-red-900));
+  border-color: hsl(var(--color-red-300));
 }
 
 .dark .state-danger {
-  background-color: hsl(var(--color-red-900) / 0.5);
-  color: hsl(var(--color-red-200));
+  background-color: hsl(var(--color-red-950) / 0.8);
+  color: hsl(var(--color-red-100));
   border-color: hsl(var(--color-red-700));
 }
 
 .state-info {
   background-color: hsl(var(--color-blue-50));
-  color: hsl(var(--color-blue-800));
-  border-color: hsl(var(--color-blue-200));
+  color: hsl(var(--color-blue-900));
+  border-color: hsl(var(--color-blue-300));
 }
 
 .dark .state-info {
-  background-color: hsl(var(--color-blue-900) / 0.5);
-  color: hsl(var(--color-blue-200));
+  background-color: hsl(var(--color-blue-950) / 0.8);
+  color: hsl(var(--color-blue-100));
   border-color: hsl(var(--color-blue-700));
 }
 
@@ -1998,6 +2024,201 @@
   .touch-manipulation {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Enhanced micro-interactions */
+.micro-interaction {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Haptic feedback simulation */
+@keyframes haptic-tap {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.haptic-feedback:active {
+  animation: haptic-tap 0.1s ease-out;
+}
+
+/* Subtle hover lift effect */
+.micro-lift {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.micro-lift:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Ripple effect for better touch feedback */
+@keyframes ripple-expand {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ripple-effect:active::after {
+  animation: ripple-expand 0.6s ease-out;
+}
+
+/* Success animation */
+@keyframes success-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.success-feedback {
+  animation: success-pulse 0.3s ease-out;
+}
+
+/* Error shake animation */
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.error-feedback {
+  animation: error-shake 0.5s ease-out;
+}
+
+/* Loading skeleton enhanced */
+@keyframes skeleton-wave {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: skeleton-wave 1.5s infinite ease-in-out;
+}
+
+/* Button press feedback */
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+.btn-micro:active {
+  animation: button-press 0.1s ease-out;
+}
+
+/* Card hover micro-interactions */
+@keyframes card-glow {
+  0% { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+  50% { box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3); }
+  100% { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+}
+
+.card-micro:hover {
+  animation: card-glow 0.3s ease-out;
+  transform: translateY(-4px);
+}
+
+/* Smooth color transitions */
+.color-transition {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Enhanced focus micro-interactions */
+@keyframes focus-ring-appear {
+  0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+  100% { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.5); }
+}
+
+.focus-micro:focus-visible {
+  animation: focus-ring-appear 0.2s ease-out;
+}
+
+/* Notification slide in animation */
+@keyframes notification-slide-in {
+  0% { 
+    transform: translateX(100%) translateY(-50%);
+    opacity: 0;
+  }
+  100% { 
+    transform: translateX(0) translateY(-50%);
+    opacity: 1;
+  }
+}
+
+.notification-enter {
+  animation: notification-slide-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Mobile-optimized micro-interactions */
+@media (hover: none) and (pointer: coarse) {
+  .touch-feedback:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease-out;
+  }
+  
+  .touch-ripple:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: touch-ripple-expand 0.3s ease-out;
+  }
+  
+  @keyframes touch-ripple-expand {
+    0% {
+      width: 20px;
+      height: 20px;
+      opacity: 0.5;
+    }
+    100% {
+      width: 80px;
+      height: 80px;
+      opacity: 0;
+    }
+  }
+}
     user-select: none;
     -webkit-user-select: none;
   }

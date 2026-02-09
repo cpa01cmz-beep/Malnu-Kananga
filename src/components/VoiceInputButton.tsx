@@ -212,7 +212,7 @@ setTranscriptBuffer('');
     return (
       <button
         disabled
-        className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
+        className={`p-4 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] ${className}`}
         aria-label="Input suara dinonaktifkan"
         title="Input suara dinonaktifkan"
       >
@@ -227,7 +227,7 @@ setTranscriptBuffer('');
         <button
           onClick={() => setShowPermissionHandler(true)}
           className={`
-            p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+            p-4 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0 min-w-[44px] min-h-[44px]
             ${getButtonStyle()}
             ${className}
           `}
@@ -262,7 +262,7 @@ setTranscriptBuffer('');
       onClick={handleClick}
       disabled={!isSupported || disabled}
        className={`
-         p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+         p-4 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0 min-w-[44px] min-h-[44px]
          ${getButtonStyle()}
          ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
          ${className}
