@@ -212,6 +212,10 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
                 target: { value: '' }
               } as React.ChangeEvent<HTMLInputElement>;
               handleChange(syntheticEvent);
+              // Focus back on input after clearing for better UX
+              if (ref && 'current' in ref && ref.current) {
+                ref.current.focus();
+              }
             }}
             className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
               showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'

@@ -13,9 +13,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   iconOnly?: boolean;
   ariaLabel?: string;
   children?: React.ReactNode;
+  /** Reason shown in tooltip when button is disabled */
+  disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
@@ -61,6 +63,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   children = null,
   className = '',
   disabled,
+  disabledReason,
   ...props
 }, ref) => {
   const classes = `
@@ -69,6 +72,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ${iconOnly ? iconOnlySizes[size] : sizeClasses[size]}
     ${fullWidth ? 'w-full' : ''}
     ${isLoading ? 'cursor-wait' : ''}
+    ${disabled && disabledReason ? 'group relative' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -84,11 +88,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ariaProps['aria-busy'] = 'true';
   }
 
+  const isDisabled = disabled || isLoading;
+
   return (
     <button
       ref={ref}
       className={classes}
-      disabled={disabled || isLoading}
+      disabled={isDisabled}
+      aria-live={isLoading ? 'polite' : undefined}
+      aria-disabled={isDisabled}
       {...ariaProps}
       {...props}
     >
@@ -117,6 +125,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
             <span className="ml-2 flex items-center">{icon}</span>
           )}
         </>
+      )}
+      {/* Tooltip for disabled state */}
+      {isDisabled && disabledReason && (
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium bg-neutral-800 dark:bg-neutral-700 text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+          {disabledReason}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"></span>
+        </span>
       )}
     </button>
   );
