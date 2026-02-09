@@ -100,7 +100,7 @@ class SpeechRecognitionService {
       const permission = await navigator.permissions.query({ name: 'microphone' as const });
       this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
       
-      this.permissionChangeListener = () => {
+      this.permissionChangeListener = (): void => {
         this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
         logger.debug('Microphone permission state changed:', this.permissionState);
       };
@@ -144,20 +144,20 @@ class SpeechRecognitionService {
   private setupEventListeners(): void {
     if (!this.recognition) return;
 
-    this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+    this.recognition.onresult = (event: SpeechRecognitionEvent): void => {
       this.handleResult(event);
     };
 
-    this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    this.recognition.onerror = (event: SpeechRecognitionErrorEvent): void => {
       this.handleError(event);
     };
 
-    this.recognition.onstart = () => {
+    this.recognition.onstart = (): void => {
       this.state = 'listening';
       this.callbacks.onStart?.();
     };
 
-    this.recognition.onend = () => {
+    this.recognition.onend = (): void => {
       if (this.state !== 'error') {
         this.state = 'idle';
       }
@@ -165,12 +165,12 @@ class SpeechRecognitionService {
       this.callbacks.onEnd?.();
     };
 
-    this.recognition.onspeechstart = () => {
+    this.recognition.onspeechstart = (): void => {
       this.clearTimeout();
       this.callbacks.onSpeechStart?.();
     };
 
-    this.recognition.onspeechend = () => {
+    this.recognition.onspeechend = (): void => {
       this.setupTimeout();
       this.callbacks.onSpeechEnd?.();
     };
