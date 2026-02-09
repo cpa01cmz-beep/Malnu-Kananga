@@ -6,17 +6,17 @@ export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
     title: 'Tahfidz Al-Qur\'an',
     description: 'Program intensif menghafal Al-Qur\'an dengan bimbingan ustadz/ustadzah berkompeten.',
-    imageUrl: 'https://images.unsplash.com/photo-1599339942293-86b72a38547b?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+    imageUrl: '/images/placeholder.svg'
   },
   {
     title: 'Kajian Kitab Kuning',
     description: 'Pendalaman khazanah Islam klasik melalui kajian kitab-kitab kuning oleh para ahli.',
-    imageUrl: 'https://images.unsplash.com/photo-1585056701393-85835978f84e?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+    imageUrl: '/images/placeholder.svg'
   },
   {
     title: 'Sains & Teknologi',
     description: 'Mengintegrasikan ilmu pengetahuan modern dengan nilai-nilai Islam untuk mencetak generasi unggul.',
-    imageUrl: `${EXTERNAL_URLS.PLACEHOLDER_IMAGE_BASE}Sains+%26+Teknologi`
+    imageUrl: '/images/placeholder.svg'
   }
 ];
 
@@ -25,19 +25,19 @@ export const INITIAL_NEWS: LatestNews[] = [
         title: 'MA Malnu Kananga Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten',
         date: '15 Juli 2024',
         category: 'Prestasi',
-        imageUrl: 'https://images.unsplash.com/photo-1571260899204-42aebca5a2aa?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: '/images/placeholder.svg'
     },
     {
         title: 'Penerimaan Peserta Didik Baru (PPDB) Tahun Ajaran 2025/2026 Resmi Dibuka',
         date: '10 Juli 2024',
         category: 'Sekolah',
-        imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: '/images/placeholder.svg'
     },
     {
         title: 'Kegiatan Bakti Sosial Sukses Digelar di Desa Sekitar Sekolah',
         date: '5 Juli 2024',
         category: 'Kegiatan',
-        imageUrl: 'https://images.unsplash.com/photo-1618494955439-78a25c1b698a?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=600'
+        imageUrl: '/images/placeholder.svg'
     }
 ];
 
