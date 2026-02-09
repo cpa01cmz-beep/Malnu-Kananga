@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" fill="#f3f4f6"/>
+  <path d="M200 120c-13.8 0-25 11.2-25 25s11.2 25 25 25 25-11.2 25-25-11.2-25-25-25zm0 40c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15z" fill="#9ca3af"/>
+  <path d="M140 200h120v-10H140v10z" fill="#9ca3af"/>
+  <text x="200" y="240" text-anchor="middle" fill="#6b7280" font-family="system-ui" font-size="14">Gambar tidak tersedia</text>
+</svg>
