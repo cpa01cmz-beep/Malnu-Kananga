@@ -14,7 +14,7 @@ import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
-import { useFocusTrap } from '../hooks/useKeyboardNavigation';
+import { useFocusTrap } from '../hooks/useAccessibility';
 
 const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 ease-out";
 
