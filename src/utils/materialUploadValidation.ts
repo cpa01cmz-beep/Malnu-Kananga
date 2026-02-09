@@ -10,6 +10,7 @@
  */
 
 import { logger } from './logger';
+import { FILE_SIZE_LIMITS } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -22,7 +23,7 @@ export const MATERIAL_FILE_TYPES = {
       'application/vnd.ms-powerpoint',
       'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     ],
-    maxSize: 50 * 1024 * 1024, // 50MB
+    maxSize: FILE_SIZE_LIMITS.MATERIAL_DEFAULT,
     displayName: 'Dokumen',
   },
   IMAGE: {
@@ -32,7 +33,7 @@ export const MATERIAL_FILE_TYPES = {
       'image/jpg',
       'image/png',
     ],
-    maxSize: 10 * 1024 * 1024, // 10MB
+    maxSize: FILE_SIZE_LIMITS.PPDB_DOCUMENT,
     displayName: 'Gambar',
   },
   VIDEO: {
@@ -41,7 +42,7 @@ export const MATERIAL_FILE_TYPES = {
       'video/mp4',
       'video/webm',
     ],
-    maxSize: 200 * 1024 * 1024, // 200MB
+    maxSize: FILE_SIZE_LIMITS.MATERIAL_LARGE,
     displayName: 'Video',
   },
 } as const;

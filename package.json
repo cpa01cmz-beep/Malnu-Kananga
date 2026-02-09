@@ -90,10 +90,9 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix"
     ],
-      "*.{json,md,yml,yaml}": [
-        "eslint --fix"
-      ]
-  ]
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "lastUpdated": "2026-02-04"
 }

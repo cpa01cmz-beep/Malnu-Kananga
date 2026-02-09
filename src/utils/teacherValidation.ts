@@ -1,5 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
+import { FILE_SIZE_LIMITS } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -204,7 +205,7 @@ export const validateMaterialData = (data: Partial<MaterialFormData>): Validatio
 
   // Validate file
   if (data.fileUrl && data.fileSize) {
-    const maxSize = 50 * 1024 * 1024; // 50MB
+    const maxSize = FILE_SIZE_LIMITS.MATERIAL_DEFAULT; // 50MB
     if (data.fileSize > maxSize) {
       errors.push('Ukuran file maksimal 50MB');
     }

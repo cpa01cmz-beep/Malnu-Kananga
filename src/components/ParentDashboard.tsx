@@ -24,7 +24,7 @@ import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -111,7 +111,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           try {
             const childrenData: Record<string, CachedStudentData> = {};
             const now = Date.now();
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+            const CACHE_DURATION = TIME_MS.ONE_DAY; // 24 hours
 
             // Fetch schedules once for all children
             const schedulesResponse = await schedulesAPI.getAll();
@@ -278,7 +278,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       // Check every 6 hours
       const interval = setInterval(() => {
         parentGradeNotificationService.checkMissingGrades(children);
-      }, 6 * 60 * 60 * 1000);
+      }, TIME_MS.SIX_HOURS);
 
       return () => clearInterval(interval);
     }
