@@ -543,7 +543,7 @@ class CommunicationLogService {
   }
 
   private formatLogForExport(log: CommunicationLogEntry): Record<string, string> {
-    const formatDate = (date: string) => {
+    const formatDate = (date: string): string => {
       return new Date(date).toLocaleString('id-ID', {
         day: '2-digit',
         month: '2-digit',

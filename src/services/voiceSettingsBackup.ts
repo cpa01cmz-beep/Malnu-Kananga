@@ -180,11 +180,11 @@ export const validateBackupData = (backupData: string): { isValid: boolean; erro
   }
 };
 
-export const getErrorRecoveryState = () => {
+export const getErrorRecoveryState = (): ReturnType<typeof errorRecoveryStrategy.getCircuitBreakerState> => {
   return errorRecoveryStrategy.getCircuitBreakerState();
 };
 
-export const resetErrorRecovery = () => {
+export const resetErrorRecovery = (): void => {
   errorRecoveryStrategy.resetCircuitBreaker();
   logger.info('Error recovery state reset');
 };
