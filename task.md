@@ -2174,8 +2174,8 @@
       - .env.example (added security warnings and PAYMENT_SERVER_KEY documentation)
    - **Database Migration Note**:
       - migration-payment-table.sql is ready to create payments and payment_settings tables
-      - Migration must be executed via: wrangler d1 execute malnu-kananga-db-prod --file=./migration-payment-table.sql
-      - For local dev: wrangler d1 execute malnu-kananga-db-dev --file=./migration-payment-table.sql --local
+       - Migration must be executed via: wrangler d1 execute malnu-kananga-db-prod --file=./migrations/migration-payment-table.sql
+       - For local dev: wrangler d1 execute malnu-kananga-db-dev --file=./migrations/migration-payment-table.sql --local
    - **Test Results Summary**:
       - PaymentButton: 12/12 tests passing (100%)
       - PaymentModal: 19/19 tests passing (100%)

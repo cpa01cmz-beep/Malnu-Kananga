@@ -3,6 +3,7 @@
     STORAGE_KEYS,
     RETRY_CONFIG,
     TIME_MS,
+    API_CONFIG,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -11,10 +12,10 @@
 
   /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
 
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
+// NOTE: Using API_CONFIG to avoid hardcoded URLs
 // See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
-const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
+const DEFAULT_API_BASE_URL = API_CONFIG.DEFAULT_BASE_URL;
+const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + API_CONFIG.WS_PATH;
 
 
 

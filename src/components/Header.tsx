@@ -229,11 +229,11 @@ const Header: React.FC<HeaderProps> = ({
                                     </Button>
                               </div>
                               )}
- <IconButton
+                                <IconButton
                                     icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
+                                    tooltip={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     size="lg"
-                                    
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' || e.key === ' ') {

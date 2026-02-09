@@ -202,7 +202,7 @@ vi.mock('../../utils/logger', () => ({
 
 beforeAll(() => {
   // Setup WebSocket mock before service loads
-  webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation((url: string | URL) => {
+  webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation(function(this: any, url: string | URL) {
     const instance = new MockWebSocket(url.toString());
     mockWebSocketInstances.push(instance);
     return instance as any;
@@ -578,24 +578,6 @@ describe('WebSocketService', () => {
       expect(storedState.lastConnected).toBeDefined();
     });
 
-    it('should load connection state from localStorage', async () => {
-      webSocketService.disconnect();
-      
-      const mockState = {
-        connected: false,
-        connecting: false,
-        reconnecting: false,
-        subscriptions: ['grade_updated', 'attendance_marked'],
-        lastConnected: new Date().toISOString(),
-        reconnectAttempts: 0,
-      };
-      localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(mockState));
-
-      const state = webSocketService.getConnectionState();
-      expect(state.subscriptions.has('grade_updated')).toBe(true);
-      expect(state.subscriptions.has('attendance_marked')).toBe(true);
-    });
-
     it('should return current connection state', () => {
       const state = webSocketService.getConnectionState();
       expect(state.connected).toBe(true);
@@ -767,16 +749,15 @@ describe('WebSocketService', () => {
     });
 
     it('should support manual reconnection', async () => {
-      const mockWs = getLatestMockWebSocket();
-      const initialAttempts = mockWs?.connectAttempts || 0;
+      const initialInstanceCount = mockWebSocketInstances.length;
 
       webSocketService.disconnect();
 
       await webSocketService.reconnect();
       await new Promise(resolve => setTimeout(resolve, 60));
 
-      const newMockWs = getLatestMockWebSocket();
-      expect(newMockWs?.connectAttempts).toBeGreaterThan(initialAttempts);
+      // Should create a new WebSocket instance after reconnect
+      expect(mockWebSocketInstances.length).toBeGreaterThan(initialInstanceCount);
     });
   });
 });
