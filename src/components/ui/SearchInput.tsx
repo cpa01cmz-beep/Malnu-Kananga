@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
-import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
+import { MagnifyingGlassIcon, XCircleIcon } from '../icons/NotificationIcons';
+import IconButton from './IconButton';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -23,6 +24,8 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
     announceErrors?: boolean;
     describedBy?: string;
   };
+  showClearButton?: boolean;
+  onClear?: () => void;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -73,6 +76,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   validateOnChange = true,
   validateOnBlur = true,
   accessibility = { announceErrors: true },
+  showClearButton = true,
+  onClear,
   className = '',
   value,
   onChange,
@@ -141,6 +146,19 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
       props.onKeyDown(e);
     }
   };
+
+  // Clear button handler
+  const handleClear = () => {
+    const syntheticEvent = {
+      target: { value: '' }
+    } as React.ChangeEvent<HTMLInputElement>;
+    handleChange(syntheticEvent);
+    if (onClear) {
+      onClear();
+    }
+  };
+
+  const hasValue = Boolean(value);
   // Determine final state based on validation
   const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' : 
                     (validation.state.isValid ? state : 'error');
@@ -202,8 +220,20 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           </div>
         )}
 
+        {showClearButton && hasValue && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <IconButton
+              icon={<XCircleIcon className={sizeIconClasses[size]} />}
+              ariaLabel="Bersihkan pencarian"
+              size={size === 'lg' ? 'md' : size === 'sm' ? 'sm' : 'sm'}
+              onClick={handleClear}
+              className="text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors"
+            />
+          </div>
+        )}
+
         {validation.state.isValidating && (
-          <div className={`absolute top-1/2 -translate-y-1/2 ${showIcon && iconPosition === 'right' ? 'right-12' : 'right-3'}`}>
+          <div className={`absolute top-1/2 -translate-y-1/2 ${showIcon && iconPosition === 'right' ? 'right-12' : showClearButton && hasValue ? 'right-12' : 'right-3'}`}>
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
           </div>
         )}
