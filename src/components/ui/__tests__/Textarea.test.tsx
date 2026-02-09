@@ -196,10 +196,97 @@ describe('Textarea Component', () => {
     const textarea = screen.getByRole('textbox');
     const errorText = screen.getByText('Error text');
     const helperText = screen.getByText('Helper text');
-    
+
     expect(helperText).toBeInTheDocument();
     const describedBy = textarea.getAttribute('aria-describedby');
     expect(describedBy).toContain(errorText.id);
     expect(describedBy).toContain(helperText.id);
+  });
+
+  // Micro-UX: Clear button tests
+  describe('Clear button functionality', () => {
+    it('should not show clear button by default', () => {
+      render(<Textarea value="Some text" />);
+      const clearButton = screen.queryByRole('button', { name: /bersihkan/i });
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should show clear button when showClearButton is true and there is a value', () => {
+      render(<Textarea value="Some text" showClearButton />);
+      const clearButton = screen.getByRole('button', { name: /bersihkan/i });
+      expect(clearButton).toBeInTheDocument();
+    });
+
+    it('should not show clear button when value is empty', () => {
+      render(<Textarea value="" showClearButton />);
+      const clearButton = screen.queryByRole('button', { name: /bersihkan/i });
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should not show clear button when textarea is disabled', () => {
+      render(<Textarea value="Some text" showClearButton disabled />);
+      const clearButton = screen.queryByRole('button', { name: /bersihkan/i });
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should clear value when clear button is clicked', () => {
+      const handleChange = vi.fn();
+      render(<Textarea value="Some text" showClearButton onChange={handleChange} />);
+
+      const clearButton = screen.getByRole('button', { name: /bersihkan/i });
+      fireEvent.click(clearButton);
+
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('should focus textarea after clearing', () => {
+      render(<Textarea value="Some text" showClearButton />);
+      const textarea = screen.getByRole('textbox');
+      const clearButton = screen.getByRole('button', { name: /bersihkan/i });
+
+      fireEvent.click(clearButton);
+
+      expect(document.activeElement).toBe(textarea);
+    });
+  });
+
+  // Micro-UX: Escape key functionality
+  describe('Escape key functionality', () => {
+    it('should not clear on escape by default', () => {
+      const handleChange = vi.fn();
+      render(<Textarea value="Some text" onChange={handleChange} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Escape' });
+
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    it('should clear value when escape is pressed and clearOnEscape is true', () => {
+      const handleChange = vi.fn();
+      render(<Textarea value="Some text" clearOnEscape onChange={handleChange} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Escape' });
+
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('should focus textarea after clearing with escape key', () => {
+      render(<Textarea value="Some text" clearOnEscape />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Escape' });
+
+      expect(document.activeElement).toBe(textarea);
+    });
   });
 });

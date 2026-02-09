@@ -1,5 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
+import { XMarkIcon } from '../icons/MaterialIcons';
 
 // Micro-UX: Character count indicator with progressive visual feedback
 interface CharacterCountIndicatorProps {
@@ -93,6 +94,8 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
     announceErrors?: boolean;
     describedBy?: string;
   };
+  showClearButton?: boolean;
+  clearOnEscape?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed resize-none";
@@ -121,6 +124,12 @@ const helperTextSizeClasses: Record<TextareaSize, string> = {
   lg: "text-sm",
 };
 
+const sizeIconClasses: Record<TextareaSize, string> = {
+  sm: "w-4 h-4",
+  md: "w-5 h-5",
+  lg: "w-6 h-6",
+};
+
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
   label,
@@ -136,6 +145,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   validateOnChange = true,
   validateOnBlur = true,
   accessibility = { announceErrors: true },
+  showClearButton = false,
+  clearOnEscape = false,
   className = '',
   value,
   onChange,
@@ -191,6 +202,28 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     }
   };
 
+  // Clear button handler
+  const handleClear = () => {
+    const syntheticEvent = {
+      target: { value: '' }
+    } as React.ChangeEvent<HTMLTextAreaElement>;
+    handleChange(syntheticEvent);
+    // Focus back on textarea after clearing for better UX
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+  // Escape key handler to clear input value
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (clearOnEscape && e.key === 'Escape') {
+      handleClear();
+    }
+    if (props.onKeyDown) {
+      props.onKeyDown(e);
+    }
+  };
+
   // Auto-focus management for validation errors
   useEffect(() => {
     if (validation.state.errors.length > 0 && validation.state.isTouched && textareaRef.current) {
@@ -217,6 +250,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
                     (validation.state.isValid ? state : 'error');
   const finalErrorText = validation.state.errors.length > 0 && validation.state.isTouched ? 
                         validation.state.errors[0] : errorText;
+
+  // Check if clear button should be shown
+  const hasClearButton = showClearButton && value && String(value).length > 0 && !props.disabled;
 
   // Enhanced accessibility attributes
   const accessibilityProps = {
@@ -252,9 +288,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         {...accessibilityProps}
         {...props}
       />
+
+        {/* Clear button - appears when there's a value and showClearButton is true */}
+        {hasClearButton && !validation.state.isValidating && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-3 top-3 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            aria-label="Bersihkan textarea"
+            title="Bersihkan textarea"
+          >
+            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+          </button>
+        )}
 
         {validation.state.isValidating && (
           <div className="absolute right-3 top-3">

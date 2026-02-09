@@ -46,13 +46,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState<number>(0);
   const [uploadedBytes, setUploadedBytes] = useState<number>(0);
   const [uploadStartTime, setUploadStartTime] = useState<number>(0);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [recentlyUploadedFileId, setRecentlyUploadedFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+      }
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
       }
     };
   }, []);
@@ -151,8 +157,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
           uploadDate: new Date().toISOString(),
         };
 
+        // Trigger success animation
+        setShowSuccessAnimation(true);
+        setRecentlyUploadedFileId(newFile.id);
+
         setFiles((prev) => [...prev, newFile]);
         onFileUploaded?.(response.data);
+
+        // Clear animation states after delay
+        if (successTimeoutRef.current) {
+          clearTimeout(successTimeoutRef.current);
+        }
+        successTimeoutRef.current = setTimeout(() => {
+          setShowSuccessAnimation(false);
+          setRecentlyUploadedFileId(null);
+        }, 2000);
 
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -235,7 +254,36 @@ const FileUpload: React.FC<FileUploadProps> = ({
             : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
         }`}
       >
-        {uploading ? (
+        {showSuccessAnimation ? (
+          <div className="flex flex-col items-center justify-center animate-fade-in">
+            <div className="relative mb-4">
+              <div className="absolute inset-0 bg-green-100 dark:bg-green-900/30 rounded-full animate-ping" />
+              <div className="relative w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center animate-scale-in">
+                <svg
+                  className="w-8 h-8 text-green-600 dark:text-green-400 animate-checkmark"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                    className="animate-draw-check"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-green-700 dark:text-green-400 animate-fade-in-up">
+              Upload successful!
+            </p>
+            <p className="sr-only" role="status" aria-live="polite">
+              File has been uploaded successfully
+            </p>
+          </div>
+        ) : uploading ? (
           <div className="w-full max-w-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -303,7 +351,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             Tip: Press Delete key on a focused file to quickly remove it
           </p>
           <div role="list" className="space-y-2">
-          {files.map((file) => (
+          {files.map((file, index) => (
             <div
               key={file.id}
               tabIndex={0}
@@ -315,7 +363,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   handleDelete(file);
                 }
               }}
-              className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+              className={`flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${
+                recentlyUploadedFileId === file.id
+                  ? 'animate-slide-in-right ring-2 ring-green-400 dark:ring-green-500 ring-offset-2 dark:ring-offset-neutral-900'
+                  : ''
+              } ${index < files.length - 1 ? 'animate-fade-in' : ''}`}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-2xl" aria-hidden="true">{getFileIcon(file.type)}</span>

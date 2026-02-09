@@ -1,102 +1,116 @@
 /**
  * Enhanced Micro-interactions and Hover States
  * Advanced CSS classes for sophisticated user interactions
+ * 
+ * Flexy: Refactored to use centralized animation constants
  */
+
+import {
+  EASING,
+  DURATION,
+  TRANSFORM,
+  SHADOW,
+  SIZE,
+  COLOR,
+  FOCUS_RING,
+  ANIMATION_CONFIG,
+  KEYFRAMES,
+} from './animationConstants';
 
 export const MICRO_INTERACTIONS = `
 /* Enhanced Hover States */
 .hover-lift {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-              box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform ${ANIMATION_CONFIG.HOVER_LIFT.duration}s ${ANIMATION_CONFIG.HOVER_LIFT.easing},
+              box-shadow ${ANIMATION_CONFIG.HOVER_LIFT.duration}s ${ANIMATION_CONFIG.HOVER_LIFT.easing};
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  transform: translateY(${ANIMATION_CONFIG.HOVER_LIFT.translateY}px) scale(${ANIMATION_CONFIG.HOVER_LIFT.scale});
+  box-shadow: ${ANIMATION_CONFIG.HOVER_LIFT.shadow};
 }
 
 .hover-lift-lg:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  transform: translateY(${ANIMATION_CONFIG.HOVER_LIFT_LARGE.translateY}px) scale(${ANIMATION_CONFIG.HOVER_LIFT_LARGE.scale});
+  box-shadow: ${ANIMATION_CONFIG.HOVER_LIFT_LARGE.shadow};
 }
 
 /* Enhanced Glow Effects */
 .hover-glow {
-  transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: box-shadow ${ANIMATION_CONFIG.GLOW.duration}s ${ANIMATION_CONFIG.GLOW.easing};
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  box-shadow: ${ANIMATION_CONFIG.GLOW.blue};
 }
 
 .hover-glow-enhanced:hover {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  box-shadow: ${ANIMATION_CONFIG.GLOW.blueEnhanced};
 }
 
 /* Color-specific glow effects */
 .hover-glow-success:hover {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  box-shadow: ${SHADOW.OFFSET.GLOW_SMALL} ${SHADOW.COLOR.GREEN_LIGHT};
 }
 
 .hover-glow-warning:hover {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  box-shadow: ${SHADOW.OFFSET.GLOW_SMALL} ${SHADOW.COLOR.AMBER_LIGHT};
 }
 
 .hover-glow-error:hover {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  box-shadow: ${SHADOW.OFFSET.GLOW_SMALL} ${SHADOW.COLOR.RED_LIGHT};
 }
 
 /* Interactive Scale Effects */
 .hover-scale {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform ${ANIMATION_CONFIG.SCALE.duration}s ${ANIMATION_CONFIG.SCALE.easing};
 }
 
 .hover-scale:hover {
-  transform: scale(1.05);
+  transform: scale(${ANIMATION_CONFIG.SCALE.medium});
 }
 
 .hover-scale-sm:hover {
-  transform: scale(1.02);
+  transform: scale(${ANIMATION_CONFIG.SCALE.small});
 }
 
 .hover-scale-lg:hover {
-  transform: scale(1.1);
+  transform: scale(${ANIMATION_CONFIG.SCALE.large});
 }
 
 /* Rotation Effects */
 .hover-rotate {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform ${DURATION.NORMAL}s ${EASING.STANDARD};
 }
 
 .hover-rotate:hover {
-  transform: rotate(5deg);
+  transform: rotate(${TRANSFORM.ROTATE.MEDIUM}deg);
 }
 
 .hover-rotate-360:hover {
-  transform: rotate(360deg);
+  transform: rotate(${TRANSFORM.ROTATE.LARGE}deg);
 }
 
 /* Background Gradient Transitions */
 .hover-gradient {
-  transition: background 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: background ${DURATION.NORMAL}s ${EASING.STANDARD};
 }
 
 .hover-gradient:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: ${COLOR.GRADIENT.HOVER};
 }
 
 /* Border Color Transitions */
 .hover-border {
-  transition: border-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: border-color ${DURATION.NORMAL}s ${EASING.STANDARD};
 }
 
 .hover-border:hover {
-  border-color: #3b82f6;
+  border-color: ${COLOR.PRIMARY.BLUE};
 }
 
 /* Text Shadow Effects */
 .hover-text-glow {
-  transition: text-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: text-shadow ${DURATION.NORMAL}s ${EASING.STANDARD};
 }
 
 .hover-text-glow:hover {
@@ -117,37 +131,37 @@ export const MICRO_INTERACTIONS = `
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background: ${ANIMATION_CONFIG.RIPPLE.color};
   transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
+  transition: width ${ANIMATION_CONFIG.RIPPLE.duration}s, height ${ANIMATION_CONFIG.RIPPLE.duration}s;
 }
 
 .ripple:active::before {
-  width: 300px;
-  height: 300px;
+  width: ${ANIMATION_CONFIG.RIPPLE.size}px;
+  height: ${ANIMATION_CONFIG.RIPPLE.size}px;
 }
 
 /* Pulse Animation */
 .pulse-on-hover {
-  transition: transform 0.2s;
+  transition: transform ${DURATION.FAST}s;
 }
 
 .pulse-on-hover:hover {
-  animation: pulse-hover 1s infinite;
+  animation: pulse-hover ${KEYFRAMES.PULSE.duration}s infinite;
 }
 
 @keyframes pulse-hover {
   0%, 100% {
-    transform: scale(1);
+    transform: scale(${KEYFRAMES.PULSE.scaleMin});
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(${KEYFRAMES.PULSE.scaleMax});
   }
 }
 
 /* Shake Animation */
 .shake-on-hover:hover {
-  animation: shake-hover 0.5s;
+  animation: shake-hover ${KEYFRAMES.SHAKE.duration}s;
 }
 
 @keyframes shake-hover {
@@ -155,16 +169,16 @@ export const MICRO_INTERACTIONS = `
     transform: translateX(0);
   }
   10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-2px);
+    transform: translateX(-${KEYFRAMES.SHAKE.offset}px);
   }
   20%, 40%, 60%, 80% {
-    transform: translateX(2px);
+    transform: translateX(${KEYFRAMES.SHAKE.offset}px);
   }
 }
 
 /* Bounce Animation */
 .bounce-on-hover:hover {
-  animation: bounce-hover 0.6s;
+  animation: bounce-hover ${KEYFRAMES.BOUNCE.duration}s;
 }
 
 @keyframes bounce-hover {
@@ -172,23 +186,23 @@ export const MICRO_INTERACTIONS = `
     transform: translateY(0);
   }
   40%, 43% {
-    transform: translateY(-8px);
+    transform: translateY(${KEYFRAMES.BOUNCE.heights[1]}px);
   }
   70% {
-    transform: translateY(-4px);
+    transform: translateY(${KEYFRAMES.BOUNCE.heights[2]}px);
   }
   90% {
-    transform: translateY(-2px);
+    transform: translateY(${KEYFRAMES.BOUNCE.heights[3]}px);
   }
 }
 
 /* Float Animation */
 .float-on-hover {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform ${DURATION.NORMAL}s ${EASING.STANDARD};
 }
 
 .float-on-hover:hover {
-  animation: float-hover 2s ease-in-out infinite;
+  animation: float-hover ${KEYFRAMES.FLOAT.duration}s ${EASING.EASE_IN_OUT} infinite;
 }
 
 @keyframes float-hover {
@@ -196,35 +210,35 @@ export const MICRO_INTERACTIONS = `
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(${KEYFRAMES.FLOAT.translateY}px);
   }
 }
 
 /* Tilt Effect */
 .hover-tilt {
-  transition: transform 0.2s;
+  transition: transform ${DURATION.FAST}s;
   transform-style: preserve-3d;
 }
 
 .hover-tilt:hover {
-  transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+  transform: perspective(${TRANSFORM.PERSPECTIVE.DEFAULT}px) rotateX(${TRANSFORM.ROTATE.MEDIUM}deg) rotateY(${TRANSFORM.ROTATE.MEDIUM}deg);
 }
 
 /* Staggered Animation for Lists */
 .stagger-fade-in {
-  animation: stagger-fade-in 0.5s ease-out forwards;
+  animation: stagger-fade-in ${ANIMATION_CONFIG.STAGGER.baseDuration}s ${EASING.EASE_OUT} forwards;
 }
 
-.stagger-fade-in:nth-child(1) { animation-delay: 0.1s; }
-.stagger-fade-in:nth-child(2) { animation-delay: 0.2s; }
-.stagger-fade-in:nth-child(3) { animation-delay: 0.3s; }
-.stagger-fade-in:nth-child(4) { animation-delay: 0.4s; }
-.stagger-fade-in:nth-child(5) { animation-delay: 0.5s; }
+.stagger-fade-in:nth-child(1) { animation-delay: ${ANIMATION_CONFIG.STAGGER.delays[0]}s; }
+.stagger-fade-in:nth-child(2) { animation-delay: ${ANIMATION_CONFIG.STAGGER.delays[1]}s; }
+.stagger-fade-in:nth-child(3) { animation-delay: ${ANIMATION_CONFIG.STAGGER.delays[2]}s; }
+.stagger-fade-in:nth-child(4) { animation-delay: ${ANIMATION_CONFIG.STAGGER.delays[3]}s; }
+.stagger-fade-in:nth-child(5) { animation-delay: ${ANIMATION_CONFIG.STAGGER.delays[4]}s; }
 
 @keyframes stagger-fade-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(${ANIMATION_CONFIG.STAGGER.translateY}px);
   }
   to {
     opacity: 1;
@@ -234,49 +248,49 @@ export const MICRO_INTERACTIONS = `
 
 /* Magnetic Effect */
 .magnetic {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform ${DURATION.FAST}s ${EASING.STANDARD};
 }
 
 /* Active States */
 .active-scale:active {
-  transform: scale(0.95);
+  transform: scale(${TRANSFORM.SCALE.TINY});
 }
 
 .active-rotate:active {
-  transform: rotate(2deg);
+  transform: rotate(${TRANSFORM.ROTATE.SMALL}deg);
 }
 
 .active-glow:active {
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+  box-shadow: ${ANIMATION_CONFIG.GLOW.blueActive};
 }
 
 /* Focus States */
 .focus-ring:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 ${FOCUS_RING.WIDTH}px ${FOCUS_RING.COLOR};
 }
 
 .focus-ring-offset:focus {
   outline: none;
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 ${FOCUS_RING.WIDTH_OFFSET}px ${FOCUS_RING.COLOR_WHITE}, 0 0 0 ${FOCUS_RING.WIDTH_OFFSET + 2}px ${FOCUS_RING.COLOR};
 }
 
 /* Loading States */
 .loading-dots {
   display: inline-flex;
-  gap: 4px;
+  gap: ${ANIMATION_CONFIG.LOADING_DOTS.gap}px;
 }
 
 .loading-dots span {
-  width: 8px;
-  height: 8px;
+  width: ${ANIMATION_CONFIG.LOADING_DOTS.width}px;
+  height: ${ANIMATION_CONFIG.LOADING_DOTS.height}px;
   border-radius: 50%;
   background-color: currentColor;
-  animation: loading-dots 1.4s ease-in-out infinite both;
+  animation: loading-dots ${ANIMATION_CONFIG.LOADING_DOTS.duration}s ${EASING.EASE_IN_OUT} infinite both;
 }
 
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(1) { animation-delay: ${ANIMATION_CONFIG.LOADING_DOTS.delay1}s; }
+.loading-dots span:nth-child(2) { animation-delay: ${ANIMATION_CONFIG.LOADING_DOTS.delay2}s; }
 
 @keyframes loading-dots {
   0%, 80%, 100% {
@@ -291,9 +305,9 @@ export const MICRO_INTERACTIONS = `
 
 /* Skeleton Loading */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
+  background: ${ANIMATION_CONFIG.SKELETON.gradient};
+  background-size: ${ANIMATION_CONFIG.SKELETON.gradientSize} 100%;
+  animation: skeleton-loading ${ANIMATION_CONFIG.SKELETON.duration}s ${EASING.EASE_IN_OUT} infinite;
 }
 
 @keyframes skeleton-loading {
@@ -307,24 +321,24 @@ export const MICRO_INTERACTIONS = `
 
 /* Success Animation */
 .success-checkmark {
-  animation: success-checkmark 0.6s ease-in-out;
+  animation: success-checkmark ${KEYFRAMES.SUCCESS.duration}s ${EASING.EASE_IN_OUT};
 }
 
 @keyframes success-checkmark {
   0% {
-    transform: scale(0) rotate(-45deg);
+    transform: scale(${KEYFRAMES.SUCCESS.scaleMin}) rotate(-45deg);
   }
   50% {
-    transform: scale(1.2) rotate(-45deg);
+    transform: scale(${KEYFRAMES.SUCCESS.scaleMid}) rotate(-45deg);
   }
   100% {
-    transform: scale(1) rotate(0deg);
+    transform: scale(${KEYFRAMES.SUCCESS.scaleMax}) rotate(0deg);
   }
 }
 
 /* Error Shake */
 .error-shake {
-  animation: error-shake 0.5s ease-in-out;
+  animation: error-shake ${KEYFRAMES.ERROR_SHAKE.duration}s ${EASING.EASE_IN_OUT};
 }
 
 @keyframes error-shake {
@@ -332,10 +346,10 @@ export const MICRO_INTERACTIONS = `
     transform: translateX(0);
   }
   10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-5px);
+    transform: translateX(-${KEYFRAMES.ERROR_SHAKE.offset}px);
   }
   20%, 40%, 60%, 80% {
-    transform: translateX(5px);
+    transform: translateX(${KEYFRAMES.ERROR_SHAKE.offset}px);
   }
 }
 
@@ -349,8 +363,8 @@ export const MICRO_INTERACTIONS = `
 /* Touch Optimizations */
 @media (pointer: coarse) {
   .hover-lift {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: ${SIZE.TOUCH.MIN}px;
+    min-width: ${SIZE.TOUCH.MIN}px;
   }
 }
 
