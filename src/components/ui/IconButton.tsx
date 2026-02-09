@@ -11,9 +11,11 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   ariaLabel: string;
   tooltip?: string;
   tooltipPosition?: IconButtonTooltipPosition;
+  /** Reason shown in tooltip when button is disabled */
+  disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative";
+const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group";
 
 const variantClasses: Record<IconButtonVariant, string> = {
   default: "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-primary-500/50 hover:scale-110 active:scale-95",
@@ -45,13 +47,16 @@ const IconButton: React.FC<IconButtonProps> = ({
   ariaLabel,
   tooltip,
   tooltipPosition = 'bottom',
+  disabledReason,
   className = '',
+  disabled,
   ...props
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const hasTooltip = Boolean(tooltip);
+  const hasDisabledReason = Boolean(disabledReason) && disabled;
 
   const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
   const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
@@ -97,7 +102,7 @@ const IconButton: React.FC<IconButtonProps> = ({
           id={tooltipId}
           role="tooltip"
           className={`
-            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 
+            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700
             rounded-md shadow-lg whitespace-nowrap pointer-events-none
             transition-all duration-200 ease-out
             ${tooltipPositionClasses[tooltipPosition]}
@@ -105,6 +110,27 @@ const IconButton: React.FC<IconButtonProps> = ({
           `.replace(/\s+/g, ' ').trim()}
         >
           {tooltip}
+          <span
+            className={`
+              absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
+              ${tooltipArrowClasses[tooltipPosition]}
+            `.replace(/\s+/g, ' ').trim()}
+            aria-hidden="true"
+          />
+        </span>
+      )}
+      {/* Tooltip for disabled state */}
+      {hasDisabledReason && (
+        <span
+          className={`
+            absolute z-50 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700
+            rounded-lg shadow-lg whitespace-nowrap pointer-events-none
+            transition-all duration-200
+            ${tooltipPositionClasses[tooltipPosition]}
+            opacity-0 invisible group-hover:opacity-100 group-hover:visible
+          `.replace(/\s+/g, ' ').trim()}
+        >
+          {disabledReason}
           <span
             className={`
               absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
