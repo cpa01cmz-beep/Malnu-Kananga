@@ -1,6 +1,7 @@
 import { Permission, UserRole, UserExtraRole, AccessResult, AuditLog } from '../types/permissions';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../config/permissions';
 import { logger } from '../utils/logger';
+import { PERMISSION_CONFIG } from '../constants';
 
 const EXTRA_ROLE_PERMISSIONS: Record<string, string[]> = {};
 
@@ -186,9 +187,9 @@ class PermissionService {
   private logAccess(log: AuditLog): void {
     this.auditLogs.push(log);
     
-    // Keep only last 1000 logs to prevent memory issues
-    if (this.auditLogs.length > 1000) {
-      this.auditLogs = this.auditLogs.slice(-1000);
+    // Keep only last MAX_AUDIT_LOGS logs to prevent memory issues
+    if (this.auditLogs.length > PERMISSION_CONFIG.MAX_AUDIT_LOGS) {
+      this.auditLogs = this.auditLogs.slice(-PERMISSION_CONFIG.MAX_AUDIT_LOGS);
     }
 
 // In production, this would be sent to a logging service

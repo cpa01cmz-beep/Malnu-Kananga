@@ -899,6 +899,7 @@ export const EMAIL_CONFIG = {
     MAX_RETRY_ATTEMPTS: 3,
     RETRY_DELAYS: [TIME_MS.ONE_MINUTE, 5 * TIME_MS.ONE_MINUTE, 15 * TIME_MS.ONE_MINUTE], // 1min, 5min, 15min
     ANALYTICS_DAYS: 30,
+    QUEUE_PROCESSING_DELAY_MS: 1000, // Delay between processing queue items
 } as const;
 
 // Byte conversion constants
@@ -919,6 +920,7 @@ export const COMPONENT_TIMEOUTS = {
     VOICE_MESSAGE: 30000,
     PASSWORD_REQUIREMENTS_HIDE: 3000,
     PAGE_RELOAD: 1500,
+    ERROR_FLUSH: 2000, // Sentry flush timeout
 } as const;
 
 // Animation constants
