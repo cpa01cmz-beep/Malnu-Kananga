@@ -3,6 +3,7 @@ import { useVoiceCommands } from './useVoiceCommands';
 import type { VoiceCommand } from '../types';
 import { UserRole, UserExtraRole } from '../types/permissions';
 import { logger } from '../utils/logger';
+import { USER_ROLES } from '../constants';
 
 interface UseDashboardVoiceCommandsOptions {
   userRole: UserRole;
@@ -40,15 +41,15 @@ export const useDashboardVoiceCommands = ({
 
     // Role-specific commands
     switch (userRole) {
-      case 'admin':
+      case USER_ROLES.ADMIN:
         commands.add('SHOW_PPDB');
         commands.add('VIEW_GRADES_OVERVIEW');
         commands.add('OPEN_LIBRARY');
         commands.add('GO_TO_CALENDAR');
         commands.add('SHOW_STATISTICS');
         break;
-        
-      case 'teacher':
+
+      case USER_ROLES.TEACHER:
         commands.add('SHOW_MY_CLASSES');
         commands.add('OPEN_GRADING');
         commands.add('VIEW_ATTENDANCE');
@@ -58,15 +59,15 @@ export const useDashboardVoiceCommands = ({
         commands.add('OPEN_GROUPS');
         commands.add('SEND_MESSAGE');
         break;
-        
-      case 'student':
+
+      case USER_ROLES.STUDENT:
         commands.add('SHOW_MY_GRADES');
         commands.add('CHECK_ATTENDANCE');
         commands.add('VIEW_INSIGHTS');
         commands.add('OPEN_LIBRARY');
         break;
-        
-      case 'parent':
+
+      case USER_ROLES.PARENT:
         commands.add('VIEW_CHILD_GRADES');
         commands.add('VIEW_CHILD_ATTENDANCE');
         commands.add('VIEW_CHILD_SCHEDULE');

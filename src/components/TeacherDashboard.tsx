@@ -28,6 +28,7 @@ import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedTeacherData } from '../services/offlineDataService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
+import { USER_ROLES, USER_STATUS } from '../constants';
 import { classifyError } from '../utils/errorHandler';
 import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
@@ -746,8 +747,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                   id: getCurrentUserId(),
                   name: getCurrentUserName(),
                   email: getCurrentUserEmail(),
-                  role: 'teacher',
-                  status: 'active',
+                  role: USER_ROLES.TEACHER,
+                  status: USER_STATUS.ACTIVE,
                 }}
               />
             </Suspense>
@@ -775,8 +776,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                   id: getCurrentUserId(),
                   name: getCurrentUserName(),
                   email: getCurrentUserEmail(),
-                  role: 'teacher',
-                  status: 'active',
+                  role: USER_ROLES.TEACHER,
+                  status: USER_STATUS.ACTIVE,
                 }}
               />
             </Suspense>

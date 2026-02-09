@@ -12,14 +12,14 @@ import { emailQueueService } from './emailQueueService';
 import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS } from '../constants';
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
   private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS || 'malnu_email_notification_settings';
   private analyticsKey = STORAGE_KEYS.EMAIL_ANALYTICS || 'malnu_email_analytics';
   private deliveryHistoryKey = STORAGE_KEYS.EMAIL_DELIVERY_HISTORY || 'malnu_email_delivery_history';
-  private apiEndpoint = '/api/email/send';
+  private apiEndpoint = API_ENDPOINTS.EMAIL.SEND;
 
   constructor() {
     logger.info('EmailService initialized');

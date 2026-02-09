@@ -13,7 +13,7 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
-import { OPACITY_TOKENS, HEADER_NAV_STRINGS } from '../constants';
+import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing";
 
@@ -196,7 +196,7 @@ const Header: React.FC<HeaderProps> = ({
                                       </Badge>
                                   )}
 
-                                 {userRole === 'admin' && (
+                                 {userRole === USER_ROLES.ADMIN && (
                                      <Button
                                          variant="indigo"
                                          onClick={onEditClick}

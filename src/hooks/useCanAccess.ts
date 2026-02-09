@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { AccessResult, UserExtraRole, UserRole } from '../types/permissions';
 import { permissionService } from '../services/permissionService';
 import { useAuth } from './useAuth';
+import { USER_ROLES } from '../constants';
 
 export interface UseCanAccessResult {
   canAccess: boolean;
@@ -22,7 +23,7 @@ export const useCanAccess = (context?: {
 }) => {
   // Get current user from reactive auth state
   const { user } = useAuth();
-  const userRole: UserRole = user?.role || 'student';
+  const userRole: UserRole = user?.role || USER_ROLES.STUDENT;
   const userExtraRole: UserExtraRole = (user?.extraRole as UserExtraRole) || null;
 
   /**

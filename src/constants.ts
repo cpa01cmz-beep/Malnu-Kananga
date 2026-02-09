@@ -1835,3 +1835,110 @@ export const XML_NAMESPACES = {
     XLINK: 'http://www.w3.org/1999/xlink',
     XML: 'http://www.w3.org/XML/1998/namespace',
 } as const;
+
+// User Status - Flexy: Never hardcode status strings!
+export const USER_STATUS = {
+    ACTIVE: 'active',
+    INACTIVE: 'inactive',
+    PENDING: 'pending',
+    SUSPENDED: 'suspended',
+} as const;
+
+export type UserStatus = typeof USER_STATUS[keyof typeof USER_STATUS];
+
+// Queue Status for offline actions - Flexy: Never hardcode status strings!
+export const QUEUE_STATUS = {
+    PENDING: 'pending',
+    PROCESSING: 'processing',
+    COMPLETED: 'completed',
+    FAILED: 'failed',
+    RETRYING: 'retrying',
+} as const;
+
+export type QueueStatus = typeof QUEUE_STATUS[keyof typeof QUEUE_STATUS];
+
+// Inventory Status - Flexy: Never hardcode status strings!
+export const INVENTORY_STATUS = {
+    ACTIVE: 'active',
+    MAINTENANCE: 'maintenance',
+    DISPOSED: 'disposed',
+    LOST: 'lost',
+} as const;
+
+export type InventoryStatus = typeof INVENTORY_STATUS[keyof typeof INVENTORY_STATUS];
+
+// Payment Status - Flexy: Never hardcode status strings!
+export const PAYMENT_STATUS = {
+    PENDING: 'pending',
+    PAID: 'paid',
+    OVERDUE: 'overdue',
+    PARTIAL: 'partial',
+    CANCELLED: 'cancelled',
+} as const;
+
+export type PaymentStatus = typeof PAYMENT_STATUS[keyof typeof PAYMENT_STATUS];
+
+// Announcement Status - Flexy: Never hardcode status strings!
+export const ANNOUNCEMENT_STATUS = {
+    ACTIVE: 'active',
+    INACTIVE: 'inactive',
+    SCHEDULED: 'scheduled',
+    EXPIRED: 'expired',
+} as const;
+
+export type AnnouncementStatus = typeof ANNOUNCEMENT_STATUS[keyof typeof ANNOUNCEMENT_STATUS];
+
+// Role Display Names - Flexy: Centralize display labels!
+export const ROLE_DISPLAY_NAMES = {
+    [USER_ROLES.ADMIN]: 'Administrator',
+    [USER_ROLES.TEACHER]: 'Guru',
+    [USER_ROLES.STUDENT]: 'Siswa',
+    [USER_ROLES.PARENT]: 'Wali Murid',
+    [USER_ROLES.STAFF]: 'Guru (Staff)',
+    [USER_ROLES.OSIS]: 'Siswa (OSIS)',
+    [USER_ROLES.WAKASEK]: 'Wakasek',
+    [USER_ROLES.KEPSEK]: 'Kepala Sekolah',
+} as const;
+
+// User Status Display Labels
+export const USER_STATUS_LABELS = {
+    [USER_STATUS.ACTIVE]: 'Aktif',
+    [USER_STATUS.INACTIVE]: 'Non-Aktif',
+    [USER_STATUS.PENDING]: 'Pending',
+    [USER_STATUS.SUSPENDED]: 'Ditangguhkan',
+} as const;
+
+// Inventory Status Display Labels
+export const INVENTORY_STATUS_LABELS = {
+    [INVENTORY_STATUS.ACTIVE]: 'Aktif',
+    [INVENTORY_STATUS.MAINTENANCE]: 'Dalam Perbaikan',
+    [INVENTORY_STATUS.DISPOSED]: 'Dihapuskan',
+    [INVENTORY_STATUS.LOST]: 'Hilang',
+} as const;
+
+// Payment Status Display Labels
+export const PAYMENT_STATUS_LABELS = {
+    [PAYMENT_STATUS.PENDING]: 'Pending',
+    [PAYMENT_STATUS.PAID]: 'Lunas',
+    [PAYMENT_STATUS.OVERDUE]: 'Terlambat',
+    [PAYMENT_STATUS.PARTIAL]: 'Sebagian',
+    [PAYMENT_STATUS.CANCELLED]: 'Dibatalkan',
+} as const;
+
+// Announcement Status Display Labels
+export const ANNOUNCEMENT_STATUS_LABELS = {
+    [ANNOUNCEMENT_STATUS.ACTIVE]: 'Aktif',
+    [ANNOUNCEMENT_STATUS.INACTIVE]: 'Non-Aktif',
+    [ANNOUNCEMENT_STATUS.SCHEDULED]: 'Terjadwal',
+    [ANNOUNCEMENT_STATUS.EXPIRED]: 'Kadaluarsa',
+} as const;
+
+// Placeholder Images - Flexy: Centralize placeholder URLs!
+export const PLACEHOLDER_IMAGES = {
+    SCHOOL: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=400&fit=crop',
+    STUDENT: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&h=100&fit=crop',
+    TEACHER: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
+    CLASS: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
+    EVENT: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=400&fit=crop',
+    MATERIAL: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop',
+} as const;
