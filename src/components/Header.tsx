@@ -13,17 +13,17 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
-import { OPACITY_TOKENS } from '../constants';
+import { OPACITY_TOKENS, HEADER_NAV_STRINGS } from '../constants';
 
 const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
 
 const NavLinks = () => (
     <>
-        <a href="#home" className={navLinkClass}>Beranda</a>
-        <a href="#profil" className={navLinkClass}>Profil</a>
-        <a href="#berita" className={navLinkClass}>Berita</a>
-        <a href="#download" className={navLinkClass}>Download</a>
-        <a href="#login-email" className={navLinkClass}>Login Email</a>
+        <a href="#home" className={navLinkClass}>{HEADER_NAV_STRINGS.HOME}</a>
+        <a href="#profil" className={navLinkClass}>{HEADER_NAV_STRINGS.PROFILE}</a>
+        <a href="#berita" className={navLinkClass}>{HEADER_NAV_STRINGS.NEWS}</a>
+        <a href="#download" className={navLinkClass}>{HEADER_NAV_STRINGS.DOWNLOAD}</a>
+        <a href="#login-email" className={navLinkClass}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</a>
     </>
 );
 
@@ -156,11 +156,11 @@ const Header: React.FC<HeaderProps> = ({
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
                         <div className="flex items-center gap-3">
                         <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}>
-                            M
+                            {HEADER_NAV_STRINGS.LOGO_TEXT}
                         </div>
                         <div>
-                            <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">Malnu Kananga</span>
-                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide">NPSN: 69881502</span>
+                            <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">{HEADER_NAV_STRINGS.SCHOOL_NAME}</span>
+                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide">{HEADER_NAV_STRINGS.NPSN_LABEL}</span>
                         </div>
                     </div>
 
@@ -202,18 +202,18 @@ const Header: React.FC<HeaderProps> = ({
                                          onClick={onEditClick}
                                           icon={<SparklesIcon aria-hidden="true" />}
                                          iconPosition="left"
-                                         title="Buka Editor AI"
+                                         title={HEADER_NAV_STRINGS.AI_EDITOR_OPEN}
                                      >
-                                         <span className="hidden lg:inline">Editor AI</span>
+                                         <span className="hidden lg:inline">{HEADER_NAV_STRINGS.AI_EDITOR}</span>
                                      </Button>
                                   )}
 
-                                 <Button
-                                     variant="secondary"
-                                     onClick={onTogglePublicView}
-                                 >
-                                     {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
-                                 </Button>
+                                  <Button
+                                      variant="secondary"
+                                      onClick={onTogglePublicView}
+                                  >
+                                      {isPublicView ? HEADER_NAV_STRINGS.VIEW_DASHBOARD : HEADER_NAV_STRINGS.VIEW_WEBSITE}
+                                  </Button>
 
                                 <Button variant="danger" onClick={onLogout}>
                                     Logout
@@ -221,9 +221,9 @@ const Header: React.FC<HeaderProps> = ({
                             </div>
                           ) : (
                               <div className="hidden sm:flex items-center gap-2">
-                                   <Button variant="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
-                                        <span>Tanya AI</span>
-                                    </Button>
+                                    <Button variant="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
+                                         <span>{HEADER_NAV_STRINGS.AI_ASK}</span>
+                                     </Button>
                                     <Button onClick={onLoginClick}>
                                         Login
                                     </Button>

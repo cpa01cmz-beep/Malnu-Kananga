@@ -18,6 +18,7 @@ import {
   announceValidation,
   getPasswordRequirements
 } from '../utils/validation';
+import { TIMEOUT_CONFIG, LOGIN_UI_STRINGS } from '../constants';
 
 const EyeIcon = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +67,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             setShowPasswordRequirements(false);
             setTouchedFields({ email: false, password: false });
             setShowForgotPassword(false);
-        }, 300);
+        }, TIMEOUT_CONFIG.UI_ANIMATION_DURATION);
     }
   }, [isOpen]);
 
@@ -95,7 +96,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       // Validate form
       const validation = validateLoginForm(email, password);
       if (!validation.isValid) {
-        setError('Periksa kembali data yang Anda masukkan');
+        setError(LOGIN_UI_STRINGS.VALIDATION_ERROR);
         announceValidation('Form login belum lengkap atau tidak valid');
         return;
       }

@@ -751,3 +751,212 @@ export const HTTP = {
     RETRYABLE_STATUSES: [408, 429, 500, 502, 503, 504] as const,
     SERVER_ERROR_STATUSES: [500, 502, 503, 504] as const,
 } as const;
+
+// UI Text Constants - Centralized to avoid hardcoded strings
+export const UI_STRINGS = {
+    // Common actions
+    SAVE: 'Simpan',
+    CANCEL: 'Batal',
+    CLOSE: 'Tutup',
+    DELETE: 'Hapus',
+    EDIT: 'Edit',
+    CREATE: 'Buat',
+    SEARCH: 'Cari',
+    LOADING: 'Memuat...',
+    ERROR: 'Error',
+    SUCCESS: 'Berhasil',
+    WARNING: 'Peringatan',
+    INFO: 'Info',
+    CONFIRM: 'Konfirmasi',
+    BACK: 'Kembali',
+    NEXT: 'Lanjut',
+    SUBMIT: 'Kirim',
+    DONE: 'Selesai',
+    CONTINUE: 'Lanjutkan',
+    TRY_AGAIN: 'Coba Lagi',
+    SELECT_ALL: 'Pilih Semua',
+    CLEAR_SELECTION: 'Bersihkan Pilihan',
+    SELECTED: 'terpilih',
+    OR: 'atau',
+    YES: 'Ya',
+    NO: 'Tidak',
+    OK: 'OK',
+    LOGOUT: 'Keluar',
+    LOGIN: 'Login',
+    REGISTER: 'Daftar',
+    FORGOT_PASSWORD: 'Lupa Password?',
+    RESET_PASSWORD: 'Reset Password',
+    DASHBOARD: 'Dashboard',
+    HOME: 'Beranda',
+    PROFILE: 'Profil',
+    NOTIFICATIONS: 'Notifikasi',
+    MESSAGES: 'Pesan',
+    CALENDAR: 'Kalender',
+    SCHEDULE: 'Jadwal',
+    ATTENDANCE: 'Absensi',
+    GRADES: 'Nilai',
+    ASSIGNMENTS: 'Tugas',
+    MATERIALS: 'Materi',
+    LIBRARY: 'Perpustakaan',
+    EVENTS: 'Kegiatan',
+    ANNOUNCEMENTS: 'Pengumuman',
+    NEWS: 'Berita',
+    CLASSES: 'Kelas',
+    STUDENTS: 'Siswa',
+    TEACHERS: 'Guru',
+    PARENTS: 'Orang Tua',
+    SUBJECTS: 'Mata Pelajaran',
+    EXAMS: 'Ujian',
+    REPORTS: 'Laporan',
+    ANALYTICS: 'Analitik',
+    STATISTICS: 'Statistik',
+    OVERVIEW: 'Ringkasan',
+    DETAILS: 'Detail',
+    HISTORY: 'Riwayat',
+    ACTIVITY: 'Aktivitas',
+    PROGRESS: 'Progres',
+    PERFORMANCE: 'Performa',
+    DOCUMENTS: 'Dokumen',
+    FILES: 'File',
+    SETTINGS: 'Pengaturan',
+    HELP: 'Bantuan',
+    SUPPORT: 'Dukungan',
+    ABOUT: 'Tentang',
+    VERSION: 'Versi',
+    PRIVACY_POLICY: 'Kebijakan Privasi',
+    TERMS_OF_SERVICE: 'Ketentuan Layanan',
+} as const;
+
+// Login-related UI strings
+export const LOGIN_UI_STRINGS = {
+    TITLE: 'Login',
+    QUICK_LOGIN: 'Login Cepat (Demo)',
+    SELECT_ROLE: 'Pilih peran untuk login instan:',
+    ROLE_STUDENT: 'Siswa',
+    ROLE_TEACHER: 'Guru',
+    ROLE_ADMIN: 'Admin',
+    ROLE_STAFF: 'Guru (Staff)',
+    ROLE_OSIS: 'Siswa (OSIS)',
+    SUCCESS_TITLE: 'Login Berhasil!',
+    SUCCESS_MESSAGE: 'Anda akan diarahkan ke dashboard...',
+    EMAIL_LABEL: 'Alamat Email Terdaftar',
+    EMAIL_PLACEHOLDER: 'anda@email.com',
+    PASSWORD_LABEL: 'Password',
+    PASSWORD_PLACEHOLDER: 'Masukkan password',
+    SEARCH_PLACEHOLDER: 'Cari Nama / NIS...',
+    WEIGHT_INFO_TITLE: 'Info Pembobotan',
+    VALIDATION_ERROR: 'Periksa kembali data yang Anda masukkan',
+} as const;
+
+// Forgot password UI strings
+export const FORGOT_PASSWORD_STRINGS = {
+    TITLE: 'Lupa Password',
+    EMAIL_SENT_TITLE: 'Email Terkirim!',
+    EMAIL_SENT_MESSAGE: 'Kami telah mengirimkan link reset password ke:',
+    LINK_EXPIRY_INFO: 'Link ini hanya berlaku selama 1 jam.',
+    CLOSE_BUTTON: 'Tutup',
+    INSTRUCTIONS_TITLE: 'Instruksi:',
+    INSTRUCTION_ENTER_EMAIL: 'Masukkan email yang terdaftar',
+    INSTRUCTION_CHECK_INBOX: 'Cek inbox Anda untuk link reset',
+    INSTRUCTION_EXPIRY: 'Link berlaku selama 1 jam',
+    EMAIL_LABEL: 'Alamat Email',
+    EMAIL_PLACEHOLDER: 'nama@email.com',
+    SUBMIT_BUTTON: 'Kirim Link Reset Password',
+    BACK_TO_LOGIN: 'Kembali ke Login',
+    VALIDATION_ERROR: 'Masukkan email yang valid',
+} as const;
+
+// Header navigation UI strings
+export const HEADER_NAV_STRINGS = {
+    HOME: 'Beranda',
+    PROFILE: 'Profil',
+    NEWS: 'Berita',
+    DOWNLOAD: 'Download',
+    LOGIN_EMAIL: 'Login Email',
+    LOGO_TEXT: 'M',
+    SCHOOL_NAME: 'Malnu Kananga',
+    NPSN_LABEL: 'NPSN: 69881502',
+    AI_EDITOR: 'Editor AI',
+    AI_EDITOR_OPEN: 'Buka Editor AI',
+    AI_ASK: 'Tanya AI',
+    VIEW_DASHBOARD: 'Lihat Dashboard',
+    VIEW_WEBSITE: 'Lihat Website',
+} as const;
+
+// Access denied UI strings  
+export const ACCESS_DENIED_STRINGS = {
+    TITLE: 'Access Denied',
+    MESSAGE: 'You do not have permission to access this feature.',
+    REQUIRED_PERMISSION: 'Required permission:',
+    GO_BACK: 'Go Back',
+} as const;
+
+// Toast notification UI strings
+export const TOAST_UI_STRINGS = {
+    CLOSE: 'Tutup notifikasi',
+} as const;
+
+// Grading management UI strings
+export const GRADING_UI_STRINGS = {
+    PAGE_TITLE: 'Input Nilai Siswa',
+    SUBJECT_LABEL: 'Mata Pelajaran:',
+    UNSAVED_CHANGES_WARNING: 'Ada perubahan belum disimpan',
+    SEARCH_PLACEHOLDER: 'Cari Nama / NIS...',
+    AUTO_SAVING: 'Auto-saving...',
+    WEIGHT_INFO_TITLE: 'Info Pembobotan',
+    WEIGHT_INFO_DESC: 'Tugas (30%) + UTS (30%) + UAS (40%)',
+    SAVE_ALL_BUTTON: 'Simpan Semua Nilai',
+    BATCH_OPERATIONS_TITLE: 'Batch Operations',
+    ASSIGNMENT_LABEL: 'Assignment',
+    UTS_LABEL: 'UTS',
+    UAS_LABEL: 'UAS',
+} as const;
+
+// Notification template strings
+export const NOTIFICATION_TEMPLATE_STRINGS = {
+    GENERAL_TITLE: '📢 {title}',
+    GRADE_UPDATE_TITLE: '📊 Update Nilai: {subject}',
+    PPDB_STATUS_TITLE: '🎓 Status PPDB: {status}',
+    EVENT_TITLE: '🎉 Kegiatan Baru: {title}',
+    MATERIAL_TITLE: '📚 Materi Baru: {title}',
+    SYSTEM_TITLE: '⚙️ {title}',
+    OCR_VALIDATION_TITLE: '📄 OCR Validation {severity}',
+    OCR_COMPLETE_TITLE: '🔍 OCR Validation Complete',
+} as const;
+
+// Animation and timeout constants
+export const TIMEOUT_CONFIG = {
+    UI_ANIMATION_DURATION: 300,
+    PASSWORD_REQUIREMENTS_HIDE_DELAY: 3000,
+    TOAST_DEFAULT_DURATION: 3000,
+    SCREEN_READER_TIMEOUT: 1000,
+    REDIRECT_DELAY: 3000,
+    DEBOUNCE_SHORT: 200,
+    DEBOUNCE_DEFAULT: 1000,
+} as const;
+
+// Table and pagination constants
+export const TABLE_CONFIG = {
+    DEFAULT_SKELETON_ROWS: 10,
+    DEFAULT_PAGE_SIZE: 20,
+    MAX_VISIBLE_PAGES: 5,
+} as const;
+
+// Category validation constants
+export const CATEGORY_CONFIG = {
+    SIMILARITY_THRESHOLD: 0.6,
+    MAX_SUGGESTIONS: 5,
+    MIN_DESCRIPTION_LENGTH: 10,
+    CACHE_TTL_MINUTES: 30,
+} as const;
+
+// OCR enhancement constants
+export const OCR_ENHANCEMENT_CONFIG = {
+    MAX_SUMMARY_LENGTH: 150,
+    SIMILARITY_THRESHOLD: 0.8,
+} as const;
+
+// Permission service constants
+export const PERMISSION_CONFIG = {
+    MAX_AUDIT_LOGS: 1000,
+} as const;
