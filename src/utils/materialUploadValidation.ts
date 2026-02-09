@@ -10,7 +10,7 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS } from '../constants';
+import { FILE_SIZE_LIMITS, FILE_VALIDATION } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -198,8 +198,6 @@ export class FileTypeDetector {
 
 // File name validation
 export class FileNameValidator {
-  private static MAX_LENGTH = 255;
-  private static MIN_LENGTH = 1;
   private static RESERVED_NAMES = [
     'CON', 'PRN', 'AUX', 'NUL',
     'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
@@ -213,10 +211,10 @@ export class FileNameValidator {
     // Check length
     if (fileName.length === 0) {
       errors.push('Nama file tidak boleh kosong');
-    } else if (fileName.length < this.MIN_LENGTH) {
-      errors.push(`Nama file minimal ${this.MIN_LENGTH} karakter`);
-    } else if (fileName.length > this.MAX_LENGTH) {
-      errors.push(`Nama file maksimal ${this.MAX_LENGTH} karakter`);
+    } else if (fileName.length < FILE_VALIDATION.FILENAME_MIN_LENGTH) {
+      errors.push(`Nama file minimal ${FILE_VALIDATION.FILENAME_MIN_LENGTH} karakter`);
+    } else if (fileName.length > FILE_VALIDATION.FILENAME_MAX_LENGTH) {
+      errors.push(`Nama file maksimal ${FILE_VALIDATION.FILENAME_MAX_LENGTH} karakter`);
     }
 
     // Check for reserved names
@@ -242,7 +240,7 @@ export class FileNameValidator {
     }
 
     // Warnings
-    if (fileName.length > 100) {
+    if (fileName.length > FILE_VALIDATION.FILENAME_WARNING_LENGTH) {
       warnings.push('Nama file panjang dapat menyulitkan pengelolaan');
     }
 
@@ -293,9 +291,9 @@ export class PPDBDocumentValidator {
     }
 
     // Validate file size for PPDB documents
-    const maxPPDBSize = 10 * 1024 * 1024; // 10MB for PPDB
+    const maxPPDBSize = FILE_SIZE_LIMITS.PPDB_DOCUMENT;
     if (file.size > maxPPDBSize) {
-      warnings.push('Ukuran dokumen PPDB idealnya tidak melebihi 10MB untuk pemrosesan OCR yang optimal');
+      warnings.push(`Ukuran dokumen PPDB idealnya tidak melebihi ${FILE_SIZE_LIMITS.PPDB_DOCUMENT / (1024 * 1024)}MB untuk pemrosesan OCR yang optimal`);
     }
 
     // Validate document requirements
@@ -353,8 +351,8 @@ export class PPDBDocumentValidator {
     let score = 100;
 
     // Validate file size for OCR
-    const minSize = 10 * 1024; // 10KB
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const minSize = FILE_SIZE_LIMITS.IMAGE_MIN;
+    const maxSize = FILE_SIZE_LIMITS.PROFILE_IMAGE;
 
     if (file.size < minSize) {
       errors.push('Ukuran gambar terlalu kecil untuk OCR yang optimal');
@@ -527,12 +525,12 @@ export class MaterialUploadValidator {
     }
 
     // Check batch size limit
-    const maxBatchSize = 500 * 1024 * 1024; // 500MB
+    const maxBatchSize = FILE_SIZE_LIMITS.BATCH_TOTAL;
     const canUpload = overallValid && totalSize <= maxBatchSize;
 
     if (totalSize > maxBatchSize) {
       results.forEach(r => {
-        r.warnings.push('Total ukuran file melebihi batas 500MB untuk batch upload');
+        r.warnings.push(`Total ukuran file melebihi batas ${FILE_SIZE_LIMITS.BATCH_TOTAL / (1024 * 1024)}MB untuk batch upload`);
       });
     }
 

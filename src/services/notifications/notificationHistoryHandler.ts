@@ -61,6 +61,8 @@ export class NotificationHistoryHandler {
 
   getUnifiedHistory(limit: number = 20): NotificationHistoryItem[] {
     try {
+      // Reload from localStorage to ensure we have the latest data
+      this.loadHistory();
       return this.history.slice(-limit);
     } catch (error) {
       logger.error('Failed to get notification history:', error);
@@ -70,6 +72,8 @@ export class NotificationHistoryHandler {
 
   markAsRead(notificationId: string): void {
     try {
+      // Reload from localStorage to ensure we have the latest data
+      this.loadHistory();
       const updatedHistory = this.history.map((item) => {
         if (item.id === notificationId) {
           return {
@@ -93,6 +97,8 @@ export class NotificationHistoryHandler {
 
   deleteFromHistory(notificationId: string): void {
     try {
+      // Reload from localStorage to ensure we have the latest data
+      this.loadHistory();
       this.history = this.history.filter((item) => item.id !== notificationId);
       this.saveHistory();
       logger.info('Notification deleted from history:', notificationId);
