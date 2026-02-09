@@ -727,6 +727,13 @@ export const VALIDATION_PATTERNS = {
     URL_PROTOCOLS: ['http://', 'https://'] as const,
 } as const;
 
+// Email validation constants - Flexy: Never hardcode email validation limits!
+export const EMAIL_VALIDATION = {
+    MAX_LOCAL_LENGTH: 64,
+    MAX_DOMAIN_LENGTH: 253,
+    MIN_PASSWORD_LENGTH: 6,
+} as const;
+
 // Search configuration constants
 export const SEARCH_CONFIG = {
     DEFAULT_MAX_RESULTS: 20,

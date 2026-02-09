@@ -1,4 +1,4 @@
-import { UI_ACCESSIBILITY } from '../constants';
+import { UI_ACCESSIBILITY, EMAIL_VALIDATION, HTTP } from '../constants';
 
 /**
  * Validation utilities for form inputs
@@ -30,7 +30,7 @@ export const emailValidation: ValidationRule = {
     
     if (parts.length !== 2) return false;
     if (parts[0].length === 0 || parts[1].length === 0) return false;
-    if (parts[0].length > 64 || parts[1].length > 253) return false;
+    if (parts[0].length > EMAIL_VALIDATION.MAX_LOCAL_LENGTH || parts[1].length > EMAIL_VALIDATION.MAX_DOMAIN_LENGTH) return false;
     if (parts[0].startsWith('.') || parts[0].endsWith('.')) return false;
     
     return true;
@@ -42,7 +42,7 @@ export const emailValidation: ValidationRule = {
 export const passwordValidation: ValidationRule = {
   validate: (password: string) => {
     if (!password || password.length === 0) return false;
-    if (password.length < 6) return false; // Minimum 6 characters
+    if (password.length < EMAIL_VALIDATION.MIN_PASSWORD_LENGTH) return false; // Minimum password length from constants
     return true;
   },
   message: 'Password minimal 6 karakter'
@@ -54,9 +54,9 @@ export const getPasswordRequirements = (password: string): {
   status: 'met' | 'unmet';
 }[] => [
   {
-    met: password.length >= 6,
-    requirement: 'Minimal 6 karakter',
-    status: password.length >= 6 ? 'met' : 'unmet'
+    met: password.length >= EMAIL_VALIDATION.MIN_PASSWORD_LENGTH,
+    requirement: `Minimal ${EMAIL_VALIDATION.MIN_PASSWORD_LENGTH} karakter`,
+    status: password.length >= EMAIL_VALIDATION.MIN_PASSWORD_LENGTH ? 'met' : 'unmet'
   },
   {
     met: password.length > 0,
@@ -93,7 +93,7 @@ export function validatePasswordRealtime(password: string): ValidationResult {
     return { isValid: false, errors };
   }
   
-  if (password.length < 6) {
+  if (password.length < EMAIL_VALIDATION.MIN_PASSWORD_LENGTH) {
     errors.push(passwordValidation.message);
   }
   
@@ -132,19 +132,19 @@ export function classifyLoginError(error: unknown): string {
     return 'Waktu habis. Silakan coba lagi.';
   }
   
-  // Authentication errors
-  if (errorMessage.includes('401') || errorMessage.includes('unauthorized') || 
+  // Authentication errors - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.UNAUTHORIZED)) || errorMessage.includes('unauthorized') ||
       errorMessage.includes('kredensial') || errorMessage.includes('login gagal')) {
     return 'Email atau password salah. Periksa kembali data Anda.';
   }
-  
-  // Server errors
-  if (errorMessage.includes('500') || errorMessage.includes('server error')) {
+
+  // Server errors - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.INTERNAL_SERVER_ERROR)) || errorMessage.includes('server error')) {
     return 'Server sedang bermasalah. Silakan coba beberapa saat lagi.';
   }
-  
-  // Rate limiting
-  if (errorMessage.includes('429') || errorMessage.includes('rate limit') || 
+
+  // Rate limiting - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) || errorMessage.includes('rate limit') ||
       errorMessage.includes('terlalu banyak')) {
     return 'Terlalu banyak percobaan login. Tunggu sebentar lalu coba lagi.';
   }
