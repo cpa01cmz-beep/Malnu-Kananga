@@ -2219,16 +2219,15 @@
     }
   }
 }
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
   .safe-area-padding {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
+
   .mobile-full-height {
     min-height: 100vh;
     min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
