@@ -17,24 +17,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-sm hover:shadow-md hover:scale-[1.02] btn-hover-primary focus-visible-enhanced",
-  secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
-  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05]",
-  danger: "bg-red-700 text-white dark:bg-red-600 dark:text-white hover:bg-red-800 dark:hover:bg-red-700 focus:ring-red-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  success: "bg-green-700 text-white dark:bg-green-600 dark:text-white hover:bg-green-800 dark:hover:bg-green-700 focus:ring-green-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  warning: "bg-orange-600 text-white dark:bg-orange-500 dark:text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  indigo: "bg-indigo-700 text-white dark:bg-indigo-600 dark:text-white hover:bg-indigo-800 dark:hover:bg-indigo-700 focus:ring-indigo-500/50 shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'green-solid': "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'blue-solid': "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'purple-solid': "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 transition-all duration-200 ease-out shadow-sm hover:shadow-md hover:scale-[1.02]",
-  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02]",
+  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover",
+  secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth",
+  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05] transition-bounce",
+  danger: "bg-red-700 text-white dark:bg-red-600 dark:text-white hover:bg-red-800 dark:hover:bg-red-700 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  success: "bg-green-700 text-white dark:bg-green-600 dark:text-white hover:bg-green-800 dark:hover:bg-green-700 focus:ring-green-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  info: "bg-blue-700 text-white dark:bg-blue-600 dark:text-white hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-blue-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  warning: "bg-orange-600 text-white dark:bg-orange-500 dark:text-white hover:bg-orange-700 dark:hover:bg-orange-600 focus:ring-orange-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  indigo: "bg-indigo-700 text-white dark:bg-indigo-600 dark:text-white hover:bg-indigo-800 dark:hover:bg-indigo-700 focus:ring-indigo-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'green-solid': "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'blue-solid': "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'purple-solid': "bg-purple-600 text-white hover:bg-purple-700 focus:ring-purple-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'red-solid': "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'orange-solid': "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  'teal-solid': "bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover",
+  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
