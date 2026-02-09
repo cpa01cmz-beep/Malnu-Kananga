@@ -1,6 +1,78 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 
+// Micro-UX: Character count indicator with progressive visual feedback
+interface CharacterCountIndicatorProps {
+  current: number;
+  max: number;
+  size: TextareaSize;
+}
+
+const CharacterCountIndicator: React.FC<CharacterCountIndicatorProps> = ({ current, max, size }) => {
+  const percentage = (current / max) * 100;
+  const isWarning = percentage >= 80 && percentage < 100;
+  const isError = percentage >= 100;
+
+  const getColorClasses = () => {
+    if (isError) return 'text-red-600 dark:text-red-400 font-semibold animate-pulse-once';
+    if (isWarning) return 'text-amber-600 dark:text-amber-400 font-medium';
+    return 'text-neutral-400 dark:text-neutral-500';
+  };
+
+  const getAriaLabel = () => {
+    if (isError) return `${current} dari ${max} karakter. Batas maksimum tercapai!`;
+    if (isWarning) return `${current} dari ${max} karakter. Mendekati batas.`;
+    return `${current} dari ${max} karakter`;
+  };
+
+  const helperTextSizeClasses: Record<TextareaSize, string> = {
+    sm: "text-xs",
+    md: "text-xs",
+    lg: "text-sm",
+  };
+
+  return (
+    <span 
+      className={`${helperTextSizeClasses[size]} ${getColorClasses()} transition-colors duration-200`}
+      aria-label={getAriaLabel()}
+      role="status"
+      aria-live="polite"
+    >
+      {current}/{max}
+    </span>
+  );
+};
+
+// Micro-UX: Visual progress bar for character limit
+interface CharacterProgressBarProps {
+  current: number;
+  max: number;
+}
+
+const CharacterProgressBar: React.FC<CharacterProgressBarProps> = ({ current, max }) => {
+  const percentage = Math.min((current / max) * 100, 100);
+  const isWarning = percentage >= 80 && percentage < 100;
+  const isError = percentage >= 100;
+
+  const getBarColor = () => {
+    if (isError) return 'bg-red-500';
+    if (isWarning) return 'bg-amber-500';
+    return 'bg-primary-500';
+  };
+
+  return (
+    <div 
+      className="h-1 w-full bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden"
+      aria-hidden="true"
+    >
+      <div 
+        className={`h-full ${getBarColor()} transition-all duration-300 ease-out rounded-full`}
+        style={{ width: `${percentage}%` }}
+      />
+    </div>
+  );
+};
+
 export type TextareaSize = 'sm' | 'md' | 'lg';
 export type TextareaState = 'default' | 'error' | 'success';
 
@@ -203,11 +275,21 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         </p>
       )}
 
-      {/* Character count for accessibility */}
+      {/* Character count with visual feedback */}
       {props.maxLength && (
-        <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500 text-right`} aria-live="polite">
-          {String(value || '').length}/{props.maxLength}
-        </p>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <CharacterCountIndicator 
+              current={String(value || '').length} 
+              max={props.maxLength}
+              size={size}
+            />
+          </div>
+          <CharacterProgressBar 
+            current={String(value || '').length} 
+            max={props.maxLength}
+          />
+        </div>
       )}
     </div>
   );
