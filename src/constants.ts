@@ -627,7 +627,7 @@ export const SCHEDULER_INTERVALS = {
     PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
     NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
     AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
-    OFFLINE_SYNC_CHECK: 60 * 1000, // 1 minute
+    OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
     WEBSOCKET_PING: 30 * 1000, // 30 seconds
 } as const;
 
@@ -811,11 +811,18 @@ export const OCR_CONFIG = {
     CONFIDENCE_WARNING_THRESHOLD: 0.7,
     COMPARISON_TEXT_MAX: 200,
     INPUT_LOG_MAX: 500,
+    ATTENDANCE_CONFIDENCE_THRESHOLD: 60, // Minimum average confidence for attendance OCR
 } as const;
 
 // ID generation constants
 export const ID_GENERATION = {
     RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// UI Accessibility constants - Flexy: Never hardcode accessibility values!
+export const UI_ACCESSIBILITY = {
+    OFFSCREEN_POSITION: '-9999px',
+    SCREEN_READER_TIMEOUT: 1000,
 } as const;
 
 // Cache TTL constants in milliseconds

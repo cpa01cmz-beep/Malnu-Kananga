@@ -1,7 +1,7 @@
 import { Subject, Class } from '../types';
 import { subjectsAPI, classesAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, CACHE_TTL } from '../constants';
 // import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export interface SubjectWithUsage {
@@ -24,7 +24,7 @@ export interface NewCategorySuggestion {
   status: 'pending' | 'approved' | 'rejected';
 }
 
-const CACHE_EXPIRY = 30 * 60 * 1000; // 30 minutes
+const CACHE_EXPIRY = CACHE_TTL.CATEGORY; // 30 minutes
 
 interface CacheData<T> {
   data: T;
