@@ -1,6 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS } from '../constants';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -243,7 +243,7 @@ class OCRService {
 
   private isValidGrade(grade: string): boolean {
     const numericGrade = parseInt(grade, 10);
-    return !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 100;
+    return !isNaN(numericGrade) && numericGrade >= GRADE_LIMITS.MIN && numericGrade <= GRADE_LIMITS.MAX;
   }
 
   private assessTextQuality(text: string, confidence: number): OCRTextQuality {
@@ -258,8 +258,8 @@ class OCRService {
     
     estimatedAccuracy = Math.max(0, Math.min(100, estimatedAccuracy));
     
-    const isHighQuality = confidence >= 70 && wordCount >= 20;
-    const isSearchable = confidence >= 50 && wordCount >= 5;
+    const isHighQuality = confidence >= OCR_SERVICE_CONFIG.QUALITY.HIGH_THRESHOLD && wordCount >= 20;
+    const isSearchable = confidence >= OCR_SERVICE_CONFIG.QUALITY.MEDIUM_THRESHOLD && wordCount >= 5;
     
     // Determine document type
     let documentType: OCRTextQuality['documentType'] = 'unknown';
@@ -331,9 +331,9 @@ class OCRService {
       const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS) || '[]');
       events.push(event);
       
-      // Keep only last 100 events
-      if (events.length > 100) {
-        events.splice(0, events.length - 100);
+      // Keep only last N events (configurable)
+      if (events.length > OCR_SERVICE_CONFIG.MAX_CACHED_EVENTS) {
+        events.splice(0, events.length - OCR_SERVICE_CONFIG.MAX_CACHED_EVENTS);
       }
       
       localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS, JSON.stringify(events));

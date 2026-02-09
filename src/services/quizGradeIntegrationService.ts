@@ -2,7 +2,7 @@ import { Grade, Quiz, QuizAttempt, AssignmentType } from '../types';
 import { gradesAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_KEY_PATTERNS } from '../constants';
 
 /**
  * Quiz Grade Integration Service
@@ -248,7 +248,7 @@ function getQuizAttempts(
       }
     } else {
       const storageKeys = Object.keys(localStorage);
-      const quizAttemptKeys = storageKeys.filter(key => key.startsWith('malnu_quiz_attempts_'));
+      const quizAttemptKeys = storageKeys.filter(key => key.startsWith(STORAGE_KEY_PATTERNS.QUIZ_ATTEMPTS));
       
       for (const key of quizAttemptKeys) {
         const stored = localStorage.getItem(key);
