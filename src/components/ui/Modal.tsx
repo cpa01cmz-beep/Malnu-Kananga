@@ -71,22 +71,22 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300"
+      className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300"
       onClick={handleBackdropClick}
       role="presentation"
     >
       <div
         ref={modalRef}
-        className={`bg-white dark:bg-neutral-800 rounded-xl shadow-float border border-neutral-200 dark:border-neutral-700 ${sizeClasses[size]} ${animationClasses[animation]} ${className}`}
+        className={`bg-white/95 dark:bg-neutral-800/95 rounded-xl shadow-2xl border border-neutral-200/60 dark:border-neutral-700/60 ${sizeClasses[size]} ${animationClasses[animation]} ${className} backdrop-blur-md`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         aria-describedby={description ? 'modal-description' : undefined}
       >
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700">
+          <div className="flex items-center justify-between p-6 border-b border-neutral-200/60 dark:border-neutral-700/60">
             {title && (
-              <h2 id="modal-title" className="text-lg font-bold text-neutral-900 dark:text-white">
+              <h2 id="modal-title" className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">
                 {title}
               </h2>
             )}
@@ -94,7 +94,7 @@ const Modal: React.FC<ModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 rounded-lg text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50%"
+                className="p-2.5 rounded-xl text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50% hover:scale-105"
                 aria-label="Close modal"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -109,7 +109,7 @@ const Modal: React.FC<ModalProps> = ({
             {description}
           </p>
         )}
-        <div className="p-4">{children}</div>
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );
