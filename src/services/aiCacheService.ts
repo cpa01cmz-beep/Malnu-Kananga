@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CACHE_TTL } from '../constants';
 import type { CacheConfig, CacheEntry, CacheKeyParams, CacheStats, SerializedCacheData } from './aiCache.types';
 
 class AIResponseCache {
@@ -20,7 +20,7 @@ class AIResponseCache {
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
       maxSize: 100,
-      ttl: 30 * 60 * 1000, // 30 minutes default
+      ttl: CACHE_TTL.AI_CACHE, // 30 minutes default
       ...config
     };
     
@@ -165,7 +165,7 @@ class AIResponseCache {
    * Start automatic cleanup interval
    */
   private startCleanupInterval(): void {
-    this.cleanupIntervalId = setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    this.cleanupIntervalId = setInterval(() => this.cleanup(), CACHE_TTL.CLEANUP_INTERVAL);
   }
 
   /**
@@ -341,7 +341,7 @@ export { AIResponseCache };
 
 export const chatCache = new AIResponseCache({
   maxSize: 50,
-  ttl: 20 * 60 * 1000 // 20 minutes for chat
+  ttl: CACHE_TTL.AI_CHAT // 20 minutes for chat
 });
 
 export const analysisCache = new AIResponseCache({
@@ -351,11 +351,11 @@ export const analysisCache = new AIResponseCache({
 
 export const editorCache = new AIResponseCache({
   maxSize: 20,
-  ttl: 15 * 60 * 1000 // 15 minutes for editor responses
+  ttl: CACHE_TTL.AI_EDITOR // 15 minutes for editor responses
 });
 
 export const ocrCache = new AIResponseCache({
   maxSize: 40,
-  ttl: 45 * 60 * 1000 // 45 minutes for OCR processing results
+  ttl: CACHE_TTL.AI_OCR // 45 minutes for OCR processing results
 });
 

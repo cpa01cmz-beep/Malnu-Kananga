@@ -245,9 +245,15 @@ export const VOICE_CONFIG = {
     SPEECH_RECOGNITION_TIMEOUT: 5000,
     DEBOUNCE_DELAY: 500,
     MAX_VOICE_CACHE_SIZE: 50,
-CONTINUOUS_MODE_TIMEOUT: 10000,
+    CONTINUOUS_MODE_TIMEOUT: 10000,
     COMMAND_DETECTION_THRESHOLD: 0.7,
     MESSAGE_QUEUE_MAX_SIZE: 50,
+    MAX_SPEAK_ATTEMPTS: 3,
+    PREFERRED_LANGUAGE: 'id-ID',
+    FALLBACK_LANGUAGE: 'en-US',
+    RATE_BOUNDS: { MIN: 0.1, MAX: 10 },
+    PITCH_BOUNDS: { MIN: 0, MAX: 2 },
+    VOLUME_BOUNDS: { MIN: 0, MAX: 1 },
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -592,8 +598,122 @@ export const API_CONFIG = {
     ENDPOINTS: {
         CHAT: '/api/chat',
         LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        USERS: '/api/users',
+        USER_PASSWORD: '/api/users/:userId/password',
     },
 } as const;
+
+// Language and Locale Codes - Flexy: Never hardcode language codes!
+export const LANGUAGE_CODES = {
+    INDONESIAN: 'id-ID',
+    ENGLISH_US: 'en-US',
+    ENGLISH_UK: 'en-GB',
+    JAVANESE: 'jv-ID',
+    DEFAULT: 'id-ID',
+} as const;
+
+// File Type Extensions - Flexy: Never hardcode file extensions!
+export const FILE_EXTENSIONS = {
+    DOCUMENTS: ['.pdf', '.doc', '.docx', '.ppt', '.pptx'] as const,
+    IMAGES: ['.jpg', '.jpeg', '.png', '.gif', '.webp'] as const,
+    VIDEOS: ['.mp4', '.avi', '.mov', '.mkv'] as const,
+    AUDIO: ['.mp3', '.wav', '.ogg', '.m4a'] as const,
+    SPREADSHEETS: ['.xls', '.xlsx', '.csv'] as const,
+    ARCHIVES: ['.zip', '.rar', '.7z'] as const,
+} as const;
+
+// All accepted file extensions (for FileUpload component)
+export const ACCEPTED_FILE_EXTENSIONS = [
+    ...FILE_EXTENSIONS.DOCUMENTS,
+    ...FILE_EXTENSIONS.IMAGES,
+    '.mp4', // Video (commonly used)
+] as const;
+
+// Scheduler Intervals (milliseconds) - Flexy: Never hardcode intervals!
+export const SCHEDULER_INTERVALS = {
+    EMAIL_DIGEST_CHECK: 5 * 60 * 1000, // 5 minutes
+    PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
+    NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
+    AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
+    OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
+    WEBSOCKET_PING: 30 * 1000, // 30 seconds
+} as const;
+
+// Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
+export const PERFORMANCE_THRESHOLDS = {
+    SLOW_REQUEST_MS: 3000, // 3 seconds
+    ERROR_RATE_ALERT_PERCENT: 10, // 10%
+    AVG_RESPONSE_TIME_ALERT_MS: 5000, // 5 seconds
+    CONSECUTIVE_FAILURES_ALERT: 5,
+    MEMORY_WARNING_PERCENT: 80, // 80%
+    CPU_WARNING_PERCENT: 70, // 70%
+} as const;
+
+// Test Timeout Delays (milliseconds) - Flexy: Never hardcode test delays!
+export const TEST_DELAYS = {
+    SHORT: 10,
+    MEDIUM: 50,
+    LONG: 100,
+    VERY_LONG: 500,
+} as const;
+
+// Hash Algorithm Configuration
+export const HASH_CONFIG = {
+    DEFAULT_ALGORITHM: 'simple',
+    HASH_SHIFT_BITS: 5,
+    OUTPUT_BASE: 36,
+    DEFAULT_RANDOM_LENGTH: 9,
+} as const;
+
+// UI ID Configuration
+export const UI_ID_CONFIG = {
+    RANDOM_SUFFIX_LENGTH: 9,
+    DEFAULT_SEPARATOR: '_',
+} as const;
+
+// Conversion Utilities
+export const CONVERSION = {
+    BYTES_PER_KB: 1024,
+    BYTES_PER_MB: 1024 * 1024,
+    BYTES_PER_GB: 1024 * 1024 * 1024,
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 60 * 1000,
+    MS_PER_HOUR: 60 * 60 * 1000,
+} as const;
+
+/**
+ * Convert megabytes to bytes
+ * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
+ */
+export function mbToBytes(mb: number): number {
+    return mb * CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert bytes to megabytes
+ */
+export function bytesToMb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert minutes to milliseconds
+ * Flexy says: Use this instead of hardcoded `minutes * 60 * 1000`
+ */
+export function minutesToMs(minutes: number): number {
+    return minutes * CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert hours to milliseconds
+ */
+export function hoursToMs(hours: number): number {
+    return hours * CONVERSION.MS_PER_HOUR;
+}
 
 // Validation regex patterns - Centralized to avoid hardcoded regex
 export const VALIDATION_PATTERNS = {
@@ -673,6 +793,7 @@ export const ACADEMIC = {
         MAX: 20,
     } as const,
     NISN_LENGTH: 10,
+    MAJOR_EXAM_TYPES: ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'] as const,
 } as const;
 
 // File validation constants
@@ -703,11 +824,18 @@ export const OCR_CONFIG = {
     CONFIDENCE_WARNING_THRESHOLD: 0.7,
     COMPARISON_TEXT_MAX: 200,
     INPUT_LOG_MAX: 500,
+    ATTENDANCE_CONFIDENCE_THRESHOLD: 60, // Minimum average confidence for attendance OCR
 } as const;
 
 // ID generation constants
 export const ID_GENERATION = {
     RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// UI Accessibility constants - Flexy: Never hardcode accessibility values!
+export const UI_ACCESSIBILITY = {
+    OFFSCREEN_POSITION: '-9999px',
+    SCREEN_READER_TIMEOUT: 1000,
 } as const;
 
 // Cache TTL constants in milliseconds
@@ -999,4 +1127,213 @@ export const OCR_ENHANCEMENT_CONFIG = {
 // Permission service constants
 export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
+} as const;
+
+// Email template colors - Flexy: Never hardcode colors in email templates!
+export const EMAIL_COLORS = {
+    PRIMARY: '#2563eb',
+    SUCCESS: '#059669',
+    SUCCESS_LIGHT: '#dcfce7',
+    WARNING: '#dc2626',
+    INFO: '#dbeafe',
+    LIBRARY: '#7c3aed',
+    PPDB: '#ea580c',
+    BACKGROUND: '#f9fafb',
+    TEXT_PRIMARY: '#333',
+    TEXT_DARK: '#1f2937',
+    HIGHLIGHT: '#dbeafe',
+    STATUS_SUCCESS: '#d1fae5',
+    STATUS_WARNING: '#fef3c7',
+    STATUS_INFO: '#dbeafe',
+    STATUS_ERROR: '#fee2e2',
+    GRAY_BG: '#f3f4f6',
+    GREEN_SUCCESS: '#10b981',
+} as const;
+
+// Phone format constants - Flexy: Never hardcode phone formats!
+export const PHONE_FORMAT = {
+    INDONESIA_PREFIX: '628',
+    INDONESIA_LOCAL_PREFIX: '0',
+    INDONESIA_MIN_LENGTH: 10,
+    INDONESIA_MAX_LENGTH: 15,
+} as const;
+
+// Input mask patterns - Flexy: Never hardcode mask patterns!
+export const INPUT_MASKS = {
+    NISN: '9999999999',
+    PHONE: '999-9999-99999',
+    DATE: '99-99-9999',
+    NIS: '9999999999',
+} as const;
+
+// ID Prefixes - Flexy: Never hardcode ID prefixes!
+export const ID_PREFIXES = {
+    TEMPLATE: 'template',
+    NOTIFICATION: 'notif',
+    AUDIT: 'audit',
+    EMAIL: 'email',
+    STUDY_PLAN: 'study_plan',
+    SESSION: 'session',
+    USER: 'user',
+    GRADE: 'grade',
+    MATERIAL: 'material',
+    ANNOUNCEMENT: 'announcement',
+    OFFLINE: 'offline',
+} as const;
+
+// Academic subjects - Flexy: Never hardcode subject names!
+export const ACADEMIC_SUBJECTS = {
+    MATHEMATICS: 'Matematika',
+    INDONESIAN: 'Bahasa Indonesia',
+    ENGLISH: 'Bahasa Inggris',
+    PHYSICS: 'Fisika',
+    CHEMISTRY: 'Kimia',
+    BIOLOGY: 'Biologi',
+    HISTORY: 'Sejarah',
+    GEOGRAPHY: 'Geografi',
+    ECONOMICS: 'Ekonomi',
+    SOCIOLOGY: 'Sosiologi',
+    CIVICS: 'PPKn',
+    RELIGION: 'Pendidikan Agama',
+    ARTS: 'Seni Budaya',
+    PE: 'Penjasorkes',
+    ENTREPRENEURSHIP: 'Kewirausahaan',
+} as const;
+
+// Indonesian month names - Flexy: Never hardcode locale-specific data!
+export const DATE_LOCALE = {
+    INDONESIAN_MONTHS: [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ] as const,
+    INDONESIAN_SHORT_MONTHS: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ] as const,
+    INDONESIAN_DAYS: [
+        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+    ] as const,
+} as const;
+
+// Default class configuration for new students
+export const DEFAULT_CLASS_CONFIG = {
+    NEW_STUDENT_CODE: '10',
+    NEW_STUDENT_NAME: 'Kelas 10',
+} as const;
+
+// Email domain constants
+export const EMAIL_DOMAINS = {
+    ADMIN: 'admin@malnu-kananga.sch.id',
+    INFO: 'info@ma-malnukananga.sch.id',
+    TEACHER: 'guru.staff@malnu.sch.id',
+    STUDENT: 'siswa.osis@malnu.sch.id',
+} as const;
+
+// Demo user data - Flexy: Demo data should be centralized!
+export const DEMO_USERS = {
+    ADMIN: {
+        name: 'Ahmad Dahlan',
+        email: EMAIL_DOMAINS.ADMIN,
+    },
+    TEACHER: {
+        name: 'Siti Aminah, S.Pd.',
+        email: EMAIL_DOMAINS.TEACHER,
+    },
+    STUDENT: {
+        name: 'Budi Santoso',
+        email: 'budi.santoso@malnu.sch.id',
+    },
+} as const;
+
+// PPDB Committee configuration
+export const PPDB_CONFIG = {
+    COMMITTEE_NAME: `Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
+    DEFAULT_STATUS_COLORS: {
+        PENDING: EMAIL_COLORS.STATUS_WARNING,
+        APPROVED: EMAIL_COLORS.STATUS_SUCCESS,
+        REJECTED: EMAIL_COLORS.STATUS_ERROR,
+    },
+} as const;
+
+// Quiz configuration constants
+export const QUIZ_CONFIG = {
+    DEFAULT_DURATION_MINUTES: 30,
+    PASSING_SCORE: 70,
+} as const;
+
+// Study plan configuration constants
+export const STUDY_PLAN_CONFIG = {
+    DEFAULT_DURATION_WEEKS: 4,
+} as const;
+
+// Parent notification configuration constants
+export const PARENT_NOTIFICATION_CONFIG = {
+    DEFAULT_GRADE_THRESHOLD: 70,
+    MISSING_GRADE_DAYS: 7,
+    DEFAULT_QUIET_HOURS: {
+        START: '22:00',
+        END: '07:00',
+    },
+} as const;
+
+// Grade frequency constants
+export const GRADE_FREQUENCY = {
+    MAJOR_EXAM_DAYS: 30,
+    QUIZ_DAYS: 14,
+    HOMEWORK_DAYS: 7,
+} as const;
+
+// Document types mapping
+export const DOCUMENT_TYPES = {
+    AKTA_KELAHIRAN: { key: 'akta_kelahiran', label: 'Akta Kelahiran' },
+    KARTU_KELUARGA: { key: 'kartu_keluarga', label: 'Kartu Keluarga' },
+    IJAZAH: { key: 'ijazah', label: 'Ijazah' },
+    SKHU: { key: 'skhu', label: 'SKHU' },
+    PAS_FOTO: { key: 'pas_foto', label: 'Pas Foto' },
+    RAPORT: { key: 'raport', label: 'Raport' },
+    KIP: { key: 'kip', label: 'KIP' },
+    KPS: { key: 'kps', label: 'KPS' },
+    KKS: { key: 'kks', label: 'KKS' },
+    PKH: { key: 'pkh', label: 'PKH' },
+} as const;
+
+// AI Prompts - Centralized prompts for consistency
+export const AI_PROMPTS = {
+    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk MA Malnu Kananga, sebuah madrasah aliyah di Indonesia. 
+Berikan respons yang:
+1. Sopan dan profesional
+2. Menggunakan Bahasa Indonesia yang baik dan benar
+3. Islami dan edukatif
+4. Terkait dengan dunia pendidikan dan kemadrasahan`,
+} as const;
+
+// Alert thresholds for monitoring
+export const ALERT_THRESHOLDS = {
+    ERROR_RATE_PERCENT: 10,
+    RESPONSE_TIME_MS: 5000,
+    SLOW_CONNECTION_MS: 3000,
+} as const;
+
+// Backoff configuration
+export const BACKOFF_CONFIG = {
+    DEFAULT_MULTIPLIER: 2,
+    DEFAULT_INITIAL_DELAY_MS: 1000,
+    DEFAULT_MAX_DELAY_MS: 5000,
+} as const;
+
+// Notification emojis for template strings
+export const NOTIFICATION_EMOJIS = {
+    GENERAL: '📢',
+    GRADE: '📊',
+    PPDB: '🎓',
+    EVENT: '🎉',
+    MATERIAL: '📚',
+    SYSTEM: '⚙️',
+    OCR: '📄',
+    SEARCH: '🔍',
+    ANNOUNCEMENT: '📢',
+    WARNING: '⚠️',
+    SUCCESS: '✅',
+    ERROR: '❌',
+    INFO: 'ℹ️',
 } as const;

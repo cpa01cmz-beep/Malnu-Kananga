@@ -183,6 +183,7 @@
   --animate-scale-in: scale-in 0.3s ease-out;
   --animate-pulse-slow: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-wave: wave 2s linear infinite;
+  --animate-shimmer: shimmer 1.5s linear infinite;
 }
 
 :root {
@@ -422,8 +423,255 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
 .skeleton-wave {
   background-size: 200% 100% !important;
+}
+
+.skeleton-shimmer {
+  background-size: 1000px 100% !important;
+}
+
+/* Sophisticated hover states */
+@keyframes hover-lift {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+  100% {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+@keyframes hover-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes hover-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(8px);
+  }
+}
+
+@keyframes hover-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes hover-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Utility classes for hover effects */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.hover-lift:hover:active {
+  transform: translateY(-1px) scale(1.005);
+  transition-duration: 0.1s;
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.hover-glow:focus {
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+}
+
+.hover-slide-right:hover {
+  transform: translateX(4px);
+  transition: transform 0.3s ease;
+}
+
+.hover-slide-left:hover {
+  transform: translateX(-4px);
+  transition: transform 0.3s ease;
+}
+
+.hover-rotate:hover {
+  animation: hover-rotate 0.3s ease;
+}
+
+.hover-float:hover {
+  animation: hover-float 2s ease-in-out infinite;
+}
+
+/* Sophisticated color transitions */
+.hover-primary:hover {
+  background-color: rgb(16 185 129 / 0.1);
+  color: rgb(5 150 105);
+}
+
+.hover-secondary:hover {
+  background-color: rgb(107 114 128 / 0.1);
+  color: rgb(75 85 99);
+}
+
+/* Smooth text underline animation */
+.hover-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -2px;
+  left: 50%;
+  background-color: rgb(16 185 129);
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.hover-underline:hover::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Button hover states */
+.btn-hover-primary {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-hover-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-hover-primary:hover::before {
+  left: 100%;
+}
+
+.btn-hover-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Card hover states with multiple effects */
+.card-hover-enhanced {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-hover-enhanced::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  opacity: 0;
+}
+
+.card-hover-enhanced:hover::before {
+  opacity: 1;
+  animation: shimmer 0.6s ease;
+}
+
+.card-hover-enhanced:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Focus visible enhancements */
+.focus-ring-enhanced:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+  border-color: rgb(16, 185, 129);
+}
+
+/* Enhanced focus indicators for better accessibility */
+.focus-visible-enhanced:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .focus-ring-enhanced:focus-visible {
+    box-shadow: 0 0 0 4px currentColor;
+  }
+}
+
+/* Reduced motion focus indicators */
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring-enhanced:focus-visible,
+  .focus-visible-enhanced:focus-visible {
+    transition: none;
+  }
+}
+
+/* Smooth transitions for all interactive elements */
+.interactive-element {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Delayed hover for better UX */
+.hover-delayed {
+  transition: all 0.2s ease 0.1s;
+}
+
+/* Scale hover for icons */
+.icon-hover:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.icon-hover:active {
+  transform: scale(0.95);
+  transition-duration: 0.1s;
 }
 
 /* Respect user's motion preference for accessibility */
@@ -437,6 +685,77 @@
   }
 }
 
+/* Enhanced mobile touch interactions */
+@media (max-width: 768px) {
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .safe-area-padding {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .mobile-full-height {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  }
+}
+
+/* Hide scrollbar for mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Enhanced focus indicators for touch devices */
+@media (hover: none) {
+  .touch-hover:hover {
+    background-color: transparent !important;
+  }
+  
+  .touch-hover:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+}
+
+/* Pull-to-refresh indicator */
+@keyframes pull-to-refresh {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pull-to-refresh-indicator {
+  animation: pull-to-refresh 0.3s ease-out;
+}
+
 :root {
   --progress-bar-striped-overlay: 255 255 255;
+}
+
+/* Form fieldset disabled state for improved UX */
+/* Ensures disabled fieldset properly disables all child form elements */
+fieldset:disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Smooth transition for disabled state */
+fieldset {
+  transition: opacity 0.2s ease-out;
 }

@@ -873,7 +873,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
         <div className="space-y-4">
           <div className="bg-neutral-50 dark:bg-neutral-700 p-4 rounded-lg">
             {showQRCode && (
-              <img src={showQRCode} alt="QR Code barang" className="w-full" />
+              <img src={showQRCode} alt="QR Code barang" className="w-full" width={300} height={300} />
             )}
           </div>
           <div className="flex gap-2">
