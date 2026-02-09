@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
-import { EXTERNAL_URLS } from '../constants';
+import { EXTERNAL_URLS, USER_ROLES, USER_STATUS } from '../constants';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
@@ -99,55 +99,55 @@ export const INITIAL_USERS: User[] = [
         id: '1', 
         name: 'Ahmad Dahlan', 
         email: 'admin@malnu.sch.id', 
-        role: 'admin', 
-        status: 'active' 
+        role: USER_ROLES.ADMIN, 
+        status: USER_STATUS.ACTIVE 
     },
     { 
         id: '2', 
         name: 'Siti Aminah, S.Pd.', 
         email: 'guru.staff@malnu.sch.id', 
-        role: 'teacher', 
+        role: USER_ROLES.TEACHER, 
         extraRole: 'staff', // Guru merangkap Staff Tata Usaha/Sarpras
-        status: 'active' 
+        status: USER_STATUS.ACTIVE 
     },
     { 
         id: '3', 
         name: 'Budi Santoso', 
         email: 'siswa.osis@malnu.sch.id', 
-        role: 'student', 
+        role: USER_ROLES.STUDENT, 
         extraRole: 'osis', // Siswa merangkap Ketua OSIS
-        status: 'active' 
+        status: USER_STATUS.ACTIVE 
     },
     { 
         id: '4', 
         name: 'Rudi Hartono, M.Pd.', 
         email: 'guru.biasa@malnu.sch.id', 
-        role: 'teacher', 
+        role: USER_ROLES.TEACHER, 
         extraRole: null, 
-        status: 'active' 
+        status: USER_STATUS.ACTIVE 
     },
     { 
         id: '5', 
         name: 'Dewi Sartika', 
         email: 'siswa.biasa@malnu.sch.id', 
-        role: 'student', 
+        role: USER_ROLES.STUDENT, 
         extraRole: null, 
-        status: 'active' 
+        status: USER_STATUS.ACTIVE 
     },
     {
         id: '6',
         name: 'Andi Pratama',
         email: 'andi.osis@malnu.sch.id',
-        role: 'student',
+        role: USER_ROLES.STUDENT,
         extraRole: 'osis', // Siswa merangkap Wakil Ketua OSIS
-        status: 'active'
+        status: USER_STATUS.ACTIVE
     },
     {
         id: '7',
         name: 'Nurul Hidayah, S.Kom',
         email: 'nurul.staff@malnu.sch.id',
-        role: 'teacher',
+        role: USER_ROLES.TEACHER,
         extraRole: 'staff', // Guru merangkap Staff IT/Laboran
-        status: 'active'
+        status: USER_STATUS.ACTIVE
     }
 ];

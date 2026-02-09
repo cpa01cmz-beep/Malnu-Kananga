@@ -6,7 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_CONFIG } from '../../constants';
+import { API_CONFIG, HTTP } from '../../constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -56,11 +56,11 @@ async function validateRequestPermissions(
     const method = options.method?.toUpperCase() || 'GET';
 
     const actionMap: Record<string, string> = {
-      'GET': 'read',
-      'POST': 'create',
-      'PUT': 'update',
-      'PATCH': 'update',
-      'DELETE': 'delete'
+      [HTTP.METHODS.GET]: 'read',
+      [HTTP.METHODS.POST]: 'create',
+      [HTTP.METHODS.PUT]: 'update',
+      [HTTP.METHODS.PATCH]: 'update',
+      [HTTP.METHODS.DELETE]: 'delete'
     };
 
     const action = actionMap[method] || 'read';
@@ -124,8 +124,9 @@ export async function request<T>(
   const skipQueue = options.skipQueue || false;
   const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
   
-  const method = options.method?.toUpperCase() || 'GET';
-  const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+  const method = options.method?.toUpperCase() || HTTP.METHODS.GET;
+  const writeMethods: string[] = [HTTP.METHODS.POST, HTTP.METHODS.PUT, HTTP.METHODS.DELETE, HTTP.METHODS.PATCH];
+  const isWriteOperation = writeMethods.includes(method);
   
   if (!isOnline) {
     if (isWriteOperation && !skipQueue) {
@@ -169,7 +170,7 @@ export async function request<T>(
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       } as HeadersInit,

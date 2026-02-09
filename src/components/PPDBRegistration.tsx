@@ -23,7 +23,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, API_ENDPOINTS, HTTP } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { VoiceLanguage } from '../types';
@@ -549,8 +549,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           entity: 'ppdb',
           entityId: ppdbData.nisn || generateTempId(),
           data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
+          endpoint: API_ENDPOINTS.PPDB.REGISTRANTS,
+          method: HTTP.METHODS.POST,
         });
 
         setIsSubmittingFinal(false);
@@ -592,8 +592,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           entity: 'ppdb',
           entityId: ppdbData.nisn || generateTempId(),
           data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
+          endpoint: API_ENDPOINTS.PPDB.REGISTRANTS,
+          method: HTTP.METHODS.POST,
         });
 
         setIsSubmittingFinal(false);

@@ -36,7 +36,7 @@ const NewsSection = lazy(() => import('./components/sections/NewsSection'));
 const PPDBSection = lazy(() => import('./components/sections/PPDBSection'));
 
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
-import { STORAGE_KEYS } from './constants';
+import { STORAGE_KEYS, USER_ROLES, ROLE_DISPLAY_NAMES } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
@@ -205,7 +205,7 @@ const App: React.FC = () => {
       ip: window.location.hostname
     });
     
-    let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : role === 'parent' ? 'Wali Murid' : 'Siswa';
+    let roleName = ROLE_DISPLAY_NAMES[role];
     if (extraRole === 'staff') roleName += ' (Staff)';
     if (extraRole === 'osis') roleName += ' (Pengurus OSIS)';
 
@@ -267,7 +267,7 @@ const App: React.FC = () => {
       }
 
       switch (userRole) {
-          case 'admin':
+          case USER_ROLES.ADMIN:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
                     <AdminDashboard
@@ -276,7 +276,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'teacher':
+          case USER_ROLES.TEACHER:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard guru..." />}>
                     <TeacherDashboard
@@ -285,7 +285,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'parent':
+          case USER_ROLES.PARENT:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard wali murid..." />}>
                     <ParentDashboard
@@ -293,7 +293,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'student':
+          case USER_ROLES.STUDENT:
           default:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat portal siswa..." />}>
