@@ -3,7 +3,7 @@ import { parentProgressReportService, type ProgressReportSettings, type Progress
 import { getEmailNotificationService } from './emailNotificationService';
 import { gradesAPI, attendanceAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, STORAGE_LIMITS } from '../constants';
 import type { PushNotification } from '../types';
 
 export interface ProgressReportAuditLog {
@@ -273,9 +273,8 @@ class ProgressReportScheduler {
       const auditLogs = this.loadAuditLogs();
       auditLogs.push(auditLog);
 
-      const maxLogs = 1000;
-      if (auditLogs.length > maxLogs) {
-        auditLogs.splice(0, auditLogs.length - maxLogs);
+      if (auditLogs.length > STORAGE_LIMITS.LOG_ENTRIES_MAX) {
+        auditLogs.splice(0, auditLogs.length - STORAGE_LIMITS.LOG_ENTRIES_MAX);
       }
 
       localStorage.setItem(STORAGE_KEYS.PROGRESS_REPORT_AUTO_GENERATION_AUDIT, JSON.stringify(auditLogs));

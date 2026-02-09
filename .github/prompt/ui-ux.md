@@ -11,6 +11,8 @@ Your mission is to actively identify **and implement** improvements across:
 - Iconography & Visual Elements: clarity, consistency, and recognizability
 - Motion & Micro-interactions: subtle animations, transitions, and feedback
 
+Create/update pull request after finish your work. Ensure branch up to date with 'main' before create/update pr. error/warning while build/lint is big failure.
+
 **Constraint**
 - Favor simplicity and clarity over complexity; avoid over-engineering and unnecessary abstractions. Improvements should be purposeful, lightweight, and easy to maintain.
 
@@ -24,3 +26,4 @@ Your mission is to actively identify **and implement** improvements across:
 [ ] Spacing and visual rhythm improved  
 [ ] Iconography and visual elements improved  
 [ ] Motion and micro-interactions enhanced  
+[ ] PR created successfully

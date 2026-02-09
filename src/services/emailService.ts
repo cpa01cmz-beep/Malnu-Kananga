@@ -12,7 +12,7 @@ import { emailQueueService } from './emailQueueService';
 import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS } from '../constants';
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
@@ -60,9 +60,8 @@ class EmailService {
       const history = this.loadDeliveryHistory();
       history.push(status);
 
-      const maxHistorySize = 1000;
-      if (history.length > maxHistorySize) {
-        history.splice(0, history.length - maxHistorySize);
+      if (history.length > STORAGE_LIMITS.EMAIL_HISTORY_MAX) {
+        history.splice(0, history.length - STORAGE_LIMITS.EMAIL_HISTORY_MAX);
       }
 
       localStorage.setItem(this.deliveryHistoryKey, JSON.stringify(history));
@@ -86,10 +85,10 @@ class EmailService {
     try {
       const history = this.loadDeliveryHistory();
       const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const analyticsStartDate = new Date(now.getTime() - EMAIL_CONFIG.ANALYTICS_DAYS * TIME_MS.ONE_DAY);
 
       const recentDeliveries = history.filter(
-        d => new Date(d.timestamp) >= thirtyDaysAgo
+        d => new Date(d.timestamp) >= analyticsStartDate
       );
 
       const totalSent = recentDeliveries.length;
@@ -108,7 +107,7 @@ class EmailService {
         openRate: totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0,
         clickRate: totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0,
         dateRange: {
-          from: thirtyDaysAgo.toISOString(),
+          from: analyticsStartDate.toISOString(),
           to: now.toISOString()
         }
       };

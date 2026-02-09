@@ -6,6 +6,7 @@ import Modal from './ui/Modal';
 import { api } from '../services/apiService';
 import { validateEmailRealtime } from '../utils/validation';
 import { logger } from '../utils/logger';
+import { TIMEOUT_CONFIG, FORGOT_PASSWORD_STRINGS } from '../constants';
 
 interface ForgotPasswordProps {
   isOpen: boolean;
@@ -28,7 +29,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
         setEmailError('');
         setError('');
         setTouchedEmail(false);
-      }, 300);
+      }, TIMEOUT_CONFIG.UI_ANIMATION_DURATION);
     }
   }, [isOpen]);
 
@@ -44,7 +45,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
     setTouchedEmail(true);
 
     if (!email || emailError) {
-      setError('Masukkan email yang valid');
+      setError(FORGOT_PASSWORD_STRINGS.VALIDATION_ERROR);
       return;
     }
 
@@ -74,7 +75,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Lupa Password"
+      title={FORGOT_PASSWORD_STRINGS.TITLE}
       size="md"
       animation="scale-in"
       closeOnBackdropClick={true}
@@ -90,16 +91,16 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
               </svg>
             </div>
             <h3 className="text-2xl font-semibold text-neutral-900 dark:text-white mb-3">
-              Email Terkirim!
+              {FORGOT_PASSWORD_STRINGS.EMAIL_SENT_TITLE}
             </h3>
             <p className="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-2">
-              Kami telah mengirimkan link reset password ke:
+              {FORGOT_PASSWORD_STRINGS.EMAIL_SENT_MESSAGE}
             </p>
             <p className="text-lg font-medium text-neutral-800 dark:text-neutral-200 mb-4">
               {email}
             </p>
             <p className="text-sm text-neutral-500 dark:text-neutral-500 mb-6">
-              Link ini hanya berlaku selama 1 jam.
+              {FORGOT_PASSWORD_STRINGS.LINK_EXPIRY_INFO}
             </p>
             <Button
               variant="primary"
@@ -108,7 +109,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
               onClick={onClose}
               className="py-3.5"
             >
-              Tutup
+              {FORGOT_PASSWORD_STRINGS.CLOSE_BUTTON}
             </Button>
           </div>
         ) : (
@@ -125,11 +126,11 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div className="text-sm text-neutral-700 dark:text-neutral-300">
-                  <p className="font-medium mb-1">Instruksi:</p>
+                  <p className="font-medium mb-1">{FORGOT_PASSWORD_STRINGS.INSTRUCTIONS_TITLE}</p>
                   <ul className="list-disc list-inside space-y-1 text-neutral-600 dark:text-neutral-400">
-                    <li>Masukkan email yang terdaftar</li>
-                    <li>Cek inbox Anda untuk link reset</li>
-                    <li>Link berlaku selama 1 jam</li>
+                    <li>{FORGOT_PASSWORD_STRINGS.INSTRUCTION_ENTER_EMAIL}</li>
+                    <li>{FORGOT_PASSWORD_STRINGS.INSTRUCTION_CHECK_INBOX}</li>
+                    <li>{FORGOT_PASSWORD_STRINGS.INSTRUCTION_EXPIRY}</li>
                   </ul>
                 </div>
               </div>
@@ -138,8 +139,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
             <Input
               id="email"
               type="email"
-              label="Alamat Email"
-              placeholder="nama@email.com"
+              label={FORGOT_PASSWORD_STRINGS.EMAIL_LABEL}
+              placeholder={FORGOT_PASSWORD_STRINGS.EMAIL_PLACEHOLDER}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => setTouchedEmail(true)}
@@ -158,7 +159,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
               fullWidth
               className="py-3.5"
             >
-              {formState === 'loading' ? 'Mengirim...' : 'Kirim Link Reset Password'}
+              {formState === 'loading' ? 'Mengirim...' : FORGOT_PASSWORD_STRINGS.SUBMIT_BUTTON}
             </Button>
 
             <div className="text-center pt-2">
@@ -167,7 +168,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
                 onClick={onClose}
                 className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
               >
-                Kembali ke Login
+                {FORGOT_PASSWORD_STRINGS.BACK_TO_LOGIN}
               </button>
             </div>
           </form>
