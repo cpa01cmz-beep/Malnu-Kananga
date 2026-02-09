@@ -34,10 +34,13 @@ describe('IconButton', () => {
       expect(button).toHaveClass('p-2.5');
     });
 
-    it('renders with tooltip', () => {
+    it('renders with accessible tooltip', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Tooltip text" />);
       const button = screen.getByRole('button');
-      expect(button).toHaveAttribute('title', 'Tooltip text');
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      expect(tooltip).toHaveTextContent('Tooltip text');
+      expect(button).toHaveAttribute('aria-describedby', tooltip.id);
     });
 
     it('applies custom className', () => {
@@ -204,6 +207,98 @@ describe('IconButton', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" disabled />);
       const button = screen.getByRole('button');
       expect(button).toBeDisabled();
+    });
+
+    it('tooltip is accessible with aria-describedby', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Helpful tooltip" />);
+      const button = screen.getByRole('button');
+      const tooltip = screen.getByRole('tooltip');
+      expect(button).toHaveAttribute('aria-describedby', tooltip.id);
+    });
+
+    it('does not have aria-describedby when no tooltip', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" />);
+      const button = screen.getByRole('button');
+      expect(button).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('shows tooltip on mouse enter', async () => {
+      const user = userEvent.setup();
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Hover tooltip" />);
+      const button = screen.getByRole('button');
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(tooltip).toHaveClass('opacity-0');
+      await user.hover(button);
+      expect(tooltip).toHaveClass('opacity-100');
+    });
+
+    it('hides tooltip on mouse leave', async () => {
+      const user = userEvent.setup();
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Hover tooltip" />);
+      const button = screen.getByRole('button');
+      const tooltip = screen.getByRole('tooltip');
+
+      await user.hover(button);
+      expect(tooltip).toHaveClass('opacity-100');
+      await user.unhover(button);
+      expect(tooltip).toHaveClass('opacity-0');
+    });
+
+    it('shows tooltip on focus', async () => {
+      const user = userEvent.setup();
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Focus tooltip" />);
+      const button = screen.getByRole('button');
+      const tooltip = screen.getByRole('tooltip');
+
+      expect(tooltip).toHaveClass('opacity-0');
+      await user.click(button);
+      expect(tooltip).toHaveClass('opacity-100');
+    });
+
+    it('hides tooltip on blur', async () => {
+      const user = userEvent.setup();
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Focus tooltip" />);
+      const button = screen.getByRole('button');
+      const tooltip = screen.getByRole('tooltip');
+
+      await user.click(button);
+      expect(tooltip).toHaveClass('opacity-100');
+      await user.tab();
+      expect(tooltip).toHaveClass('opacity-0');
+    });
+  });
+
+  describe('Tooltip Positioning', () => {
+    it('renders tooltip at bottom by default', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Test" />);
+      const tooltip = container.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveClass('top-full');
+    });
+
+    it('renders tooltip at top', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Test" tooltipPosition="top" />);
+      const tooltip = container.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveClass('bottom-full');
+    });
+
+    it('renders tooltip at left', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Test" tooltipPosition="left" />);
+      const tooltip = container.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveClass('right-full');
+    });
+
+    it('renders tooltip at right', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Test" tooltipPosition="right" />);
+      const tooltip = container.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveClass('left-full');
+    });
+
+    it('has tooltip arrow', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Test" />);
+      const arrow = container.querySelector('[role="tooltip"] > span[aria-hidden="true"]');
+      expect(arrow).toBeInTheDocument();
+      expect(arrow).toHaveClass('rotate-45');
     });
   });
 
