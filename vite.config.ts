@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'css-cache',
                 expiration: {
                   maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 // <== 24 hours
+                  maxAgeSeconds: 60 * 60 * 24 // 24 hours
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
@@ -68,7 +68,7 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'google-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                  maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
@@ -82,7 +82,7 @@ export default defineConfig(({ mode }) => {
                 cacheName: 'gstatic-fonts-cache',
                 expiration: {
                   maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                  maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
                 },
                 cacheableResponse: {
                   statuses: [0, 200]
