@@ -18,6 +18,10 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
+  const [progress, setProgress] = useState(100);
+  const animationFrameRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const pausedProgressRef = useRef<number>(100);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -28,11 +32,16 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
 
   const handleMouseEnter = useCallback(() => {
     setIsPaused(true);
-  }, []);
+    pausedProgressRef.current = progress;
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+    }
+  }, [progress]);
 
   const handleMouseLeave = useCallback(() => {
     setIsPaused(false);
-  }, []);
+    startTimeRef.current = Date.now() - ((100 - pausedProgressRef.current) / 100) * duration;
+  }, [duration]);
 
   useEffect(() => {
     if (isVisible && !isPaused) {
@@ -43,11 +52,38 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, remainingTime, isPaused, onClose]);
 
+  // Progress bar animation
+  useEffect(() => {
+    if (isVisible && !isPaused) {
+      startTimeRef.current = Date.now() - ((100 - progress) / 100) * duration;
+
+      const animate = () => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const newProgress = Math.max(0, 100 - (elapsed / duration) * 100);
+        setProgress(newProgress);
+
+        if (newProgress > 0) {
+          animationFrameRef.current = window.requestAnimationFrame(animate);
+        }
+      };
+
+      animationFrameRef.current = window.requestAnimationFrame(animate);
+
+      return () => {
+        if (animationFrameRef.current) {
+          window.cancelAnimationFrame(animationFrameRef.current);
+        }
+      };
+    }
+  }, [isVisible, isPaused, duration, progress]);
+
   useEffect(() => {
     if (isVisible) {
       setRemainingTime(duration);
       setIsPaused(false);
-      
+      setProgress(100);
+      pausedProgressRef.current = 100;
+
       previousActiveElementRef.current = document.activeElement as HTMLElement;
       toastRef.current?.focus();
     } else {
@@ -95,6 +131,13 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       )
   }
 
+  const progressBarColors = {
+    success: 'bg-primary-500',
+    info: 'bg-blue-500',
+    error: 'bg-red-500',
+    warning: 'bg-amber-500',
+  };
+
   return (
     <div
       ref={toastRef}
@@ -117,6 +160,14 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         size="sm"
         onClick={onClose}
       />
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-b-xl overflow-hidden">
+        <div
+          className={`h-full ${progressBarColors[type]} transition-none`}
+          style={{ width: `${progress}%` }}
+          aria-hidden="true"
+        />
+      </div>
     </div>
   );
 };
