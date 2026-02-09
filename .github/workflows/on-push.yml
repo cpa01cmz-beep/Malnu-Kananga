@@ -74,14 +74,14 @@ jobs:
         uses: ./.github/actions/opencode-run
         with:
           prompt-file: .github/prompt/user-story.md
-          model: opencode/glm-4.7-free
+          model: opencode/big-pickle
           share: 'false'
 
       - name: UI/UX Analysis
         uses: ./.github/actions/opencode-run
         with:
           prompt-file: .github/prompt/ui-ux.md
-          model: opencode/glm-4.7-free
+          model: opencode/big-pickle
           share: 'false'
 
       - name: Deployment Notice

@@ -6,6 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
+import { API_CONFIG } from '../../constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -15,10 +16,8 @@ import {
 import { getIsRefreshing, setIsRefreshing, subscribeTokenRefresh, onTokenRefreshed } from './refreshState';
 import { queueOfflineRequest } from './offline';
 
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
-// See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
+// Use centralized API config to avoid circular dependency and duplication
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || API_CONFIG.DEFAULT_BASE_URL;
 
 export interface ApiResponse<T> {
   success: boolean;

@@ -13,7 +13,7 @@ import { VoiceLanguage } from '../types';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { GRADIENT_CLASSES } from '../config/gradients';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
 import Button from './ui/Button';
@@ -404,7 +404,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         const now = new Date();
         let matchDate = true;
         if (filterDateRange === 'week') {
-          matchDate = materialDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          matchDate = materialDate >= new Date(now.getTime() - TIME_MS.ONE_WEEK);
         } else if (filterDateRange === 'month') {
           matchDate = materialDate >= new Date(now.getFullYear(), now.getMonth(), 1);
         } else if (filterDateRange === 'semester') {
@@ -484,7 +484,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       const now = new Date();
       let matchDate = true;
       if (filterDateRange === 'week') {
-        matchDate = materialDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        matchDate = materialDate >= new Date(now.getTime() - TIME_MS.ONE_WEEK);
       } else if (filterDateRange === 'month') {
         matchDate = materialDate >= new Date(now.getFullYear(), now.getMonth(), 1);
       } else if (filterDateRange === 'semester') {

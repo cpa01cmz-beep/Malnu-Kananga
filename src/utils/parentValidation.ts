@@ -1,4 +1,5 @@
 import type { ParentChild, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment } from '../types';
+import { TIME_MS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -418,10 +419,10 @@ export function validateOfflineDataIntegrity(cachedData: { children?: ParentChil
 
   const now = Date.now();
   const cacheAge = cachedData.lastUpdated ? now - cachedData.lastUpdated : Infinity;
-  const MAX_CACHE_AGE = 24 * 60 * 60 * 1000; // 24 hours
+  const MAX_CACHE_AGE = TIME_MS.ONE_DAY; // 24 hours
 
   if (cacheAge > MAX_CACHE_AGE) {
-    warnings.push(`Cached data is stale: ${Math.floor(cacheAge / (60 * 60 * 1000))} hours old`);
+    warnings.push(`Cached data is stale: ${Math.floor(cacheAge / TIME_MS.ONE_HOUR)} hours old`);
   }
 
   return {
