@@ -2218,10 +2218,6 @@
       opacity: 0;
     }
   }
-}
-    user-select: none;
-    -webkit-user-select: none;
-  }
   
   .safe-area-padding {
     padding-left: env(safe-area-inset-left);
