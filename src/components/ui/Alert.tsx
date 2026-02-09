@@ -18,9 +18,11 @@ interface AlertProps {
   fullWidth?: boolean;
   centered?: boolean;
   className?: string;
+  animated?: boolean;
+  animationType?: 'slide-down' | 'slide-up' | 'fade' | 'scale' | 'bounce';
 }
 
-const baseClasses = "transition-all duration-200 ease-out";
+const baseClasses = "transition-all duration-300 ease-out transform-gpu";
 
 const variantClasses: Record<AlertVariant, { bg: string; border: string; title: string; text: string; iconBg: string }> = {
   info: {
@@ -140,11 +142,21 @@ const Alert: React.FC<AlertProps> = ({
   onClose,
   fullWidth = true,
   centered = false,
+  animated = true,
+  animationType = variant === 'error' ? 'bounce' : 'slide-down',
   className = '',
 }) => {
   const variantStyle = variantClasses[variant];
   const sizeStyle = sizeClasses[size];
   const borderStyle = borderClasses[border][variant];
+
+  const animationClasses = animated ? {
+    'slide-down': 'animate-slide-in-down',
+    'slide-up': 'animate-slide-in-up',
+    'fade': 'animate-fade-in',
+    'scale': 'animate-scale-in',
+    'bounce': 'animate-bounce-subtle'
+  }[animationType] : '';
 
   const alertClasses = `
     ${baseClasses}
@@ -153,6 +165,7 @@ const Alert: React.FC<AlertProps> = ({
     ${fullWidth ? 'w-full' : ''}
     ${sizeStyle.padding}
     rounded-xl
+    ${animationClasses}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 

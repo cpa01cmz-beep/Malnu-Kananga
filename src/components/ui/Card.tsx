@@ -1,6 +1,6 @@
 import React, { forwardRef, ButtonHTMLAttributes } from 'react';
 
-export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
+export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient' | 'glass' | 'elevated';
 export type CardRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
 export type CardShadow = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'card' | 'float';
 export type CardBorder = 'none' | 'neutral-200' | 'neutral-100';
@@ -67,7 +67,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300 relative overflow-hidden group";
+const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-500 relative overflow-hidden group transform-gpu";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -97,10 +97,10 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-white/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100';
+        classes += ' hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-white/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-tr after:from-primary-500/5 after:via-transparent after:to-transparent after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-700';
         break;
       case 'interactive':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-95 text-left group before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-white/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100';
+        classes += ' hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-95 text-left group before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-white/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-tr after:from-primary-500/5 after:via-transparent after:to-transparent after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-700';
         break;
       case 'gradient':
         if (gradient) {
@@ -109,11 +109,18 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100';
+          classes += ' hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/20 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-tr after:from-white/10 after:to-transparent after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-700';
         }
         break;
+      case 'glass':
+        classes = classes.replace('bg-white dark:bg-neutral-800', 'bg-white/80 dark:bg-neutral-800/80 backdrop-blur-xl border border-white/20 dark:border-neutral-700/20');
+        classes += ' hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 after:absolute after:inset-0 after:bg-gradient-to-tr after:from-primary-500/5 after:via-transparent after:to-transparent after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-700';
+        break;
+      case 'elevated':
+        classes += ' shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-primary-500/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100 after:absolute after:top-0 after:left-0 after:right-0 after:h-px after:bg-gradient-to-r after:from-transparent after:via-primary-500 after:to-transparent after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-700';
+        break;
       default:
-        classes += ' hover:shadow-sm hover:-translate-y-0.5 transition-all duration-300';
+        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] transition-all duration-500 before:absolute before:inset-0 before:bg-gradient-to-br before:from-transparent before:via-white/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300';
         break;
     }
 

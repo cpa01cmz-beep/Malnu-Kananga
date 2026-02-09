@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MaskOptions } from '../../utils/inputMasks';
 import { createFormatter } from '../../utils/inputMasks';
@@ -28,6 +28,8 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   customType?: InputType;
   clearOnEscape?: boolean;
   showClearButton?: boolean;
+  floatingLabel?: boolean;
+  placeholder?: string;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed relative group";
@@ -80,16 +82,22 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   customType = 'text',
   clearOnEscape = false,
   showClearButton = false,
+  floatingLabel = false,
+  placeholder,
   value,
   onChange,
   onBlur,
+  onFocus,
   className = '',
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLInputElement>(null);
   const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
+  const [isFocused, setIsFocused] = useState(false);
+  const [hasValue, setHasValue] = useState(Boolean(value));
   
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const labelId = label ? `${inputId}-label` : undefined;
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
@@ -127,14 +135,29 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     validation.changeHandler(e.target.value);
   };
 
+  // Enhanced focus handler
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(true);
+    
+    if (onFocus) {
+      onFocus(e);
+    }
+  };
+
   // Enhanced blur handler
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setIsFocused(false);
     validation.blurHandler();
     
     if (onBlur) {
       onBlur(e);
     }
   };
+
+  // Track value changes for floating label
+  useEffect(() => {
+    setHasValue(Boolean(value) && String(value).length > 0);
+  }, [value]);
 
   // Escape key handler to clear input value
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -186,9 +209,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     ...(validation.state.isValidating && { 'aria-busy': true })
   };
 
+  const shouldLabelFloat = floatingLabel && (isFocused || hasValue);
+
   return (
     <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
-      {label && (
+      {label && !floatingLabel && (
         <label
           htmlFor={inputId}
           className={`${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block`}
@@ -203,9 +228,34 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       )}
 
       <div className="relative">
+        {label && floatingLabel && (
+          <label
+            id={labelId}
+            htmlFor={inputId}
+            className={`
+              ${labelSizeClasses[size]} font-semibold text-neutral-700 dark:text-neutral-300 block
+              ${floatingLabel ? `
+                absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 ease-out pointer-events-none
+                ${leftIcon ? 'left-11' : 'left-4'}
+                ${shouldLabelFloat ? `
+                  -top-2.5 translate-y-0 text-xs bg-white dark:bg-neutral-800 px-1.5 py-0.5 rounded
+                  ${finalState === 'error' ? 'text-red-600 dark:text-red-400' : 'text-primary-600 dark:text-primary-400'}
+                ` : 'text-neutral-500 dark:text-neutral-400'}
+              ` : ''}
+            `}
+          >
+            {label}
+            {props.required && (
+              <span className="text-red-500 ml-1" aria-label="wajib diisi">
+                *
+              </span>
+            )}
+          </label>
+        )}
+
         {leftIcon && (
           <div 
-            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]} z-10`} 
             aria-hidden="true"
           >
             {leftIcon}
@@ -214,7 +264,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
         {inputMask === 'phone' && !leftIcon && (
           <div 
-            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]} z-10`} 
             aria-hidden="true"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,23 +283,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           }
           pattern={
             customType === 'nisn' ? '[0-9]{10}' :
-            customType === 'phone' ? '[0-9]{10,13}' :
+            customType === 'phone' ? '[0-9]{10,13]' :
             customType === 'year' ? '[0-9]{4}' :
             customType === 'grade' ? '[0-9]{1,3}' : undefined
           }
           maxLength={customType === 'nisn' ? 10 : customType === 'year' ? 4 : customType === 'grade' ? 3 : undefined}
-          className={inputClasses}
+          placeholder={floatingLabel ? '' : placeholder}
+          className={`${inputClasses} ${floatingLabel ? 'pt-6 pb-2' : ''}`}
           value={value}
           onChange={handleMaskedChange}
           onBlur={handleBlur}
+          onFocus={handleFocus}
           onKeyDown={handleKeyDown}
+          aria-labelledby={floatingLabel ? labelId : undefined}
           {...accessibilityProps}
           {...props}
         />
 
         {rightIcon && (
           <div 
-            className={`absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`} 
+            className={`absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]} z-10`} 
             aria-hidden="true"
           >
             {rightIcon}
@@ -270,7 +323,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 inputRef.current.focus();
               }
             }}
-            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 hover:scale-110 active:scale-95 ${
+            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 hover:scale-110 active:scale-95 z-10 ${
               rightIcon ? 'right-10' : 'right-3'
             }`}
             aria-label="Bersihkan input"
@@ -281,7 +334,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         )}
 
         {validation.state.isValidating && (
-          <div className={`absolute top-1/2 -translate-y-1/2 ${rightIcon ? 'right-10' : hasClearButton ? 'right-10' : 'right-3'}`}>
+          <div className={`absolute top-1/2 -translate-y-1/2 ${rightIcon ? 'right-10' : hasClearButton ? 'right-10' : 'right-3'} z-10`}>
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-neutral-300 border-t-primary-500" aria-hidden="true" />
           </div>
         )}

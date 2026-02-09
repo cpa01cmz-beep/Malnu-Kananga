@@ -5,9 +5,11 @@ export interface SkeletonProps {
   variant?: 'text' | 'rectangular' | 'circular' | 'rounded';
   width?: string | number;
   height?: string | number;
-  animation?: 'pulse' | 'wave' | 'shimmer';
+  animation?: 'pulse' | 'wave' | 'shimmer' | 'skeleton-pulse' | 'gradient-slide';
   lines?: number;
   animated?: boolean;
+  shimmerColor?: string;
+  speed?: 'slow' | 'normal' | 'fast';
 }
 
 const baseClasses = "bg-neutral-200 dark:bg-neutral-700";
@@ -15,6 +17,14 @@ const animationClasses = {
   pulse: "animate-pulse",
   wave: "animate-wave",
   shimmer: "animate-shimmer",
+  'skeleton-pulse': "animate-skeleton-pulse",
+  'gradient-slide': "animate-gradient-slide",
+};
+
+const speedClasses = {
+  slow: "duration-1000",
+  normal: "duration-700",
+  fast: "duration-500",
 };
 
 const variantClasses: Record<'text' | 'rectangular' | 'circular' | 'rounded', string> = {
@@ -32,19 +42,28 @@ const Skeleton: React.FC<SkeletonProps> = ({
   animation = 'pulse',
   lines = 1,
   animated = true,
+  shimmerColor = 'neutral',
+  speed = 'normal',
 }) => {
   const isWave = animation === 'wave';
   const isShimmer = animation === 'shimmer';
+  const isSkeletonPulse = animation === 'skeleton-pulse';
+  const isGradientSlide = animation === 'gradient-slide';
+  
   const backgroundClass = isWave
     ? 'bg-gradient-to-r from-neutral-200 via-neutral-100 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700 skeleton-wave'
     : isShimmer
-    ? 'bg-gradient-to-r from-transparent via-neutral-100/50 to-transparent dark:from-transparent dark:via-neutral-600/50 dark:to-transparent skeleton-shimmer'
+    ? `bg-gradient-to-r from-transparent via-${shimmerColor}-100/50 to-transparent dark:from-transparent dark:via-${shimmerColor}-600/50 dark:to-transparent skeleton-shimmer`
+    : isSkeletonPulse
+    ? 'bg-gradient-to-r from-neutral-200 via-neutral-300 to-neutral-200 dark:from-neutral-700 dark:via-neutral-600 dark:to-neutral-700'
+    : isGradientSlide
+    ? 'bg-gradient-to-r from-neutral-100 via-neutral-200 to-neutral-100 dark:from-neutral-800 dark:via-neutral-700 dark:to-neutral-800'
     : baseClasses;
 
   const classes = `
     ${backgroundClass}
     ${variantClasses[variant]}
-    ${animated ? animationClasses[animation] : ''}
+    ${animated ? `${animationClasses[animation]} ${speedClasses[speed]}` : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -171,6 +190,65 @@ export const StatsCardSkeleton: React.FC<{ className?: string }> = ({ className 
     </div>
     <Skeleton variant="text" height={32} className="w-24 mb-2" />
     <Skeleton variant="text" height={16} className="w-32" />
+  </div>
+);
+
+export const UserProfileSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden ${className}`}>
+    <div className="h-32 bg-gradient-to-br from-primary-500/20 to-secondary-500/20">
+      <Skeleton variant="rectangular" height="100%" className="w-full" animation="gradient-slide" />
+    </div>
+    <div className="px-6 pb-6">
+      <div className="flex items-center -mt-12 mb-4">
+        <Skeleton variant="circular" width={80} height={80} className="border-4 border-white dark:border-neutral-800" />
+      </div>
+      <Skeleton variant="text" height={24} className="w-48 mb-2" />
+      <Skeleton variant="text" height={16} className="w-32 mb-4" />
+      <div className="flex gap-4">
+        <Skeleton variant="rectangular" height={32} className="flex-1" />
+        <Skeleton variant="rectangular" height={32} className="flex-1" />
+      </div>
+    </div>
+  </div>
+);
+
+export const CommentSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`bg-white dark:bg-neutral-800 rounded-lg p-4 ${className}`}>
+    <div className="flex items-start gap-3">
+      <Skeleton variant="circular" width={40} height={40} />
+      <div className="flex-1">
+        <div className="flex items-center gap-2 mb-2">
+          <Skeleton variant="text" height={16} className="w-24" />
+          <Skeleton variant="text" height={12} className="w-16" />
+        </div>
+        <Skeleton variant="text" height={16} lines={2} className="w-full" />
+      </div>
+    </div>
+  </div>
+);
+
+export const ProductCardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden ${className}`}>
+    <Skeleton variant="rectangular" height={200} className="w-full" animation="shimmer" />
+    <div className="p-4 space-y-3">
+      <Skeleton variant="text" height={20} className="w-3/4" />
+      <Skeleton variant="text" height={16} className="w-full" />
+      <div className="flex items-center justify-between">
+        <Skeleton variant="text" height={20} className="w-20" />
+        <Skeleton variant="rectangular" height={32} width={80} className="rounded-lg" />
+      </div>
+    </div>
+  </div>
+);
+
+export const SidebarSkeleton: React.FC<{ items?: number; className?: string }> = ({ items = 5, className = '' }) => (
+  <div className={`space-y-2 ${className}`}>
+    {Array.from({ length: items }).map((_, index) => (
+      <div key={index} className="flex items-center gap-3 p-3">
+        <Skeleton variant="circular" width={20} height={20} />
+        <Skeleton variant="text" height={16} className="flex-1" />
+      </div>
+    ))}
   </div>
 );
 
