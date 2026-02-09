@@ -3,7 +3,7 @@ import { parentProgressReportService, type ProgressReportSettings, type Progress
 import { getEmailNotificationService } from './emailNotificationService';
 import { gradesAPI, attendanceAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import type { PushNotification } from '../types';
 
 export interface ProgressReportAuditLog {
@@ -264,7 +264,7 @@ class ProgressReportScheduler {
       monthly: 30
     };
     const days = frequencyDays[settings.frequency];
-    const nextDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+    const nextDate = new Date(now.getTime() + days * TIME_MS.ONE_DAY);
     return nextDate.toISOString();
   }
 

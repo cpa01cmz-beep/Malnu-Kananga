@@ -1,6 +1,8 @@
 
   import {
     STORAGE_KEYS,
+    RETRY_CONFIG,
+    TIME_MS,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -63,11 +65,11 @@ export const WS_CONFIG = {
   WS_BASE_URL: import.meta.env.VITE_WS_BASE_URL ||
     (import.meta.env.VITE_API_BASE_URL?.replace('https://', 'wss://') || DEFAULT_WS_BASE_URL),
   MAX_RECONNECT_ATTEMPTS: 5,
-  RECONNECT_DELAY: 5000,
-  CONNECTION_TIMEOUT: 10000,
-  PING_INTERVAL: 30000,
-  FALLBACK_POLLING_INTERVAL: 30000,
-  SUBSCRIPTION_TTL: 3600000, // 1 hour
+  RECONNECT_DELAY: RETRY_CONFIG.WEBSOCKET_RECONNECT_DELAY,
+  CONNECTION_TIMEOUT: RETRY_CONFIG.WEBSOCKET_CONNECTION_TIMEOUT,
+  PING_INTERVAL: RETRY_CONFIG.WEBSOCKET_PING_INTERVAL,
+  FALLBACK_POLLING_INTERVAL: RETRY_CONFIG.WEBSOCKET_FALLBACK_POLLING_INTERVAL,
+  SUBSCRIPTION_TTL: RETRY_CONFIG.WEBSOCKET_SUBSCRIPTION_TTL, // 1 hour
 } as const;
 
 /**
@@ -672,7 +674,7 @@ private updateEventsData(event: RealTimeEvent): void {
           const lastConnected = this.connectionState.lastConnected;
           if (lastConnected) {
             const timeAway = Date.now() - new Date(lastConnected).getTime();
-            if (timeAway > 60000) {
+            if (timeAway > TIME_MS.ONE_MINUTE) {
               this.pollForUpdates().catch(() => {});
             }
           }

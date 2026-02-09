@@ -1,3 +1,4 @@
+import { RETRY_CONFIG } from "../constants";
 export interface RetryOptions {
   maxAttempts: number;
   initialDelay: number;
@@ -26,8 +27,8 @@ export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {
     maxAttempts: 3,
-    initialDelay: 1000,
-    maxDelay: 10000,
+    initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+    maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
     backoffFactor: 2,
   }
 ): Promise<T> {
@@ -80,9 +81,9 @@ export class CircuitBreaker {
   };
 
   constructor(private options: CircuitBreakerOptions = {
-    failureThreshold: 5,
-    resetTimeout: 60000,
-    monitoringPeriod: 10000,
+    failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+    resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
+    monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
   }) {}
 
   async execute<T>(fn: () => Promise<T>): Promise<T> {
@@ -163,16 +164,16 @@ export class ErrorRecoveryStrategy {
   ) {
     this.retryOptions = {
       maxAttempts: 3,
-      initialDelay: 1000,
-      maxDelay: 10000,
+      initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+      maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
       backoffFactor: 2,
       ...retryOptions,
     };
 
     this.circuitBreaker = new CircuitBreaker({
-      failureThreshold: 5,
-      resetTimeout: 60000,
-      monitoringPeriod: 10000,
+      failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+      resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
+      monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
       ...circuitBreakerOptions,
     });
   }

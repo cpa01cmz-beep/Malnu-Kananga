@@ -1,6 +1,6 @@
 import { eLibraryAPI, subjectsAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { classifyError, logError } from '../utils/errorHandler';
 import type { StudyPlan, MaterialRecommendation } from '../types';
 import type { ELibrary } from '../types';
@@ -333,7 +333,7 @@ class StudyPlanMaterialService {
   }
 
   private isCacheValid(cached: { timestamp: number }): boolean {
-    const CACHE_TTL = 24 * 60 * 60 * 1000;
+    const CACHE_TTL = TIME_MS.ONE_DAY;
     return Date.now() - cached.timestamp < CACHE_TTL;
   }
 
