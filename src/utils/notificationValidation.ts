@@ -1,4 +1,5 @@
 import type { PushNotification, NotificationSettings, VoiceNotificationSettings } from '../types';
+import { VALIDATION_LIMITS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -32,14 +33,14 @@ export function validatePushNotification(notification: unknown): ValidationResul
 
   if (!n.title || typeof n.title !== 'string' || n.title.trim().length === 0) {
     errors.push('Notification title is required and must be a non-empty string');
-  } else if (n.title.length > 200) {
-    errors.push('Notification title must not exceed 200 characters');
+  } else if (n.title.length > VALIDATION_LIMITS.NOTIFICATION_TITLE_MAX) {
+    errors.push(`Notification title must not exceed ${VALIDATION_LIMITS.NOTIFICATION_TITLE_MAX} characters`);
   }
 
   if (!n.body || typeof n.body !== 'string' || n.body.trim().length === 0) {
     errors.push('Notification body is required and must be a non-empty string');
-  } else if (n.body.length > 1000) {
-    errors.push('Notification body must not exceed 1000 characters');
+  } else if (n.body.length > VALIDATION_LIMITS.NOTIFICATION_BODY_MAX) {
+    errors.push(`Notification body must not exceed ${VALIDATION_LIMITS.NOTIFICATION_BODY_MAX} characters`);
   }
 
   if (!n.timestamp || typeof n.timestamp !== 'string' || isNaN(Date.parse(n.timestamp))) {

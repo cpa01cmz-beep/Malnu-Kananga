@@ -627,7 +627,7 @@ export const SCHEDULER_INTERVALS = {
     PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
     NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
     AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
-    OFFLINE_SYNC_CHECK: 60 * 1000, // 1 minute
+    OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
     WEBSOCKET_PING: 30 * 1000, // 30 seconds
 } as const;
 
@@ -811,11 +811,18 @@ export const OCR_CONFIG = {
     CONFIDENCE_WARNING_THRESHOLD: 0.7,
     COMPARISON_TEXT_MAX: 200,
     INPUT_LOG_MAX: 500,
+    ATTENDANCE_CONFIDENCE_THRESHOLD: 60, // Minimum average confidence for attendance OCR
 } as const;
 
 // ID generation constants
 export const ID_GENERATION = {
     RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// UI Accessibility constants - Flexy: Never hardcode accessibility values!
+export const UI_ACCESSIBILITY = {
+    OFFSCREEN_POSITION: '-9999px',
+    SCREEN_READER_TIMEOUT: 1000,
 } as const;
 
 // Cache TTL constants in milliseconds
@@ -1107,4 +1114,129 @@ export const OCR_ENHANCEMENT_CONFIG = {
 // Permission service constants
 export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
+} as const;
+
+// Email template colors - Flexy: Never hardcode colors in email templates!
+export const EMAIL_COLORS = {
+    PRIMARY: '#2563eb',
+    SUCCESS: '#059669',
+    SUCCESS_LIGHT: '#dcfce7',
+    WARNING: '#dc2626',
+    INFO: '#dbeafe',
+    LIBRARY: '#7c3aed',
+    PPDB: '#ea580c',
+    BACKGROUND: '#f9fafb',
+    TEXT_PRIMARY: '#333',
+    TEXT_DARK: '#1f2937',
+    HIGHLIGHT: '#dbeafe',
+    STATUS_SUCCESS: '#d1fae5',
+    STATUS_WARNING: '#fef3c7',
+    STATUS_INFO: '#dbeafe',
+    STATUS_ERROR: '#fee2e2',
+    GRAY_BG: '#f3f4f6',
+    GREEN_SUCCESS: '#10b981',
+} as const;
+
+// Phone format constants - Flexy: Never hardcode phone formats!
+export const PHONE_FORMAT = {
+    INDONESIA_PREFIX: '628',
+    INDONESIA_LOCAL_PREFIX: '0',
+    INDONESIA_MIN_LENGTH: 10,
+    INDONESIA_MAX_LENGTH: 15,
+} as const;
+
+// Input mask patterns - Flexy: Never hardcode mask patterns!
+export const INPUT_MASKS = {
+    NISN: '9999999999',
+    PHONE: '999-9999-99999',
+    DATE: '99-99-9999',
+    NIS: '9999999999',
+} as const;
+
+// ID Prefixes - Flexy: Never hardcode ID prefixes!
+export const ID_PREFIXES = {
+    TEMPLATE: 'template',
+    NOTIFICATION: 'notif',
+    AUDIT: 'audit',
+    EMAIL: 'email',
+    STUDY_PLAN: 'study_plan',
+    SESSION: 'session',
+    USER: 'user',
+    GRADE: 'grade',
+    MATERIAL: 'material',
+    ANNOUNCEMENT: 'announcement',
+} as const;
+
+// Academic subjects - Flexy: Never hardcode subject names!
+export const ACADEMIC_SUBJECTS = {
+    MATHEMATICS: 'Matematika',
+    INDONESIAN: 'Bahasa Indonesia',
+    ENGLISH: 'Bahasa Inggris',
+    PHYSICS: 'Fisika',
+    CHEMISTRY: 'Kimia',
+    BIOLOGY: 'Biologi',
+    HISTORY: 'Sejarah',
+    GEOGRAPHY: 'Geografi',
+    ECONOMICS: 'Ekonomi',
+    SOCIOLOGY: 'Sosiologi',
+    CIVICS: 'PPKn',
+    RELIGION: 'Pendidikan Agama',
+    ARTS: 'Seni Budaya',
+    PE: 'Penjasorkes',
+    ENTREPRENEURSHIP: 'Kewirausahaan',
+} as const;
+
+// Indonesian month names - Flexy: Never hardcode locale-specific data!
+export const DATE_LOCALE = {
+    INDONESIAN_MONTHS: [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ] as const,
+    INDONESIAN_SHORT_MONTHS: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+    ] as const,
+    INDONESIAN_DAYS: [
+        'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
+    ] as const,
+} as const;
+
+// Default class configuration for new students
+export const DEFAULT_CLASS_CONFIG = {
+    NEW_STUDENT_CODE: '10',
+    NEW_STUDENT_NAME: 'Kelas 10',
+} as const;
+
+// Email domain constants
+export const EMAIL_DOMAINS = {
+    ADMIN: 'admin@malnu-kananga.sch.id',
+    INFO: 'info@ma-malnukananga.sch.id',
+    TEACHER: 'guru.staff@malnu.sch.id',
+    STUDENT: 'siswa.osis@malnu.sch.id',
+} as const;
+
+// Demo user data - Flexy: Demo data should be centralized!
+export const DEMO_USERS = {
+    ADMIN: {
+        name: 'Ahmad Dahlan',
+        email: EMAIL_DOMAINS.ADMIN,
+    },
+    TEACHER: {
+        name: 'Siti Aminah, S.Pd.',
+        email: EMAIL_DOMAINS.TEACHER,
+    },
+    STUDENT: {
+        name: 'Budi Santoso',
+        email: 'budi.santoso@malnu.sch.id',
+    },
+} as const;
+
+// PPDB Committee configuration
+export const PPDB_CONFIG = {
+    COMMITTEE_NAME: `Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
+    DEFAULT_STATUS_COLORS: {
+        PENDING: EMAIL_COLORS.STATUS_WARNING,
+        APPROVED: EMAIL_COLORS.STATUS_SUCCESS,
+        REJECTED: EMAIL_COLORS.STATUS_ERROR,
+    },
 } as const;

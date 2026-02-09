@@ -747,3 +747,15 @@
 :root {
   --progress-bar-striped-overlay: 255 255 255;
 }
+
+/* Form fieldset disabled state for improved UX */
+/* Ensures disabled fieldset properly disables all child form elements */
+fieldset:disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Smooth transition for disabled state */
+fieldset {
+  transition: opacity 0.2s ease-out;
+}
