@@ -698,7 +698,11 @@ private updateEventsData(event: RealTimeEvent): void {
    * Save connection state to localStorage
    */
   private saveConnectionState(): void {
-    localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(this.connectionState));
+    const stateToSave = {
+      ...this.connectionState,
+      subscriptions: Array.from(this.connectionState.subscriptions),
+    };
+    localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(stateToSave));
   }
 
   /**
