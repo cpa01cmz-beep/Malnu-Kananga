@@ -277,13 +277,13 @@ Monitor query performance via Cloudflare Dashboard:
 
 ```bash
 # Apply optimization migration to D1 database
-wrangler d1 execute malnu-kananga-db-dev --local --file=migration-2026-01-17-database-optimization.sql
+wrangler d1 execute malnu-kananga-db-dev --local --file=migrations/migration-2026-01-17-database-optimization.sql
 
 # Apply to remote dev database
-wrangler d1 execute malnu-kananga-db-dev --remote --file=migration-2026-01-17-database-optimization.sql
+wrangler d1 execute malnu-kananga-db-dev --remote --file=migrations/migration-2026-01-17-database-optimization.sql
 
 # Apply to production database
-wrangler d1 execute malnu-kananga-db-prod --remote --file=migration-2026-01-17-database-optimization.sql
+wrangler d1 execute malnu-kananga-db-prod --remote --file=migrations/migration-2026-01-17-database-optimization.sql
 ```
 
 **Note**: This migration includes:

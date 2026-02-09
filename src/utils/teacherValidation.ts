@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -81,9 +81,9 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.assignment < 0) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.assignment > 100) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.assignment < 60 && grade.assignment > 0) {
+    } else if (grade.assignment > GRADE_LIMITS.MAX) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
+    } else if (grade.assignment < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.assignment > 0) {
       warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('tugas'));
     }
   }
@@ -96,9 +96,9 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.midExam < 0) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.midExam > 100) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.midExam < 60 && grade.midExam > 0) {
+    } else if (grade.midExam > GRADE_LIMITS.MAX) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
+    } else if (grade.midExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.midExam > 0) {
       warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('UTS'));
     }
   }
@@ -111,9 +111,9 @@ export const validateGradeInput = (grade: GradeInput): ValidationResult => {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_TYPE);
     } else if (grade.finalExam < 0) {
       errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.finalExam > 100) {
-      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', '0').replace('${1}', '100'));
-    } else if (grade.finalExam < 60 && grade.finalExam > 0) {
+    } else if (grade.finalExam > GRADE_LIMITS.MAX) {
+      errors.push(VALIDATION_MESSAGES.GRADE_INVALID_RANGE.replace('${0}', String(GRADE_LIMITS.MIN)).replace('${1}', String(GRADE_LIMITS.MAX)));
+    } else if (grade.finalExam < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && grade.finalExam > 0) {
       warnings.push(VALIDATION_MESSAGES.GRADE_LOW_WARNING('UAS'));
     }
   }
@@ -141,21 +141,21 @@ export const validateClassData = (data: Partial<ClassFormData>): ValidationResul
   // Validate name
   if (!data.name || data.name.trim().length === 0) {
     errors.push(VALIDATION_MESSAGES.STUDENT_NAME_REQUIRED);
-  } else if (data.name.trim().length < 3) {
+  } else if (data.name.trim().length < FILE_VALIDATION.MATERIAL_TITLE_MIN_LENGTH) {
     errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MIN_LENGTH);
-  } else if (data.name.trim().length > 100) {
+  } else if (data.name.trim().length > FILE_VALIDATION.FILENAME_MAX_LENGTH) {
     errors.push(VALIDATION_MESSAGES.STUDENT_NAME_MAX_LENGTH);
-  } else if (!/^[a-zA-Z\s.'-]+$/.test(data.name.trim())) {
+  } else if (!VALIDATION_PATTERNS.NAME.test(data.name.trim())) {
     warnings.push(VALIDATION_MESSAGES.STUDENT_NAME_UNUSUAL_CHARS);
   }
 
   // Validate NIS
   if (!data.nis || data.nis.trim().length === 0) {
     errors.push('NIS tidak boleh kosong');
-  } else if (!/^\d+$/.test(data.nis.trim())) {
+  } else if (!VALIDATION_PATTERNS.NIS.test(data.nis.trim())) {
     errors.push('NIS hanya boleh berisi angka');
-  } else if (data.nis.length < 5 || data.nis.length > 20) {
-    errors.push('NIS harus antara 5-20 digit');
+  } else if (data.nis.length < ACADEMIC.NIS_LENGTH.MIN || data.nis.length > ACADEMIC.NIS_LENGTH.MAX) {
+    errors.push(`NIS harus antara ${ACADEMIC.NIS_LENGTH.MIN}-${ACADEMIC.NIS_LENGTH.MAX} digit`);
   }
 
   // Validate gender
@@ -164,8 +164,8 @@ export const validateClassData = (data: Partial<ClassFormData>): ValidationResul
   }
 
   // Validate address
-  if (data.address && data.address.trim().length > 200) {
-    errors.push('Alamat maksimal 200 karakter');
+  if (data.address && data.address.trim().length > FILE_VALIDATION.ADDRESS_MAX_LENGTH) {
+    errors.push(`Alamat maksimal ${FILE_VALIDATION.ADDRESS_MAX_LENGTH} karakter`);
   }
 
   return {
@@ -185,17 +185,17 @@ export const validateMaterialData = (data: Partial<MaterialFormData>): Validatio
   // Validate title
   if (!data.title || data.title.trim().length === 0) {
     errors.push('Judul materi tidak boleh kosong');
-  } else if (data.title.trim().length < 3) {
-    errors.push('Judul materi minimal 3 karakter');
-  } else if (data.title.trim().length > 200) {
-    errors.push('Judul materi maksimal 200 karakter');
+  } else if (data.title.trim().length < FILE_VALIDATION.MATERIAL_TITLE_MIN_LENGTH) {
+    errors.push(`Judul materi minimal ${FILE_VALIDATION.MATERIAL_TITLE_MIN_LENGTH} karakter`);
+  } else if (data.title.trim().length > FILE_VALIDATION.MATERIAL_TITLE_MAX_LENGTH) {
+    errors.push(`Judul materi maksimal ${FILE_VALIDATION.MATERIAL_TITLE_MAX_LENGTH} karakter`);
   }
 
   // Validate description
   if (!data.description || data.description.trim().length === 0) {
     warnings.push('Deskripsi materi kosong, pertimbangkan menambahkannya');
-  } else if (data.description.length > 1000) {
-    errors.push('Deskripsi materi maksimal 1000 karakter');
+  } else if (data.description.length > VALIDATION_LIMITS.DESCRIPTION_MAX) {
+    errors.push(`Deskripsi materi maksimal ${VALIDATION_LIMITS.DESCRIPTION_MAX} karakter`);
   }
 
   // Validate category
@@ -255,11 +255,11 @@ export const validateSearchInput = (searchTerm: string): ValidationResult => {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  if (searchTerm.length > 100) {
-    errors.push('Kata pencarian maksimal 100 karakter');
+  if (searchTerm.length > FILE_VALIDATION.SEARCH_MAX_LENGTH) {
+    errors.push(`Kata pencarian maksimal ${FILE_VALIDATION.SEARCH_MAX_LENGTH} karakter`);
   }
 
-  if (searchTerm && !/^[a-zA-Z0-9\s.-]+$/.test(searchTerm)) {
+  if (searchTerm && !VALIDATION_PATTERNS.SEARCH_TERM.test(searchTerm)) {
     warnings.push('Gunakan kata pencarian yang lebih sederhana');
   }
 
@@ -293,7 +293,15 @@ export const validateAttendance = (attendance: Attendance): ValidationResult => 
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
+  if (!ACADEMIC.ATTENDANCE_STATUS_LIST.includes(attendance.status as typeof ACADEMIC.ATTENDANCE_STATUS_LIST[number])) {
+    errors.push('Invalid attendance status');
+  }
+
+  if (!attendance.recordedBy || attendance.recordedBy.trim() === '') {
+    errors.push('Recorded by is required');
+  }
+
+  if (!Object.values(ACADEMIC.ATTENDANCE_STATUSES).includes(attendance.status)) {
     errors.push('Invalid attendance status');
   }
 
@@ -312,16 +320,16 @@ export const validateAttendance = (attendance: Attendance): ValidationResult => 
  * Calculates final grade from components
  */
 export const calculateFinalGrade = (assignment: number, midExam: number, finalExam: number): number => {
-  return Math.round(((assignment * 0.3) + (midExam * 0.3) + (finalExam * 0.4)) * 10) / 10;
+  return Math.round(((assignment * ACADEMIC.GRADE_WEIGHTS.ASSIGNMENT) + (midExam * ACADEMIC.GRADE_WEIGHTS.MID_EXAM) + (finalExam * ACADEMIC.GRADE_WEIGHTS.FINAL_EXAM)) * 10) / 10;
 };
 
 /**
  * Gets grade letter from numeric score
  */
 export const getGradeLetter = (score: number): string => {
-  if (score >= 85) return 'A';
-  if (score >= 75) return 'B';
-  if (score >= 60) return 'C';
+  if (score >= ACADEMIC.GRADE_THRESHOLDS.A) return 'A';
+  if (score >= ACADEMIC.GRADE_THRESHOLDS.B) return 'B';
+  if (score >= ACADEMIC.GRADE_THRESHOLDS.C) return 'C';
   return 'D';
 };
 
@@ -338,8 +346,8 @@ export const validateGradeComposition = (grade: GradeInput): ValidationResult =>
 
   if (hasAllScores) {
     const finalScore = calculateFinalGrade(grade.assignment!, grade.midExam!, grade.finalExam!);
-    if (finalScore < 60) {
-      warnings.push('Nilai akhir dibawah standar kelulusan (60)');
+    if (finalScore < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS) {
+      warnings.push(`Nilai akhir dibawah standar kelulusan (${ACADEMIC.GRADE_THRESHOLDS.MIN_PASS})`);
     }
   } else {
     const providedScores = Object.values(grade).filter(v => v !== undefined).length;
@@ -359,7 +367,7 @@ export const validateGradeComposition = (grade: GradeInput): ValidationResult =>
 
 export function sanitizeGradeInput(input: string | number): number {
   const numValue = typeof input === 'string' ? parseFloat(input) : input;
-  return isNaN(numValue) ? 0 : Math.min(100, Math.max(0, numValue));
+  return isNaN(numValue) ? GRADE_LIMITS.MIN : Math.min(GRADE_LIMITS.MAX, Math.max(GRADE_LIMITS.MIN, numValue));
 }
 
 /**
@@ -414,7 +422,7 @@ export function validateGrade(
     errors.push('Academic year is required');
   }
 
-  if (!grade.semester || !['1', '2'].includes(grade.semester)) {
+  if (!grade.semester || !ACADEMIC.SEMESTERS.includes(grade.semester as typeof ACADEMIC.SEMESTERS[number])) {
     errors.push('Semester must be either "1" or "2"');
   }
 
@@ -518,11 +526,11 @@ export function validateStudent(student: Student): ValidationResult {
     if (isNaN(dob.getTime())) {
       errors.push('Invalid date of birth');
     } else {
-      const age = Math.floor((new Date().getTime() - dob.getTime()) / 31557600000);
-      if (age < 6 || age > 25) {
-        errors.push('Student age must be between 6 and 25 years old');
-      } else if (age < 12 || age > 20) {
-        warnings.push('Student age outside typical range (12-20 years)');
+      const age = Math.floor((new Date().getTime() - dob.getTime()) / TIME_MS.ONE_YEAR);
+      if (age < ACADEMIC.AGE_LIMITS.STUDENT_MIN || age > ACADEMIC.AGE_LIMITS.STUDENT_MAX) {
+        errors.push(`Student age must be between ${ACADEMIC.AGE_LIMITS.STUDENT_MIN} and ${ACADEMIC.AGE_LIMITS.STUDENT_MAX} years old`);
+      } else if (age < ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MIN || age > ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MAX) {
+        warnings.push(`Student age outside typical range (${ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MIN}-${ACADEMIC.AGE_LIMITS.STUDENT_TYPICAL_MAX} years)`);
       }
     }
   }
@@ -556,10 +564,10 @@ export function validateSubject(subject: Subject): ValidationResult {
 
   if (typeof subject.creditHours !== 'number' || isNaN(subject.creditHours)) {
     errors.push('Credit hours must be a valid number');
-  } else if (subject.creditHours < 1 || subject.creditHours > 6) {
-    errors.push('Credit hours must be between 1 and 6');
-  } else if (subject.creditHours < 2 || subject.creditHours > 4) {
-    warnings.push('Credit hours outside typical range (2-4 hours)');
+  } else if (subject.creditHours < ACADEMIC.CREDIT_HOURS.MIN || subject.creditHours > ACADEMIC.CREDIT_HOURS.MAX) {
+    errors.push(`Credit hours must be between ${ACADEMIC.CREDIT_HOURS.MIN} and ${ACADEMIC.CREDIT_HOURS.MAX}`);
+  } else if (subject.creditHours < ACADEMIC.CREDIT_HOURS.TYPICAL_MIN || subject.creditHours > ACADEMIC.CREDIT_HOURS.TYPICAL_MAX) {
+    warnings.push(`Credit hours outside typical range (${ACADEMIC.CREDIT_HOURS.TYPICAL_MIN}-${ACADEMIC.CREDIT_HOURS.TYPICAL_MAX} hours)`);
   }
 
   return {
@@ -589,7 +597,7 @@ export function validateClass(classData: Class): ValidationResult {
     errors.push('Academic year is required');
   }
 
-  if (!classData.semester || !['1', '2'].includes(classData.semester)) {
+  if (!classData.semester || !ACADEMIC.SEMESTERS.includes(classData.semester as typeof ACADEMIC.SEMESTERS[number])) {
     errors.push('Semester must be either "1" or "2"');
   }
 
@@ -621,7 +629,7 @@ export function validateAttendanceTyped(attendance: Attendance): ValidationResul
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
+  if (!Object.values(ACADEMIC.ATTENDANCE_STATUSES).includes(attendance.status)) {
     errors.push('Invalid attendance status');
   }
 
@@ -704,8 +712,8 @@ export function validateELibrary(material: ELibrary): ValidationResult {
     errors.push('Material file size must be a valid number');
   } else if (material.fileSize <= 0) {
     errors.push('Material file size must be greater than 0');
-  } else if (material.fileSize > 100 * 1024 * 1024) { // 100MB
-    errors.push('Material file size cannot exceed 100MB');
+  } else if (material.fileSize > FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX) {
+    errors.push(`Material file size cannot exceed ${FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX / (1024 * 1024)}MB`);
   }
 
   if (!material.subjectId || material.subjectId.trim() === '') {
@@ -866,8 +874,8 @@ export function validateClassCompletion(grades: StudentGrade[]): ClassValidation
   const studentsWithGrades = grades.length - studentsWithoutGradesList.length;
 
   if (studentsWithoutGradesList.length > 0) {
-    warnings.push(
-      `${studentsWithoutGradesList.length} siswa belum memiliki nilai: ${studentsWithoutGradesList.slice(0, 5).join(', ')}${studentsWithoutGradesList.length > 5 ? '...' : ''}`
+      warnings.push(
+      `${studentsWithoutGradesList.length} siswa belum memiliki nilai: ${studentsWithoutGradesList.slice(0, VALIDATION_LIMITS.MAX_DISPLAY_ITEMS).join(', ')}${studentsWithoutGradesList.length > VALIDATION_LIMITS.MAX_DISPLAY_ITEMS ? '...' : ''}`
     );
   }
 
@@ -948,19 +956,19 @@ export function getInlineValidationMessage(
     return { isValid: false, message: 'Nilai tidak valid', severity: 'error' };
   }
 
-  if (value < 0) {
-    return { isValid: false, message: 'Nilai tidak boleh negatif', severity: 'error' };
+  if (value < GRADE_LIMITS.MIN) {
+    return { isValid: false, message: `Nilai tidak boleh negatif`, severity: 'error' };
   }
 
-  if (value > 100) {
-    return { isValid: false, message: 'Nilai maksimal 100', severity: 'error' };
+  if (value > GRADE_LIMITS.MAX) {
+    return { isValid: false, message: `Nilai maksimal ${GRADE_LIMITS.MAX}`, severity: 'error' };
   }
 
-  if (value === 0) {
+  if (value === GRADE_LIMITS.MIN) {
     return { isValid: true, message: 'Nilai belum diisi', severity: 'info' };
   }
 
-  if (value < 60 && value > 0) {
+  if (value < ACADEMIC.GRADE_THRESHOLDS.MIN_PASS && value > 0) {
     return { isValid: true, message: 'Nilai rendah', severity: 'warning' };
   }
 

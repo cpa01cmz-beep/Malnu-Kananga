@@ -482,12 +482,15 @@ export const OPACITY_TOKENS = {
 export const TIME_MS = {
     ONE_SECOND: 1000,
     ONE_MINUTE: 60 * 1000,
+    FIVE_MINUTES: 5 * 60 * 1000,
+    THIRTY_MINUTES: 30 * 60 * 1000,
     ONE_HOUR: 60 * 60 * 1000,
     SIX_HOURS: 6 * 60 * 60 * 1000,
     TWELVE_HOURS: 12 * 60 * 60 * 1000,
     ONE_DAY: 24 * 60 * 60 * 1000,
     ONE_WEEK: 7 * 24 * 60 * 60 * 1000,
     THIRTY_DAYS: 30 * 24 * 60 * 60 * 1000,
+    ONE_YEAR: 31557600000, // 365.25 days in milliseconds (accounts for leap years)
 } as const;
 
 // File size limits in bytes
@@ -532,14 +535,34 @@ export const GRADE_LIMITS = {
     MIN: 0,
     MAX: 100,
     PASS_THRESHOLD: 40,
+    MIN_PASS: 60,
+} as const;
+
+// Grade thresholds for letter calculation
+export const GRADE_THRESHOLDS = {
+    A_PLUS: 90,
+    A: 85,
+    A_MINUS: 80,
+    B_PLUS: 78,
+    B: 75,
+    B_MINUS: 72,
+    C_PLUS: 68,
+    C: 60,
+    D: 0,
 } as const;
 
 // Validation length limits
 export const VALIDATION_LIMITS = {
     NOTIFICATION_BODY_MAX: 1000,
+    NOTIFICATION_TITLE_MAX: 200,
     DESCRIPTION_MAX: 1000,
     AI_PROMPT_MAX: 1000,
     TITLE_MAX: 255,
+    IMAGE_URL_MAX: 500,
+    URL_MAX: 500,
+    PREVIEW_LENGTH: 200,
+    MAX_DISPLAY_ITEMS: 5,
+    MAX_SUGGESTIONS: 5,
 } as const;
 
 // UI delays in milliseconds
@@ -570,4 +593,518 @@ export const API_CONFIG = {
         CHAT: '/api/chat',
         LOGIN: '/api/auth/login',
     },
+} as const;
+
+// Language and Locale Codes - Flexy: Never hardcode language codes!
+export const LANGUAGE_CODES = {
+    INDONESIAN: 'id-ID',
+    ENGLISH_US: 'en-US',
+    ENGLISH_UK: 'en-GB',
+    JAVANESE: 'jv-ID',
+    DEFAULT: 'id-ID',
+} as const;
+
+// File Type Extensions - Flexy: Never hardcode file extensions!
+export const FILE_EXTENSIONS = {
+    DOCUMENTS: ['.pdf', '.doc', '.docx', '.ppt', '.pptx'] as const,
+    IMAGES: ['.jpg', '.jpeg', '.png', '.gif', '.webp'] as const,
+    VIDEOS: ['.mp4', '.avi', '.mov', '.mkv'] as const,
+    AUDIO: ['.mp3', '.wav', '.ogg', '.m4a'] as const,
+    SPREADSHEETS: ['.xls', '.xlsx', '.csv'] as const,
+    ARCHIVES: ['.zip', '.rar', '.7z'] as const,
+} as const;
+
+// All accepted file extensions (for FileUpload component)
+export const ACCEPTED_FILE_EXTENSIONS = [
+    ...FILE_EXTENSIONS.DOCUMENTS,
+    ...FILE_EXTENSIONS.IMAGES,
+    '.mp4', // Video (commonly used)
+] as const;
+
+// Scheduler Intervals (milliseconds) - Flexy: Never hardcode intervals!
+export const SCHEDULER_INTERVALS = {
+    EMAIL_DIGEST_CHECK: 5 * 60 * 1000, // 5 minutes
+    PROGRESS_REPORT_CHECK: 60 * 60 * 1000, // 60 minutes (1 hour)
+    NOTIFICATION_BATCH_INTERVAL: 30 * 1000, // 30 seconds
+    AI_CACHE_CLEANUP: 10 * 60 * 1000, // 10 minutes
+    OFFLINE_SYNC_CHECK: 60 * 1000, // 1 minute
+    WEBSOCKET_PING: 30 * 1000, // 30 seconds
+} as const;
+
+// Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
+export const PERFORMANCE_THRESHOLDS = {
+    SLOW_REQUEST_MS: 3000, // 3 seconds
+    ERROR_RATE_ALERT_PERCENT: 10, // 10%
+    AVG_RESPONSE_TIME_ALERT_MS: 5000, // 5 seconds
+    CONSECUTIVE_FAILURES_ALERT: 5,
+    MEMORY_WARNING_PERCENT: 80, // 80%
+    CPU_WARNING_PERCENT: 70, // 70%
+} as const;
+
+// Test Timeout Delays (milliseconds) - Flexy: Never hardcode test delays!
+export const TEST_DELAYS = {
+    SHORT: 10,
+    MEDIUM: 50,
+    LONG: 100,
+    VERY_LONG: 500,
+} as const;
+
+// Hash Algorithm Configuration
+export const HASH_CONFIG = {
+    DEFAULT_ALGORITHM: 'simple',
+    HASH_SHIFT_BITS: 5,
+    OUTPUT_BASE: 36,
+    DEFAULT_RANDOM_LENGTH: 9,
+} as const;
+
+// UI ID Configuration
+export const UI_ID_CONFIG = {
+    RANDOM_SUFFIX_LENGTH: 9,
+    DEFAULT_SEPARATOR: '_',
+} as const;
+
+// Conversion Utilities
+export const CONVERSION = {
+    BYTES_PER_KB: 1024,
+    BYTES_PER_MB: 1024 * 1024,
+    BYTES_PER_GB: 1024 * 1024 * 1024,
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 60 * 1000,
+    MS_PER_HOUR: 60 * 60 * 1000,
+} as const;
+
+/**
+ * Convert megabytes to bytes
+ * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
+ */
+export function mbToBytes(mb: number): number {
+    return mb * CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert bytes to megabytes
+ */
+export function bytesToMb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert minutes to milliseconds
+ * Flexy says: Use this instead of hardcoded `minutes * 60 * 1000`
+ */
+export function minutesToMs(minutes: number): number {
+    return minutes * CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert hours to milliseconds
+ */
+export function hoursToMs(hours: number): number {
+    return hours * CONVERSION.MS_PER_HOUR;
+}
+
+// Validation regex patterns - Centralized to avoid hardcoded regex
+export const VALIDATION_PATTERNS = {
+    NAME: /^[a-zA-Z\s.'-]+$/,
+    NIS: /^\d+$/,
+    NISN: /^\d{10}$/,
+    SEARCH_TERM: /^[a-zA-Z0-9\s.-]+$/,
+    PHONE: /^[0-9+\-\s()]+$/,
+    URL_PROTOCOLS: ['http://', 'https://'] as const,
+} as const;
+
+// Search configuration constants
+export const SEARCH_CONFIG = {
+    DEFAULT_MAX_RESULTS: 20,
+    MAX_SUGGESTED_QUERIES: 5,
+    MAX_RELATED_CONCEPTS: 8,
+    MAX_SIMILAR_ITEMS: 5,
+    MAX_KEYWORDS: 10,
+    MIN_RELEVANCE_SCORE: 0.3,
+    HIGH_RELEVANCE_SCORE: 0.8,
+    OCR_TEXT_MAX: 500,
+} as const;
+
+// Academic constants - Centralized academic year related values
+export const ACADEMIC = {
+    SEMESTERS: ['1', '2'] as const,
+    DAYS_OF_WEEK: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const,
+    ATTENDANCE_STATUSES: {
+        PRESENT: 'hadir',
+        SICK: 'sakit',
+        PERMITTED: 'izin',
+        ABSENT: 'alpa',
+    } as const,
+    ATTENDANCE_STATUS_LIST: ['hadir', 'sakit', 'izin', 'alpa'] as const,
+    GRADE_WEIGHTS: {
+        ASSIGNMENT: 0.3,
+        MID_EXAM: 0.3,
+        FINAL_EXAM: 0.4,
+    } as const,
+    GRADE_THRESHOLDS: {
+        A: 85,
+        B: 75,
+        C: 60,
+        MIN_PASS: 60,
+    } as const,
+    GRADE_THRESHOLDS_DETAILED: {
+        A_PLUS: 90,
+        A: 85,
+        A_MINUS: 80,
+        B_PLUS: 78,
+        B: 75,
+        B_MINUS: 72,
+        C_PLUS: 68,
+        C: 60,
+        D: 0,
+    } as const,
+    GRADE_MIN_SCORES: {
+        A: 85,
+        B: 75,
+        C: 60,
+        D: 0,
+    } as const,
+    AGE_LIMITS: {
+        STUDENT_MIN: 6,
+        STUDENT_MAX: 25,
+        STUDENT_TYPICAL_MIN: 12,
+        STUDENT_TYPICAL_MAX: 20,
+    } as const,
+    CREDIT_HOURS: {
+        MIN: 1,
+        MAX: 6,
+        TYPICAL_MIN: 2,
+        TYPICAL_MAX: 4,
+    } as const,
+    NIS_LENGTH: {
+        MIN: 5,
+        MAX: 20,
+    } as const,
+    NISN_LENGTH: 10,
+} as const;
+
+// File validation constants
+export const FILE_VALIDATION = {
+    FILENAME_MAX_LENGTH: 255,
+    FILENAME_MIN_LENGTH: 1,
+    FILENAME_WARNING_LENGTH: 100,
+    SEARCH_MAX_LENGTH: 100,
+    MATERIAL_TITLE_MAX_LENGTH: 200,
+    MATERIAL_TITLE_MIN_LENGTH: 3,
+    ADDRESS_MAX_LENGTH: 200,
+} as const;
+
+// AI/Gemini configuration constants
+export const AI_CONFIG = {
+    THINKING_BUDGET: 32768,
+    DEFAULT_CONFIDENCE_SCORE: 0.85,
+    JSON_MIME_TYPE: 'application/json',
+    MATERIAL_CONTENT_MAX: 500,
+} as const;
+
+// OCR configuration constants
+export const OCR_CONFIG = {
+    SIMILARITY_THRESHOLD: 0.8,
+    LOW_SIMILARITY_SCORE: 0.3,
+    SHORT_TEXT_PENALTY: 0.8,
+    CONFIDENCE_LOW_THRESHOLD: 0.5,
+    CONFIDENCE_WARNING_THRESHOLD: 0.7,
+    COMPARISON_TEXT_MAX: 200,
+    INPUT_LOG_MAX: 500,
+} as const;
+
+// ID generation constants
+export const ID_GENERATION = {
+    RANDOM_SUFFIX_LENGTH: 9,
+} as const;
+
+// Cache TTL constants in milliseconds
+export const CACHE_TTL = {
+    CATEGORY: 30 * 60 * 1000, // 30 minutes
+    AI_CACHE: 30 * 60 * 1000, // 30 minutes
+    AI_CHAT: 20 * 60 * 1000, // 20 minutes
+    AI_EDITOR: 15 * 60 * 1000, // 15 minutes
+    AI_OCR: 45 * 60 * 1000, // 45 minutes
+    CLEANUP_INTERVAL: 5 * 60 * 1000, // 5 minutes
+} as const;
+
+// Storage limits for various services - centralized to avoid hardcoded limits
+export const STORAGE_LIMITS = {
+    EMAIL_HISTORY_MAX: 1000,
+    NOTIFICATION_HISTORY_MAX: 1000,
+    LOG_ENTRIES_MAX: 1000,
+    METRICS_MAX: 1000,
+    DELIVERY_HISTORY_MAX: 1000,
+} as const;
+
+// Email configuration constants
+export const EMAIL_CONFIG = {
+    MAX_RETRY_ATTEMPTS: 3,
+    RETRY_DELAYS: [TIME_MS.ONE_MINUTE, 5 * TIME_MS.ONE_MINUTE, 15 * TIME_MS.ONE_MINUTE], // 1min, 5min, 15min
+    ANALYTICS_DAYS: 30,
+} as const;
+
+// Byte conversion constants
+export const BYTES_PER_KB = 1024;
+
+// Component-specific debounce delays
+export const DEBOUNCE_DELAYS = {
+    ACTIVITY_FEED: 500,
+    FIELD_VALIDATION: 300,
+    SEARCH_INPUT: 300,
+    AI_CACHE_REFRESH: 5000,
+} as const;
+
+// Component timeout constants
+export const COMPONENT_TIMEOUTS = {
+    TOAST_DEFAULT: 3000,
+    VOICE_MESSAGE: 30000,
+    PASSWORD_REQUIREMENTS_HIDE: 3000,
+    PAGE_RELOAD: 1500,
+} as const;
+
+// Animation constants
+export const ANIMATION_CONFIG = {
+    TOAST_EASING: 'cubic-bezier(0.4, 0, 0.2, 1)',
+} as const;
+
+// HTTP constants
+export const HTTP = {
+    HEADERS: {
+        CONTENT_TYPE_JSON: 'application/json',
+        CONTENT_TYPE_PDF: 'application/pdf',
+        CONTENT_TYPE_FORM_DATA: 'multipart/form-data',
+    } as const,
+    METHODS: {
+        GET: 'GET',
+        POST: 'POST',
+        PUT: 'PUT',
+        PATCH: 'PATCH',
+        DELETE: 'DELETE',
+        HEAD: 'HEAD',
+    } as const,
+    STATUS_CODES: {
+        BAD_REQUEST: 400,
+        UNAUTHORIZED: 401,
+        FORBIDDEN: 403,
+        NOT_FOUND: 404,
+        CONFLICT: 409,
+        UNPROCESSABLE_ENTITY: 422,
+        TOO_MANY_REQUESTS: 429,
+        INTERNAL_SERVER_ERROR: 500,
+        BAD_GATEWAY: 502,
+        SERVICE_UNAVAILABLE: 503,
+        GATEWAY_TIMEOUT: 504,
+    } as const,
+    RETRYABLE_STATUSES: [408, 429, 500, 502, 503, 504] as const,
+    SERVER_ERROR_STATUSES: [500, 502, 503, 504] as const,
+} as const;
+
+// UI Text Constants - Centralized to avoid hardcoded strings
+export const UI_STRINGS = {
+    // Common actions
+    SAVE: 'Simpan',
+    CANCEL: 'Batal',
+    CLOSE: 'Tutup',
+    DELETE: 'Hapus',
+    EDIT: 'Edit',
+    CREATE: 'Buat',
+    SEARCH: 'Cari',
+    LOADING: 'Memuat...',
+    ERROR: 'Error',
+    SUCCESS: 'Berhasil',
+    WARNING: 'Peringatan',
+    INFO: 'Info',
+    CONFIRM: 'Konfirmasi',
+    BACK: 'Kembali',
+    NEXT: 'Lanjut',
+    SUBMIT: 'Kirim',
+    DONE: 'Selesai',
+    CONTINUE: 'Lanjutkan',
+    TRY_AGAIN: 'Coba Lagi',
+    SELECT_ALL: 'Pilih Semua',
+    CLEAR_SELECTION: 'Bersihkan Pilihan',
+    SELECTED: 'terpilih',
+    OR: 'atau',
+    YES: 'Ya',
+    NO: 'Tidak',
+    OK: 'OK',
+    LOGOUT: 'Keluar',
+    LOGIN: 'Login',
+    REGISTER: 'Daftar',
+    FORGOT_PASSWORD: 'Lupa Password?',
+    RESET_PASSWORD: 'Reset Password',
+    DASHBOARD: 'Dashboard',
+    HOME: 'Beranda',
+    PROFILE: 'Profil',
+    NOTIFICATIONS: 'Notifikasi',
+    MESSAGES: 'Pesan',
+    CALENDAR: 'Kalender',
+    SCHEDULE: 'Jadwal',
+    ATTENDANCE: 'Absensi',
+    GRADES: 'Nilai',
+    ASSIGNMENTS: 'Tugas',
+    MATERIALS: 'Materi',
+    LIBRARY: 'Perpustakaan',
+    EVENTS: 'Kegiatan',
+    ANNOUNCEMENTS: 'Pengumuman',
+    NEWS: 'Berita',
+    CLASSES: 'Kelas',
+    STUDENTS: 'Siswa',
+    TEACHERS: 'Guru',
+    PARENTS: 'Orang Tua',
+    SUBJECTS: 'Mata Pelajaran',
+    EXAMS: 'Ujian',
+    REPORTS: 'Laporan',
+    ANALYTICS: 'Analitik',
+    STATISTICS: 'Statistik',
+    OVERVIEW: 'Ringkasan',
+    DETAILS: 'Detail',
+    HISTORY: 'Riwayat',
+    ACTIVITY: 'Aktivitas',
+    PROGRESS: 'Progres',
+    PERFORMANCE: 'Performa',
+    DOCUMENTS: 'Dokumen',
+    FILES: 'File',
+    SETTINGS: 'Pengaturan',
+    HELP: 'Bantuan',
+    SUPPORT: 'Dukungan',
+    ABOUT: 'Tentang',
+    VERSION: 'Versi',
+    PRIVACY_POLICY: 'Kebijakan Privasi',
+    TERMS_OF_SERVICE: 'Ketentuan Layanan',
+} as const;
+
+// Login-related UI strings
+export const LOGIN_UI_STRINGS = {
+    TITLE: 'Login',
+    QUICK_LOGIN: 'Login Cepat (Demo)',
+    SELECT_ROLE: 'Pilih peran untuk login instan:',
+    ROLE_STUDENT: 'Siswa',
+    ROLE_TEACHER: 'Guru',
+    ROLE_ADMIN: 'Admin',
+    ROLE_STAFF: 'Guru (Staff)',
+    ROLE_OSIS: 'Siswa (OSIS)',
+    SUCCESS_TITLE: 'Login Berhasil!',
+    SUCCESS_MESSAGE: 'Anda akan diarahkan ke dashboard...',
+    EMAIL_LABEL: 'Alamat Email Terdaftar',
+    EMAIL_PLACEHOLDER: 'anda@email.com',
+    PASSWORD_LABEL: 'Password',
+    PASSWORD_PLACEHOLDER: 'Masukkan password',
+    SEARCH_PLACEHOLDER: 'Cari Nama / NIS...',
+    WEIGHT_INFO_TITLE: 'Info Pembobotan',
+    VALIDATION_ERROR: 'Periksa kembali data yang Anda masukkan',
+} as const;
+
+// Forgot password UI strings
+export const FORGOT_PASSWORD_STRINGS = {
+    TITLE: 'Lupa Password',
+    EMAIL_SENT_TITLE: 'Email Terkirim!',
+    EMAIL_SENT_MESSAGE: 'Kami telah mengirimkan link reset password ke:',
+    LINK_EXPIRY_INFO: 'Link ini hanya berlaku selama 1 jam.',
+    CLOSE_BUTTON: 'Tutup',
+    INSTRUCTIONS_TITLE: 'Instruksi:',
+    INSTRUCTION_ENTER_EMAIL: 'Masukkan email yang terdaftar',
+    INSTRUCTION_CHECK_INBOX: 'Cek inbox Anda untuk link reset',
+    INSTRUCTION_EXPIRY: 'Link berlaku selama 1 jam',
+    EMAIL_LABEL: 'Alamat Email',
+    EMAIL_PLACEHOLDER: 'nama@email.com',
+    SUBMIT_BUTTON: 'Kirim Link Reset Password',
+    BACK_TO_LOGIN: 'Kembali ke Login',
+    VALIDATION_ERROR: 'Masukkan email yang valid',
+} as const;
+
+// Header navigation UI strings
+export const HEADER_NAV_STRINGS = {
+    HOME: 'Beranda',
+    PROFILE: 'Profil',
+    NEWS: 'Berita',
+    DOWNLOAD: 'Download',
+    LOGIN_EMAIL: 'Login Email',
+    LOGO_TEXT: 'M',
+    SCHOOL_NAME: 'Malnu Kananga',
+    NPSN_LABEL: 'NPSN: 69881502',
+    AI_EDITOR: 'Editor AI',
+    AI_EDITOR_OPEN: 'Buka Editor AI',
+    AI_ASK: 'Tanya AI',
+    VIEW_DASHBOARD: 'Lihat Dashboard',
+    VIEW_WEBSITE: 'Lihat Website',
+} as const;
+
+// Access denied UI strings  
+export const ACCESS_DENIED_STRINGS = {
+    TITLE: 'Access Denied',
+    MESSAGE: 'You do not have permission to access this feature.',
+    REQUIRED_PERMISSION: 'Required permission:',
+    GO_BACK: 'Go Back',
+} as const;
+
+// Toast notification UI strings
+export const TOAST_UI_STRINGS = {
+    CLOSE: 'Tutup notifikasi',
+} as const;
+
+// Grading management UI strings
+export const GRADING_UI_STRINGS = {
+    PAGE_TITLE: 'Input Nilai Siswa',
+    SUBJECT_LABEL: 'Mata Pelajaran:',
+    UNSAVED_CHANGES_WARNING: 'Ada perubahan belum disimpan',
+    SEARCH_PLACEHOLDER: 'Cari Nama / NIS...',
+    AUTO_SAVING: 'Auto-saving...',
+    WEIGHT_INFO_TITLE: 'Info Pembobotan',
+    WEIGHT_INFO_DESC: 'Tugas (30%) + UTS (30%) + UAS (40%)',
+    SAVE_ALL_BUTTON: 'Simpan Semua Nilai',
+    BATCH_OPERATIONS_TITLE: 'Batch Operations',
+    ASSIGNMENT_LABEL: 'Assignment',
+    UTS_LABEL: 'UTS',
+    UAS_LABEL: 'UAS',
+} as const;
+
+// Notification template strings
+export const NOTIFICATION_TEMPLATE_STRINGS = {
+    GENERAL_TITLE: '📢 {title}',
+    GRADE_UPDATE_TITLE: '📊 Update Nilai: {subject}',
+    PPDB_STATUS_TITLE: '🎓 Status PPDB: {status}',
+    EVENT_TITLE: '🎉 Kegiatan Baru: {title}',
+    MATERIAL_TITLE: '📚 Materi Baru: {title}',
+    SYSTEM_TITLE: '⚙️ {title}',
+    OCR_VALIDATION_TITLE: '📄 OCR Validation {severity}',
+    OCR_COMPLETE_TITLE: '🔍 OCR Validation Complete',
+} as const;
+
+// Animation and timeout constants
+export const TIMEOUT_CONFIG = {
+    UI_ANIMATION_DURATION: 300,
+    PASSWORD_REQUIREMENTS_HIDE_DELAY: 3000,
+    TOAST_DEFAULT_DURATION: 3000,
+    SCREEN_READER_TIMEOUT: 1000,
+    REDIRECT_DELAY: 3000,
+    DEBOUNCE_SHORT: 200,
+    DEBOUNCE_DEFAULT: 1000,
+} as const;
+
+// Table and pagination constants
+export const TABLE_CONFIG = {
+    DEFAULT_SKELETON_ROWS: 10,
+    DEFAULT_PAGE_SIZE: 20,
+    MAX_VISIBLE_PAGES: 5,
+} as const;
+
+// Category validation constants
+export const CATEGORY_CONFIG = {
+    SIMILARITY_THRESHOLD: 0.6,
+    MAX_SUGGESTIONS: 5,
+    MIN_DESCRIPTION_LENGTH: 10,
+    CACHE_TTL_MINUTES: 30,
+} as const;
+
+// OCR enhancement constants
+export const OCR_ENHANCEMENT_CONFIG = {
+    MAX_SUMMARY_LENGTH: 150,
+    SIMILARITY_THRESHOLD: 0.8,
+} as const;
+
+// Permission service constants
+export const PERMISSION_CONFIG = {
+    MAX_AUDIT_LOGS: 1000,
 } as const;

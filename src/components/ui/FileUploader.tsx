@@ -360,18 +360,26 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop'}
-          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full ${
+          aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop files'}
+          aria-describedby="upload-instructions"
+          aria-dropeffect={dragActive ? "copy" : "none"}
+          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${
             disabled || uploading
               ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
               : dragActive
-              ? 'border-primary-400 bg-primary-50/50 dark:bg-primary-900/10'
+              ? 'border-primary-500 bg-primary-100/50 dark:bg-primary-900/20 ring-2 ring-primary-500/30'
               : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
           }`}
         >
           {getUploadArea()}
         </button>
       )}
+
+      <span id="upload-instructions" className="sr-only">
+        Supported file types: {acceptedFileTypes}. Maximum file size: {maxSizeMB}MB.
+        {allowMultiple ? ` You can upload up to ${maxFiles} files.` : ''}
+        {dragActive ? ' Files detected. Release to drop.' : ''}
+      </span>
 
       {variant === 'minimal' && (
         <Button

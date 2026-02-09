@@ -133,12 +133,18 @@ const App: React.FC = () => {
     };
     
     const loadDefaultContent = async () => {
-      if (!hasLoadedContent.current && (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0)) {
+      if (!hasLoadedContent.current) {
         hasLoadedContent.current = true;
         const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
-        setSiteContent({
-          featuredPrograms: INITIAL_PROGRAMS,
-          latestNews: INITIAL_NEWS
+        setSiteContent((prevContent: SiteContent) => {
+          // Only set defaults if content is empty
+          if (prevContent.featuredPrograms.length === 0 || prevContent.latestNews.length === 0) {
+            return {
+              featuredPrograms: INITIAL_PROGRAMS,
+              latestNews: INITIAL_NEWS
+            };
+          }
+          return prevContent;
         });
       }
     };
@@ -154,7 +160,8 @@ const App: React.FC = () => {
     }).catch(error => {
       logger.warn('Failed to enable push notifications:', error);
     });
-  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleSWUpdate = () => setIsSWUpdateConfirmOpen(true);
