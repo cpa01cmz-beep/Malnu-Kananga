@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, APP_CONFIG } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -111,8 +111,8 @@ class PPDBIntegrationService {
       counter += 1;
       localStorage.setItem(counterKey, counter.toString());
       
-      // Generate NIS: YEAR + CLASS (10) + 4-digit sequence
-      const classCode = '10'; // Default class code for new students
+      // Generate NIS: YEAR + CLASS + 4-digit sequence
+      const classCode = DEFAULT_CLASS_CONFIG.NEW_STUDENT_CODE;
       const sequence = counter.toString().padStart(4, '0');
       const nis = `${year}${classCode}${sequence}`;
       
@@ -132,8 +132,8 @@ class PPDBIntegrationService {
     try {
       // Default class assignment for new students
       // In production, this would load-balance based on existing student count
-      const classCode = '10'; // Class 10 (Grade 10)
-      const className = 'Kelas 10'; // Display name
+      const classCode = DEFAULT_CLASS_CONFIG.NEW_STUDENT_CODE;
+      const className = DEFAULT_CLASS_CONFIG.NEW_STUDENT_NAME;
 
       logger.info('Assigned student to class', { assignedClass: classCode, assignedClassName: className });
       return { className, class: classCode };
@@ -448,23 +448,23 @@ class PPDBIntegrationService {
         subject: `Selamat! Siswa Diterima di ${APP_CONFIG.SCHOOL_NAME}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
+            <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
             <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di ${APP_CONFIG.SCHOOL_NAME}.</p>
             
-            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.GRAY_BG}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Data Siswa</h3>
               <p><strong>Nama Lengkap:</strong> ${registrant.fullName}</p>
               <p><strong>NIS:</strong> ${nis}</p>
               <p><strong>Kelas:</strong> (Akan ditentukan kemudian)</p>
             </div>
             
-            <div style="background-color: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.INFO}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Akun Orang Tua</h3>
               <p>Berikut adalah akun untuk mengakses portal orang tua:</p>
               <p><strong>Username:</strong> ${credentials.username}</p>
               <p><strong>Password:</strong> ${credentials.password}</p>
-              <p style="color: #dc2626; font-size: 14px;">Silakan ganti password setelah login pertama.</p>
+              <p style="color: ${EMAIL_COLORS.WARNING}; font-size: 14px;">Silakan ganti password setelah login pertama.</p>
             </div>
             
             <p>Silakan login ke portal orang tua untuk melihat jadwal, nilai, dan informasi lainnya.</p>
@@ -814,11 +814,11 @@ class PPDBIntegrationService {
         subject: 'Selamat! Akun Siswa Telah Dibuat',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
+            <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
             <p>Kami dengan senang hati menginformasikan bahwa akun siswa untuk <strong>${registrant.fullName}</strong> telah dibuat secara otomatis.</p>
             
-            <div style="background-color: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.INFO}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Data Siswa</h3>
               <p><strong>Nama Lengkap:</strong> ${registrant.fullName}</p>
               <p><strong>NIS:</strong> ${nis}</p>

@@ -1443,3 +1443,175 @@ export const NOTIFICATION_EMOJIS = {
     ERROR: '❌',
     INFO: 'ℹ️',
 } as const;
+
+// PPDB Pipeline Status - Flexy: Never hardcode status strings!
+export const PPDB_STATUS = {
+    REGISTERED: 'registered',
+    DOCUMENT_REVIEW: 'document_review',
+    INTERVIEW_SCHEDULED: 'interview_scheduled',
+    INTERVIEW_COMPLETED: 'interview_completed',
+    ACCEPTED: 'accepted',
+    ENROLLED: 'enrolled',
+    REJECTED: 'rejected',
+} as const;
+
+export type PPDBPipelineStatus = typeof PPDB_STATUS[keyof typeof PPDB_STATUS];
+
+// PPDB Status Display Labels
+export const PPDB_STATUS_LABELS = {
+    [PPDB_STATUS.REGISTERED]: 'Terdaftar',
+    [PPDB_STATUS.DOCUMENT_REVIEW]: 'Review Dokumen',
+    [PPDB_STATUS.INTERVIEW_SCHEDULED]: 'Jadwal Wawancara',
+    [PPDB_STATUS.INTERVIEW_COMPLETED]: 'Wawancara Selesai',
+    [PPDB_STATUS.ACCEPTED]: 'Diterima',
+    [PPDB_STATUS.ENROLLED]: 'Terdaftar sebagai Siswa',
+    [PPDB_STATUS.REJECTED]: 'Ditolak',
+} as const;
+
+// Theme Color Palette - Flexy: Never hardcode theme colors!
+export const THEME_COLOR_PALETTE = {
+    PINK: '#db2777',
+    CYAN: '#06b6d4',
+    EMERALD: '#10b981',
+    SKY: '#0ea5e9',
+    AMBER: '#f59e0b',
+    TEAL: '#14b8a6',
+    ROSE: '#f43f5e',
+    VIOLET: '#8b5cf6',
+    INDIGO: '#6366f1',
+    FUCHSIA: '#d946ef',
+    LIME: '#84cc16',
+    ORANGE: '#f97316',
+} as const;
+
+// Z-Index Scale - Flexy: Never hardcode z-index values!
+export const Z_INDEX = {
+    MODAL_OVERLAY: 50,
+    MODAL_CONTENT: 51,
+    HEADER: 40,
+    NOTIFICATION_CENTER: 45,
+    DROPDOWN: 30,
+    TOOLTIP: 35,
+    STICKY_HEADER: 20,
+    STICKY_TABLE: 10,
+    BASE: 0,
+    BEHIND: -1,
+} as const;
+
+// API Endpoints - Flexy: Centralize all API endpoints!
+export const API_ENDPOINTS = {
+    // Auth
+    AUTH: {
+        LOGIN: '/api/auth/login',
+        LOGOUT: '/api/auth/logout',
+        FORGOT_PASSWORD: '/api/auth/forgot-password',
+        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
+        RESET_PASSWORD: '/api/auth/reset-password',
+        REFRESH_TOKEN: '/api/auth/refresh',
+    },
+    // Users
+    USERS: {
+        BASE: '/api/users',
+        PASSWORD: (userId: string) => `/api/users/${userId}/password`,
+        PROFILE: '/api/users/profile',
+    },
+    // Students
+    STUDENTS: {
+        BASE: '/api/students',
+        BY_ID: (id: string) => `/api/students/${id}`,
+    },
+    // Teachers
+    TEACHERS: {
+        BASE: '/api/teachers',
+        BY_ID: (id: string) => `/api/teachers/${id}`,
+    },
+    // Academic
+    ACADEMIC: {
+        SUBJECTS: '/api/subjects',
+        CLASSES: '/api/classes',
+        SCHEDULES: '/api/schedules',
+        GRADES: '/api/grades',
+        ATTENDANCE: '/api/attendance',
+    },
+    // Events
+    EVENTS: {
+        BASE: '/api/school_events',
+        REGISTRATIONS: '/api/event_registrations',
+    },
+    // PPDB
+    PPDB: {
+        REGISTRANTS: '/api/ppdb_registrants',
+        PIPELINE: '/api/ppdb/pipeline',
+        METRICS: '/api/ppdb/metrics',
+    },
+    // Library
+    LIBRARY: {
+        MATERIALS: '/api/e_library',
+        CATEGORIES: '/api/e_library/categories',
+        FAVORITES: '/api/e_library/favorites',
+    },
+    // Inventory
+    INVENTORY: {
+        BASE: '/api/inventory',
+        CATEGORIES: '/api/inventory/categories',
+    },
+    // Announcements
+    ANNOUNCEMENTS: {
+        BASE: '/api/announcements',
+        BY_ID: (id: string) => `/api/announcements/${id}`,
+    },
+    // Payments
+    PAYMENTS: {
+        CREATE: '/api/payments/create',
+        STATUS: '/api/payments/status',
+        HISTORY: '/api/payments/history',
+    },
+    // Messaging
+    MESSAGING: {
+        PARENT_CHILDREN: '/api/parent/children',
+        MESSAGES: '/api/messages',
+        CONVERSATIONS: '/api/conversations',
+    },
+    // AI
+    AI: {
+        CHAT: '/api/chat',
+        STUDENT_ANALYSIS: '/api/ai/student-analysis',
+        GRADE_PREDICTION: '/api/ai/grade-prediction',
+    },
+    // Email
+    EMAIL: {
+        SEND: '/api/email/send',
+        TEMPLATES: '/api/email/templates',
+        QUEUE: '/api/email/queue',
+    },
+    // OCR
+    OCR: {
+        PROCESS: '/api/ocr/process',
+        VALIDATE: '/api/ocr/validate',
+    },
+    // Quiz
+    QUIZ: {
+        BASE: '/api/quizzes',
+        ATTEMPTS: '/api/quiz/attempts',
+        GENERATE: '/api/quiz/generate',
+    },
+    // WebSocket
+    WEBSOCKET: {
+        CONNECT: '/ws',
+    },
+} as const;
+
+// Attendance Status Labels - Flexy: Use these for display!
+export const ATTENDANCE_STATUS_LABELS = {
+    [ACADEMIC.ATTENDANCE_STATUSES.PRESENT]: 'Hadir',
+    [ACADEMIC.ATTENDANCE_STATUSES.SICK]: 'Sakit',
+    [ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]: 'Izin',
+    [ACADEMIC.ATTENDANCE_STATUSES.ABSENT]: 'Alpa',
+} as const;
+
+// SVG Namespaces - Flexy: Never hardcode XML namespaces!
+export const XML_NAMESPACES = {
+    SVG: 'http://www.w3.org/2000/svg',
+    XLINK: 'http://www.w3.org/1999/xlink',
+    XML: 'http://www.w3.org/XML/1998/namespace',
+} as const;
