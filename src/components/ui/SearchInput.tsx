@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
+import { XMarkIcon } from '../icons/MaterialIcons';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -200,6 +201,26 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" aria-hidden="true">
             {iconContent}
           </div>
+        )}
+
+        {/* Clear button - appears when there's a value */}
+        {value && String(value).length > 0 && !validation.state.isValidating && (
+          <button
+            type="button"
+            onClick={() => {
+              const syntheticEvent = {
+                target: { value: '' }
+              } as React.ChangeEvent<HTMLInputElement>;
+              handleChange(syntheticEvent);
+            }}
+            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+              showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
+            }`}
+            aria-label="Bersihkan pencarian"
+            title="Bersihkan pencarian"
+          >
+            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+          </button>
         )}
 
         {validation.state.isValidating && (

@@ -1,4 +1,4 @@
-
+import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
 import { EXTERNAL_URLS } from '../constants';
 
@@ -65,25 +65,25 @@ export const getRelatedLinks = async () => {
         {
             name: 'RDM Malnu Kananga',
             href: EXTERNAL_URLS.RDM_PORTAL,
-            icon: DocumentTextIcon,
+            icon: <DocumentTextIcon />,
             color: getColorIconClass('sky')
         },
         {
             name: 'Kemenag RI',
             href: EXTERNAL_URLS.KEMENAG,
-            icon: BuildingLibraryIcon,
+            icon: <BuildingLibraryIcon />,
             color: getColorIconClass('emerald')
         },
         {
             name: 'EMIS Pendis',
             href: EXTERNAL_URLS.EMIS,
-            icon: ClipboardDocumentCheckIcon,
+            icon: <ClipboardDocumentCheckIcon />,
             color: getColorIconClass('amber')
         },
         {
             name: 'Simpatika',
             href: EXTERNAL_URLS.SIMPATIKA,
-            icon: UsersIcon,
+            icon: <UsersIcon />,
             color: getColorIconClass('indigo')
         }
     ];

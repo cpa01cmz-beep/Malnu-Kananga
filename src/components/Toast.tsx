@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
-import { OPACITY_TOKENS } from '../constants';
+import { OPACITY_TOKENS, TIMEOUT_CONFIG, TOAST_UI_STRINGS } from '../constants';
 
 export type ToastType = 'success' | 'info' | 'error' | 'warning';
 
@@ -13,7 +13,7 @@ interface ToastProps {
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = TIMEOUT_CONFIG.TOAST_DEFAULT_DURATION }) => {
   const toastRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -113,7 +113,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <span className="font-medium text-base leading-snug flex-grow">{message}</span>
       <IconButton
         icon={<CloseIcon />}
-        ariaLabel="Tutup notifikasi"
+        ariaLabel={TOAST_UI_STRINGS.CLOSE}
         size="sm"
         onClick={onClose}
       />
