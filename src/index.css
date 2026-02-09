@@ -674,6 +674,126 @@
   transition-duration: 0.1s;
 }
 
+/* New animations for enhanced UX */
+@keyframes pulse-once {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-once {
+  animation: pulse-once 0.5s ease-in-out;
+}
+
+/* Enhanced ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:active::before {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+/* Enhanced loading skeleton */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-enhanced {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--color-neutral-200)) 0%,
+    hsl(var(--color-neutral-100)) 50%,
+    hsl(var(--color-neutral-200)) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.dark .skeleton-enhanced {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--color-neutral-700)) 0%,
+    hsl(var(--color-neutral-600)) 50%,
+    hsl(var(--color-neutral-700)) 100%
+  );
+  background-size: 200% 100%;
+}
+
+/* Enhanced mobile touch targets */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 12px;
+  }
+  
+  .enhanced-mobile-spacing {
+    gap: 1rem;
+  }
+}
+
+/* Improved focus management */
+.focus-trap:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px hsl(var(--color-primary-500) / 0.3);
+  border-radius: 8px;
+}
+
+/* Better smooth scroll for mobile */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Enhanced accessibility for high contrast */
+@media (prefers-contrast: high) {
+  .enhanced-contrast {
+    border-width: 2px;
+  }
+  
+  .enhanced-contrast:focus {
+    border-width: 3px;
+  }
+}
+
 /* Respect user's motion preference for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -682,6 +802,10 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .ripple-effect::before {
+    transition: none;
   }
 }
 
@@ -758,4 +882,80 @@ fieldset:disabled {
 /* Smooth transition for disabled state */
 fieldset {
   transition: opacity 0.2s ease-out;
+}
+
+/* Enhanced typography for better readability */
+.prose {
+  line-height: 1.7;
+  letter-spacing: -0.01em;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.prose p {
+  margin-bottom: 1.5rem;
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: hsl(var(--color-primary-500) / 0.3);
+  transition: text-decoration-color 0.2s ease;
+}
+
+.prose a:hover {
+  text-decoration-color: hsl(var(--color-primary-600));
+}
+
+.prose strong {
+  font-weight: 600;
+  color: hsl(var(--color-neutral-900) / 0.9);
+}
+
+.dark .prose strong {
+  color: hsl(var(--color-neutral-100) / 0.95);
+}
+
+/* Enhanced focus styles for better accessibility */
+.focus-enhanced:focus-visible {
+  outline: 2px solid hsl(var(--color-primary-500));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Improved spacing for form elements */
+.form-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-spacing-sm {
+  gap: 1rem;
+}
+
+.form-spacing-lg {
+  gap: 2rem;
+}
+
+/* Enhanced reading experience for long content */
+.reading-enhanced {
+  max-width: 65ch;
+  line-height: 1.75;
+  letter-spacing: -0.005em;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

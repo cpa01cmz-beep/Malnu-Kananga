@@ -15,7 +15,7 @@ import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS } from '../constants';
 
-const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95";
+const navLinkClass = "text-sm sm:text-base text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 ease-out font-semibold px-4 py-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation";
 
 const NavLinks = () => (
     <>
@@ -243,6 +243,7 @@ const Header: React.FC<HeaderProps> = ({
                                     }}
                                     aria-expanded={isMenuOpen}
                                     aria-controls="mobile-menu"
+                                    className="touch-manipulation"
                                 />
                     </div>
                 </div>
@@ -251,22 +252,24 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700`}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-xl mt-2 p-4 sm:p-5 animate-fade-in border border-neutral-200 dark:border-neutral-700 safe-area-padding`}
                 >
                     <nav
                         id="mobile-menu"
-                        className="flex flex-col gap-2.5 sm:gap-3 font-medium text-center"
+                        className="flex flex-col gap-3 sm:gap-4 font-medium text-center"
                         role="navigation"
                         aria-label="Menu navigasi utama"
                     >
                         <NavLinks />
-                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-2">
+                            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700 flex flex-col gap-3">
                                   {isLoggedIn ? (
                                      <>
                                            <Button
                                                variant="secondary"
                                                onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }}
                                                fullWidth
+                                               size="lg"
+                                               className="touch-manipulation min-h-[44px]"
                                            >
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                            </Button>
@@ -274,6 +277,8 @@ const Header: React.FC<HeaderProps> = ({
                                                variant="danger"
                                                onClick={() => { onLogout(); setIsMenuOpen(false); }}
                                                fullWidth
+                                               size="lg"
+                                               className="touch-manipulation min-h-[44px]"
                                            >
                                                Logout
                                            </Button>
@@ -283,6 +288,8 @@ const Header: React.FC<HeaderProps> = ({
                                               variant="primary"
                                               onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
                                               fullWidth
+                                              size="lg"
+                                              className="touch-manipulation min-h-[44px]"
                                           >
                                               Login
                                           </Button>

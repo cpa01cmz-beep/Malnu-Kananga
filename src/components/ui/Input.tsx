@@ -32,12 +32,12 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   showClearButton?: boolean;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation";
 
 const sizeClasses: Record<InputSize, string> = {
-  sm: "px-3 py-2 text-sm",
-  md: "px-4 py-3 text-sm sm:text-base",
-  lg: "px-5 py-4 text-base sm:text-lg",
+  sm: "px-3 py-2 text-sm min-h-[2.75rem]",
+  md: "px-4 py-3 text-sm sm:text-base min-h-[3rem]",
+  lg: "px-5 py-4 text-base sm:text-lg min-h-[3.5rem]",
 };
 
 const sizeIconClasses: Record<InputSize, string> = {
@@ -47,9 +47,9 @@ const sizeIconClasses: Record<InputSize, string> = {
 };
 
 const stateClasses: Record<InputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500 focus:ring-primary-500/50 focus:border-primary-500",
-  error: "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-400 dark:hover:border-red-600 focus:ring-red-500/50 focus:border-red-500",
-  success: "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-600 focus:ring-green-500/50 focus:border-green-500",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-neutral-400 dark:hover:border-neutral-500 focus:ring-primary-500/50 focus:border-primary-500 focus:scale-[1.01]",
+  error: "border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-400 dark:hover:border-red-600 focus:ring-red-500/50 focus:border-red-500 focus:scale-[1.01] animate-pulse-once",
+  success: "border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-600 focus:ring-green-500/50 focus:border-green-500 focus:scale-[1.01]",
 };
 
 const labelSizeClasses: Record<InputSize, string> = {

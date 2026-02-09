@@ -13,9 +13,9 @@ const HeroSection: React.FC = () => {
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO')}`}></div>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO_DECORATIVE', 'HERO_DECORATIVE')}`}></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        <div className="inline-flex items-center gap-2.5 px-5 py-2.5 mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-subtle hover:shadow-md animate-scale-in transition-all duration-200 ease-out">
-          <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse-slow ring-2 ring-primary-300 dark:ring-primary-700"></span>
-          <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300">Penerimaan Siswa Baru 2025</span>
+        <div className="inline-flex items-center gap-2.5 px-5 py-2.5 mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-subtle hover:shadow-md animate-scale-in transition-all duration-300 ease-out hover:scale-[1.05] group">
+          <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse-slow ring-2 ring-primary-300 dark:ring-primary-700 group-hover:animate-pulse"></span>
+          <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300 transition-colors duration-300 group-hover:text-primary-800 dark:group-hover:text-primary-200">Penerimaan Siswa Baru 2025</span>
         </div>
         <Heading
           id={headingId}
@@ -24,11 +24,11 @@ const HeroSection: React.FC = () => {
           weight="bold"
           tracking="tight"
           leading="leading-[1.1]"
-          className="sm:text-6xl md:text-7xl lg:text-8xl mb-6 sm:mb-8 animate-scale-in"
+          className="sm:text-6xl md:text-7xl lg:text-8xl mb-6 sm:mb-8 animate-scale-in bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent dark:from-primary-400 dark:via-primary-500 dark:to-primary-600"
         >
           MA Malnu Kananga
         </Heading>
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 leading-relaxed animate-fade-in font-medium">
+        <p className="max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl lg:text-3xl text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 leading-relaxed animate-fade-in font-medium tracking-[-0.01em]">
           Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
         </p>
         <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 justify-center items-center animate-fade-in-up">

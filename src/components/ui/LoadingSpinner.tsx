@@ -15,12 +15,6 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   fullScreen = false,
   className = ''
 }) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12'
-  };
-
   const colorClasses = {
     primary: 'border-primary-600',
     neutral: 'border-neutral-600',
@@ -28,23 +22,28 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     error: 'border-red-600'
   };
 
+  const dotSizeClasses = {
+    sm: 'h-1.5 w-1.5',
+    md: 'h-2 w-2',
+    lg: 'h-2.5 w-2.5'
+  };
+
   const containerClasses = fullScreen
-    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80% dark:bg-neutral-900/80% z-50'
+    ? 'fixed inset-0 flex flex-col items-center justify-center bg-white/80% dark:bg-neutral-900/80% z-50 backdrop-blur-sm'
     : 'flex flex-col items-center justify-center';
 
   if (fullScreen || text) {
     return (
       <div className={`${containerClasses} ${className}`}>
-        <div className="flex flex-col items-center gap-3">
-          <div 
-            className={`animate-spin rounded-full border-2 border-t-transparent ${sizeClasses[size]} ${colorClasses[color]}`}
-            role="status"
-            aria-label={text || "Loading"}
-          >
-            <span className="sr-only">Loading...</span>
+        <div className="flex flex-col items-center gap-4">
+          {/* Enhanced spinner with dots */}
+          <div className="flex items-center gap-1">
+            <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.3s]`}></div>
+            <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.15s]`}></div>
+            <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce`}></div>
           </div>
           {text && (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-pulse">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-fade-in font-medium">
               {text}
             </p>
           )}
@@ -53,12 +52,12 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     );
   }
 
+  // Simple spinner for inline use
   return (
-    <div 
-      className={`animate-spin rounded-full border-2 border-t-transparent ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
-      role="status"
-      aria-label="Loading"
-    >
+    <div className={`${className} inline-flex items-center`}>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.3s]`}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.15s] mx-1`}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce`}></div>
       <span className="sr-only">Loading...</span>
     </div>
   );
