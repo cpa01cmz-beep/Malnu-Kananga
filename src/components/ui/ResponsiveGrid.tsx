@@ -11,6 +11,7 @@ export interface ResponsiveGridProps {
   className?: string;
   swipeable?: boolean;
   showScrollIndicators?: boolean;
+  enhanced?: boolean;
 }
 
 const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
@@ -20,6 +21,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   className = '',
   swipeable = false,
   showScrollIndicators = true,
+  enhanced = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showLeftIndicator, setShowLeftIndicator] = useState(false);
@@ -67,10 +69,10 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
         {showScrollIndicators && isScrollable && showLeftIndicator && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-neutral-200 dark:border-neutral-700 hover:bg-white dark:hover:bg-neutral-800 transition-all duration-200"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg border border-neutral-200 dark:border-neutral-700 hover:bg-white dark:hover:bg-neutral-800 hover:scale-110 transition-all duration-200 touch-manipulation ripple-effect"
             aria-label="Scroll left"
           >
-            <svg className="w-4 h-4 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -79,11 +81,11 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
         {/* Grid container */}
         <div
           ref={containerRef}
-          className="overflow-x-auto scrollbar-hide scroll-smooth"
+          className={`overflow-x-auto scrollbar-hide scroll-smooth ${enhanced ? 'touch-pan-x' : ''}`}
           style={{ gap }}
         >
           <div 
-            className="flex"
+            className={`flex ${enhanced ? 'enhanced-mobile-spacing' : ''}`}
             style={{ 
               gap,
               minWidth: `min-content`,
@@ -91,7 +93,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
             }}
           >
             {children.map((child, index) => (
-              <div key={index} className="flex-shrink-0" style={{ minWidth: `${minItemWidth}px` }}>
+              <div key={index} className={`flex-shrink-0 ${enhanced ? 'touch-target' : ''}`} style={{ minWidth: `${minItemWidth}px` }}>
                 {child}
               </div>
             ))}
@@ -102,10 +104,10 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
         {showScrollIndicators && isScrollable && showRightIndicator && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm rounded-full p-2 shadow-lg border border-neutral-200 dark:border-neutral-700 hover:bg-white dark:hover:bg-neutral-800 transition-all duration-200"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg border border-neutral-200 dark:border-neutral-700 hover:bg-white dark:hover:bg-neutral-800 hover:scale-110 transition-all duration-200 touch-manipulation ripple-effect"
             aria-label="Scroll right"
           >
-            <svg className="w-4 h-4 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-neutral-600 dark:text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -124,13 +126,17 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
 
   return (
     <div 
-      className={`grid ${className}`}
+      className={`grid ${enhanced ? 'enhanced-mobile-spacing' : ''} ${className}`}
       style={{
         gridTemplateColumns: `repeat(auto-fit, minmax(${minItemWidth}px, 1fr))`,
         gap,
       }}
     >
-      {children}
+      {children.map((child, index) => (
+        <div key={index} className={enhanced ? 'touch-target' : ''}>
+          {child}
+        </div>
+      ))}
     </div>
   );
 };

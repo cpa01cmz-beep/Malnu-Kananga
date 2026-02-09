@@ -1,6 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
-import { EXTERNAL_URLS, STORAGE_KEYS } from '../constants';
+import { EXTERNAL_URLS, STORAGE_KEYS, TIME_MS, VALIDATION_LIMITS } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -163,8 +163,8 @@ const DANGEROUS_PATTERNS = [
 
 const MAX_PROGRAMS = 20;
 const MAX_NEWS = 50;
-const MAX_TITLE_LENGTH = 200;
-const MAX_DESCRIPTION_LENGTH = 1000;
+const MAX_TITLE_LENGTH = VALIDATION_LIMITS.TITLE_MAX;
+const MAX_DESCRIPTION_LENGTH = VALIDATION_LIMITS.DESCRIPTION_MAX;
 
 // Rate limiting interface
 interface RequestTracker {
@@ -174,7 +174,7 @@ interface RequestTracker {
 
 // In-memory rate limiting for AI editor requests
 const RATE_LIMIT_MAP = new Map<string, RequestTracker>();
-const RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
+const RATE_LIMIT_WINDOW = TIME_MS.ONE_MINUTE;
 const MAX_REQUESTS_PER_MINUTE = 10;
 
 // Audit log storage
@@ -279,15 +279,15 @@ export function validateAICommand(prompt: string, userId?: string): AICommandVal
     return { isValid: false, error: 'Minimal 3 karakter untuk permintaan yang bermakna' };
   }
 
-  if (trimmedPrompt.length > 1000) {
+  if (trimmedPrompt.length > VALIDATION_LIMITS.AI_PROMPT_MAX) {
     logAuditEntry({
       timestamp: Date.now(),
       action: 'command_blocked',
       userId,
       commandHash: hashCommand(prompt),
-      reason: 'Input terlalu panjang (> 1000 karakter)'
+      reason: `Input terlalu panjang (> ${VALIDATION_LIMITS.AI_PROMPT_MAX} karakter)`
     });
-    return { isValid: false, error: 'Maksimal 1000 karakter' };
+    return { isValid: false, error: `Maksimal ${VALIDATION_LIMITS.AI_PROMPT_MAX} karakter` };
   }
 
   // Rate limiting

@@ -417,7 +417,10 @@ export class CircuitBreaker {
   }
 }
 
-const DEFAULT_CIRCUIT_BREAKER = new CircuitBreaker(5, 60000);
+const DEFAULT_CIRCUIT_BREAKER = new CircuitBreaker(
+  RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+  RETRY_CONFIG.CIRCUIT_BREAKER_TIMEOUT
+);
 
 export function withCircuitBreaker<T>(
   operation: () => Promise<T>,

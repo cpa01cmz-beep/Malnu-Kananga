@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 export interface SkeletonProps {
   className?: string;
@@ -8,7 +8,34 @@ export interface SkeletonProps {
   animation?: 'pulse' | 'wave' | 'shimmer';
   lines?: number;
   animated?: boolean;
+  /**
+   * Respect user's reduced motion preference.
+   * When true (default), animations will be disabled if user prefers reduced motion.
+   */
+  respectReducedMotion?: boolean;
 }
+
+/**
+ * Hook to detect if user prefers reduced motion
+ * @returns boolean indicating if reduced motion is preferred
+ */
+const usePrefersReducedMotion = (): boolean => {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (event: { matches: boolean }): void => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  return prefersReducedMotion;
+};
 
 const baseClasses = "bg-neutral-200 dark:bg-neutral-700";
 const animationClasses = {
@@ -32,7 +59,11 @@ const Skeleton: React.FC<SkeletonProps> = ({
   animation = 'pulse',
   lines = 1,
   animated = true,
+  respectReducedMotion = true,
 }) => {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const shouldAnimate = animated && !(respectReducedMotion && prefersReducedMotion);
+
   const isWave = animation === 'wave';
   const isShimmer = animation === 'shimmer';
   const backgroundClass = isWave
@@ -44,7 +75,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
   const classes = `
     ${backgroundClass}
     ${variantClasses[variant]}
-    ${animated ? animationClasses[animation] : ''}
+    ${shouldAnimate ? animationClasses[animation] : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -54,11 +85,11 @@ const Skeleton: React.FC<SkeletonProps> = ({
 
   if (variant === 'text' && lines > 1) {
     return (
-      <div className="space-y-2" role="presentation" aria-label="Loading content">
+      <div className="space-y-2" role="status" aria-label="Memuat konten" aria-live="polite">
         {Array.from({ length: lines }, (_, index) => (
           <div
             key={index}
-            className={`${backgroundClass} ${variantClasses[variant]} ${animated ? animationClasses[animation] : ''}`}
+            className={`${backgroundClass} ${variantClasses[variant]} ${shouldAnimate ? animationClasses[animation] : ''}`}
             style={{
               ...style,
               height: style.height || '1rem',
@@ -74,7 +105,7 @@ const Skeleton: React.FC<SkeletonProps> = ({
     style.height = style.height || '1rem';
   }
 
-  return <div className={classes} style={Object.keys(style).length > 0 ? style : undefined} role="presentation" aria-label="Loading content" />;
+  return <div className={classes} style={Object.keys(style).length > 0 ? style : undefined} role="status" aria-label="Memuat konten" aria-live="polite" />;
 };
 
 export const CardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
