@@ -11,7 +11,8 @@
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
-import { isNetworkError } from '../utils/errorRecovery';
+import { isNetworkError } from '../utils/retry';
+import { generateId, ID_CONFIG } from '../utils/idGenerator';
 
 // Define ApiResponse locally to avoid circular dependency
 export interface ApiResponse<T> {
@@ -128,7 +129,7 @@ class OfflineActionQueueService {
   public addAction(action: Omit<OfflineAction, 'id' | 'timestamp' | 'status' | 'retryCount'>): string {
     const queueAction: OfflineAction = {
       ...action,
-      id: `offline_action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId({ prefix: ID_CONFIG.PREFIXES.OFFLINE }),
       timestamp: Date.now(),
       status: 'pending',
       retryCount: 0,

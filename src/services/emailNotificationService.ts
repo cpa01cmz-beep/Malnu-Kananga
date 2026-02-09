@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, STORAGE_LIMITS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -266,7 +266,7 @@ class EmailNotificationService {
       
       const context: EmailTemplateContext = {
         recipientName,
-        schoolName: 'MA Malnu Kananga',
+        schoolName: `${APP_CONFIG.SCHOOL_NAME}`,
         ...notification.data as Record<string, string | number>
       };
 
@@ -323,7 +323,7 @@ class EmailNotificationService {
       templateId,
       context: {
         recipientName,
-        schoolName: 'MA Malnu Kananga',
+        schoolName: `${APP_CONFIG.SCHOOL_NAME}`,
         ...notification.data as Record<string, string | number>
       }
     };
