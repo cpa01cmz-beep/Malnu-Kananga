@@ -20,9 +20,9 @@ describe('notificationTemplates', () => {
   });
 
   describe('NOTIFICATION_TEMPLATES constant', () => {
-    it('should have 9 notification templates', () => {
+    it('should have 10 notification templates', () => {
       const templateCount = Object.keys(NOTIFICATION_TEMPLATES).length;
-      expect(templateCount).toBe(9);
+      expect(templateCount).toBe(10);
     });
 
     it('should have all required notification types', () => {
@@ -36,6 +36,7 @@ describe('notificationTemplates', () => {
         'ocr',
         'ocr_validation',
         'missing_grades',
+        'progress_report',
       ];
 
       expectedTypes.forEach(type => {
