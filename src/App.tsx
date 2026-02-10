@@ -155,14 +155,35 @@ const App: React.FC = () => {
     checkAuth();
     loadDefaultContent();
     
-    // Initialize push notification service
-    unifiedNotificationManager.requestPermission().then((granted: boolean) => {
-      if (granted) {
-        logger.info('Push notifications enabled on app initialization');
-      }
-    }).catch(error => {
-      logger.warn('Failed to enable push notifications:', error);
-    });
+    // Defer push notification permission request to avoid blocking page load
+    // Lighthouse best practice: Don't request permissions on page load
+    const requestNotificationPermission = () => {
+      unifiedNotificationManager.requestPermission().then((granted: boolean) => {
+        if (granted) {
+          logger.info('Push notifications enabled after user interaction');
+        }
+      }).catch(error => {
+        logger.warn('Failed to enable push notifications:', error);
+      });
+    };
+    
+    // Request permission after 30 seconds or on first user interaction
+    const timeoutId = setTimeout(requestNotificationPermission, 30000);
+    const handleFirstInteraction = () => {
+      clearTimeout(timeoutId);
+      requestNotificationPermission();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('scroll', handleFirstInteraction);
+    };
+    
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('scroll', handleFirstInteraction, { once: true });
+    
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('scroll', handleFirstInteraction);
+    };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

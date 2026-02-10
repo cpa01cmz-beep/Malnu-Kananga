@@ -98,7 +98,8 @@ async function checkBrowserConsoleErrors(url) {
   console.log(`🔍 Checking browser console errors at ${url}...`);
 
   const browser = await chromium.launch({
-    headless: true
+    headless: true,
+    executablePath: '/home/runner/.cache/ms-playwright/chromium_headless_shell-1200/chrome-linux/headless_shell'
   });
 
   const context = await browser.newContext();
@@ -167,7 +168,7 @@ async function runLighthouse(url) {
 
   const chrome = await chromeLauncher.launch({ 
     chromeFlags: ['--headless', '--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-    chromePath: process.env.CHROME_PATH || '/usr/bin/chromium-browser'
+    chromePath: process.env.CHROME_PATH || '/home/runner/.cache/ms-playwright/chromium-1200/chrome-linux/chrome'
   });
 
   const options = {
