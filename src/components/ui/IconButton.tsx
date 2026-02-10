@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useRef, useId } from 'react';
+import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
+import { useReducedMotion } from '../../hooks/useAccessibility';
+import { CheckIcon } from '../icons/CheckIcon';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -13,6 +15,14 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   tooltipPosition?: IconButtonTooltipPosition;
   /** Reason shown in tooltip when button is disabled */
   disabledReason?: string;
+  /** Show loading spinner instead of icon */
+  isLoading?: boolean;
+  /** Show success state temporarily after action */
+  showSuccess?: boolean;
+  /** Duration of success state in milliseconds */
+  successDuration?: number;
+  /** Success icon to show (defaults to checkmark) */
+  successIcon?: React.ReactNode;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
@@ -40,6 +50,36 @@ const iconSizeClasses: Record<IconButtonSize, string> = {
   lg: "w-6 h-6",
 };
 
+// Default success icon component
+const DefaultSuccessIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <CheckIcon className={className} />
+);
+
+// Loading spinner component
+const LoadingSpinner: React.FC<{ className?: string; prefersReducedMotion: boolean }> = ({ 
+  className, 
+  prefersReducedMotion 
+}) => (
+  <svg 
+    className={`${className} ${prefersReducedMotion ? '' : 'animate-spin'}`} 
+    xmlns="http://www.w3.org/2000/svg" 
+    fill="none" 
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+  >
+    {prefersReducedMotion ? (
+      // Static dots for reduced motion
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity="0.3" />
+    ) : (
+      // Animated spinner
+      <>
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+      </>
+    )}
+  </svg>
+);
+
 const IconButton: React.FC<IconButtonProps> = ({
   variant = 'default',
   size = 'md',
@@ -48,23 +88,72 @@ const IconButton: React.FC<IconButtonProps> = ({
   tooltip,
   tooltipPosition = 'bottom',
   disabledReason,
+  isLoading = false,
+  showSuccess = false,
+  successDuration = 1500,
+  successIcon,
   className = '',
   disabled,
+  onClick,
   ...props
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const hasTooltip = Boolean(tooltip);
   const hasDisabledReason = Boolean(disabledReason) && disabled;
+  const prefersReducedMotion = useReducedMotion();
 
   const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
   const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+
+  // Handle success animation
+  useEffect(() => {
+    if (showSuccess && !isLoading) {
+      setIsSuccessVisible(true);
+      const timer = setTimeout(() => {
+        setIsSuccessVisible(false);
+      }, successDuration);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess, isLoading, successDuration]);
+
+  // Handle click with haptic feedback
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!disabled && !isLoading) {
+      // Haptic feedback on mobile
+      if ('vibrate' in navigator && window.innerWidth <= 768) {
+        navigator.vibrate(10);
+      }
+      onClick?.(e);
+    }
+  }, [disabled, isLoading, onClick]);
+
+  // Handle press state for enhanced feedback
+  const handleMouseDown = useCallback(() => {
+    if (!disabled && !isLoading && !prefersReducedMotion) {
+      setIsPressed(true);
+    }
+  }, [disabled, isLoading, prefersReducedMotion]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPressed(false);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPressed(false);
+    hideTooltip();
+  }, [hideTooltip]);
 
   const classes = `
     ${baseClasses}
     ${variantClasses[variant]}
     ${sizeClasses[size]}
+    ${isLoading ? 'cursor-wait opacity-80' : ''}
+    ${isSuccessVisible ? 'text-green-600 dark:text-green-400' : ''}
+    ${isPressed && !prefersReducedMotion ? 'scale-95' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -82,37 +171,106 @@ const IconButton: React.FC<IconButtonProps> = ({
     right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-t-transparent border-b-transparent border-l-transparent',
   };
 
+  // Get current tooltip text based on state
+  const getTooltipText = () => {
+    if (isLoading) return 'Memuat...';
+    if (isSuccessVisible) return 'Berhasil!';
+    return tooltip;
+  };
+
+  // Get current aria-label based on state
+  const getAriaLabel = () => {
+    if (isLoading) return `${ariaLabel} - sedang memuat`;
+    if (isSuccessVisible) return `${ariaLabel} - berhasil`;
+    return ariaLabel;
+  };
+
+  const currentTooltip = getTooltipText();
+  const currentAriaLabel = getAriaLabel();
+
   return (
     <button
       ref={buttonRef}
       className={classes}
-      aria-label={ariaLabel}
-      aria-describedby={hasTooltip ? tooltipId : undefined}
-      onMouseEnter={hasTooltip ? showTooltip : undefined}
-      onMouseLeave={hasTooltip ? hideTooltip : undefined}
-      onFocus={hasTooltip ? showTooltip : undefined}
-      onBlur={hasTooltip ? hideTooltip : undefined}
+      aria-label={currentAriaLabel}
+      aria-describedby={hasTooltip || isLoading || isSuccessVisible ? tooltipId : undefined}
+      aria-busy={isLoading}
+      aria-live={isSuccessVisible ? 'polite' : undefined}
+      disabled={disabled || isLoading}
+      onClick={handleClick}
+      onMouseEnter={hasTooltip || isLoading || isSuccessVisible ? showTooltip : undefined}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onFocus={hasTooltip || isLoading || isSuccessVisible ? showTooltip : undefined}
+      onBlur={hideTooltip}
       {...props}
     >
-      <span className={iconSizeClasses[size]} aria-hidden="true">
-        {icon}
+      <span className={`${iconSizeClasses[size]} relative flex items-center justify-center`} aria-hidden="true">
+        {/* Original Icon */}
+        <span
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
+            isLoading || isSuccessVisible
+              ? 'opacity-0 scale-50 rotate-[-45deg]'
+              : 'opacity-100 scale-100 rotate-0'
+          }`}
+        >
+          {icon}
+        </span>
+        
+        {/* Loading Spinner */}
+        <span
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
+            isLoading
+              ? 'opacity-100 scale-100 rotate-0'
+              : 'opacity-0 scale-50 rotate-[45deg]'
+          }`}
+        >
+          <LoadingSpinner className="w-full h-full" prefersReducedMotion={prefersReducedMotion} />
+        </span>
+        
+        {/* Success Icon */}
+        <span
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
+            isSuccessVisible && !isLoading
+              ? 'opacity-100 scale-100 rotate-0'
+              : 'opacity-0 scale-50 rotate-[45deg]'
+          }`}
+        >
+          {successIcon || <DefaultSuccessIcon className="w-full h-full" />}
+        </span>
       </span>
-      {hasTooltip && (
+      
+      {/* State indicator ring for loading/success */}
+      {(isLoading || isSuccessVisible) && (
+        <span 
+          className={`absolute inset-0 rounded-lg ring-2 transition-all duration-300 ${
+            isLoading 
+              ? 'ring-primary-500/30 animate-pulse' 
+              : 'ring-green-500/50'
+          } ${prefersReducedMotion ? '' : ''}`}
+          aria-hidden="true"
+        />
+      )}
+      
+      {(hasTooltip || isLoading || isSuccessVisible) && (
         <span
           id={tooltipId}
           role="tooltip"
           className={`
-            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700
+            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white
             rounded-md shadow-lg whitespace-nowrap pointer-events-none
             transition-all duration-200 ease-out
+            ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
             ${tooltipPositionClasses[tooltipPosition]}
-            ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${isTooltipVisible || isLoading || isSuccessVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
-          {tooltip}
+          {currentTooltip}
           <span
             className={`
-              absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
+              absolute w-2 h-2 rotate-45
+              ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
               ${tooltipArrowClasses[tooltipPosition]}
             `.replace(/\s+/g, ' ').trim()}
             aria-hidden="true"
