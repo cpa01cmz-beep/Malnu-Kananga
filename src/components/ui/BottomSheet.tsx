@@ -327,6 +327,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
 };
 
 // Preset bottom sheet configurations
+// eslint-disable-next-line react-refresh/only-export-components
 export const BottomSheetPresets = {
   // Action sheets
   actionSheet: {
@@ -368,6 +369,7 @@ export const BottomSheetPresets = {
 };
 
 // Hook for bottom sheet management
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBottomSheet = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<Partial<BottomSheetProps>>({});

@@ -231,6 +231,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFormValidation = () => {
   const context = useContext(FormValidationContext);
   if (context === undefined) {
@@ -240,6 +241,7 @@ export const useFormValidation = () => {
 };
 
 // Enhanced validation rules
+// eslint-disable-next-line react-refresh/only-export-components
 export const ValidationRules = {
   required: (message = 'This field is required'): ValidationRule => ({
     validate: (value) => value !== undefined && value !== null && value !== '',
@@ -363,6 +365,7 @@ export const EnhancedFieldFeedback: React.FC<EnhancedFieldFeedbackProps> = ({
 };
 
 // Hook for enhanced field validation
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFieldValidation = (
   fieldName: string,
   validationRules: ValidationRule[],
