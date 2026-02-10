@@ -204,28 +204,31 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         )}
 
         {/* Clear button - appears when there's a value */}
-        {value && String(value).length > 0 && !validation.state.isValidating && (
-          <button
-            type="button"
-            onClick={() => {
-              const syntheticEvent = {
-                target: { value: '' }
-              } as React.ChangeEvent<HTMLInputElement>;
-              handleChange(syntheticEvent);
-              // Focus back on input after clearing for better UX
-              if (ref && 'current' in ref && ref.current) {
-                ref.current.focus();
-              }
-            }}
-            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
-              showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
-            }`}
-            aria-label="Bersihkan pencarian"
-            title="Bersihkan pencarian"
-          >
-            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => {
+            const syntheticEvent = {
+              target: { value: '' }
+            } as React.ChangeEvent<HTMLInputElement>;
+            handleChange(syntheticEvent);
+            // Focus back on input after clearing for better UX
+            if (ref && 'current' in ref && ref.current) {
+              ref.current.focus();
+            }
+          }}
+          className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all duration-200 ease-out ${
+            showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
+          } ${
+            value && String(value).length > 0 && !validation.state.isValidating
+              ? 'opacity-100 scale-100 pointer-events-auto'
+              : 'opacity-0 scale-75 pointer-events-none'
+          }`}
+          aria-label="Bersihkan pencarian"
+          title="Bersihkan pencarian"
+          aria-hidden={!(value && String(value).length > 0 && !validation.state.isValidating)}
+        >
+          <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+        </button>
 
         {validation.state.isValidating && (
           <div className={`absolute top-1/2 -translate-y-1/2 ${showIcon && iconPosition === 'right' ? 'right-12' : 'right-3'}`}>
