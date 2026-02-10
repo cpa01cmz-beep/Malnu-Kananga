@@ -131,7 +131,9 @@
         min-height: 100vh;
       }
     </style>
-    <link rel="stylesheet" href="/src/index.css">
+    <!-- Preload critical CSS -->
+    <link rel="preload" href="/src/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/src/index.css"></noscript>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
