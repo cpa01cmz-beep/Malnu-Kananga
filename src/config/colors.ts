@@ -385,3 +385,192 @@ export const COLOR_ALIASES: Record<string, SemanticPurpose> = {
 export function migrateColorScale(deprecatedScale: string): SemanticPurpose {
   return COLOR_ALIASES[deprecatedScale] || 'neutral';
 }
+
+/**
+ * Enhanced UI state colors with micro-interactions - Palette 🎨
+ * Provides consistent color utilities for enhanced UX
+ */
+export const ENHANCED_UI_COLORS = {
+  // Hover states with subtle transitions
+  hover: {
+    lift: 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200',
+    scale: 'hover:scale-105 transition-transform duration-200',
+    glow: {
+      primary: 'hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:shadow-primary-500/20 hover:shadow-lg',
+      success: 'hover:bg-green-50 dark:hover:bg-green-900/20 hover:shadow-green-500/20 hover:shadow-lg',
+      warning: 'hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:shadow-amber-500/20 hover:shadow-lg',
+      error: 'hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-red-500/20 hover:shadow-lg',
+      info: 'hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:shadow-blue-500/20 hover:shadow-lg',
+    },
+  },
+
+  // Active states with tactile feedback
+  active: {
+    press: 'active:scale-95 active:bg-neutral-100 dark:active:bg-neutral-700 transition-all duration-150',
+    sink: 'active:translate-y-0.5 active:shadow-sm transition-all duration-150',
+  },
+
+  // Focus states with accessibility improvements
+  focus: {
+    ring: 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900',
+    colored: {
+      primary: 'focus:ring-primary-500/50',
+      success: 'focus:ring-green-500/50',
+      warning: 'focus:ring-amber-500/50',
+      error: 'focus:ring-red-500/50',
+      info: 'focus:ring-blue-500/50',
+      neutral: 'focus:ring-neutral-500/50',
+    },
+  },
+
+  // Selection states for interactive elements
+  selected: {
+    primary: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-primary-300 dark:border-primary-700',
+    secondary: 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-600',
+  },
+
+  // Disabled states with proper contrast
+  disabled: {
+    opacity: 'opacity-50 cursor-not-allowed',
+    subtle: 'opacity-60 cursor-not-allowed hover:opacity-60',
+    interactive: 'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:scale-100',
+  },
+
+  // Loading states with visual feedback
+  loading: {
+    skeleton: 'bg-neutral-200 dark:bg-neutral-700 animate-pulse',
+    shimmer: 'bg-gradient-to-r from-transparent via-neutral-200 to-transparent animate-shimmer',
+    spinner: {
+      primary: 'text-primary-600 dark:text-primary-400',
+      secondary: 'text-neutral-600 dark:text-neutral-400',
+      white: 'text-white',
+    },
+  },
+
+  // Gradient overlays for depth
+  overlay: {
+    glass: 'bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm border border-white/20 dark:border-neutral-700/20',
+    subtle: 'bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-800',
+    vignette: 'bg-gradient-to-t from-black/20 via-transparent to-transparent',
+  },
+
+  // Shadow system for depth hierarchy
+  depth: {
+    flat: 'shadow-none',
+    raised: 'shadow-sm',
+    elevated: 'shadow-md',
+    floating: 'shadow-lg',
+    modal: 'shadow-xl',
+    popup: 'shadow-2xl',
+  },
+} as const;
+
+/**
+ * Accessibility color utilities for enhanced contrast
+ */
+export const ACCESSIBILITY_COLORS = {
+  // High contrast for better visibility
+  highContrast: {
+    text: 'text-black dark:text-white',
+    background: 'bg-white dark:bg-black',
+    border: 'border-black dark:border-white',
+    focus: 'focus:ring-2 focus:ring-black dark:focus:ring-white',
+  },
+
+  // Color blind friendly combinations
+  colorblindSafe: {
+    success: 'bg-emerald-600 text-white',
+    error: 'bg-red-600 text-white',
+    warning: 'bg-blue-600 text-white',
+    info: 'bg-orange-600 text-white',
+  },
+
+  // Reduced motion friendly
+  reducedMotion: {
+    focus: 'focus:outline-none focus:ring-2 focus:ring-offset-2',
+    hover: 'hover:opacity-80',
+    active: 'active:opacity-60',
+  },
+} as const;
+
+/**
+ * Component-specific color enhancements
+ */
+export const COMPONENT_COLOR_ENHANCEMENTS: {
+  button: string;
+  input: {
+    default: string;
+    error: string;
+    success: string;
+  };
+  card: {
+    default: string;
+    interactive: string;
+  };
+  navigation: {
+    active: string;
+    hover: string;
+    focus: string;
+  };
+} = {
+  // Enhanced button states
+  button: 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95 active:bg-neutral-100 dark:active:bg-neutral-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:scale-100',
+
+  // Enhanced input states
+  input: {
+    default: 'focus:ring-primary-500/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:shadow-primary-500/20 hover:shadow-lg',
+    error: 'focus:ring-red-500/50 hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-red-500/20 hover:shadow-lg',
+    success: 'focus:ring-green-500/50 hover:bg-green-50 dark:hover:bg-green-900/20 hover:shadow-green-500/20 hover:shadow-lg',
+  },
+
+  // Enhanced card states
+  card: {
+    default: 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 shadow-sm',
+    interactive: 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 shadow-lg',
+  },
+
+  // Enhanced navigation states
+  navigation: {
+    active: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-primary-300 dark:border-primary-700',
+    hover: 'hover:bg-neutral-50 dark:hover:bg-neutral-800/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200',
+    focus: 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900',
+  },
+} as const;
+
+/**
+ * Get enhanced UI color classes for specific purposes
+ */
+export function getEnhancedColorClasses(type: keyof typeof ENHANCED_UI_COLORS, subtype?: string): string {
+  const colorSet = ENHANCED_UI_COLORS[type];
+  
+  if (subtype && typeof colorSet === 'object' && subtype in colorSet) {
+    return (colorSet as Record<string, string>)[subtype];
+  }
+  
+  if (typeof colorSet === 'string') {
+    return colorSet;
+  }
+  
+  return '';
+}
+
+/**
+ * Get component enhancement color classes
+ */
+export function getComponentColorClasses(component: keyof typeof COMPONENT_COLOR_ENHANCEMENTS): string {
+  const classes = COMPONENT_COLOR_ENHANCEMENTS[component];
+  if (typeof classes === 'string') {
+    return classes;
+  }
+  // For object types, return default class based on component type
+  if (component === 'input') {
+    return (classes as { default: string; error: string; success: string }).default;
+  }
+  if (component === 'card') {
+    return (classes as { default: string; interactive: string }).default;
+  }
+  if (component === 'navigation') {
+    return (classes as { active: string; hover: string; focus: string }).hover;
+  }
+  return '';
+}
