@@ -3,7 +3,7 @@
  * Provides sophisticated gesture detection for mobile interactions
  */
 
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect, type ReactNode } from 'react';
 import { useHapticFeedback } from './hapticFeedback';
 
 export interface SwipeGestureOptions {
@@ -32,7 +32,7 @@ export interface SwipeToDeleteOptions {
   onDelete?: () => void;
   actionWidth?: number;
   actionLabel?: string;
-  actionIcon?: import('react').ReactNode;
+  actionIcon?: ReactNode;
 }
 
 // Hook for swipe gestures
@@ -128,7 +128,7 @@ export const useLongPress = (options: LongPressOptions = {}) => {
   } = options;
 
   const { onLongPress: hapticLongPress } = useHapticFeedback();
-  const   timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isLongPressing, setIsLongPressing] = useState(false);
 
   const start = useCallback(() => {

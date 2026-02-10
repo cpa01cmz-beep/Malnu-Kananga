@@ -8,7 +8,8 @@ import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
 
 export interface ValidationRule {
-  validate: (value: unknown, formData?: Record<string, unknown>) => boolean | Promise<boolean>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  validate: (value: any, formData?: Record<string, any>) => boolean | Promise<boolean>;
   message: string;
   type?: FeedbackType;
   debounceMs?: number;
@@ -38,11 +39,13 @@ export interface FormValidationConfig {
 }
 
 interface FormValidationContextType {
-  formData: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  formData: Record<string, any>;
   fieldValidations: Record<string, FieldValidation>;
   isFormValid: boolean;
   isFormSubmitting: boolean;
-  updateField: (name: string, value: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  updateField: (name: string, value: any) => void;
   validateField: (name: string, rules: ValidationRule[]) => Promise<boolean>;
   validateForm: () => Promise<boolean>;
   resetValidation: () => void;
@@ -58,7 +61,8 @@ const FormValidationContext = createContext<FormValidationContextType | undefine
 
 interface FormValidationProviderProps {
   children: React.ReactNode;
-  initialValues?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  initialValues?: Record<string, any>;
   config?: FormValidationConfig;
 }
 
@@ -67,7 +71,8 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
   initialValues = {},
   config = {},
 }) => {
-  const [formData, setFormData] = useState<Record<string, unknown>>(initialValues);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [formData, setFormData] = useState<Record<string, any>>(initialValues);
   const [fieldValidations, setFieldValidations] = useState<Record<string, FieldValidation>>({});
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
@@ -83,7 +88,8 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
     ...config,
   };
 
-  const updateField = useCallback((name: string, value: unknown) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updateField = useCallback((name: string, value: any) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     
     if (!touchedFields[name]) {
@@ -110,7 +116,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
           message: rule.message,
           type: rule.type || (isValid ? 'success' : 'error'),
         };
-      } catch (_error) {
+      } catch {
         return {
           valid: false,
           message: rule.message,
@@ -241,24 +247,18 @@ export const ValidationRules = {
   }),
 
   minLength: (min: number, message?: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return value.length >= min;
-    },
+    validate: (value) => !value || value.length >= min,
     message: message || `Must be at least ${min} characters`,
   }),
 
   maxLength: (max: number, message?: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return value.length <= max;
-    },
+    validate: (value) => !value || value.length <= max,
     message: message || `Must be no more than ${max} characters`,
   }),
 
   email: (message = 'Please enter a valid email address'): ValidationRule => ({
     validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
+      if (!value) return true;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(value);
     },
@@ -267,8 +267,8 @@ export const ValidationRules = {
 
   phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
     validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      const phoneRegex = /^[\d\s\-+()]+$/;
+      if (!value) return true;
+      const phoneRegex = /^[\d\s+\-()]+$/;
       return phoneRegex.test(value) && value.replace(/\D/g, '').length >= 10;
     },
     message,
@@ -276,7 +276,7 @@ export const ValidationRules = {
 
   password: (message = 'Password must be at least 8 characters with uppercase, lowercase, and numbers'): ValidationRule => ({
     validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
+      if (!value) return true;
       const hasUpperCase = /[A-Z]/.test(value);
       const hasLowerCase = /[a-z]/.test(value);
       const hasNumbers = /\d/.test(value);
@@ -287,19 +287,18 @@ export const ValidationRules = {
   }),
 
   pattern: (regex: RegExp, message: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return regex.test(value);
-    },
+    validate: (value) => !value || regex.test(value),
     message,
   }),
 
-  custom: (validator: (value: unknown, formData?: Record<string, unknown>) => boolean, message: string): ValidationRule => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  custom: (validator: (value: any, formData?: Record<string, any>) => boolean, message: string): ValidationRule => ({
     validate: validator,
     message,
   }),
 
-  async: (validator: (value: unknown, formData?: Record<string, unknown>) => Promise<boolean>, message: string): ValidationRule => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async: (validator: (value: any, formData?: Record<string, any>) => Promise<boolean>, message: string): ValidationRule => ({
     validate: validator,
     message,
     async: true,

@@ -93,7 +93,7 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     },
   };
 
-  const { pressProps: _pressProps } = useLongPress(longPressConfig);
+  useLongPress(longPressConfig);
 
   const handleConfirmDelete = useCallback(() => {
     if (confirmTimer) {
@@ -120,13 +120,8 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     <div
       ref={itemRef}
       className={`relative overflow-hidden ${disabled ? 'opacity-50' : ''} ${className}`}
-      onTouchStart={(e) => {
-        const touchEvent = e.nativeEvent as unknown as TouchEvent;
-        deleteProps.onTouchStart?.(touchEvent);
-      }}
-      onTouchEnd={() => {
-        deleteProps.onTouchEnd?.();
-      }}
+      onTouchStart={deleteProps.onTouchStart as unknown as React.TouchEventHandler<HTMLDivElement>}
+      onTouchEnd={deleteProps.onTouchEnd as unknown as React.TouchEventHandler<HTMLDivElement>}
     >
       {/* Left Actions (appears when swiping right) */}
       {canSwipeRight && leftActions && (

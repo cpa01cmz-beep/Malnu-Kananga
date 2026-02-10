@@ -154,7 +154,7 @@ export const RouteTransitionWrapper: React.FC<RouteTransitionWrapperProps> = ({
   path,
   customTransition,
 }) => {
-  const { isTransitioning: _isTransitioning, transitionConfig } = useRouteTransition();
+  const { transitionConfig } = useRouteTransition();
 
   const isCurrentRoute = transitionConfig.to === path;
   const isPreviousRoute = transitionConfig.from === path;

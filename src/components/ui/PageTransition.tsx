@@ -159,12 +159,14 @@ const PageTransition: React.FC<PageTransitionProps> = ({
 
     return React.Children.map(children, (child, index) => {
       if (React.isValidElement(child)) {
-        return React.cloneElement(child as React.ReactElement<{ style?: React.CSSProperties }>, {
+        const childProps = child.props as { style?: React.CSSProperties };
+        const newProps = {
           style: {
-            ...(child.props as { style?: React.CSSProperties }).style,
+            ...childProps.style,
             transitionDelay: `${delay + (index * staggerDelay)}ms`,
           },
-        });
+        };
+        return React.cloneElement(child, newProps as React.Attributes & { style?: React.CSSProperties });
       }
       return child;
     });
