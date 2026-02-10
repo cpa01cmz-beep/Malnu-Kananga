@@ -41,7 +41,7 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   confirmDelay = 2000,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
-  const [confirmTimer, setConfirmTimer] = useState<NodeJS.Timeout | null>(null);
+  const [confirmTimer, setConfirmTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const itemRef = useRef<HTMLDivElement>(null);
   const { onDelete: hapticDelete } = useHapticFeedback();
 
@@ -120,8 +120,8 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
     <div
       ref={itemRef}
       className={`relative overflow-hidden ${disabled ? 'opacity-50' : ''} ${className}`}
-      onTouchStart={deleteProps.onTouchStart as any}
-      onTouchEnd={deleteProps.onTouchEnd as any}
+      onTouchStart={deleteProps.onTouchStart as unknown as React.TouchEventHandler}
+      onTouchEnd={deleteProps.onTouchEnd as unknown as React.TouchEventHandler}
     >
       {/* Left Actions (appears when swiping right) */}
       {canSwipeRight && leftActions && (
