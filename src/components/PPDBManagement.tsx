@@ -962,6 +962,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                             className="w-full h-full object-contain"
                             width={800}
                             height={600}
+                            loading="lazy"
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
                               const errorMsg = e.currentTarget.nextElementSibling as HTMLElement;
@@ -1009,6 +1010,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                 className="w-full h-full object-contain"
                                 width={800}
                                 height={256}
+                                loading="lazy"
                               />
                             ) : doc.type === 'pdf' ? (
                               <object
