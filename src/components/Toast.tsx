@@ -161,14 +161,25 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         size="sm"
         onClick={onClose}
       />
-      {/* Progress bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-b-xl overflow-hidden">
+      {/* Progress bar with accessibility */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-b-xl overflow-hidden"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress)}
+        aria-label={isPaused ? 'Notifikasi dijeda. Gerakkan mouse keluar untuk melanjutkan.' : 'Waktu tersisa sebelum notifikasi tertutup otomatis'}
+      >
         <div
           className={`h-full ${progressBarColors[type]} transition-none`}
           style={{ width: `${progress}%` }}
           aria-hidden="true"
         />
       </div>
+      {/* Screen reader announcement for remaining time */}
+      <span className="sr-only" role="status" aria-live="polite">
+        {isVisible && !isPaused && Math.round(progress) > 0 && Math.round(progress) < 100 && `${Math.round(progress)}% waktu tersisa`}
+      </span>
     </div>
   );
 };

@@ -669,6 +669,8 @@ export const SCHEDULER_INTERVALS = {
     OFFLINE_SYNC_CHECK: 30 * 60 * 1000, // 30 minutes
     WEBSOCKET_PING: 30 * 1000, // 30 seconds
     AUTH_CHECK: 5 * 1000, // 5 seconds
+    QUEUED_COUNT_UPDATE: 5 * 1000, // 5 seconds - for auto-save queue count updates
+    SPEAKING_STATUS_CHECK: 1000, // 1 second - for voice notification speaking status
 } as const;
 
 // Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!

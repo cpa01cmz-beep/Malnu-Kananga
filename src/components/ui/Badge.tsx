@@ -11,6 +11,12 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   size?: BadgeSize;
   styleType?: BadgeStyle;
   rounded?: boolean;
+  /** Accessible label for screen readers. If not provided, will use children as label. */
+  ariaLabel?: string;
+  /** Role for the badge. Defaults to 'status' for status indicators. Use 'generic' for non-status badges. */
+  role?: 'status' | 'generic' | 'img';
+  /** Whether the badge is purely decorative and should be hidden from screen readers */
+  decorative?: boolean;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
@@ -110,6 +116,9 @@ const Badge: React.FC<BadgeProps> = ({
   styleType = 'solid',
   rounded = true,
   className = '',
+  ariaLabel,
+  role = 'status',
+  decorative = false,
   ...props
 }) => {
   const classes = `
@@ -121,7 +130,13 @@ const Badge: React.FC<BadgeProps> = ({
   `.replace(/\s+/g, ' ').trim();
 
   return (
-    <span className={classes} {...props}>
+    <span
+      className={classes}
+      role={role}
+      aria-label={decorative ? undefined : ariaLabel}
+      aria-hidden={decorative}
+      {...props}
+    >
       {children}
     </span>
   );
