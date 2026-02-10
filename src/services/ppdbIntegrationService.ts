@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -120,7 +120,7 @@ class PPDBIntegrationService {
       return nis;
     } catch (error) {
       logger.error('Failed to generate NIS:', error);
-      throw new Error('Gagal generate NIS');
+      throw new Error(SERVICE_ERROR_MESSAGES.NIS_GENERATION_FAILED);
     }
   }
 
@@ -139,7 +139,7 @@ class PPDBIntegrationService {
       return { className, class: classCode };
     } catch (error) {
       logger.error('Failed to assign class:', error);
-      throw new Error('Gagal menentukan kelas');
+      throw new Error(SERVICE_ERROR_MESSAGES.CLASS_ASSIGNMENT_FAILED);
     }
   }
 
@@ -163,7 +163,7 @@ class PPDBIntegrationService {
       const response = await usersAPI.create(parentUser);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Gagal membuat akun orang tua');
+        throw new Error(response.error || SERVICE_ERROR_MESSAGES.PARENT_ACCOUNT_FAILED);
       }
 
       const credentials: ParentAccountCredentials = {
@@ -178,7 +178,7 @@ class PPDBIntegrationService {
       return credentials;
     } catch (error) {
       logger.error('Failed to create parent account:', error);
-      throw new Error('Gagal membuat akun orang tua');
+      throw new Error(SERVICE_ERROR_MESSAGES.PARENT_ACCOUNT_FAILED);
     }
   }
 
@@ -212,7 +212,7 @@ class PPDBIntegrationService {
       const response = await studentsAPI.create(student);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Gagal membuat data siswa');
+        throw new Error(response.error || SERVICE_ERROR_MESSAGES.STUDENT_CREATION_FAILED);
       }
 
       // Note: Parent-student relationship is created via student.parentName field
@@ -222,7 +222,7 @@ class PPDBIntegrationService {
       return response.data;
     } catch (error) {
       logger.error('Failed to convert registrant to student:', error);
-      throw new Error('Gagal membuat data siswa dari pendaftar PPDB');
+      throw new Error(SERVICE_ERROR_MESSAGES.STUDENT_CREATION_FAILED);
     }
   }
 
@@ -239,7 +239,7 @@ class PPDBIntegrationService {
       // Get registrant data
       const registrantResponse = await ppdbAPI.getById(registrantId);
       if (!registrantResponse.success || !registrantResponse.data) {
-        throw new Error('Pendaftar tidak ditemukan');
+        throw new Error(SERVICE_ERROR_MESSAGES.REGISTRANT_NOT_FOUND);
       }
 
       const registrant = registrantResponse.data;
@@ -792,7 +792,7 @@ class PPDBIntegrationService {
       });
     } catch (error) {
       logger.error('Failed to rollback student account:', error);
-      throw new Error('Gagal melakukan rollback akun siswa');
+      throw new Error(SERVICE_ERROR_MESSAGES.ROLLBACK_FAILED);
     }
   }
 

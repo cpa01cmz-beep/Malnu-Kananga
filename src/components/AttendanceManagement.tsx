@@ -14,7 +14,7 @@ import { useNetworkStatus } from '../utils/networkStatus';
 import ProgressBar from './ui/ProgressBar';
 import { UserRole, UserExtraRole } from '../types';
 import { useErrorHandler } from '../hooks/useErrorHandler';
-import { FILE_SIZE_LIMITS, USER_ROLES, ACADEMIC } from '../constants';
+import { FILE_SIZE_LIMITS, USER_ROLES, ACADEMIC, UI_STRINGS } from '../constants';
 
 interface AttendanceManagementProps {
   onBack: () => void;
@@ -313,7 +313,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
               variant="success"
               size="md"
             >
-              {isSaving ? 'Menyimpan...' : 'Simpan'}
+              {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE}
             </Button>
           </div>
         </div>

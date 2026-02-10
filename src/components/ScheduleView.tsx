@@ -9,6 +9,7 @@ import { TableSkeleton } from './ui/Skeleton';
 import ErrorMessage from './ui/ErrorMessage';
 import Button from './ui/Button';
 import { HEIGHTS } from '../config/heights';
+import { UI_STRINGS } from '../constants';
 
 interface ScheduleItem {
   id: string;
@@ -169,7 +170,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
             disabled={isRetrying}
             ariaLabel={isRetrying ? 'Memuat ulang jadwal, harap tunggu...' : 'Coba memuat jadwal lagi'}
           >
-            {isRetrying ? 'Memuat...' : 'Coba Lagi'}
+            {isRetrying ? UI_STRINGS.LOADING : 'Coba Lagi'}
           </Button>
         </div>
       </div>

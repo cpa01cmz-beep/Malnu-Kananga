@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnnouncementCategory, AnnouncementTargetType, type Announcement, type AnnouncementFormData, type User, type UserRole, type UserExtraRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, UI_STRINGS } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
@@ -569,7 +569,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
               {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Menyimpan...
+                  {UI_STRINGS.SAVING}
                 </>
               ) : (
                 <>

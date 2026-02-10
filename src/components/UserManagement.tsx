@@ -22,7 +22,7 @@ import {
   USER_GUIDANCE
 } from '../utils/errorMessages';
 import AccessDenied from './AccessDenied';
-import { USER_ROLES, USER_STATUS } from '../constants';
+import { USER_ROLES, USER_STATUS, UI_STRINGS } from '../constants';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -377,7 +377,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
               />
             </div>
             <Button type="submit" fullWidth isLoading={isSaving}>
-              {isSaving ? 'Menyimpan...' : 'Simpan'}
+              {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE}
             </Button>
           </form>
         </Modal>

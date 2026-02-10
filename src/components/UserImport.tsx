@@ -48,6 +48,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -57,6 +58,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       setImportProgress(0);
       setImportResult(null);
       setIsClosing(false);
+      setUploadError(null);
     }
   }, [isOpen]);
 
@@ -133,7 +135,10 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const handleFileSelect = useCallback(async (selectedFile: File | null) => {
     if (!selectedFile) return;
 
+    setUploadError(null);
+
     if (!selectedFile.name.endsWith('.csv')) {
+      setUploadError('Format file tidak valid. Harap pilih file CSV (.csv)');
       logger.error('Invalid file type: Please select a CSV file');
       return;
     }
@@ -141,6 +146,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     try {
       const data = await parseCSV(selectedFile);
       if (data.length === 0) {
+        setUploadError('File CSV kosong. Harap pastikan file memiliki data yang valid.');
         logger.error('CSV file is empty');
         return;
       }
@@ -148,6 +154,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       const validatedUsers = data.map((row, index) => validateUser(row, index));
       setParsedUsers(validatedUsers);
       setFile(selectedFile);
+      setUploadError(null);
       setStep('preview');
     } catch (error) {
       const classifiedError = classifyError(error, {
@@ -155,6 +162,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
         timestamp: Date.now(),
       });
       logError(classifiedError);
+      setUploadError('Gagal memproses file CSV. Harap periksa format file dan coba lagi.');
       logger.error('Failed to parse CSV file. Please check format and try again.');
     }
   }, [parseCSV, validateUser]);
@@ -325,6 +333,12 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
             className="hidden"
           />
 
+          {uploadError && (
+            <Alert variant="error" className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <p>{uploadError}</p>
+            </Alert>
+          )}
+
           {file && (
             <div className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg">
               <div className="flex items-center gap-3">
@@ -404,7 +418,10 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
           <div className="flex justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">
             <Button
               variant="secondary"
-              onClick={() => setStep('upload')}
+              onClick={() => {
+                setStep('upload');
+                setUploadError(null);
+              }}
               disabled={isClosing}
             >
               Back

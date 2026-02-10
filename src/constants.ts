@@ -1038,6 +1038,8 @@ export const HTTP = {
 export const UI_STRINGS = {
     // Common actions
     SAVE: 'Simpan',
+    SAVING: 'Menyimpan...',
+    SAVE_ALL: 'Simpan Semua',
     CANCEL: 'Batal',
     CLOSE: 'Tutup',
     DELETE: 'Hapus',
@@ -1045,6 +1047,7 @@ export const UI_STRINGS = {
     CREATE: 'Buat',
     SEARCH: 'Cari',
     LOADING: 'Memuat...',
+    PROCESSING: 'Memproses...',
     ERROR: 'Error',
     SUCCESS: 'Berhasil',
     WARNING: 'Peringatan',
@@ -1058,6 +1061,8 @@ export const UI_STRINGS = {
     TRY_AGAIN: 'Coba Lagi',
     SELECT_ALL: 'Pilih Semua',
     CLEAR_SELECTION: 'Bersihkan Pilihan',
+    CLEAR_INPUT: 'Bersihkan input',
+    CLEAR_TEXTAREA: 'Bersihkan textarea',
     SELECTED: 'terpilih',
     OR: 'atau',
     YES: 'Ya',
@@ -1192,6 +1197,40 @@ export const GRADING_UI_STRINGS = {
     ASSIGNMENT_LABEL: 'Assignment',
     UTS_LABEL: 'UTS',
     UAS_LABEL: 'UAS',
+} as const;
+
+// Section titles for marketing/landing page sections
+export const SECTION_TITLES = {
+    PROFILE: 'Profil Madrasah',
+    PROFILE_SUBTITLE: 'Mengenal Lebih Dekat MA Malnu Kananga',
+    PROGRAMS: 'Program Unggulan',
+    PPDB: 'Bergabunglah Bersama Kami',
+    PPDB_SUBTITLE: 'Masa Depan Gemilang Dimulai dari Sini',
+    NEWS: 'Berita & Kegiatan Terbaru',
+    NEWS_SUBTITLE: 'Update terkini dari MA Malnu Kananga',
+    ACHIEVEMENTS: 'Prestasi Madrasah',
+    GALLERY: 'Galeri Kegiatan',
+    TESTIMONIALS: 'Testimoni',
+    CONTACT: 'Hubungi Kami',
+    FACILITIES: 'Fasilitas Madrasah',
+} as const;
+
+// Service error messages - centralized for consistency
+export const SERVICE_ERROR_MESSAGES = {
+    NIS_GENERATION_FAILED: 'Gagal generate NIS',
+    CLASS_ASSIGNMENT_FAILED: 'Gagal menentukan kelas',
+    PARENT_ACCOUNT_FAILED: 'Gagal membuat akun orang tua',
+    STUDENT_CREATION_FAILED: 'Gagal membuat data siswa dari pendaftar PPDB',
+    REGISTRANT_NOT_FOUND: 'Pendaftar tidak ditemukan',
+    ROLLBACK_FAILED: 'Gagal melakukan rollback akun siswa',
+    REPORT_GENERATION_FAILED: 'Gagal membuat laporan progres pembelajaran',
+    PDF_EXPORT_FAILED: 'Gagal membuat ekspor PDF. Silakan coba lagi.',
+    CSV_EXPORT_FAILED: 'Gagal membuat ekspor CSV. Silakan coba lagi.',
+    DATA_FETCH_FAILED: 'Gagal mengambil data',
+    DATA_SAVE_FAILED: 'Gagal menyimpan data',
+    DATA_DELETE_FAILED: 'Gagal menghapus data',
+    NETWORK_ERROR: 'Terjadi kesalahan jaringan. Silakan coba lagi.',
+    UNKNOWN_ERROR: 'Terjadi kesalahan yang tidak diketahui',
 } as const;
 
 // Notification template strings
