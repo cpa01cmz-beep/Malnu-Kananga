@@ -204,7 +204,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('all')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'all'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -215,7 +215,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('direct')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'direct'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -226,7 +226,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('group')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'group'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -237,7 +237,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 showUnreadOnly
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -319,18 +319,19 @@ export function MessageList({
                            )}
                          </div>
                          <div className="flex items-center gap-2">
-                           {conversation.type === 'group' && onManageGroup && (
-                             <button
-                               type="button"
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 onManageGroup(conversation);
-                               }}
-                               className="p-1 text-gray-400 hover:text-gray-600"
-                             >
-                               ⚙️
-                             </button>
-                           )}
+                            {conversation.type === 'group' && onManageGroup && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onManageGroup(conversation);
+                                }}
+                                aria-label="Kelola grup"
+                                className="p-1 text-gray-400 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                              >
+                                ⚙️
+                              </button>
+                            )}
                            <span className="ml-2 flex-shrink-0 text-xs text-gray-500">
                              {conversation.lastMessageAt ? formatTime(conversation.lastMessageAt) : ''}
                            </span>
