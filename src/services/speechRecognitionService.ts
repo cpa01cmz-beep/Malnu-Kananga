@@ -478,6 +478,10 @@ class SpeechRecognitionService {
     logger.debug('Continuous mode set to:', continuous);
   }
 
+  public getIsContinuous(): boolean {
+    return this.config.continuous;
+  }
+
   public setInterimResults(enabled: boolean): void {
     this.config.interimResults = enabled;
 

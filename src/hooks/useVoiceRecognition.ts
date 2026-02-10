@@ -11,6 +11,7 @@ interface UseVoiceRecognitionOptions {
   onTranscript?: (transcript: string, isFinal: boolean) => void;
   onError?: (error: SpeechRecognitionError) => void;
   autoStart?: boolean;
+  continuous?: boolean;
 }
 
 interface UseVoiceRecognitionReturn {
@@ -32,14 +33,14 @@ interface UseVoiceRecognitionReturn {
 export const useVoiceRecognition = (
   options: UseVoiceRecognitionOptions = {}
 ): UseVoiceRecognitionReturn => {
-  const { onTranscript, onError, autoStart = false } = options;
+  const { onTranscript, onError, autoStart = false, continuous: initialContinuous = false } = options;
 
   const [transcript, setTranscript] = useState('');
   const [state, setState] = useState<SpeechRecognitionState>('idle');
   const [isListening, setIsListening] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [language, setLanguage] = useState<VoiceLanguage>(VoiceLanguage.Indonesian);
-  const [continuous, setContinuous] = useState(false);
+  const [continuous, setContinuous] = useState(initialContinuous);
   const [permissionState, setPermissionState] = useState<'granted' | 'denied' | 'prompt' | 'unknown'>('unknown');
 
   const serviceRef = useRef<SpeechRecognitionService | null>(null);
@@ -113,7 +114,7 @@ export const useVoiceRecognition = (
   }, [language]);
 
   useEffect(() => {
-    if (serviceRef.current) {
+    if (serviceRef.current && serviceRef.current.getIsContinuous() !== continuous) {
       serviceRef.current.setContinuous(continuous);
     }
   }, [continuous]);

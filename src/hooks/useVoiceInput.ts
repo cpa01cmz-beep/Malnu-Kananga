@@ -191,6 +191,7 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
     onTranscript: onTranscriptHandler,
     onError: onErrorHandler,
     autoStart: false,
+    continuous,
   });
 
   const {
@@ -201,12 +202,11 @@ export const useVoiceInput = (options: UseVoiceInputOptions): UseVoiceInputRetur
     startRecording,
     stopRecording,
     abortRecording,
-    setContinuous,
+    setContinuous: _setContinuous,
   } = voiceRecognition;
 
-  useEffect(() => {
-    setContinuous(continuous);
-  }, [continuous, setContinuous]);
+  // Remove redundant effect - continuous is passed to useVoiceRecognition options
+  // and setContinuous is handled internally by the hook
 
   const startListening = useCallback(async (): Promise<void> => {
     setError(null);
