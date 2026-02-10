@@ -165,6 +165,6 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'build/**', 'node_modules/**', '*.config.js', '*.config.ts'],
+    ignores: ['dist/**', 'build/**', 'node_modules/**', 'playwright-report/**', 'test-results/**', '*.config.js', '*.config.ts'],
   },
 ]
