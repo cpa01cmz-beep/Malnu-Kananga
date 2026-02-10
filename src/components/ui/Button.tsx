@@ -1,6 +1,14 @@
 import React from 'react';
 import { XML_NAMESPACES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { 
+  buildButtonClasses, 
+  BUTTON_SIZE_CLASSES, 
+  BUTTON_ICON_ONLY_SIZES, 
+  BUTTON_BASE_CLASSES, 
+  BUTTON_VARIANT_CLASSES, 
+  BUTTON_INTENT_CLASSES 
+} from '../../utils/buttonUtils';
 
 // Haptic feedback utility
 const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -42,39 +50,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const getBaseClasses = (prefersReducedMotion: boolean) => {
   const motionClasses = prefersReducedMotion 
     ? "transition-none"
-    : "transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
-    
-  return `inline-flex items-center justify-center font-semibold rounded-xl ${motionClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated button-accessible`;
+    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
+     
+  return `${BUTTON_BASE_CLASSES} ${motionClasses}`;
 };
 
-const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:shadow-primary-500/20 btn-hover-primary focus-visible-enhanced hover-glow-enhanced border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect-elevated",
-  secondary: "bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect",
-  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:shadow-sm backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced focus-indicator-enhanced",
-  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:shadow-red-500/20 border-red-600 hover:border-red-700 dark:border-red-500 dark:hover:border-red-600 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect-elevated",
-  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50/80 dark:hover:bg-neutral-700/80 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect focus-indicator-enhanced",
-};
-
-const intentClasses: Record<ButtonIntent, string> = {
-  default: "",
-  success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500/50",
-  warning: "bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500/50",
-  info: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500/50",
-};
-
-const sizeClasses: Record<ButtonSize, string> = {
-  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "px-4 py-2.5 text-sm min-h-[52px] sm:min-h-[56px] mobile-touch-target",
-  md: "px-5 py-3 text-sm sm:text-base min-h-[56px] sm:min-h-[60px] mobile-touch-target",
-  lg: "px-6 py-4 text-base sm:text-lg min-h-[60px] sm:min-h-[64px] mobile-touch-target",
-};
-
-const iconOnlySizes: Record<ButtonSize, string> = {
-  icon: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
-  md: "p-3 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]",
-  lg: "p-4 min-w-[60px] min-h-[60px] sm:min-w-[64px] sm:min-h-[64px]",
-};
+const variantClasses = BUTTON_VARIANT_CLASSES;
+const intentClasses = BUTTON_INTENT_CLASSES;
+const sizeClasses = BUTTON_SIZE_CLASSES;
+const iconOnlySizes = BUTTON_ICON_ONLY_SIZES;
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   variant = 'primary',
@@ -149,15 +133,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     return variantClasses[normalizedVariant];
   };
 
-  const classes = `
-    ${getBaseClasses(prefersReducedMotion)}
-    ${getVariantClasses()}
-    ${iconOnly ? iconOnlySizes[size] : sizeClasses[size]}
-    ${fullWidth ? 'w-full' : ''}
-    ${isLoading ? 'cursor-wait' : ''}
-    ${disabled && disabledReason ? 'group relative' : ''}
-    ${className}
-  `.replace(/\s+/g, ' ').trim();
+  const classes = buildButtonClasses({
+    baseClasses: getBaseClasses(prefersReducedMotion),
+    variantClasses: getVariantClasses(),
+    sizeClasses: iconOnly ? iconOnlySizes[size] : sizeClasses[size],
+    fullWidth,
+    isLoading,
+    hasDisabledReason: !!(disabled && disabledReason),
+    className
+  });
 
   const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : ariaLabel;
 
