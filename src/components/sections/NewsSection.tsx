@@ -4,6 +4,7 @@ import NewsCard from '../NewsCard';
 import { LatestNews } from '../../types';
 import Section from '../ui/Section';
 import { getResponsiveGradient } from '../../config/gradients';
+import { SECTION_TITLES } from '../../constants';
 
 interface NewsSectionProps {
   news: LatestNews[];
@@ -13,7 +14,7 @@ const NewsSection: React.FC<NewsSectionProps> = ({ news }) => {
   return (
     <Section
       id="berita"
-      title="Berita & Kegiatan Terbaru"
+      title={SECTION_TITLES.NEWS}
       subtitle="Ikuti perkembangan dan prestasi terbaru dari sekolah kami."
       className={getResponsiveGradient('NEWS')}
     >

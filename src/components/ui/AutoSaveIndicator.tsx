@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { AutoSaveStatus } from '../../hooks/useAutoSaveSimple';
+import { UI_STRINGS } from '../../constants';
 
 export type { AutoSaveStatus };
 
@@ -94,7 +95,7 @@ export const AutoSaveIndicator: React.FC<AutoSaveIndicatorProps> = ({
               />
             </svg>
             <span className="text-neutral-500 dark:text-neutral-400 animate-pulse">
-              Menyimpan...
+              {UI_STRINGS.SAVING}
             </span>
           </>
         );

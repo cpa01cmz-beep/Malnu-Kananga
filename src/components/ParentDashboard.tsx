@@ -25,7 +25,7 @@ import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_STRINGS } from '../constants';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -609,7 +609,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       disabled={insightsLoading}
                       className="text-sm px-3 py-1 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 rounded-lg disabled:opacity-50"
                     >
-                      {insightsLoading ? 'Memuat...' : 'Perbarui'}
+                      {insightsLoading ? UI_STRINGS.LOADING : 'Perbarui'}
                     </button>
                   </div>
                 </div>

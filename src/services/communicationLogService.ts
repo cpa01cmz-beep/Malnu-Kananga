@@ -4,7 +4,7 @@ import {
   CommunicationLogExportOptions,
   CommunicationLogStats,
 } from '../types';
-import { STORAGE_KEYS, TEXT_TRUNCATION } from '../constants';
+import { STORAGE_KEYS, TEXT_TRUNCATION, SERVICE_ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { pdfExportService } from '../services/pdfExportService';
@@ -498,7 +498,7 @@ class CommunicationLogService {
       });
       logError(classifiedError);
       logger.error('Failed to export communication log to PDF:', error);
-      throw new Error('Gagal membuat ekspor PDF. Silakan coba lagi.');
+      throw new Error(SERVICE_ERROR_MESSAGES.PDF_EXPORT_FAILED);
     }
   }
 
@@ -538,7 +538,7 @@ class CommunicationLogService {
       });
       logError(classifiedError);
       logger.error('Failed to export communication log to CSV:', error);
-      throw new Error('Gagal membuat ekspor CSV. Silakan coba lagi.');
+      throw new Error(SERVICE_ERROR_MESSAGES.CSV_EXPORT_FAILED);
     }
   }
 

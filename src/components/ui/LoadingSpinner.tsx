@@ -1,4 +1,5 @@
 import React from 'react';
+import { UI_STRINGS } from '../../constants';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -116,7 +117,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div className={`${className} inline-flex items-center gap-2`}>
       <div className="relative">
         {getSpinner()}
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">{UI_STRINGS.LOADING}</span>
       </div>
       {/* Optional inline text indicator */}
       <div className="flex gap-1">
