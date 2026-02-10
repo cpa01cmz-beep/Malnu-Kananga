@@ -425,6 +425,63 @@ describe('IconButton', () => {
     });
   });
 
+  describe('Error State', () => {
+    it('renders error X mark when showError is true', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" showError />);
+      const button = screen.getByRole('button');
+
+      // Check aria-label includes error text
+      expect(button).toHaveAttribute('aria-label', 'Test - Gagal');
+
+      // Check for error styling
+      expect(button).toHaveClass('text-red-600', 'dark:text-red-400');
+      expect(button).toHaveClass('bg-red-100', 'dark:bg-red-900/30');
+
+      // Original icon should be hidden during error
+      const hiddenIcon = document.querySelector('.opacity-0.scale-50');
+      expect(hiddenIcon).toBeInTheDocument();
+    });
+
+    it('auto-hides error state after duration', async () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" showError errorDuration={100} />);
+
+      // Initially shows error
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Test - Gagal');
+
+      // Wait for auto-reset
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      // Should revert to normal state
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Test');
+    });
+
+    it('prioritizes loading over error state', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" isLoading showError />);
+      const button = screen.getByRole('button');
+
+      // Loading state takes precedence
+      expect(button).toHaveAttribute('aria-label', 'Test - Memuat');
+      expect(button).toHaveAttribute('aria-busy', 'true');
+    });
+
+    it('does not show tooltip when in error state', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Help" showError />);
+
+      // Tooltip should not be rendered when showing error
+      const tooltip = screen.queryByRole('tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('error state takes precedence over success state', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" showError showSuccess />);
+      const button = screen.getByRole('button');
+
+      // Error state takes precedence when both are shown
+      expect(button).toHaveAttribute('aria-label', 'Test - Gagal');
+      expect(button).toHaveClass('text-red-600');
+    });
+  });
+
   describe('Accessibility with Loading and Success', () => {
     it('has aria-live polite for screen reader announcements', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" />);
@@ -435,17 +492,21 @@ describe('IconButton', () => {
     it('updates aria-label dynamically based on state', () => {
       const { rerender } = render(<IconButton icon={mockIcon} ariaLabel="Save" />);
       const button = screen.getByRole('button');
-      
+
       // Normal state
       expect(button).toHaveAttribute('aria-label', 'Save');
-      
+
       // Loading state
       rerender(<IconButton icon={mockIcon} ariaLabel="Save" isLoading />);
       expect(button).toHaveAttribute('aria-label', 'Save - Memuat');
-      
+
       // Success state
       rerender(<IconButton icon={mockIcon} ariaLabel="Save" showSuccess />);
       expect(button).toHaveAttribute('aria-label', 'Save - Berhasil');
+
+      // Error state
+      rerender(<IconButton icon={mockIcon} ariaLabel="Save" showError />);
+      expect(button).toHaveAttribute('aria-label', 'Save - Gagal');
     });
   });
 });
