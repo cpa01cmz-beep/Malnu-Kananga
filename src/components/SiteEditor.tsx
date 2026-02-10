@@ -69,17 +69,21 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
 
   useEffect(() => {
     if (isOpen) {
-      if (messages.length === 0) {
-        setMessages([
+      // Use functional update to check previous state and avoid dependency on messages
+      setMessages(prev => {
+        if (prev.length === 0) {
+          return [
             { id: 'initial', text: 'Halo! Saya asisten editor AI Anda dengan sistem validasi keamanan. Beri tahu saya perubahan apa yang ingin Anda buat pada konten **"Program Unggulan"** atau **"Berita Terbaru"**. \n\nContoh perintah yang valid:\n- "Tambahkan program baru tentang Robotika"\n- "Ubah judul berita pertama menjadi lebih menarik"\n- "Hapus program terakhir"\n\n🛡️ **Keamanan**: Perintah berbahaya atau akses sistem akan diblokir otomatis.\n\n💡 **Tips:** Anda dapat membatalkan hingga 5 perubahan terakhir menggunakan tombol Undo.', sender: Sender.AI }
-        ]);
-      }
+          ];
+        }
+        return prev;
+      });
       setProposedContent(null);
       setInput('');
       setInputError('');
       setValidationError('');
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
 
   // Auto-scroll whenever messages change
   useEffect(() => {
