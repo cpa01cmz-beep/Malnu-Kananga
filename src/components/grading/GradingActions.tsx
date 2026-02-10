@@ -7,6 +7,7 @@ import { FILE_ERROR_MESSAGES, CSV_MESSAGES, EXPORT_MESSAGES, AI_MESSAGES } from 
 import { createToastHandler } from '../../utils/teacherErrorHandler';
 import { validateCSVImport, sanitizeGradeInput, validateGradeInput, type GradeInput } from '../../utils/teacherValidation';
 import type { QueuedGradeUpdate, OCRReviewData } from './useGradingData';
+import { FILE_SIZE_LIMITS } from '../../constants';
 
 export interface GradingActionsProps {
   csvInputRef: React.RefObject<HTMLInputElement>;
@@ -238,10 +239,10 @@ const GradingActions: React.FC<GradingActionsProps> = ({
        return;
      }
 
-     if (file.size > 10 * 1024 * 1024) {
-      onShowToast(FILE_ERROR_MESSAGES.FILE_TOO_LARGE('10MB'), 'error');
-      return;
-    }
+     if (file.size > FILE_SIZE_LIMITS.MATERIAL_DEFAULT) {
+       onShowToast(FILE_ERROR_MESSAGES.FILE_TOO_LARGE('50MB'), 'error');
+       return;
+     }
 
     _setIsOCRProcessing(true);
     _setOCRProgress({ status: 'Memulai OCR...', progress: 0 });
@@ -307,6 +308,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
                     size="md"
                     onClick={() => _ocrInputRef.current?.click()}
                     disabled={isOCRProcessing}
+                    aria-label="Pindai ujian menggunakan kamera atau upload file"
                 >
                     📷 Scan Exam
                 </Button>
@@ -318,6 +320,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           disabled={isExportingPDF || grades.length === 0}
           variant="green-solid"
           isLoading={isExportingPDF}
+          aria-label="Ekspor nilai siswa ke file PDF"
         >
           {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
         </Button>

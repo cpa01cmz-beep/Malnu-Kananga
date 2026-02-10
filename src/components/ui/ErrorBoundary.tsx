@@ -1,8 +1,12 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { logger } from '../../utils/logger';
+import { copyToClipboard, CopyResult } from '../../utils/clipboard';
 import Card from './Card';
 import Button from './Button';
+import SmallActionButton from './SmallActionButton';
 import { ArrowPathIcon, AlertTriangleIcon } from '../icons/StatusIcons';
+import { CheckIcon } from '../icons/CheckIcon';
+import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { INFO_EMAIL } from '../../constants';
 
 interface ErrorBoundaryProps {
@@ -17,6 +21,7 @@ interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+  copyStatus: CopyResult | null;
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -26,6 +31,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       hasError: false,
       error: null,
       errorInfo: null,
+      copyStatus: null,
     };
   }
 
@@ -69,6 +75,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       hasError: false,
       error: null,
       errorInfo: null,
+      copyStatus: null,
     }, () => {
       if (this.props.onReset) {
         this.props.onReset();
@@ -78,6 +85,43 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   handleReload = (): void => {
     window.location.reload();
+  };
+
+  formatErrorDetails = (): string => {
+    const { error, errorInfo } = this.state;
+    if (!error) return '';
+
+    const timestamp = new Date().toISOString();
+    const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown';
+    const url = typeof window !== 'undefined' ? window.location.href : 'Unknown';
+
+    let details = `[Error Report]\n`;
+    details += `Timestamp: ${timestamp}\n`;
+    details += `URL: ${url}\n`;
+    details += `User Agent: ${userAgent}\n\n`;
+    details += `Error: ${error.name}\n`;
+    details += `Message: ${error.message}\n`;
+    if (error.stack) {
+      details += `\nStack Trace:\n${error.stack}\n`;
+    }
+    if (errorInfo?.componentStack) {
+      details += `\nComponent Stack:\n${errorInfo.componentStack}\n`;
+    }
+
+    return details;
+  };
+
+  handleCopyError = async (): Promise<void> => {
+    const errorDetails = this.formatErrorDetails();
+    const result = await copyToClipboard(errorDetails);
+    this.setState({ copyStatus: result });
+
+    // Clear the success message after 3 seconds
+    if (result.success) {
+      setTimeout(() => {
+        this.setState({ copyStatus: null });
+      }, 3000);
+    }
   };
 
   render(): ReactNode {
@@ -120,13 +164,30 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
                   Lihat detail error (untuk debugging)
                 </summary>
                 <div className="mt-4 p-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-x-auto">
-                  <p className="text-sm font-mono text-red-600 dark:text-red-400 mb-2">
-                    {error.name}: {error.message}
-                  </p>
+                  <div className="flex justify-between items-start mb-3">
+                    <p className="text-sm font-mono text-red-600 dark:text-red-400">
+                      {error.name}: {error.message}
+                    </p>
+                    <SmallActionButton
+                      variant={this.state.copyStatus?.success ? 'success' : 'info'}
+                      onClick={this.handleCopyError}
+                      icon={this.state.copyStatus?.success ? <CheckIcon className="w-4 h-4" /> : <DocumentTextIcon className="w-4 h-4" />}
+                      iconPosition="left"
+                      aria-label="Salin detail error ke clipboard"
+                      className="ml-2 flex-shrink-0"
+                    >
+                      {this.state.copyStatus?.success ? 'Tersalin!' : 'Salin Error'}
+                    </SmallActionButton>
+                  </div>
                   {error.stack && (
                     <pre className="text-xs text-neutral-600 dark:text-neutral-400 whitespace-pre-wrap">
                       {error.stack}
                     </pre>
+                  )}
+                  {this.state.copyStatus && !this.state.copyStatus.success && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-2" role="alert">
+                      {this.state.copyStatus.message}
+                    </p>
                   )}
                 </div>
               </details>

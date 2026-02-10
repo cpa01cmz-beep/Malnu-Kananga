@@ -10,7 +10,7 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS, CONVERSION } from '../constants';
+import { FILE_SIZE_LIMITS, FILE_VALIDATION, XSS_CONFIG, CONVERSION } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -93,16 +93,9 @@ export interface FileValidationOptions {
 
 // XSS sanitization utilities
 export class XSSSanitizer {
-  private static dangerousTags = [
-    'script', 'iframe', 'object', 'embed', 'form', 'input',
-    'button', 'textarea', 'select', 'option', 'link', 'style',
-  ] as const;
-
-  private static dangerousAttributes = [
-    'onerror', 'onload', 'onmouseover', 'onmouseout', 'onclick',
-    'ondblclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup',
-    'onfocus', 'onblur', 'javascript', 'data', 'vbscript',
-  ] as const;
+  // Flexy: Using centralized XSS_CONFIG constants for security
+  private static dangerousTags = XSS_CONFIG.DANGEROUS_TAGS;
+  private static dangerousAttributes = XSS_CONFIG.DANGEROUS_ATTRIBUTES;
 
   static sanitizeFileName(fileName: string): string {
     let sanitized = fileName;
@@ -198,13 +191,8 @@ export class FileTypeDetector {
 
 // File name validation
 export class FileNameValidator {
-  private static MAX_LENGTH = 255;
-  private static MIN_LENGTH = 1;
-  private static RESERVED_NAMES = [
-    'CON', 'PRN', 'AUX', 'NUL',
-    'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9',
-    'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9',
-  ];
+  // Flexy: Using centralized FILE_VALIDATION.RESERVED_NAMES constant
+  private static RESERVED_NAMES = FILE_VALIDATION.RESERVED_NAMES;
 
   static validate(fileName: string): ValidationResult {
     const errors: string[] = [];
@@ -213,15 +201,15 @@ export class FileNameValidator {
     // Check length
     if (fileName.length === 0) {
       errors.push('Nama file tidak boleh kosong');
-    } else if (fileName.length < this.MIN_LENGTH) {
-      errors.push(`Nama file minimal ${this.MIN_LENGTH} karakter`);
-    } else if (fileName.length > this.MAX_LENGTH) {
-      errors.push(`Nama file maksimal ${this.MAX_LENGTH} karakter`);
+    } else if (fileName.length < FILE_VALIDATION.FILENAME_MIN_LENGTH) {
+      errors.push(`Nama file minimal ${FILE_VALIDATION.FILENAME_MIN_LENGTH} karakter`);
+    } else if (fileName.length > FILE_VALIDATION.FILENAME_MAX_LENGTH) {
+      errors.push(`Nama file maksimal ${FILE_VALIDATION.FILENAME_MAX_LENGTH} karakter`);
     }
 
     // Check for reserved names
     const nameWithoutExtension = fileName.split('.')[0].toUpperCase();
-    if (this.RESERVED_NAMES.includes(nameWithoutExtension)) {
+    if ((this.RESERVED_NAMES as readonly string[]).includes(nameWithoutExtension)) {
       errors.push(`"${nameWithoutExtension}" adalah nama yang tidak diizinkan`);
     }
 
@@ -242,7 +230,7 @@ export class FileNameValidator {
     }
 
     // Warnings
-    if (fileName.length > 100) {
+    if (fileName.length > FILE_VALIDATION.FILENAME_WARNING_LENGTH) {
       warnings.push('Nama file panjang dapat menyulitkan pengelolaan');
     }
 
@@ -293,9 +281,9 @@ export class PPDBDocumentValidator {
     }
 
     // Validate file size for PPDB documents
-    const maxPPDBSize = 10 * CONVERSION.BYTES_PER_MB; // 10MB for PPDB
+    const maxPPDBSize = FILE_SIZE_LIMITS.PPDB_DOCUMENT;
     if (file.size > maxPPDBSize) {
-      warnings.push('Ukuran dokumen PPDB idealnya tidak melebihi 10MB untuk pemrosesan OCR yang optimal');
+      warnings.push(`Ukuran dokumen PPDB idealnya tidak melebihi ${FILE_SIZE_LIMITS.PPDB_DOCUMENT / (1024 * 1024)}MB untuk pemrosesan OCR yang optimal`);
     }
 
     // Validate document requirements
@@ -353,8 +341,8 @@ export class PPDBDocumentValidator {
     let score = 100;
 
     // Validate file size for OCR
-    const minSize = 10 * CONVERSION.BYTES_PER_KB; // 10KB
-    const maxSize = 5 * CONVERSION.BYTES_PER_MB; // 5MB
+    const minSize = FILE_SIZE_LIMITS.IMAGE_MIN;
+    const maxSize = FILE_SIZE_LIMITS.PROFILE_IMAGE;
 
     if (file.size < minSize) {
       errors.push('Ukuran gambar terlalu kecil untuk OCR yang optimal');
@@ -391,7 +379,7 @@ export class MaterialUploadValidator {
     // Default options
     const sanitizeName = options.sanitizeFileName !== false;
     const maxSize = options.maxSizeMB
-      ? options.maxSizeMB * CONVERSION.BYTES_PER_MB
+      ? options.maxSizeMB * 1024 * 1024
       : undefined;
 
     // Validate file name
@@ -429,12 +417,12 @@ export class MaterialUploadValidator {
 
     // Validate file size
     if (maxSize && file.size > maxSize) {
-      const maxSizeMB = Math.round(maxSize / CONVERSION.BYTES_PER_MB);
+      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
       errors.push(`Ukuran file terlalu besar. Maksimal: ${maxSizeMB}MB`);
     } else if (fileType) {
       const maxTypeSize = MATERIAL_FILE_TYPES[fileType].maxSize;
       if (file.size > maxTypeSize) {
-        const maxSizeMB = Math.round(maxTypeSize / CONVERSION.BYTES_PER_MB);
+        const maxSizeMB = Math.round(maxTypeSize / (1024 * 1024));
         errors.push(`Ukuran ${MATERIAL_FILE_TYPES[fileType].displayName} tidak boleh melebihi ${maxSizeMB}MB`);
       }
     }
@@ -527,12 +515,12 @@ export class MaterialUploadValidator {
     }
 
     // Check batch size limit
-    const maxBatchSize = 500 * CONVERSION.BYTES_PER_MB; // 500MB
+    const maxBatchSize = FILE_SIZE_LIMITS.BATCH_TOTAL;
     const canUpload = overallValid && totalSize <= maxBatchSize;
 
     if (totalSize > maxBatchSize) {
       results.forEach(r => {
-        r.warnings.push('Total ukuran file melebihi batas 500MB untuk batch upload');
+        r.warnings.push(`Total ukuran file melebihi batas ${FILE_SIZE_LIMITS.BATCH_TOTAL / (1024 * 1024)}MB untuk batch upload`);
       });
     }
 
@@ -548,9 +536,10 @@ export class MaterialUploadValidator {
 // Utility functions
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
+  const k = CONVERSION.BYTES_PER_KB;
   const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
-  return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
 export const getAllowedFileExtensions = (
@@ -568,7 +557,7 @@ export const getAllowedFileExtensions = (
 
 export const getMaxFileSizeForType = (fileType: MaterialFileType): string => {
   const maxSize = MATERIAL_FILE_TYPES[fileType].maxSize;
-  const maxSizeMB = Math.round(maxSize / CONVERSION.BYTES_PER_MB);
+  const maxSizeMB = Math.round(maxSize / (1024 * 1024));
   return `${maxSizeMB}MB`;
 };
 

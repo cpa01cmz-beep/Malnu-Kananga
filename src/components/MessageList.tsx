@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { EmptyState } from './ui/LoadingState';
+import { ChatIcon } from './icons/ChatIcon';
 import type { Conversation, ConversationFilter } from '../types';
 
 interface MessageListProps {
@@ -9,6 +11,7 @@ interface MessageListProps {
   selectedConversationId?: string;
   filter?: 'all' | 'direct' | 'group';
   onManageGroup?: (conversation: Conversation) => void;
+  onStartNewConversation?: () => void;
 }
 
 export function MessageList({
@@ -16,6 +19,7 @@ export function MessageList({
   selectedConversationId,
   filter: externalFilter,
   onManageGroup,
+  onStartNewConversation,
 }: MessageListProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -247,12 +251,31 @@ export function MessageList({
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-gray-500">
-            <p className="text-center">
-              {searchQuery || filterType !== 'all' || showUnreadOnly
-                ? 'Tidak ada percakapan yang sesuai'
-                : 'Belum ada percakapan. Mulai percakapan baru!'}
-            </p>
+          <div className="flex h-full items-center justify-center">
+            <EmptyState
+              message={
+                searchQuery || filterType !== 'all' || showUnreadOnly
+                  ? 'Tidak ada percakapan yang sesuai'
+                  : 'Belum ada percakapan'
+              }
+              subMessage={
+                searchQuery || filterType !== 'all' || showUnreadOnly
+                  ? 'Coba ubah filter atau kata kunci pencarian'
+                  : 'Mulai percakapan baru untuk berkomunikasi'
+              }
+              icon={<ChatIcon />}
+              size="md"
+              variant="default"
+              action={
+                onStartNewConversation && !searchQuery && filterType === 'all' && !showUnreadOnly
+                  ? {
+                      label: 'Mulai Percakapan',
+                      onClick: onStartNewConversation,
+                    }
+                  : undefined
+              }
+              ariaLabel="Tidak ada percakapan"
+            />
           </div>
         ) : (
           <div>
@@ -274,11 +297,13 @@ export function MessageList({
                    <div className="flex items-start gap-3">
                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
                        {typeof avatar === 'string' && avatar.startsWith('http') ? (
-                         <img
-                           src={avatar}
-                           alt={name}
-                           className="h-full w-full rounded-full object-cover"
-                         />
+<img
+                            src={avatar}
+                            alt={name}
+                            className="h-full w-full rounded-full object-cover"
+                            width={48}
+                            height={48}
+                          />
                        ) : (
                          avatar
                        )}

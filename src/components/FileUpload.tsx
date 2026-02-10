@@ -5,6 +5,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { mbToBytes } from '../constants';
 import Button from './ui/Button';
 import ProgressBar from './ui/ProgressBar';
 
@@ -46,13 +47,19 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState<number>(0);
   const [uploadedBytes, setUploadedBytes] = useState<number>(0);
   const [uploadStartTime, setUploadStartTime] = useState<number>(0);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [recentlyUploadedFileId, setRecentlyUploadedFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+      }
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
       }
     };
   }, []);
@@ -77,7 +84,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   const validateFile = (file: File): { valid: boolean; error?: string } => {
-    if (file.size > maxSizeMB * 1024 * 1024) {
+    if (file.size > mbToBytes(maxSizeMB)) {
       return {
         valid: false,
         error: `File size exceeds ${maxSizeMB}MB limit`,
@@ -151,8 +158,21 @@ const FileUpload: React.FC<FileUploadProps> = ({
           uploadDate: new Date().toISOString(),
         };
 
+        // Trigger success animation
+        setShowSuccessAnimation(true);
+        setRecentlyUploadedFileId(newFile.id);
+
         setFiles((prev) => [...prev, newFile]);
         onFileUploaded?.(response.data);
+
+        // Clear animation states after delay
+        if (successTimeoutRef.current) {
+          clearTimeout(successTimeoutRef.current);
+        }
+        successTimeoutRef.current = setTimeout(() => {
+          setShowSuccessAnimation(false);
+          setRecentlyUploadedFileId(null);
+        }, 2000);
 
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -229,13 +249,42 @@ const FileUpload: React.FC<FileUploadProps> = ({
         onClick={() => !disabled && !uploading && fileInputRef.current?.click()}
         disabled={disabled || uploading}
         aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop'}
-        className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full ${
+        className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 w-full min-h-[120px] sm:min-h-[140px] ${
           disabled || uploading
             ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
-            : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
+            : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-md hover:-translate-y-1 active:scale-[0.98] touch-manipulation'
         }`}
       >
-        {uploading ? (
+        {showSuccessAnimation ? (
+          <div className="flex flex-col items-center justify-center animate-fade-in">
+            <div className="relative mb-4">
+              <div className="absolute inset-0 bg-green-100 dark:bg-green-900/30 rounded-full animate-ping" />
+              <div className="relative w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center animate-scale-in">
+                <svg
+                  className="w-8 h-8 text-green-600 dark:text-green-400 animate-checkmark"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                    className="animate-draw-check"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p className="text-sm font-medium text-green-700 dark:text-green-400 animate-fade-in-up">
+              Upload successful!
+            </p>
+            <p className="sr-only" role="status" aria-live="polite">
+              File has been uploaded successfully
+            </p>
+          </div>
+        ) : uploading ? (
           <div className="w-full max-w-sm">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -277,11 +326,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
           </div>
         ) : (
           <>
-            <CloudArrowUpIcon className="w-12 h-12 text-neutral-400 dark:text-neutral-500 mb-4" />
-            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+            <CloudArrowUpIcon className="w-10 h-10 sm:w-12 sm:h-12 text-neutral-400 dark:text-neutral-500 mb-3 sm:mb-4 transition-transform group-hover:scale-110" />
+            <p className="text-sm sm:text-base font-medium text-neutral-700 dark:text-neutral-300 mb-1 sm:mb-2">
               Click to upload or drag and drop
             </p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400">
               {acceptedFileTypes} (Max {maxSizeMB}MB)
             </p>
           </>
@@ -303,7 +352,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             Tip: Press Delete key on a focused file to quickly remove it
           </p>
           <div role="list" className="space-y-2">
-          {files.map((file) => (
+          {files.map((file, index) => (
             <div
               key={file.id}
               tabIndex={0}
@@ -315,7 +364,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   handleDelete(file);
                 }
               }}
-              className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg hover:shadow-sm transition-shadow focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+              className={`flex items-center justify-between p-3 sm:p-4 bg-white/95 dark:bg-neutral-800/95 border border-neutral-200/60 dark:border-neutral-700/60 rounded-xl hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 backdrop-blur-sm touch-manipulation active:scale-[0.98] ${
+                recentlyUploadedFileId === file.id
+                  ? 'animate-slide-in-right ring-2 ring-green-400/60 dark:ring-green-500/60 ring-offset-2 dark:ring-offset-neutral-900 bg-green-50/30 dark:bg-green-900/20'
+                  : ''
+              } ${index < files.length - 1 ? 'animate-fade-in' : ''}`}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-2xl" aria-hidden="true">{getFileIcon(file.type)}</span>
@@ -329,26 +382,28 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="success"
-                  size="sm"
-                  onClick={() => handleDownload(file.key)}
-                  disabled={disabled}
-                  iconOnly
-                  icon={<ArrowDownTrayIcon className="w-4 h-4" />}
-                  aria-label={`Download ${file.name}`}
-                  title="Download file"
-                />
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(file)}
-                  disabled={disabled}
-                  iconOnly
-                  icon={<TrashIcon className="w-4 h-4" />}
-                  aria-label={`Delete ${file.name}`}
-                  title={`Delete file (Press Delete key)`}
-                />
+                 <Button
+                   variant="success"
+                   size="icon"
+                   onClick={() => handleDownload(file.key)}
+                   disabled={disabled}
+                   iconOnly
+                   icon={<ArrowDownTrayIcon className="w-4 h-4" />}
+                   aria-label={`Download ${file.name}`}
+                   title="Download file"
+                   className="mobile-touch-target"
+                 />
+                 <Button
+                   variant="danger"
+                   size="icon"
+                   onClick={() => handleDelete(file)}
+                   disabled={disabled}
+                   iconOnly
+                   icon={<TrashIcon className="w-4 h-4" />}
+                   aria-label={`Delete ${file.name}`}
+                   title={`Delete file (Press Delete key)`}
+                   className="mobile-touch-target"
+                 />
               </div>
             </div>
           ))}

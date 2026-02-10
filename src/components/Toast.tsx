@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
-import { OPACITY_TOKENS } from '../constants';
+import { OPACITY_TOKENS, TIMEOUT_CONFIG, TOAST_UI_STRINGS } from '../constants';
 
 export type ToastType = 'success' | 'info' | 'error' | 'warning';
 
@@ -13,11 +13,15 @@ interface ToastProps {
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = 3000 }) => {
+const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = TIMEOUT_CONFIG.TOAST_DEFAULT_DURATION }) => {
   const toastRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
+  const [progress, setProgress] = useState(100);
+  const animationFrameRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const pausedProgressRef = useRef<number>(100);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -28,11 +32,16 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
 
   const handleMouseEnter = useCallback(() => {
     setIsPaused(true);
-  }, []);
+    pausedProgressRef.current = progress;
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+    }
+  }, [progress]);
 
   const handleMouseLeave = useCallback(() => {
     setIsPaused(false);
-  }, []);
+    startTimeRef.current = Date.now() - ((100 - pausedProgressRef.current) / 100) * duration;
+  }, [duration]);
 
   useEffect(() => {
     if (isVisible && !isPaused) {
@@ -43,11 +52,39 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, remainingTime, isPaused, onClose]);
 
+  // Progress bar animation - use ref to avoid dependency cycle
+  useEffect(() => {
+    if (isVisible && !isPaused) {
+      startTimeRef.current = Date.now() - ((100 - progress) / 100) * duration;
+
+      const animate = () => {
+        const elapsed = Date.now() - startTimeRef.current;
+        const newProgress = Math.max(0, 100 - (elapsed / duration) * 100);
+        setProgress(newProgress);
+
+        if (newProgress > 0) {
+          animationFrameRef.current = window.requestAnimationFrame(animate);
+        }
+      };
+
+      animationFrameRef.current = window.requestAnimationFrame(animate);
+
+      return () => {
+        if (animationFrameRef.current) {
+          window.cancelAnimationFrame(animationFrameRef.current);
+        }
+      };
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVisible, isPaused, duration]);
+
   useEffect(() => {
     if (isVisible) {
       setRemainingTime(duration);
       setIsPaused(false);
-      
+      setProgress(100);
+      pausedProgressRef.current = 100;
+
       previousActiveElementRef.current = document.activeElement as HTMLElement;
       toastRef.current?.focus();
     } else {
@@ -57,19 +94,19 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, duration]);
 
-  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] transform max-w-md border backdrop-blur-xl";
+  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-xl flex items-center gap-3 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) transform max-w-md border backdrop-blur-xl hover:shadow-2xl glass-effect-elevated hover-lift-premium";
   const typeClasses = {
-    success: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    info: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    warning: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
+    success: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white feedback-success glass-effect`,
+    info: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white glass-effect`,
+    error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white feedback-error glass-effect`,
+    warning: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white glass-effect`,
   };
 
   const ariaRole = type === 'error' ? 'alert' : 'status';
   const ariaLive = type === 'error' ? 'assertive' : 'polite';
 
   const visibilityClasses = isVisible
-    ? "translate-x-0 opacity-100"
+    ? "translate-x-0 opacity-100 animate-slide-in-right"
     : "translate-x-full opacity-0 pointer-events-none";
 
   const icons = {
@@ -95,6 +132,13 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       )
   }
 
+  const progressBarColors = {
+    success: 'bg-primary-500',
+    info: 'bg-blue-500',
+    error: 'bg-red-500',
+    warning: 'bg-amber-500',
+  };
+
   return (
     <div
       ref={toastRef}
@@ -113,10 +157,29 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <span className="font-medium text-base leading-snug flex-grow">{message}</span>
       <IconButton
         icon={<CloseIcon />}
-        ariaLabel="Tutup notifikasi"
+        ariaLabel={TOAST_UI_STRINGS.CLOSE}
         size="sm"
         onClick={onClose}
       />
+      {/* Progress bar with accessibility */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-b-xl overflow-hidden"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress)}
+        aria-label={isPaused ? 'Notifikasi dijeda. Gerakkan mouse keluar untuk melanjutkan.' : 'Waktu tersisa sebelum notifikasi tertutup otomatis'}
+      >
+        <div
+          className={`h-full ${progressBarColors[type]} transition-none`}
+          style={{ width: `${progress}%` }}
+          aria-hidden="true"
+        />
+      </div>
+      {/* Screen reader announcement for remaining time */}
+      <span className="sr-only" role="status" aria-live="polite">
+        {isVisible && !isPaused && Math.round(progress) > 0 && Math.round(progress) < 100 && `${Math.round(progress)}% waktu tersisa`}
+      </span>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, RETRY_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
 import { validateVoiceSettingsBackup, isVoiceSettings } from '../utils/voiceSettingsValidation';
@@ -23,13 +23,13 @@ export interface VoiceSettingsBackup {
 const errorRecoveryStrategy = new ErrorRecoveryStrategy(
   {
     maxAttempts: 3,
-    initialDelay: 500,
-    maxDelay: 2000,
+    initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+    maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
     backoffFactor: 2,
   },
   {
     failureThreshold: 3,
-    resetTimeout: 60000,
+    resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
   }
 );
 
@@ -180,11 +180,11 @@ export const validateBackupData = (backupData: string): { isValid: boolean; erro
   }
 };
 
-export const getErrorRecoveryState = () => {
+export const getErrorRecoveryState = (): ReturnType<typeof errorRecoveryStrategy.getCircuitBreakerState> => {
   return errorRecoveryStrategy.getCircuitBreakerState();
 };
 
-export const resetErrorRecovery = () => {
+export const resetErrorRecovery = (): void => {
   errorRecoveryStrategy.resetCircuitBreaker();
   logger.info('Error recovery state reset');
 };

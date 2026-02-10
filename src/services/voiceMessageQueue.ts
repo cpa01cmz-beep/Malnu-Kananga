@@ -1,5 +1,5 @@
  
-import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
+import { VOICE_CONFIG, VOICE_NOTIFICATION_CONFIG, ERROR_MESSAGES } from '../constants';
 import type { ChatMessage } from '../types';
 import { logger } from '../utils/logger';
 
@@ -185,7 +185,7 @@ class VoiceMessageQueue {
       setTimeout(() => {
         clearInterval(checkInterval);
         resolve();
-      }, 30000);
+      }, VOICE_NOTIFICATION_CONFIG.SPEECH_TIMEOUT);
     });
   }
 

@@ -87,10 +87,12 @@ const PageNumbers: React.FC<PageNumbersProps> = ({
             onClick={() => onPageChange(page)}
             disabled={page === currentPage}
             className={`
-              px-3 py-2 text-sm font-medium rounded-md transition-colors
+              px-3 py-2 text-sm font-medium rounded-md transition-all duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50
+              focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900
               ${page === currentPage
                 ? 'bg-primary-600 text-white dark:bg-primary-500'
-                : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:scale-105 active:scale-95'
               }
               ${page === currentPage ? 'cursor-default' : 'cursor-pointer'}
             `}

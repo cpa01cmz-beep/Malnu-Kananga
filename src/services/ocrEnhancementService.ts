@@ -7,8 +7,11 @@ import {
   ErrorType
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
-import { AI_MODELS } from './ai/geminiClient';
 import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';
+import { AI_MODELS, TEXT_TRUNCATION } from '../constants';
+
+// Models - Flexy: Using centralized AI model names!
+const FLASH_MODEL = AI_MODELS.FLASH;
 
 // Lazy initialization of AI client with error handling
 let aiInstance: GoogleGenAIType | null = null;
@@ -83,7 +86,7 @@ export async function generateTextSummary(
 
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
-        model: AI_MODELS.FLASH,
+        model: FLASH_MODEL,
         contents,
         config: { systemInstruction: 'Anda adalah asisten yang membuat ringkasan.' }
       });
@@ -100,7 +103,7 @@ export async function generateTextSummary(
     if (trimmedSummary) {
       ocrCache.set({
         operation: 'summary',
-        input: text.substring(0, 500),
+        input: text.substring(0, TEXT_TRUNCATION.MEDIUM_PREVIEW),
         context: `maxLength:${maxLength}`,
         thinkingMode: false
       }, trimmedSummary);
@@ -158,7 +161,7 @@ export async function compareTextsForSimilarity(
 
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
-        model: AI_MODELS.FLASH,
+        model: FLASH_MODEL,
         contents,
         config: { systemInstruction: 'Anda adalah analis kemiripan teks.' }
       });
@@ -180,7 +183,7 @@ export async function compareTextsForSimilarity(
       // Cache the result
       ocrCache.set({
         operation: 'similarity',
-        input: `${text1.substring(0, 200)}|${text2.substring(0, 200)}`,
+        input: `${text1.substring(0, TEXT_TRUNCATION.COMPARISON_TEXT)}|${text2.substring(0, TEXT_TRUNCATION.COMPARISON_TEXT)}`,
         context: `threshold:${threshold}`,
         thinkingMode: false
       }, result);

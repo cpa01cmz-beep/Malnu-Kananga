@@ -7,6 +7,7 @@ import IconButton from './ui/IconButton';
 import { api } from '../services/apiService';
 import { validatePasswordRealtime, getPasswordRequirements } from '../utils/validation';
 import { logger } from '../utils/logger';
+import { COMPONENT_TIMEOUTS } from '../constants';
 
 const EyeIcon = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,7 +222,7 @@ const ResetPassword = () => {
                     onFocus={() => setShowPasswordRequirements(true)}
                     onBlur={() => {
                       setTouchedFields(prev => ({ ...prev, password: true }));
-                      setTimeout(() => setShowPasswordRequirements(false), 3000);
+                      setTimeout(() => setShowPasswordRequirements(false), COMPONENT_TIMEOUTS.PASSWORD_REQUIREMENTS_HIDE);
                     }}
                     errorText={touchedFields.password ? passwordError : undefined}
                     state={touchedFields.password ? (passwordError ? 'error' : 'success') : 'default'}

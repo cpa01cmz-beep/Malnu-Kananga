@@ -1,9 +1,9 @@
+import { UI_ACCESSIBILITY, EMAIL_VALIDATION, HTTP } from '../constants';
+
 /**
  * Validation utilities for form inputs
  * Indonesian language error messages
  */
-
-import { VALIDATION_LIMITS } from '../constants';
 
 export interface ValidationRule {
   validate: (value: string) => boolean;
@@ -30,7 +30,7 @@ export const emailValidation: ValidationRule = {
     
     if (parts.length !== 2) return false;
     if (parts[0].length === 0 || parts[1].length === 0) return false;
-    if (parts[0].length > VALIDATION_LIMITS.EMAIL_LOCAL_PART_MAX || parts[1].length > VALIDATION_LIMITS.EMAIL_DOMAIN_MAX) return false;
+    if (parts[0].length > EMAIL_VALIDATION.MAX_LOCAL_LENGTH || parts[1].length > EMAIL_VALIDATION.MAX_DOMAIN_LENGTH) return false;
     if (parts[0].startsWith('.') || parts[0].endsWith('.')) return false;
     
     return true;
@@ -42,10 +42,10 @@ export const emailValidation: ValidationRule = {
 export const passwordValidation: ValidationRule = {
   validate: (password: string) => {
     if (!password || password.length === 0) return false;
-    if (password.length < VALIDATION_LIMITS.PASSWORD_MIN_LENGTH) return false;
+    if (password.length < EMAIL_VALIDATION.MIN_PASSWORD_LENGTH) return false; // Minimum password length from constants
     return true;
   },
-  message: `Password minimal ${VALIDATION_LIMITS.PASSWORD_MIN_LENGTH} karakter`
+  message: 'Password minimal 6 karakter'
 };
 
 export const getPasswordRequirements = (password: string): {
@@ -54,9 +54,9 @@ export const getPasswordRequirements = (password: string): {
   status: 'met' | 'unmet';
 }[] => [
   {
-    met: password.length >= VALIDATION_LIMITS.PASSWORD_MIN_LENGTH,
-    requirement: `Minimal ${VALIDATION_LIMITS.PASSWORD_MIN_LENGTH} karakter`,
-    status: password.length >= VALIDATION_LIMITS.PASSWORD_MIN_LENGTH ? 'met' : 'unmet'
+    met: password.length >= EMAIL_VALIDATION.MIN_PASSWORD_LENGTH,
+    requirement: `Minimal ${EMAIL_VALIDATION.MIN_PASSWORD_LENGTH} karakter`,
+    status: password.length >= EMAIL_VALIDATION.MIN_PASSWORD_LENGTH ? 'met' : 'unmet'
   },
   {
     met: password.length > 0,
@@ -93,7 +93,7 @@ export function validatePasswordRealtime(password: string): ValidationResult {
     return { isValid: false, errors };
   }
   
-  if (password.length < VALIDATION_LIMITS.PASSWORD_MIN_LENGTH) {
+  if (password.length < EMAIL_VALIDATION.MIN_PASSWORD_LENGTH) {
     errors.push(passwordValidation.message);
   }
   
@@ -132,19 +132,19 @@ export function classifyLoginError(error: unknown): string {
     return 'Waktu habis. Silakan coba lagi.';
   }
   
-  // Authentication errors
-  if (errorMessage.includes('401') || errorMessage.includes('unauthorized') || 
+  // Authentication errors - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.UNAUTHORIZED)) || errorMessage.includes('unauthorized') ||
       errorMessage.includes('kredensial') || errorMessage.includes('login gagal')) {
     return 'Email atau password salah. Periksa kembali data Anda.';
   }
-  
-  // Server errors
-  if (errorMessage.includes('500') || errorMessage.includes('server error')) {
+
+  // Server errors - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.INTERNAL_SERVER_ERROR)) || errorMessage.includes('server error')) {
     return 'Server sedang bermasalah. Silakan coba beberapa saat lagi.';
   }
-  
-  // Rate limiting
-  if (errorMessage.includes('429') || errorMessage.includes('rate limit') || 
+
+  // Rate limiting - Flexy: Using HTTP.STATUS_CODES constants
+  if (errorMessage.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) || errorMessage.includes('rate limit') ||
       errorMessage.includes('terlalu banyak')) {
     return 'Terlalu banyak percobaan login. Tunggu sebentar lalu coba lagi.';
   }
@@ -159,7 +159,7 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   announcement.setAttribute('role', 'alert');
   announcement.setAttribute('aria-live', 'polite');
   announcement.style.position = 'absolute';
-  announcement.style.left = '-10000px';
+  announcement.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
   announcement.style.width = '1px';
   announcement.style.height = '1px';
   announcement.style.overflow = 'hidden';
@@ -169,5 +169,5 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   
   setTimeout(() => {
     document.body.removeChild(announcement);
-  }, 1000);
+  }, UI_ACCESSIBILITY.SCREEN_READER_TIMEOUT);
 }

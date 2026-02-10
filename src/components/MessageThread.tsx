@@ -150,8 +150,23 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      <div className="flex h-full flex-col">
+        <div className="flex items-center border-b border-gray-200 bg-white px-4 py-3">
+          <div className="flex h-10 w-10 animate-pulse items-center justify-center rounded-full bg-gray-200" />
+          <div className="ml-3 space-y-2">
+            <div className="h-4 w-32 animate-pulse rounded bg-gray-200" />
+            <div className="h-3 w-20 animate-pulse rounded bg-gray-200" />
+          </div>
+        </div>
+        <div className="flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[70%] space-y-2 ${i % 2 === 0 ? 'items-end' : 'items-start'}`}>
+                <div className={`h-16 w-48 animate-pulse rounded-lg bg-gray-200 ${i % 2 === 0 ? 'rounded-br-none' : 'rounded-bl-none'}`} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -205,8 +220,27 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
 
       <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
         {messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-gray-500">
-            <p>Belum ada pesan. Mulai percakapan!</p>
+          <div className="flex h-full flex-col items-center justify-center px-4">
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-50">
+              <svg
+                className="h-10 w-10 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-900">Mulai Percakapan</h3>
+            <p className="max-w-xs text-center text-gray-500">
+              Belum ada pesan di percakapan ini. Kirim pesan pertama untuk memulai!
+            </p>
           </div>
         ) : (
           <div className="space-y-4">

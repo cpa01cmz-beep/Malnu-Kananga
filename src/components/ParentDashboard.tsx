@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { UserIcon } from './icons/UserIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
@@ -52,6 +52,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [offlineData, setOfflineData] = useState<CachedParentData | null>(null);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
+  const [_navigatingView, setNavigatingView] = useState<string | null>(null);
+  const [initializingNotifications, setInitializingNotifications] = useState(false);
   
   const networkStatus = useNetworkStatus();
 
@@ -224,6 +226,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   // Request notification permission on first load
   useEffect(() => {
     const initializeNotifications = async () => {
+      setInitializingNotifications(true);
       try {
         const granted = await requestPermission();
         if (granted) {
@@ -238,6 +241,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         }
       } catch (error) {
         logger.error('Failed to initialize parent notifications:', error);
+      } finally {
+        setInitializingNotifications(false);
       }
     };
 
@@ -344,6 +349,15 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     setCurrentView('home');
   };
 
+  const handleViewNavigation = useCallback((view: PortalView) => {
+    setNavigatingView(view);
+    // Simulate navigation delay to show loading state
+    setTimeout(() => {
+      setCurrentView(view);
+      setNavigatingView(null);
+    }, 300);
+  }, []);
+
   // Handle manual sync
   const handleSync = async () => {
     if (!networkStatus.isOnline) {
@@ -403,26 +417,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     }
   }, [networkStatus.isOnline, offlineData, offlineDataService, onShowToast]);
 
-  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'grade_updated',
-      'grade_created',
-      'attendance_marked',
-      'attendance_updated',
-      'announcement_created',
-      'announcement_updated',
-      'event_created',
-      'event_updated',
-    ] as RealTimeEventType[],
-    enabled: networkStatus.isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; data: { studentId: string } };
-      if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
-        if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
-          refreshChildData(selectedChild.studentId);
-        }
+  const parentEventTypes = useMemo(() => [
+    'grade_updated',
+    'grade_created',
+    'attendance_marked',
+    'attendance_updated',
+    'announcement_created',
+    'announcement_updated',
+    'event_created',
+    'event_updated',
+  ] as RealTimeEventType[], []);
+
+  const handleParentRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; data: { studentId: string } };
+    if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
+      if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
+        refreshChildData(selectedChild.studentId);
       }
-    }, [selectedChild, refreshChildData]),
+    }
+  }, [selectedChild, refreshChildData]);
+
+  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
+    eventTypes: parentEventTypes,
+    enabled: networkStatus.isOnline,
+    onEvent: handleParentRealtimeEvent,
   });
 
   
@@ -469,6 +487,18 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 </p>
               </div>
             </Card>
+
+            {/* Notification Initialization Loading */}
+            {initializingNotifications && (
+                <Card className={`mb-8 animate-fade-in-up bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800`}>
+                    <div className="flex items-center gap-3 p-4">
+                        <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                        <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                            Menginisialisasi notifikasi orang tua...
+                        </span>
+                    </div>
+                </Card>
+            )}
 
             {/* Child Selection */}
             {children.length > 1 && (
@@ -554,7 +584,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -563,7 +593,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'grades' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -572,7 +602,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'attendance' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -581,25 +611,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'library' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
-            <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
+            <ELibrary onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
           </div>
         )}
 
         {currentView === 'events' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
-            <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+            <OsisEvents onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} />
           </div>
         )}
 
         {currentView === 'reports' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
           </div>
@@ -608,7 +638,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'messaging' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentMessagingView onShowToast={onShowToast} children={children} />
           </div>
@@ -617,7 +647,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'payments' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentPaymentsView onShowToast={onShowToast} children={children} />
           </div>
@@ -626,7 +656,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'meetings' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>

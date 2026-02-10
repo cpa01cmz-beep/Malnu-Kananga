@@ -14,7 +14,7 @@ import type {
   SpeechWindow,
   SpeechRecognitionConstructor,
 } from '../types';
-import { VOICE_CONFIG, ERROR_MESSAGES } from '../constants';
+import { VOICE_CONFIG, ERROR_MESSAGES, VOICE_SERVICE_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import {
   classifyError,
@@ -35,7 +35,7 @@ class SpeechRecognitionService {
   private permissionChangeListener: ((this: globalThis.PermissionStatus, ev: Event) => unknown) | null = null;
   private errorRecovery: ErrorRecoveryStrategy;
   private startAttempts: number = 0;
-  private readonly maxStartAttempts: number = 3;
+  private readonly maxStartAttempts: number = VOICE_SERVICE_CONFIG.RECOGNITION.MAX_START_ATTEMPTS;
 
   constructor(config?: Partial<SpeechRecognitionConfig>) {
     this.config = {
@@ -50,18 +50,18 @@ class SpeechRecognitionService {
     this.errorRecovery = new ErrorRecoveryStrategy(
       {
         maxAttempts: this.maxStartAttempts,
-        initialDelay: 1000,
-        maxDelay: 5000,
-        backoffFactor: 2,
+        initialDelay: VOICE_SERVICE_CONFIG.RETRY.INITIAL_DELAY_MS,
+        maxDelay: VOICE_SERVICE_CONFIG.RETRY.MAX_DELAY_MS,
+        backoffFactor: VOICE_SERVICE_CONFIG.RETRY.BACKOFF_MULTIPLIER,
         shouldRetry: (error: Error, attempt: number) => {
           const shouldRetry = this.shouldRetryStartError(error, attempt);
           return shouldRetry;
         },
       },
       {
-        failureThreshold: 5,
-        resetTimeout: 60000,
-        monitoringPeriod: 10000,
+        failureThreshold: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.FAILURE_THRESHOLD,
+        resetTimeout: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.RESET_TIMEOUT_MS,
+        monitoringPeriod: VOICE_SERVICE_CONFIG.CIRCUIT_BREAKER.MONITORING_PERIOD_MS,
       }
     );
 
@@ -100,7 +100,7 @@ class SpeechRecognitionService {
       const permission = await navigator.permissions.query({ name: 'microphone' as const });
       this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
       
-      this.permissionChangeListener = () => {
+      this.permissionChangeListener = (): void => {
         this.permissionState = permission.state as 'granted' | 'denied' | 'prompt';
         logger.debug('Microphone permission state changed:', this.permissionState);
       };
@@ -144,20 +144,20 @@ class SpeechRecognitionService {
   private setupEventListeners(): void {
     if (!this.recognition) return;
 
-    this.recognition.onresult = (event: SpeechRecognitionEvent) => {
+    this.recognition.onresult = (event: SpeechRecognitionEvent): void => {
       this.handleResult(event);
     };
 
-    this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+    this.recognition.onerror = (event: SpeechRecognitionErrorEvent): void => {
       this.handleError(event);
     };
 
-    this.recognition.onstart = () => {
+    this.recognition.onstart = (): void => {
       this.state = 'listening';
       this.callbacks.onStart?.();
     };
 
-    this.recognition.onend = () => {
+    this.recognition.onend = (): void => {
       if (this.state !== 'error') {
         this.state = 'idle';
       }
@@ -165,12 +165,12 @@ class SpeechRecognitionService {
       this.callbacks.onEnd?.();
     };
 
-    this.recognition.onspeechstart = () => {
+    this.recognition.onspeechstart = (): void => {
       this.clearTimeout();
       this.callbacks.onSpeechStart?.();
     };
 
-    this.recognition.onspeechend = () => {
+    this.recognition.onspeechend = (): void => {
       this.setupTimeout();
       this.callbacks.onSpeechEnd?.();
     };
@@ -226,10 +226,10 @@ class SpeechRecognitionService {
       errorMessage = ERROR_MESSAGES.NO_SPEECH_DETECTED;
       logger.debug('No speech detected (this is normal, not an error)');
     } else if (errorType === 'audio-capture') {
-      errorMessage = 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.';
+      errorMessage = ERROR_MESSAGES.MICROPHONE_ACCESS_ERROR || 'Tidak dapat mengakses mikrofon. Pastikan mikrofon terhubung dan tidak digunakan aplikasi lain.';
       logger.error('Audio capture error');
     } else if (errorType === 'network') {
-      errorMessage = 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.';
+      errorMessage = ERROR_MESSAGES.NETWORK_ERROR || 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.';
       logger.error('Network error in speech recognition');
     } else {
       logger.error('Unknown speech recognition error:', event.error);

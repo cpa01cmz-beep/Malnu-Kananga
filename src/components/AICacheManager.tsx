@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { useAICache } from '../hooks/useAICache';
+import { CONVERSION } from '../constants';
 import { TrashIcon } from './icons/TrashIcon';
 import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { ChartBarIcon } from './icons/ChartBarIcon';
@@ -18,9 +19,9 @@ const AICacheManager: React.FC<AICacheManagerProps> = ({ className = '' }) => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   const formatMemory = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes < CONVERSION.BYTES_PER_KB) return `${bytes} B`;
+    if (bytes < CONVERSION.BYTES_PER_MB) return `${(bytes / CONVERSION.BYTES_PER_KB).toFixed(1)} KB`;
+    return `${(bytes / CONVERSION.BYTES_PER_MB).toFixed(1)} MB`;
   };
 
   const formatHitRate = (rate: number): string => {

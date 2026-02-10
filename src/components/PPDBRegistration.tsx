@@ -23,7 +23,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, API_ENDPOINTS, HTTP } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { VoiceLanguage } from '../types';
@@ -405,7 +405,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > FILE_SIZE_LIMITS.PROFILE_IMAGE) {
       onShowToast(FILE_ERROR_MESSAGES.FILE_TOO_LARGE('5MB'), 'error');
       return;
     }
@@ -549,8 +549,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           entity: 'ppdb',
           entityId: ppdbData.nisn || generateTempId(),
           data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
+          endpoint: API_ENDPOINTS.PPDB.REGISTRANTS,
+          method: HTTP.METHODS.POST,
         });
 
         setIsSubmittingFinal(false);
@@ -592,8 +592,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           entity: 'ppdb',
           entityId: ppdbData.nisn || generateTempId(),
           data: ppdbData,
-          endpoint: '/api/ppdb',
-          method: 'POST',
+          endpoint: API_ENDPOINTS.PPDB.REGISTRANTS,
+          method: HTTP.METHODS.POST,
         });
 
         setIsSubmittingFinal(false);
@@ -696,7 +696,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                                 {diplomaImage.name}
                                             </p>
                                             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                                                {(diplomaImage.size / 1024).toFixed(2)} KB
+                                                {(diplomaImage.size / BYTES_PER_KB).toFixed(2)} KB
                                             </p>
                                         </div>
                                     </div>

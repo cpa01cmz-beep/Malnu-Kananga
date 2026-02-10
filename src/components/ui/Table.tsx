@@ -146,7 +146,15 @@ const Tfoot: React.FC<TfootProps> = ({ children, className = '', ...props }) => 
 
 const Tr: React.FC<TrProps> = ({ children, hoverable = true, selected = false, className = '', ...props }) => {
   const classes = `
-    ${hoverable ? 'hover:bg-neutral-50 dark:hover:bg-neutral-700/50 transition-colors' : ''}
+    ${hoverable ? `
+      transition-all duration-200 ease-out
+      hover:bg-neutral-50 dark:hover:bg-neutral-700/50
+      hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]
+      dark:hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.3)]
+      hover:-translate-y-[1px]
+      cursor-pointer
+      focus-within:ring-2 focus-within:ring-primary-500/30
+    ` : ''}
     ${selected ? 'bg-primary-50 dark:bg-primary-900/20' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();

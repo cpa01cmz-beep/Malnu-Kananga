@@ -51,6 +51,12 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   const [transcriptBuffer, setTranscriptBuffer] = useState('');
   const [lastActivityTime, setLastActivityTime] = useState(Date.now());
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const transcriptBufferRef = useRef('');
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    transcriptBufferRef.current = transcriptBuffer;
+  }, [transcriptBuffer]);
 
   useEffect(() => {
     const loadContinuousMode = () => {
@@ -88,11 +94,11 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
 
   useEffect(() => {
     if (continuous && isListening && state === 'processing' && transcript) {
-      const currentBuffer = transcriptBuffer + ' ' + transcript;
+      const currentBuffer = transcriptBufferRef.current + ' ' + transcript;
       setTranscriptBuffer(currentBuffer.trim());
       setLastActivityTime(Date.now());
     }
-  }, [transcript, state, isListening, continuous, transcriptBuffer]);
+  }, [transcript, state, isListening, continuous]);
 
   useEffect(() => {
     if (continuous && isListening) {
@@ -206,7 +212,7 @@ setTranscriptBuffer('');
     return (
       <button
         disabled
-        className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
+        className={`p-4 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors min-w-[44px] min-h-[44px] ${className}`}
         aria-label="Input suara dinonaktifkan"
         title="Input suara dinonaktifkan"
       >
@@ -221,7 +227,7 @@ setTranscriptBuffer('');
         <button
           onClick={() => setShowPermissionHandler(true)}
           className={`
-            p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+            p-4 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0 min-w-[44px] min-h-[44px]
             ${getButtonStyle()}
             ${className}
           `}
@@ -256,7 +262,7 @@ setTranscriptBuffer('');
       onClick={handleClick}
       disabled={!isSupported || disabled}
        className={`
-         p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+         p-4 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0 min-w-[44px] min-h-[44px]
          ${getButtonStyle()}
          ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
          ${className}

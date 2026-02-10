@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { RETRY_CONFIG } from '../constants';
 
 export interface NetworkStatus {
   isOnline: boolean;
@@ -6,7 +7,7 @@ export interface NetworkStatus {
   lastCheck: Date;
 }
 
-const SLOW_CONNECTION_THRESHOLD = 3000;
+const SLOW_CONNECTION_THRESHOLD = RETRY_CONFIG.NETWORK_SLOW_CONNECTION_THRESHOLD;
 
 export function useNetworkStatus(): NetworkStatus {
   const [isOnline, setIsOnline] = useState(true);

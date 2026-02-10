@@ -4,7 +4,7 @@ import { studentsAPI, gradesAPI } from '../../services/apiService';
 import { parentGradeNotificationService } from '../../services/parentGradeNotificationService';
 import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { useOfflineActionQueue, type SyncResult } from '../../services/offlineActionQueueService';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS } from '../../constants';
 import { DEFAULT_API_BASE_URL } from '../../config';
 import { logger } from '../../utils/logger';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
@@ -308,7 +308,7 @@ export const useGradingData = (
         setHasUnsavedChanges(false);
 
         if (isSlow) {
-          setTimeout(() => sync().catch((error) => logger.error('Sync failed:', error)), 5000);
+          setTimeout(() => sync().catch((error) => logger.error('Sync failed:', error)), SCHEDULER_INTERVALS.AUTH_CHECK);
         }
 
         return;

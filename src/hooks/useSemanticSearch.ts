@@ -6,7 +6,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import type { ELibrary as ELibraryType } from '../types';
 import { logger } from '../utils/logger';
-import { AI_MODELS } from '../services/ai/geminiClient';
+import { AI_MODELS } from '../constants';
 
 import { chatCache } from '../services/aiCacheService';
 
