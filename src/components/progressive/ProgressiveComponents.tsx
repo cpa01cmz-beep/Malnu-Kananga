@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useProgressiveLoading } from '../../hooks/useProgressiveLoading';
 
+const GlobalImage = window.Image;
+
 // Progressive image loading component
 interface ProgressiveImageProps {
   src: string;
@@ -29,7 +31,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const img = new Image();
+    const img = new GlobalImage();
     
     img.onload = () => {
       setCurrentSrc(src);
@@ -121,6 +123,7 @@ export const ProgressiveList = <T,>({
   const [isLoading, setIsLoading] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line no-undef
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Load initial items
@@ -134,6 +137,7 @@ export const ProgressiveList = <T,>({
   useEffect(() => {
     if (!containerRef.current || loadedCount >= items.length) return;
 
+    // eslint-disable-next-line no-undef
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
@@ -154,6 +158,7 @@ export const ProgressiveList = <T,>({
         observerRef.current.disconnect();
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedCount, items.length, isLoading, threshold]);
 
   const loadMoreItems = useCallback(() => {
@@ -253,7 +258,7 @@ export const ProgressiveContent = <T,>({
       <>
         {errorComponent || (
           <div className="text-center p-8">
-            <div className="text-red-500 mb-2">Error loading content</div>
+            <div className="text-red-500 mb-2">{error?.message || 'Error loading content'}</div>
             <button 
               onClick={retry}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"

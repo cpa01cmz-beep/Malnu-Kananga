@@ -1,31 +1,31 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 /**
  * Progressive Loading System
  * Implements optimistic UI updates, lazy loading, and perceived performance optimizations
  */
 
-interface ProgressiveLoadingOptions {
+interface ProgressiveLoadingOptions<T = unknown> {
   // Loading strategy
   strategy?: 'skeleton' | 'placeholder' | 'spinner' | 'optimistic';
-  
+
   // Timing options
   delay?: number; // Minimum loading time to prevent flicker
   timeout?: number; // Maximum loading time
-  
+
   // Progressive content loading
   priority?: 'high' | 'medium' | 'low';
   chunkSize?: number; // For paginated content
   loadThreshold?: number; // Intersection observer threshold
-  
+
   // Optimistic UI
-  optimisticData?: any;
+  optimisticData?: T;
   rollbackOnError?: boolean;
-  
+
   // Callbacks
   onLoadStart?: () => void;
   onLoadProgress?: (progress: number) => void;
-  onLoadComplete?: (data: any) => void;
+  onLoadComplete?: (data: T) => void;
   onLoadError?: (error: Error) => void;
 }
 
@@ -49,15 +49,14 @@ interface ProgressiveLoadingReturn<T> {
   shouldShowError: boolean;
 }
 
-export const useProgressiveLoading = <T = any>(
+export const useProgressiveLoading = <T = unknown>(
   loader: () => Promise<T>,
-  options: ProgressiveLoadingOptions = {}
+  options: ProgressiveLoadingOptions<T> = {}
 ): ProgressiveLoadingReturn<T> => {
   const {
     strategy = 'skeleton',
     delay = 200,
     timeout = 10000,
-    priority = 'medium',
     optimisticData,
     rollbackOnError = true,
     onLoadStart,
@@ -70,12 +69,13 @@ export const useProgressiveLoading = <T = any>(
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<T | null>(optimisticData || null);
+  const [data, setData] = useState<T | null>(optimisticData ?? null);
   const [progress, setProgress] = useState(0);
-  
+
   const loadingStartTime = useRef<number>(0);
-  const loadingTimeout = useRef<NodeJS.Timeout | null>(null);
-  const minimumLoadingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const minimumLoadingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // eslint-disable-next-line no-undef
   const abortController = useRef<AbortController | null>(null);
 
   const resetState = useCallback(() => {
@@ -109,6 +109,7 @@ export const useProgressiveLoading = <T = any>(
     loadingStartTime.current = Date.now();
     
     // Create new abort controller
+    // eslint-disable-next-line no-undef
     abortController.current = new AbortController();
     
     // Set up timeout
@@ -194,6 +195,7 @@ export const useProgressiveLoading = <T = any>(
         minimumLoadingTimeout.current = null;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     loader,
     isLoading,
@@ -215,7 +217,7 @@ export const useProgressiveLoading = <T = any>(
 
   const reset = useCallback(() => {
     resetState();
-    setData(optimisticData || null);
+    setData((optimisticData as T | null) ?? null);
   }, [resetState, optimisticData]);
 
   // UI helpers
@@ -240,7 +242,7 @@ export const useProgressiveLoading = <T = any>(
 };
 
 // Optimistic UI hook
-export const useOptimisticUI = <T = any>(
+export const useOptimisticUI = <T = unknown>(
   initialValue: T,
   onCommit: (value: T) => Promise<void>,
   onRollback?: (value: T) => void

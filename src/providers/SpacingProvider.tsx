@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export type Density = 'comfortable' | 'compact' | 'spacious';
 
@@ -8,7 +8,8 @@ interface SpacingContextType {
   getSpacing: (category: 'component' | 'section' | 'layout' | 'micro', size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => string;
 }
 
-const SpacingContext = createContext<SpacingContextType | undefined>(undefined);
+// eslint-disable-next-line react-refresh/only-export-components
+export const SpacingContext = createContext<SpacingContextType | undefined>(undefined);
 
 const SPACING_PRESETS = {
   comfortable: {
@@ -134,15 +135,5 @@ export const SpacingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     </SpacingContext.Provider>
   );
 };
-
-export const useSpacing = () => {
-  const context = useContext(SpacingContext);
-  if (context === undefined) {
-    throw new Error('useSpacing must be used within a SpacingProvider');
-  }
-  return context;
-};
-
-// Additional hooks are exported from src/hooks/useSpacingHooks.ts
 
 export default SpacingProvider;
