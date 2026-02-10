@@ -6,13 +6,14 @@
 import { EXTERNAL_URLS } from '../constants';
 
 export const TYPOGRAPHY_SYSTEM = `
-/* Enhanced Font Loading */
+/* Enhanced Font Loading with Performance Optimization */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
   src: url('${EXTERNAL_URLS.GOOGLE_FONTS_INTER}');
+  size-adjust: 95%; /* Slightly adjust for better readability */
 }
 
 @font-face {
@@ -21,6 +22,13 @@ export const TYPOGRAPHY_SYSTEM = `
   font-weight: 100 800;
   font-display: swap;
   src: url('${EXTERNAL_URLS.GOOGLE_FONTS_JETBRAINS}');
+}
+
+/* System font stack as fallback */
+@font-face {
+  font-family: 'System Fallback';
+  src: local('-apple-system'), local('BlinkMacSystemFont'), local('Segoe UI'), local('Roboto'), local('Helvetica Neue'), local('Arial'), local('sans-serif');
+  font-display: swap;
 }
 
 /* Typography Scale with Enhanced Readability */
@@ -336,13 +344,24 @@ export const TYPOGRAPHY_SYSTEM = `
 
 /* Enhanced Text Selection */
 ::selection {
-  background-color: #3b82f6;
-  color: white;
+  background-color: hsl(var(--color-primary-500) / 0.3);
+  color: hsl(var(--color-neutral-900));
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 ::-moz-selection {
-  background-color: #3b82f6;
-  color: white;
+  background-color: hsl(var(--color-primary-500) / 0.3);
+  color: hsl(var(--color-neutral-900));
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* Enhanced selection for dark mode */
+@media (prefers-color-scheme: dark) {
+  ::selection, ::-moz-selection {
+    background-color: hsl(var(--color-primary-400) / 0.4);
+    color: hsl(var(--color-neutral-100));
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  }
 }
 
 /* Focus Styles for Text */
@@ -352,28 +371,152 @@ export const TYPOGRAPHY_SYSTEM = `
   border-radius: 0.25rem;
 }
 
-/* Responsive Typography */
-@media (max-width: 640px) {
-  .heading-1 { font-size: 1.875rem; line-height: 2.25rem; }
-  .heading-2 { font-size: 1.5rem; line-height: 2rem; }
-  .heading-3 { font-size: 1.25rem; line-height: 1.75rem; }
-  .heading-4 { font-size: 1.125rem; line-height: 1.75rem; }
-  .heading-5 { font-size: 1rem; line-height: 1.5rem; }
-  .heading-6 { font-size: 0.875rem; line-height: 1.25rem; }
-  
-  .body-large { font-size: 1rem; line-height: 1.5rem; }
-  .body-base { font-size: 0.875rem; line-height: 1.25rem; }
-  .body-small { font-size: 0.75rem; line-height: 1rem; }
+/* Enhanced Responsive Typography with Fluid Scaling */
+@media (max-width: 375px) {
+  :root {
+    --fluid-min-width: 375;
+    --fluid-max-width: 375;
+    --fluid-screen: 100vw;
+    --fluid-bp: calc(
+      (var(--fluid-screen) - var(--fluid-min-width) / 1) /
+      (var(--fluid-max-width) - var(--fluid-min-width))
+    );
+  }
 }
 
-@media (min-width: 1024px) {
-  .heading-1 { font-size: 3rem; line-height: 1; }
-  .heading-2 { font-size: 2.25rem; line-height: 2.5rem; }
-  .heading-3 { font-size: 1.875rem; line-height: 2.25rem; }
+@media (min-width: 376px) and (max-width: 640px) {
+  :root {
+    --fluid-min-width: 376;
+    --fluid-max-width: 640;
+    --fluid-screen: 100vw;
+    --fluid-bp: calc(
+      (var(--fluid-screen) - var(--fluid-min-width) / 1) /
+      (var(--fluid-max-width) - var(--fluid-min-width))
+    );
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  :root {
+    --fluid-min-width: 641;
+    --fluid-max-width: 768;
+    --fluid-screen: 100vw;
+    --fluid-bp: calc(
+      (var(--fluid-screen) - var(--fluid-min-width) / 1) /
+      (var(--fluid-max-width) - var(--fluid-min-width))
+    );
+  }
+}
+
+/* Mobile-first responsive typography */
+@media (max-width: 480px) {
+  .heading-1 { 
+    font-size: clamp(1.5rem, 5vw, 2rem); 
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .heading-2 { 
+    font-size: clamp(1.25rem, 4vw, 1.5rem); 
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .heading-3 { 
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem); 
+    line-height: 1.4;
+  }
+  .heading-4 { 
+    font-size: clamp(1rem, 3vw, 1.125rem); 
+    line-height: 1.5;
+  }
+  .heading-5 { 
+    font-size: clamp(0.875rem, 2.5vw, 1rem); 
+    line-height: 1.6;
+  }
+  .heading-6 { 
+    font-size: clamp(0.75rem, 2vw, 0.875rem); 
+    line-height: 1.6;
+  }
+  
+  .body-large { 
+    font-size: clamp(1rem, 2.5vw, 1.125rem); 
+    line-height: 1.6;
+  }
+  .body-base { 
+    font-size: clamp(0.875rem, 2vw, 1rem); 
+    line-height: 1.6;
+  }
+  .body-small { 
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem); 
+    line-height: 1.5;
+  }
+  .body-xs { 
+    font-size: clamp(0.625rem, 1.2vw, 0.75rem); 
+    line-height: 1.4;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .heading-1 { font-size: clamp(2rem, 4vw, 2.5rem); line-height: 1.1; }
+  .heading-2 { font-size: clamp(1.5rem, 3.5vw, 2rem); line-height: 1.2; }
+  .heading-3 { font-size: clamp(1.25rem, 3vw, 1.5rem); line-height: 1.3; }
+  .heading-4 { font-size: clamp(1.125rem, 2.5vw, 1.25rem); line-height: 1.4; }
+  
+  .body-large { font-size: clamp(1.125rem, 2vw, 1.25rem); line-height: 1.7; }
+  .body-base { font-size: clamp(1rem, 1.8vw, 1.125rem); line-height: 1.7; }
+  .body-small { font-size: clamp(0.875rem, 1.5vw, 1rem); line-height: 1.6; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .heading-1 { font-size: clamp(2.5rem, 3vw, 3rem); line-height: 1.05; }
+  .heading-2 { font-size: clamp(2rem, 2.5vw, 2.5rem); line-height: 1.1; }
+  .heading-3 { font-size: clamp(1.5rem, 2vw, 2rem); line-height: 1.2; }
+  
+  .readable { max-width: 70ch; }
+  .readable-large { max-width: 75ch; }
+  .readable-small { max-width: 65ch; }
+}
+
+@media (min-width: 1025px) {
+  .heading-1 { font-size: clamp(3rem, 4vw, 4rem); line-height: 1; }
+  .heading-2 { font-size: clamp(2.5rem, 3vw, 3rem); line-height: 1.05; }
+  .heading-3 { font-size: clamp(2rem, 2.5vw, 2.5rem); line-height: 1.1; }
   
   .readable { max-width: 75ch; }
   .readable-large { max-width: 80ch; }
   .readable-small { max-width: 70ch; }
+}
+
+/* Enhanced readability for different screen sizes */
+@media (max-width: 640px) {
+  .readable-mobile {
+    max-width: 100%;
+    padding: 0 1rem;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+  
+  .readable-mobile-condensed {
+    max-width: 100%;
+    padding: 0 0.5rem;
+    line-height: 1.6;
+    font-size: 0.875rem;
+  }
+}
+
+/* Print optimization */
+@media print {
+  .heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 {
+    color: #000;
+    page-break-after: avoid;
+    orphans: 3;
+    widows: 3;
+  }
+  
+  .body-large, .body-base, .body-small, .body-xs {
+    color: #000;
+    orphans: 3;
+    widows: 3;
+  }
 }
 
 /* Print Typography */
