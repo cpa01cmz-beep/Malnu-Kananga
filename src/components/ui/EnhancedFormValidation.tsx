@@ -3,11 +3,12 @@
  * Real-time validation with sophisticated feedback patterns
  */
 
-import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
+import React, { useState, useCallback, useRef, createContext, useContext } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
 
 export interface ValidationRule {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   validate: (value: any, formData?: Record<string, any>) => boolean | Promise<boolean>;
   message: string;
   type?: FeedbackType;
@@ -38,10 +39,12 @@ export interface FormValidationConfig {
 }
 
 interface FormValidationContextType {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   formData: Record<string, any>;
   fieldValidations: Record<string, FieldValidation>;
   isFormValid: boolean;
   isFormSubmitting: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   updateField: (name: string, value: any) => void;
   validateField: (name: string, rules: ValidationRule[]) => Promise<boolean>;
   validateForm: () => Promise<boolean>;
@@ -58,6 +61,7 @@ const FormValidationContext = createContext<FormValidationContextType | undefine
 
 interface FormValidationProviderProps {
   children: React.ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialValues?: Record<string, any>;
   config?: FormValidationConfig;
 }
@@ -67,6 +71,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
   initialValues = {},
   config = {},
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [formData, setFormData] = useState<Record<string, any>>(initialValues);
   const [fieldValidations, setFieldValidations] = useState<Record<string, FieldValidation>>({});
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
@@ -83,6 +88,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
     ...config,
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateField = useCallback((name: string, value: any) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     
@@ -110,7 +116,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
           message: rule.message,
           type: rule.type || (isValid ? 'success' : 'error'),
         };
-      } catch (error) {
+      } catch {
         return {
           valid: false,
           message: rule.message,
@@ -262,7 +268,7 @@ export const ValidationRules = {
   phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
     validate: (value) => {
       if (!value) return true;
-      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      const phoneRegex = /^[\d\s+\-()]+$/;
       return phoneRegex.test(value) && value.replace(/\D/g, '').length >= 10;
     },
     message,
@@ -285,11 +291,13 @@ export const ValidationRules = {
     message,
   }),
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   custom: (validator: (value: any, formData?: Record<string, any>) => boolean, message: string): ValidationRule => ({
     validate: validator,
     message,
   }),
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async: (validator: (value: any, formData?: Record<string, any>) => Promise<boolean>, message: string): ValidationRule => ({
     validate: validator,
     message,
@@ -367,7 +375,7 @@ export const useFieldValidation = (
   const { updateField, validateField, isFieldValid, isFieldTouched, getFieldError } = useFormValidation();
   const { validateOnChange = true, validateOnBlur = true, debounceMs = 300 } = options;
   
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;
