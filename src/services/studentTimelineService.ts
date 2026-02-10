@@ -1,4 +1,4 @@
-import { STORAGE_KEYS, TIME_MS, CONVERSION, GRADE_COLOR_THRESHOLDS, GRADE_LIMITS } from '../constants';
+import { STORAGE_KEYS, CONVERSION, GRADE_COLOR_THRESHOLDS, GRADE_LIMITS, TIMELINE_CONFIG } from '../constants';
 import {
   type Grade,
   type Attendance,
@@ -32,7 +32,7 @@ import type {
   EventEventData,
 } from '../types/timeline';
 
-const TIMELINE_CACHE_TTL = TIME_MS.FIVE_MINUTES;
+const TIMELINE_CACHE_TTL = TIMELINE_CONFIG.CACHE_TTL_MS;
 
 interface TimelineCache {
   events: TimelineEvent[];
@@ -434,7 +434,7 @@ class StudentTimelineService {
       studentId: grade.studentId,
       title: `Nilai ${grade.assignmentName || 'Tugas'}`,
       description: `${grade.subjectName || 'Mata Pelajaran'}: ${score}/${maxScore}`,
-      icon: '📊',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.GRADE,
       color,
       timestamp: grade.createdAt,
       data: {
@@ -460,7 +460,7 @@ class StudentTimelineService {
       studentId,
       title: `Tugas: ${assignment.title}`,
       description: `Mata Pelajaran: ${assignment.subjectName || '-'} | Deadline: ${this.formatDate(assignment.dueDate)}`,
-      icon: '📝',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.ASSIGNMENT,
       color: 'text-purple-600',
       timestamp: assignment.createdAt,
       data: {
@@ -495,7 +495,7 @@ class StudentTimelineService {
       studentName: submission.studentName,
       title: `Pengumpulan: ${assignmentTitle}`,
       description: `Dikumpulkan: ${this.formatDate(submission.submittedAt)}${submission.score !== undefined ? ` | Nilai: ${submission.score}` : ''}`,
-      icon: '📤',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.SUBMISSION,
       color,
       timestamp: submission.submittedAt,
       data: {
@@ -518,25 +518,25 @@ class StudentTimelineService {
   }
 
   private mapAttendanceToEvent(attendance: Attendance): TimelineEvent {
-    let icon = '✅';
-    let color = 'text-green-600';
+    let icon: string = TIMELINE_CONFIG.ATTENDANCE_ICONS.HADIR;
+    let color: string = TIMELINE_CONFIG.ATTENDANCE_COLORS.HADIR;
 
     switch (attendance.status) {
       case 'hadir':
-        icon = '✅';
-        color = 'text-green-600';
+        icon = TIMELINE_CONFIG.ATTENDANCE_ICONS.HADIR;
+        color = TIMELINE_CONFIG.ATTENDANCE_COLORS.HADIR;
         break;
       case 'sakit':
-        icon = '🤒';
-        color = 'text-blue-600';
+        icon = TIMELINE_CONFIG.ATTENDANCE_ICONS.SAKIT;
+        color = TIMELINE_CONFIG.ATTENDANCE_COLORS.SAKIT;
         break;
       case 'izin':
-        icon = '📋';
-        color = 'text-yellow-600';
+        icon = TIMELINE_CONFIG.ATTENDANCE_ICONS.IZIN;
+        color = TIMELINE_CONFIG.ATTENDANCE_COLORS.IZIN;
         break;
       case 'alpa':
-        icon = '❌';
-        color = 'text-red-600';
+        icon = TIMELINE_CONFIG.ATTENDANCE_ICONS.ALPA;
+        color = TIMELINE_CONFIG.ATTENDANCE_COLORS.ALPA;
         break;
     }
 
@@ -571,7 +571,7 @@ class StudentTimelineService {
       studentId,
       title: `Akses Materi: ${material.title}`,
       description: `Kategori: ${material.category}`,
-      icon: '📖',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.MATERIAL_ACCESS,
       color: 'text-indigo-600',
       timestamp: material.uploadedAt,
       data: {
@@ -595,7 +595,7 @@ class StudentTimelineService {
       studentId,
       title: `Unduh Materi: ${material.title}`,
       description: `Ukuran: ${this.formatFileSize(material.fileSize)} | Tipe: ${material.fileType}`,
-      icon: '⬇️',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.MATERIAL_DOWNLOAD,
       color: 'text-blue-600',
       timestamp: material.uploadedAt,
       data: {
@@ -621,7 +621,7 @@ class StudentTimelineService {
       studentId,
       title: `Disimpan: ${material.title}`,
       description: bookmark.note ? `Catatan: ${bookmark.note}` : 'Materi disimpan ke penanda buku',
-      icon: '🔖',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.BOOKMARK,
       color: 'text-pink-600',
       timestamp: bookmark.createdAt,
       data: {
@@ -644,7 +644,7 @@ class StudentTimelineService {
       studentId,
       title: `Rating: ${material.title}`,
       description: `Diberi rating: ${'⭐'.repeat(rating.rating)}${rating.review ? ` | ${rating.review}` : ''}`,
-      icon: '⭐',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.RATING,
       color: 'text-yellow-500',
       timestamp: rating.createdAt,
       data: {
@@ -671,7 +671,7 @@ class StudentTimelineService {
         ? `Pesan terkirim ke ${message.recipientName}`
         : `Pesan dari ${message.senderName}`,
       description: message.content,
-      icon: isOutgoing ? '✉️' : '📨',
+      icon: isOutgoing ? TIMELINE_CONFIG.TIMELINE_ICONS.MESSAGE_SENT : TIMELINE_CONFIG.TIMELINE_ICONS.MESSAGE_RECEIVED,
       color: isOutgoing ? 'text-green-600' : 'text-blue-600',
       timestamp: message.createdAt,
       data: {
@@ -703,8 +703,8 @@ class StudentTimelineService {
       type: 'announcement',
       studentId: '',
       title: `Pengumuman: ${announcement.title}`,
-      description: announcement.content.substring(0, 150) + (announcement.content.length > 150 ? '...' : ''),
-      icon: '📢',
+      description: announcement.content.substring(0, TIMELINE_CONFIG.CONTENT_TRUNCATION_LENGTH) + (announcement.content.length > TIMELINE_CONFIG.CONTENT_TRUNCATION_LENGTH ? '...' : ''),
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.ANNOUNCEMENT,
       color,
       timestamp: announcement.createdAt,
       data: {
@@ -733,7 +733,7 @@ class StudentTimelineService {
       studentId,
       title: `Kegiatan: ${schoolEvent.eventName}`,
       description: `📅 ${this.formatDate(schoolEvent.date)} | 📍 ${schoolEvent.location}`,
-      icon: '🎉',
+      icon: TIMELINE_CONFIG.TIMELINE_ICONS.EVENT,
       color,
       timestamp: schoolEvent.date,
       data: {

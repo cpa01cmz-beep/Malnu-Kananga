@@ -11,6 +11,8 @@ export interface ModalProps {
   children: React.ReactNode;
   title?: string;
   description?: string;
+  ariaLabelledBy?: string;
+  ariaDescribedBy?: string;
   size?: ModalSize;
   animation?: ModalAnimation;
   position?: ModalPosition;
@@ -43,6 +45,8 @@ const Modal: React.FC<ModalProps> = ({
   children,
   title,
   description,
+  ariaLabelledBy,
+  ariaDescribedBy,
   size = 'md',
   animation = 'scale-in',
   position = 'center',
@@ -134,8 +138,8 @@ const Modal: React.FC<ModalProps> = ({
         className={getModalClasses()}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'modal-title' : undefined}
-        aria-describedby={description ? 'modal-description' : undefined}
+        aria-labelledby={ariaLabelledBy || (title ? 'modal-title' : undefined)}
+        aria-describedby={ariaDescribedBy || (description ? 'modal-description' : undefined)}
         onTouchStart={swipeToClose ? onTouchStart : undefined}
         onTouchMove={swipeToClose ? onTouchMove : undefined}
         onTouchEnd={swipeToClose ? onTouchEnd : undefined}
