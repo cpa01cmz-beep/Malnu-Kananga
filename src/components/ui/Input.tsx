@@ -51,9 +51,9 @@ const sizeIconClasses: Record<InputSize, string> = {
 };
 
 const stateClasses: Record<InputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01]",
-  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01]",
-  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01]",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01] hover:shadow-md focus:shadow-lg transition-all duration-250 ease-out",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01] hover:shadow-red-500/20 focus:shadow-red-500/25 transition-all duration-250 ease-out",
+  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01] hover:shadow-green-500/20 focus:shadow-green-500/25 transition-all duration-250 ease-out",
 };
 
 const labelSizeClasses: Record<InputSize, string> = {
@@ -427,13 +427,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 inputRef.current.focus();
               }
             }}
-            className={`absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 min-w-[2.75rem] min-h-[2.75rem] flex items-center justify-center ${
+            className={`absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 min-w-[2.75rem] min-h-[2.75rem] flex items-center justify-center hover:scale-110 active:scale-95 ${
               rightIcon ? 'right-10' : 'right-3'
             }`}
             aria-label="Bersihkan input"
             title="Bersihkan input"
           >
-            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+            <XMarkIcon className={`${sizeIconClasses[size]} transition-transform duration-200 hover:rotate-90`} aria-hidden="true" />
           </button>
         )}
 

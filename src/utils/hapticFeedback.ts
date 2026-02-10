@@ -67,35 +67,35 @@ class HapticFeedbackManager {
       return;
     }
 
-    // Only trigger on mobile devices
-    if (window.innerWidth > 768) {
+    // Only trigger on mobile devices with touch support
+    if (window.innerWidth > 768 || !('ontouchstart' in window)) {
       return;
     }
 
     const vibrationPatterns = {
-      // Basic feedback
-      light: [10],
-      medium: [25],
-      heavy: [50],
+      // Basic feedback - enhanced for better UX
+      light: [8],
+      medium: [20],
+      heavy: [40],
       
-      // Status feedback
-      success: [10, 50, 10],
-      error: [100, 50, 100],
-      warning: [50, 30, 50],
+      // Status feedback - more distinctive patterns
+      success: [8, 40, 8],
+      error: [80, 40, 80],
+      warning: [40, 20, 40],
       
-      // Interaction feedback
-      selection: [15],
-      impact: [30],
+      // Interaction feedback - refined for touch
+      selection: [12],
+      impact: [25],
       
-      // Notification patterns
-      notification: [20, 100, 20],
+      // Notification patterns - subtle but noticeable
+      notification: [15, 80, 15],
       
-      // Complex patterns
-      doubleTap: [10, 50, 10],
-      longPress: [50],
-      swipe: [15],
-      delete: [100, 30, 100],
-      confirm: [25, 100, 25],
+      // Complex patterns - optimized for mobile
+      doubleTap: [8, 40, 8],
+      longPress: [40],
+      swipe: [12],
+      delete: [80, 20, 80],
+      confirm: [20, 80, 20],
     };
 
     const selectedPattern = vibrationPatterns[pattern as keyof typeof vibrationPatterns] || vibrationPatterns.light;

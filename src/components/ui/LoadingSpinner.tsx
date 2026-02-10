@@ -50,18 +50,23 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   const renderDots = () => (
     <div className="flex items-center gap-2">
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`}></div>
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`} style={{ animationDelay: '0.16s' }}></div>
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`} style={{ animationDelay: '0.32s' }}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce hover:scale-110 transition-transform duration-200`}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce hover:scale-110 transition-transform duration-200`} style={{ animationDelay: '0.16s' }}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce hover:scale-110 transition-transform duration-200`} style={{ animationDelay: '0.32s' }}></div>
     </div>
   );
 
   const renderPulse = () => (
-    <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-pulse shadow-lg micro-pulse`}></div>
+    <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-pulse shadow-lg micro-pulse relative`}>
+      <div className={`absolute inset-0 ${colorClasses[color]} opacity-30 rounded-full animate-ping`}></div>
+    </div>
   );
 
   const renderRing = () => (
-    <div className={`${sizeClasses[size]} border-2 ${colorClassesBorder[color]} border-t-transparent rounded-full animate-spin shadow-sm spinner-micro`}></div>
+    <div className="relative">
+      <div className={`${sizeClasses[size]} border-2 ${colorClassesBorder[color]} border-t-transparent rounded-full animate-spin shadow-sm spinner-micro`}></div>
+      <div className={`absolute inset-0 ${sizeClasses[size]} border-2 ${colorClasses[color]} border-t-transparent rounded-full animate-spin shadow-md`} style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+    </div>
   );
 
   const renderSkeleton = () => (
