@@ -1,4 +1,4 @@
-import { STORAGE_KEYS, TIME_MS, CONVERSION, GRADE_COLOR_THRESHOLDS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CONVERSION, GRADE_COLOR_THRESHOLDS, GRADE_LIMITS } from '../constants';
 import {
   type Grade,
   type Attendance,
@@ -418,7 +418,7 @@ class StudentTimelineService {
 
   private mapGradeToEvent(grade: Grade): TimelineEvent {
     const score = typeof grade.score === 'number' ? grade.score : 0;
-    const maxScore = typeof grade.maxScore === 'number' ? grade.maxScore : 100;
+    const maxScore = typeof grade.maxScore === 'number' ? grade.maxScore : GRADE_LIMITS.MAX;
     const percentage = (score / maxScore) * 100;
 
     let color = 'text-gray-600';
