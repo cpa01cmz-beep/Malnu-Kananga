@@ -249,10 +249,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         onClick={() => !disabled && !uploading && fileInputRef.current?.click()}
         disabled={disabled || uploading}
         aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop'}
-        className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 w-full min-h-[120px] sm:min-h-[140px] ${
+        className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 w-full min-h-[120px] sm:min-h-[140px] focus:outline-none focus-visible:ring-3 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 ${
           disabled || uploading
-            ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
-            : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-md hover:-translate-y-1 active:scale-[0.98] touch-manipulation'
+            ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed opacity-60'
+            : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-lg hover:-translate-y-1 active:scale-[0.97] touch-manipulation file-upload-accessible'
         }`}
       >
         {showSuccessAnimation ? (
@@ -364,7 +364,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   handleDelete(file);
                 }
               }}
-              className={`flex items-center justify-between p-3 sm:p-4 bg-white/95 dark:bg-neutral-800/95 border border-neutral-200/60 dark:border-neutral-700/60 rounded-xl hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 backdrop-blur-sm touch-manipulation active:scale-[0.98] ${
+              className={`flex items-center justify-between p-3 sm:p-4 bg-white/95 dark:bg-neutral-800/95 border border-neutral-200/60 dark:border-neutral-700/60 rounded-xl hover:shadow-lg transition-all duration-200 focus:outline-none focus-visible:ring-3 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm touch-manipulation active:scale-[0.97] file-item-accessible ${
                 recentlyUploadedFileId === file.id
                   ? 'animate-slide-in-right ring-2 ring-green-400/60 dark:ring-green-500/60 ring-offset-2 dark:ring-offset-neutral-900 bg-green-50/30 dark:bg-green-900/20'
                   : ''

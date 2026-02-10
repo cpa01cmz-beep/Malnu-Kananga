@@ -182,11 +182,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({
               role="gridcell"
               onClick={() => handleDateClick(date)}
               onKeyDown={(e) => handleDateKeyDown(date, e)}
-              className={`${HEIGHT_CLASSES.FORM.CALENDAR_CELL_DESKTOP} p-2 border-r border-b cursor-pointer transition-colors
+              className={`${HEIGHT_CLASSES.FORM.CALENDAR_CELL_DESKTOP} p-2 border-r border-b cursor-pointer transition-all duration-200
                 ${!isCurrentMonth ? 'bg-neutral-50 text-neutral-400' : 'bg-white'}
                 ${isToday ? 'bg-blue-50' : ''}
                 ${isSelected ? 'ring-2 ring-blue-500' : ''}
-                  hover:bg-neutral-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
+                  hover:bg-neutral-50 hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 calendar-cell-accessible`}
               aria-label={fullDateLabel}
               aria-selected={isSelected}
               tabIndex={isToday ? 0 : -1}
@@ -292,15 +292,15 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                 <div className="space-y-1">
                   {events.map((event, idx) => {
                     const isMeeting = 'status' in event;
-                    return (
+                  return (
                       <button
                         key={idx}
                         type="button"
                         onClick={(e) => handleEventClick(event, e)}
-                        className={`text-xs p-1 rounded truncate
+                        className={`text-xs p-1 rounded truncate transition-all duration-200
                           ${isMeeting
-                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
-                            : 'bg-blue-100 text-blue-800 hover:bg-blue-200'} focus:outline-none focus:ring-2 focus:ring-primary-500/50`}
+                            ? 'bg-purple-100 text-purple-800 hover:bg-purple-200 hover:shadow-sm hover:scale-[1.02]'
+                            : 'bg-blue-100 text-blue-800 hover:bg-blue-200 hover:shadow-sm hover:scale-[1.02]'} focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 calendar-event-accessible`}
                         aria-label={getEventAriaLabel(event)}
                       >
                         {event.startTime && `${event.startTime} `}
