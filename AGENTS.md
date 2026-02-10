@@ -127,3 +127,59 @@ This project includes optimized OpenCode CLI configuration in `.opencode/` direc
 - **Tools**: Code analysis and generation utilities
 
 See `.opencode/README.md` for detailed usage instructions.
+
+---
+
+## Repository Maintenance
+
+### Branch Cleanup Status (2026-02-10)
+
+**Current Status:** 26 remote branches analyzed
+
+#### Stale Branches Recommended for Deletion (10 branches)
+These branches are >1 week old and appear to be abandoned:
+
+**Oldest (>3 weeks):**
+- `fix/skiplink-accessibility-tabindex` (Jan 13) - 54 commits ahead ⚠️ REVIEW BEFORE DELETE
+- `feature/toast-accessibility-ux` (Jan 11) - 1 commit
+- `fix/icon-imports` (Jan 11) - 2 commits  
+- `fix/bug-107-elibrary-mock-component` (Jan 12) - 1 commit
+
+**Older (2-3 weeks):**
+- `feature/security-critical-fixes` (Jan 20) - 1 commit
+- `fix/announcement-pushnotification-proper` (Jan 20) - 1 commit
+- `fix/build-001-typecheck-lint-blocker` (Jan 21) - 4 commits
+
+**Old (1-2 weeks):**
+- `fix/issue-1284-test-timeout-aftereach-hooks` (Jan 31) - 1 commit
+- `fix/issue-1323-circular-dependencies` (Feb 1) - 1 commit
+- `feature/remove-duplicate-api-url-definitions` (Feb 1) - 2 commits
+
+#### Potentially Duplicate Branches (4 branches)
+These branches share similar purposes and may be consolidated:
+- `fix/build-errors-20260209` (Feb 9)
+- `fix/build-errors-and-lint-warnings` (Feb 9)
+- `fix/fatal-build-errors` (Feb 9)
+- `fix/brocula-console-errors-warnings` (Feb 9)
+
+#### Active Branches (14 branches)
+Recent branches from Feb 9-10 with active development should be retained.
+
+### Cleanup Commands
+```bash
+# Delete stale branches (run with caution)
+git push origin --delete fix/skiplink-accessibility-tabindex
+# ... repeat for other stale branches
+
+# View branch ages
+git for-each-ref --sort=committerdate refs/remotes/origin/ --format='%(committerdate:short) %(refname:short)'
+```
+
+### Repository Health Checks
+- ✅ Typecheck: PASS (0 errors)
+- ✅ Lint: PASS (0 warnings)
+- ✅ Build: PASS (production build successful)
+- ✅ No temp files found
+- ✅ .gitignore: Comprehensive (138 lines)
+- ✅ Documentation: 24 docs files up to date
+- ⚠️  Branches: 26 total, 10 stale candidates
