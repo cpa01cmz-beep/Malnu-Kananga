@@ -2517,9 +2517,11 @@ export const TEST_CONSTANTS = {
         // Subject IDs
         SUBJECT_001: 'subject-001',
         SUBJECT_1: 'subject-1',
+        SUBJECT_2: 'subject-2',
 
         // Class IDs
         CLASS_001: 'class-001',
+        CLASS_1: 'class-1',
 
         // Teacher IDs (hyphenated format)
         TEACHER_001: 'teacher-001',
