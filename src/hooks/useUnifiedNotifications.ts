@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   PushNotification,
   NotificationHistoryItem,
@@ -12,7 +12,6 @@ import {
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
-import { SCHEDULER_INTERVALS, UI_DELAYS } from '../constants';
 
 interface PushSubscription {
   readonly endpoint: string;
@@ -308,7 +307,7 @@ export function useUnifiedNotifications() {
           try {
             const newValue = JSON.parse(stored);
             const lastChecked = lastCheckedRef.current[key] || 0;
-            if (Date.now() - lastChecked > UI_DELAYS.DEBOUNCE_SHORT) { // Avoid too frequent checks
+            if (Date.now() - lastChecked > 5000) { // Avoid too frequent checks
               onChangeRef.current(newValue, {});
               lastCheckedRef.current[key] = Date.now();
             }
@@ -320,7 +319,7 @@ export function useUnifiedNotifications() {
 
       window.addEventListener('storage', handleStorageChange);
       checkNow();
-      const interval = setInterval(checkNow, SCHEDULER_INTERVALS.OFFLINE_SYNC_CHECK); // Check every 30 seconds
+      const interval = setInterval(checkNow, 30000); // Check every 30 seconds
 
       return () => {
         window.removeEventListener('storage', handleStorageChange);
@@ -342,7 +341,7 @@ export function useUnifiedNotifications() {
       return () => {
         window.removeEventListener('ocrValidation', handleOCRValidation);
       };
-    }, []);
+    });
   };
 
   // Template Getters
@@ -367,7 +366,7 @@ export function useUnifiedNotifications() {
     return unifiedNotificationManager.getCurrentSubscription();
   }, []);
 
-  return {
+  return useMemo(() => ({
     // State
     isInitialized,
     permissionGranted,
@@ -435,7 +434,54 @@ export function useUnifiedNotifications() {
     // Monitoring utilities
     useMonitorLocalStorage,
     useOCRValidationMonitor,
-  };
+  }), [
+    isInitialized,
+    permissionGranted,
+    permissionDenied,
+    settings,
+    history,
+    batches,
+    templates,
+    analytics,
+    showNotification,
+    createNotification,
+    requestPermission,
+    subscribeToPush,
+    unsubscribeFromPush,
+    isPermissionGranted,
+    isPermissionDenied,
+    getCurrentSubscription,
+    createTemplate,
+    createNotificationFromTemplate,
+    getTemplates,
+    notifyGradeUpdate,
+    notifyPPDBStatus,
+    notifyLibraryUpdate,
+    notifyAssignmentCreate,
+    notifyAssignmentSubmit,
+    notifyMeetingRequest,
+    notifyScheduleChange,
+    notifyAttendanceAlert,
+    notifyOCRValidation,
+    createBatch,
+    sendBatch,
+    getBatches,
+    getHistory,
+    clearHistory,
+    markAsRead,
+    deleteFromHistory,
+    getSettings,
+    saveSettings,
+    resetSettings,
+    updateSettings,
+    getAnalytics,
+    clearAnalytics,
+    deleteNotification,
+    addEventListener,
+    removeEventListener,
+    useMonitorLocalStorage,
+    useOCRValidationMonitor,
+  ]);
 }
 
 interface NotificationEvent {
@@ -450,7 +496,7 @@ export const usePushNotifications = useUnifiedNotifications;
 export const useEventNotifications = () => {
   const unified = useUnifiedNotifications();
   
-  return {
+  return useMemo(() => ({
     notifyGradeUpdate: unified.notifyGradeUpdate,
     notifyPPDBStatus: unified.notifyPPDBStatus,
     notifyLibraryUpdate: unified.notifyLibraryUpdate,
@@ -462,5 +508,5 @@ export const useEventNotifications = () => {
     notifyOCRValidation: unified.notifyOCRValidation,
     useMonitorLocalStorage: unified.useMonitorLocalStorage,
     useOCRValidationMonitor: unified.useOCRValidationMonitor,
-  };
+  }), [unified]);
 };

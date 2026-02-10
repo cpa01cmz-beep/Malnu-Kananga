@@ -9,7 +9,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const pushNotificationHelpers = usePushNotifications();
   const eventNotificationHelpers = useEventNotifications();
 
-  // Monitor PPDB registrations for admin notifications - wrapped in useCallback to prevent infinite loops
+  // Monitor PPDB registrations for admin notifications
   const handlePPDBChange = useCallback((newValue: unknown, oldValue: unknown) => {
     if (Array.isArray(newValue)) {
       const pendingCount = newValue.filter((r) => r.status === 'pending').length;
@@ -23,7 +23,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
   }, [eventNotificationHelpers]);
 
-  // Monitor grade updates for student/parent notifications - wrapped in useCallback
+  eventNotificationHelpers.useMonitorLocalStorage(
+    STORAGE_KEYS.PPDB_REGISTRANTS,
+    handlePPDBChange
+  );
+
+  // Monitor grade updates for student/parent notifications
   const handleGradesChange = useCallback((newValue: unknown, oldValue: unknown) => {
     // This would be triggered when grades are updated
     // Implementation depends on the grade data structure
@@ -32,7 +37,12 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  // Monitor library materials - wrapped in useCallback
+  eventNotificationHelpers.useMonitorLocalStorage(
+    STORAGE_KEYS.GRADES,
+    handleGradesChange
+  );
+
+  // Monitor library materials
   const handleMaterialsChange = useCallback((newValue: unknown, oldValue: unknown) => {
     if (Array.isArray(newValue) && Array.isArray(oldValue)) {
       if (newValue.length > oldValue.length) {
@@ -46,10 +56,10 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     }
   }, [eventNotificationHelpers]);
 
-  // Apply monitoring hooks with stable callbacks
-  eventNotificationHelpers.useMonitorLocalStorage(STORAGE_KEYS.PPDB_REGISTRANTS, handlePPDBChange);
-  eventNotificationHelpers.useMonitorLocalStorage(STORAGE_KEYS.GRADES, handleGradesChange);
-  eventNotificationHelpers.useMonitorLocalStorage(STORAGE_KEYS.MATERIALS, handleMaterialsChange);
+  eventNotificationHelpers.useMonitorLocalStorage(
+    STORAGE_KEYS.MATERIALS,
+    handleMaterialsChange
+  );
 
   const value = {
     pushNotificationHelpers,
