@@ -2159,3 +2159,47 @@ export const TEXT_LIMITS = {
     MIN_SEARCH_LENGTH: 2,
     MIN_NAME_LENGTH: 2,
 } as const;
+
+// Password generation constants - Flexy: Never hardcode password generation!
+export const PASSWORD_GENERATION = {
+    CHARACTER_SET: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+    DEFAULT_LENGTH: 8,
+    MIN_LENGTH: 6,
+    MAX_LENGTH: 128,
+} as const;
+
+// Message sender types for messaging system - Flexy: Never hardcode sender types!
+export const MESSAGE_SENDER = {
+    PARENT: 'parent',
+    TEACHER: 'teacher',
+    STUDENT: 'student',
+    ADMIN: 'admin',
+    SYSTEM: 'system',
+} as const;
+
+export type MessageSenderType = typeof MESSAGE_SENDER[keyof typeof MESSAGE_SENDER];
+
+// Component-specific delays in milliseconds - Flexy: Never hardcode delays!
+export const COMPONENT_DELAYS = {
+    AUTO_SAVE_INDICATOR: 1000,
+    AUTO_SAVE_SIMPLE: 1000,
+    INSIGHTS_REFRESH: 2000,
+    REALTIME_EVENTS_CHECK: 1000,
+    WEBSOCKET_HEALTH_CHECK: 1000,
+    NOTIFICATION_SETTINGS_INDICATOR: 1500,
+    PPDB_REGISTRATION_INDICATOR: 2000,
+    PROGRESS_ANIMATION: 100,
+    FORM_FEEDBACK_ANIMATION: 50,
+} as const;
+
+// PPDB Legacy Status (for backward compatibility) - Flexy: Centralize status strings!
+export const PPDB_LEGACY_STATUS = {
+    PENDING: 'pending',
+    APPROVED: 'approved',
+    REJECTED: 'rejected',
+} as const;
+
+export type PPDBLegacyStatus = typeof PPDB_LEGACY_STATUS[keyof typeof PPDB_LEGACY_STATUS];
+
+// Student prefix for ID generation
+export const STUDENT_ID_PREFIX = 'student_';

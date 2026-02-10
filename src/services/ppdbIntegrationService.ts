@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -152,12 +152,12 @@ class PPDBIntegrationService {
       const password = this.generateRandomPassword();
 
       const parentUser: Partial<User> = {
-        id: `user_${Date.now()}`,
+        id: `${ID_PREFIXES.USER}_${Date.now()}`,
         name: registrant.parentName,
         email: registrant.email,
         role: USER_ROLES.PARENT,
         extraRole: null,
-        status: 'active',
+        status: USER_STATUS.ACTIVE,
       };
 
       const response = await usersAPI.create(parentUser);
@@ -195,8 +195,8 @@ class PPDBIntegrationService {
       const { className, class: classCode } = this.assignToClass();
 
       const student: Partial<Student> = {
-        id: `student_${Date.now()}`,
-        userId: `user_${Date.now()}`, // Student user account created separately
+        id: `${STUDENT_ID_PREFIX}${Date.now()}`,
+        userId: `${ID_PREFIXES.USER}_${Date.now()}`, // Student user account created separately
         nisn: registrant.nisn,
         nis,
         class: classCode,
@@ -671,9 +671,9 @@ class PPDBIntegrationService {
    * Format: 8 characters, mixed case, numbers
    */
   private generateRandomPassword(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars = PASSWORD_GENERATION.CHARACTER_SET;
     let password = '';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < PASSWORD_GENERATION.DEFAULT_LENGTH; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return password;
