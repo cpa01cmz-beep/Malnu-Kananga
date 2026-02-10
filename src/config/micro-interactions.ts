@@ -708,6 +708,74 @@ export const MICRO_INTERACTIONS = `
   }
 }
 
+/* Enhanced Mobile Touch Interactions */
+.touch-ripple {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width ${DURATION.SLOW}s ${EASING.EASE_OUT}, 
+              height ${DURATION.SLOW}s ${EASING.EASE_OUT},
+              opacity ${DURATION.SLOW}s ${EASING.EASE_OUT};
+  pointer-events: none;
+}
+
+.touch-ripple:active::before {
+  width: 200px;
+  height: 200px;
+  opacity: 0;
+}
+
+/* Comfortable Touch Targets */
+.touch-target-comfortable {
+  min-height: 48px;
+  min-width: 48px;
+  transition: all ${DURATION.FAST}s ${EASING.STANDARD};
+}
+
+.touch-target-large {
+  min-height: 52px;
+  min-width: 52px;
+  transition: all ${DURATION.FAST}s ${EASING.STANDARD};
+}
+
+/* Mobile-First Hover States */
+@media (hover: hover) {
+  .mobile-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: ${SHADOW.OFFSET.LARGE};
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .mobile-hover:active {
+    transform: scale(0.98);
+    box-shadow: ${SHADOW.OFFSET.SMALL};
+  }
+}
+
+/* Enhanced Touch Feedback */
+.touch-feedback-enhanced {
+  transition: transform ${DURATION.FAST}s ${EASING.STANDARD};
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
+}
+
+.touch-feedback-enhanced:active {
+  transform: scale(${TRANSFORM.SCALE.TINY});
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .hover-lift,
@@ -734,7 +802,12 @@ export const MICRO_INTERACTIONS = `
   .search-input-animate,
   .dropdown-animate,
   .pagination-item-animate,
-  .badge-pop-animate {
+  .badge-pop-animate,
+  .touch-ripple,
+  .touch-target-comfortable,
+  .touch-target-large,
+  .mobile-hover,
+  .touch-feedback-enhanced {
     transition: none;
     animation: none;
     transform: none;

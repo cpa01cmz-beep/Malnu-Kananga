@@ -29,9 +29,9 @@ const variantClasses: Record<IconButtonVariant, string> = {
 };
 
 const sizeClasses: Record<IconButtonSize, string> = {
-  sm: "p-3 min-w-[44px] min-h-[44px]",
-  md: "p-3 min-w-[44px] min-h-[44px]",
-  lg: "p-4 min-w-[48px] min-h-[48px]",
+  sm: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
+  md: "p-3 min-w-[48px] min-h-[48px]",
+  lg: "p-4 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
 };
 
 const iconSizeClasses: Record<IconButtonSize, string> = {

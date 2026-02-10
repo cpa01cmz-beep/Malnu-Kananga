@@ -153,32 +153,36 @@ const DataTable = <T extends Record<string, unknown>>({
             `}
             onClick={() => onRowClick?.(record, index)}
           >
-            <div className="flex items-center justify-between pb-3 border-b border-neutral-100 dark:border-neutral-700">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
                 {selection && (
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      selection.onSelect(selection.getRowKey(record), e.target.checked);
-                    }}
-                    className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50% shrink-0"
-                    aria-label={`Select ${titleValue}`}
-                  />
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        selection.onSelect(selection.getRowKey(record), e.target.checked);
+                      }}
+                      className="w-5 h-5 rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50% shrink-0 cursor-pointer"
+                      aria-label={`Select ${titleValue}`}
+                    />
+                  </div>
                 )}
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-neutral-900 dark:text-white truncate">
+                <div className="min-w-0 flex-1 pr-2">
+                  <h3 className="font-semibold text-base text-neutral-900 dark:text-white truncate leading-tight">
                     {titleValue}
                   </h3>
                 </div>
                 {onRowClick && (
-                  <ChevronLeftIcon className="w-5 h-5 text-neutral-400 rotate-180 flex-shrink-0" />
+                  <div className="flex-shrink-0 p-1 -mr-1">
+                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 rotate-180" />
+                  </div>
                 )}
               </div>
             </div>
             
-            <div className="pt-3 space-y-3">
+            <div className="pt-4 space-y-4">
               {columns
                 .filter(col => col.key !== titleColumn)
                 .map((column) => {
@@ -186,19 +190,17 @@ const DataTable = <T extends Record<string, unknown>>({
                   const isEmpty = value === null || value === undefined || value === '';
                   
                   return (
-                    <div key={column.key} className="flex justify-between items-start gap-4">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-1">
-                          {column.title}
-                        </p>
-                        <p className="text-sm text-neutral-900 dark:text-white break-words">
-                          {isEmpty ? (
-                            <span className="text-neutral-400 dark:text-neutral-500 italic">-</span>
-                          ) : (
-                            value
-                          )}
-                        </p>
-                      </div>
+                    <div key={column.key} className="flex flex-col gap-1 p-2 -m-2 rounded-lg touch-manipulation">
+                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                        {column.title}
+                      </p>
+                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[20px]">
+                        {isEmpty ? (
+                          <span className="text-neutral-400 dark:text-neutral-500 italic">Tidak ada data</span>
+                        ) : (
+                          value
+                        )}
+                      </p>
                     </div>
                   );
                 })}
