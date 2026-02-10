@@ -16,6 +16,7 @@ import {
   API_ERROR_MESSAGES,
   USER_GUIDANCE,
 } from '../../utils/errorMessages';
+import { RETRY_CONFIG } from '../../constants';
 import { validateMaterialData } from '../../utils/teacherValidation';
 
 interface UseMaterialDataOptions {
@@ -277,8 +278,8 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
       const result = await executeWithRetry({
         operation: createOperation,
         config: {
-          maxRetries: 3,
-          retryDelay: 2000
+          maxRetries: RETRY_CONFIG.MAX_ATTEMPTS,
+          retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY
         }
       });
 
@@ -355,8 +356,8 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
       const result = await executeWithRetry({
         operation: deleteOperation,
         config: {
-          maxRetries: 3,
-          retryDelay: 1000
+          maxRetries: RETRY_CONFIG.MAX_ATTEMPTS,
+          retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY
         }
       });
 

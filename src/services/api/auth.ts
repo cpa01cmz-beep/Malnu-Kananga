@@ -1,7 +1,7 @@
 // api/auth.ts - Authentication API and Token Management
 
 import type { User, UserExtraRole } from '../../types';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, HTTP } from '../../constants';
 import { logger } from '../../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -122,8 +122,8 @@ export { getRefreshToken };
 export const authAPI = {
   async login(email: string, password: string): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ email, password }),
     });
 
@@ -143,9 +143,9 @@ export const authAPI = {
 
     try {
       await fetch(`${API_BASE_URL}/api/auth/logout`, {
-        method: 'POST',
+        method: HTTP.METHODS.POST,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
           'Authorization': `Bearer ${token}`,
         },
       });
@@ -162,8 +162,8 @@ export const authAPI = {
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: HTTP.METHODS.POST,
+        headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
         body: JSON.stringify({ refreshToken }),
       });
 
@@ -206,8 +206,8 @@ export const authAPI = {
 
   async forgotPassword(email: string): Promise<ApiResponse<unknown>> {
     const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ email }),
     });
 
@@ -217,8 +217,8 @@ export const authAPI = {
 
   async verifyResetToken(token: string): Promise<ApiResponse<unknown>> {
     const response = await fetch(`${API_BASE_URL}/api/auth/verify-reset-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ token }),
     });
 
@@ -228,8 +228,8 @@ export const authAPI = {
 
   async resetPassword(token: string, password: string): Promise<ApiResponse<unknown>> {
     const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ token, password }),
     });
 

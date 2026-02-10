@@ -2,6 +2,7 @@
 
 import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, ConversationCreateRequest, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
 import { request } from '../client';
+import { HTTP } from '../../../constants';
 
 // ============================================
 // PARENTS API
@@ -81,16 +82,16 @@ export const messagesAPI = {
 
   async createConversation(data: ConversationCreateRequest): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
     return request<Conversation>('/api/messages/conversations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(data),
     });
   },
 
   async updateConversation(conversationId: string, updates: Partial<Conversation>): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
     return request<Conversation>(`/api/messages/conversations/${conversationId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.PUT,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(updates),
     });
   },
@@ -121,16 +122,16 @@ export const messagesAPI = {
     }
 
     return request<DirectMessage>('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(data),
     });
   },
 
   async updateMessage(messageId: string, updates: Partial<DirectMessage>): Promise<{ success: boolean; message: string; data?: DirectMessage; error?: string }> {
     return request<DirectMessage>(`/api/messages/${messageId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.PUT,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(updates),
     });
   },
@@ -159,8 +160,8 @@ export const messagesAPI = {
 
   async sendTypingIndicator(conversationId: string, isTyping: boolean): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
     return request<{ success: boolean }>(`/api/messages/conversations/${conversationId}/typing`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ isTyping }),
     });
   },

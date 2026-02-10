@@ -6,6 +6,7 @@
     API_CONFIG,
     TIME_CONVERSION,
     WEBSOCKET_CONSTANTS,
+    HTTP,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -604,9 +605,9 @@ private updateEventsData(event: RealTimeEvent): void {
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/updates`, {
-        method: 'GET',
+        method: HTTP.METHODS.GET,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
           'Authorization': `Bearer ${token}`,
           'If-Modified-Since': lastSync,
         },

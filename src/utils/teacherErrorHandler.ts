@@ -33,7 +33,7 @@ export interface AsyncOperation<T> {
  * Default retry configuration
  */
 const DEFAULT_RETRY_CONFIG: RetryConfig = {
-  maxRetries: 3,
+  maxRetries: RETRY_CONFIG.MAX_ATTEMPTS,
   retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
   backoffMultiplier: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
   shouldRetry: (error) => {

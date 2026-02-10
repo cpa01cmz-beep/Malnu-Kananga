@@ -8,6 +8,7 @@ import {
   executeWithRetry,
   createToastHandler
 } from '../utils/teacherErrorHandler';
+import { RETRY_CONFIG } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
 import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
@@ -180,8 +181,8 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       const result = await executeWithRetry({
         operation: updateOperation,
         config: {
-          maxRetries: 3,
-          retryDelay: 1000
+          maxRetries: RETRY_CONFIG.MAX_ATTEMPTS,
+          retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY
         }
       });
       

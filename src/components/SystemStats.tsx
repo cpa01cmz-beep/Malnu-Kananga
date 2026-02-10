@@ -4,7 +4,7 @@ import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import PermissionGuard from './PermissionGuard';
-import { STORAGE_KEYS, CONVERSION } from '../constants';
+import { STORAGE_KEYS, CONVERSION, COMPONENT_TIMEOUTS } from '../constants';
 import { User, UserRole, UserExtraRole } from '../types';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -103,7 +103,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
         });
 
         onShowToast('Sistem berhasil di-reset. Halaman akan dimuat ulang.', 'success');
-        setTimeout(() => window.location.reload(), 1500);
+        setTimeout(() => window.location.reload(), COMPONENT_TIMEOUTS.PAGE_RELOAD);
     } catch (error) {
         logger.error('Factory reset failed:', error);
         onShowToast('Gagal melakukan reset sistem. Silakan coba lagi.', 'error');
