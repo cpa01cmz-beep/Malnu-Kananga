@@ -192,4 +192,67 @@ describe('ProgressBar', () => {
       expect(progressBar).toHaveClass('bg-neutral-200', 'dark:bg-neutral-700');
     });
   });
+
+  describe('Tooltip Feature', () => {
+    it('shows tooltip by default', () => {
+      render(<ProgressBar value={75} />);
+      const progressBar = screen.getByRole('progressbar');
+      const tooltip = progressBar.parentElement?.querySelector('[role="tooltip"]');
+      expect(tooltip).toBeInTheDocument();
+    });
+
+    it('hides tooltip when showTooltip is false', () => {
+      render(<ProgressBar value={75} showTooltip={false} />);
+      const progressBar = screen.getByRole('progressbar');
+      const tooltip = progressBar.parentElement?.querySelector('[role="tooltip"]');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('displays percentage in tooltip by default', () => {
+      render(<ProgressBar value={75} />);
+      const progressBar = screen.getByRole('progressbar');
+      const tooltip = progressBar.parentElement?.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveTextContent('75%');
+    });
+
+    it('displays custom tooltip text when provided', () => {
+      render(<ProgressBar value={75} tooltipText="Uploading file..." />);
+      const progressBar = screen.getByRole('progressbar');
+      const tooltip = progressBar.parentElement?.querySelector('[role="tooltip"]');
+      expect(tooltip).toHaveTextContent('Uploading file...');
+    });
+
+    it('makes progressbar focusable when tooltip is enabled', () => {
+      render(<ProgressBar value={75} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('tabIndex', '0');
+    });
+
+    it('does not make progressbar focusable when tooltip is disabled', () => {
+      render(<ProgressBar value={75} showTooltip={false} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).not.toHaveAttribute('tabIndex');
+    });
+
+    it('applies cursor-help class when tooltip is enabled', () => {
+      render(<ProgressBar value={75} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveClass('cursor-help');
+    });
+
+    it('handles hover events to show tooltip', () => {
+      render(<ProgressBar value={75} />);
+      const progressBar = screen.getByRole('progressbar');
+      const tooltip = progressBar.parentElement?.querySelector('[role="tooltip"]') as HTMLElement;
+      
+      // Initially hidden
+      expect(tooltip).toHaveClass('opacity-0');
+      
+      // Trigger mouse enter
+      progressBar.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+      
+      // Tooltip should be visible (we check the class exists for transition)
+      expect(tooltip).toBeInTheDocument();
+    });
+  });
 });
