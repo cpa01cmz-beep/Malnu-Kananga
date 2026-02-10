@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useCallback } from 'react';
+import React, { forwardRef, useRef, useCallback, useState, useId } from 'react';
 import { XMarkIcon } from '../icons/MaterialIcons';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
@@ -70,6 +70,14 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   // Check if there's a value to show clear button
   const hasValue = value !== undefined && value !== '';
   const shouldShowClearButton = showClearButton && hasValue && !props.disabled;
+
+  // Tooltip state for clear button
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const clearButtonTooltipId = useId();
+  const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan pilihan';
+
+  const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
+  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
 
   // Handle clear action
   const handleClear = useCallback(() => {
@@ -149,11 +157,36 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           <button
             type="button"
             onClick={handleClear}
-            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10`}
-            aria-label="Bersihkan pilihan"
-            title="Bersihkan pilihan"
+            onMouseEnter={showTooltip}
+            onMouseLeave={hideTooltip}
+            onFocus={showTooltip}
+            onBlur={hideTooltip}
+            className="absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10"
+            aria-label={CLEAR_BUTTON_TOOLTIP_TEXT}
+            aria-describedby={clearButtonTooltipId}
           >
             <XMarkIcon className={iconSize} aria-hidden="true" />
+            {/* Tooltip */}
+            <span
+              id={clearButtonTooltipId}
+              role="tooltip"
+              className={`
+                absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 
+                rounded-md shadow-lg whitespace-nowrap pointer-events-none
+                transition-all duration-200 ease-out
+                top-full left-1/2 -translate-x-1/2 mt-2
+                ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+              `.replace(/\s+/g, ' ').trim()}
+            >
+              {CLEAR_BUTTON_TOOLTIP_TEXT}
+              <span
+                className="
+                  absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
+                  bottom-full left-1/2 -translate-x-1/2 mb-[-3px]
+                "
+                aria-hidden="true"
+              />
+            </span>
           </button>
         )}
 
