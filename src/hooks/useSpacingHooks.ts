@@ -1,4 +1,4 @@
-import { useSpacing } from '../providers/SpacingProvider';
+import { useSpacing } from './useSpacing';
 
 // Utility hooks for specific spacing patterns
 export const useComponentSpacing = (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => {

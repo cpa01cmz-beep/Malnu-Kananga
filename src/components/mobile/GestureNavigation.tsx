@@ -189,7 +189,7 @@ const useSwipeGestureInternal = ({
     const element = elementRef.current;
     if (!element) return;
 
-    const handleStart = (e: any) => {
+    const handleStart = (e: TouchEvent | MouseEvent) => {
       const clientPos = direction === 'horizontal' 
         ? 'touches' in e ? e.touches[0].clientX : e.clientX
         : 'touches' in e ? e.touches[0].clientY : e.clientY;
@@ -199,10 +199,12 @@ const useSwipeGestureInternal = ({
       onSwipeStart?.(clientPos);
     };
 
-    const handleMove = (e: any) => {
+    const handleMove = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
       
-      e.preventDefault();
+      if (e.cancelable) {
+        e.preventDefault();
+      }
       
       const clientPos = direction === 'horizontal'
         ? 'touches' in e ? e.touches[0].clientX : e.clientX
@@ -211,7 +213,7 @@ const useSwipeGestureInternal = ({
       onSwipeMove?.(clientPos, startPos.current);
     };
 
-    const handleEnd = (e: any) => {
+    const handleEnd = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
       
       isDragging.current = false;
