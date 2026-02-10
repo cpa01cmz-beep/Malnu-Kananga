@@ -70,7 +70,7 @@ export class StudentPortalValidator {
     if (!assignmentType || typeof assignmentType !== 'string') {
       errors.push('Tipe tugas tidak valid');
     } else {
-      const validTypes = ['tugas', 'uts', 'uas', 'assignment', 'mid', 'final'];
+      const validTypes = [...ACADEMIC.MAJOR_EXAM_TYPES, 'tugas', 'assignment'];
       if (!validTypes.includes(assignmentType.toLowerCase())) {
         warnings.push(`Tipe tugas "${assignmentType}" tidak dikenali`);
       }

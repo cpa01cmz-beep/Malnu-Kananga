@@ -968,6 +968,7 @@ export const HTTP = {
         HEAD: 'HEAD',
     } as const,
     STATUS_CODES: {
+        OK: 200,
         BAD_REQUEST: 400,
         UNAUTHORIZED: 401,
         FORBIDDEN: 403,
@@ -1191,6 +1192,14 @@ export const OCR_ENHANCEMENT_CONFIG = {
 // Permission service constants
 export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
+} as const;
+
+// Email template styles - Flexy: Never hardcode styles in email templates!
+export const EMAIL_TEMPLATE_STYLES = {
+    CONTAINER: '.container { max-width: 600px; margin: 0 auto; padding: 20px; }',
+    CONTAINER_MAX_WIDTH: '600px',
+    CONTAINER_MARGIN: '0 auto',
+    CONTAINER_PADDING: '20px',
 } as const;
 
 // Email template colors - Flexy: Never hardcode colors in email templates!

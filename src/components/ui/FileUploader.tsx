@@ -5,6 +5,7 @@ import { CloseIcon } from '../icons/CloseIcon';
 import { ArrowDownTrayIcon } from '../icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../../services/apiService';
 import { logger } from '../../utils/logger';
+import { mbToBytes } from '../../constants';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
 
@@ -92,7 +93,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   };
 
   const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
-    if (file.size > maxSizeMB * 1024 * 1024) {
+    if (file.size > mbToBytes(maxSizeMB)) {
       return {
         valid: false,
         error: `File size exceeds ${maxSizeMB}MB limit`,
