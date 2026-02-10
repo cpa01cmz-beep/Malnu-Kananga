@@ -209,6 +209,19 @@ describe('IconButton', () => {
       expect(button).toBeDisabled();
     });
 
+    it('displays keyboard shortcut in tooltip when provided', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Search" shortcut="⌘K" />);
+      const kbd = screen.getByText('⌘K');
+      expect(kbd).toBeInTheDocument();
+      expect(kbd.tagName.toLowerCase()).toBe('kbd');
+    });
+
+    it('does not display keyboard shortcut when not provided', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Search" />);
+      const kbd = screen.queryByRole('kbd');
+      expect(kbd).not.toBeInTheDocument();
+    });
+
     it('tooltip is accessible with aria-describedby', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Helpful tooltip" />);
       const button = screen.getByRole('button');

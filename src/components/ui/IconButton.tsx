@@ -13,6 +13,8 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   tooltipPosition?: IconButtonTooltipPosition;
   /** Reason shown in tooltip when button is disabled */
   disabledReason?: string;
+  /** Keyboard shortcut hint to display in tooltip (e.g., "⌘K", "Ctrl+S", "Esc") */
+  shortcut?: string;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
@@ -48,6 +50,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   tooltip,
   tooltipPosition = 'bottom',
   disabledReason,
+  shortcut,
   className = '',
   disabled,
   ...props
@@ -104,12 +107,17 @@ const IconButton: React.FC<IconButtonProps> = ({
           className={`
             absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700
             rounded-md shadow-lg whitespace-nowrap pointer-events-none
-            transition-all duration-200 ease-out
+            transition-all duration-200 ease-out flex items-center gap-2
             ${tooltipPositionClasses[tooltipPosition]}
             ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
-          {tooltip}
+          <span>{tooltip}</span>
+          {shortcut && (
+            <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-neutral-600 dark:bg-neutral-600 rounded border border-neutral-500 dark:border-neutral-500 shadow-sm">
+              {shortcut}
+            </kbd>
+          )}
           <span
             className={`
               absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
