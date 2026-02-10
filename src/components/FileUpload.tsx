@@ -50,7 +50,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const [recentlyUploadedFileId, setRecentlyUploadedFileId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null); // eslint-disable-line no-undef
+  const abortControllerRef = useRef<AbortController | null>(null);  
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     setUploadedBytes(0);
     setUploadStartTime(Date.now());
 
-    const abortController = new AbortController(); // eslint-disable-line no-undef
+    const abortController = new AbortController();  
     abortControllerRef.current = abortController;
 
     try {

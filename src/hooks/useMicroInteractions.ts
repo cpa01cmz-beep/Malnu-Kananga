@@ -90,7 +90,7 @@ export const useMicroInteractions = (
       const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
       setShouldAnimate(!mediaQuery.matches);
 
-      const handleChange = (event: MediaQueryListEvent) => {
+      const handleChange = (event: { matches: boolean }) => {
         setShouldAnimate(!event.matches);
       };
 

@@ -29,7 +29,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    const img = new Image();
+    const img = new window.Image();
     
     img.onload = () => {
       setCurrentSrc(src);
@@ -123,6 +123,23 @@ export const ProgressiveList = <T,>({
   const containerRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
+  // Load more items callback - defined before useEffect
+  const loadMoreItems = useCallback(() => {
+    if (isLoading || loadedCount >= items.length) return;
+
+    setIsLoading(true);
+    
+    // Simulate network delay
+    setTimeout(() => {
+      const nextCount = Math.min(loadedCount + 20, items.length);
+      const newItems = items.slice(loadedCount, nextCount);
+      
+      setVisibleItems(prev => [...prev, ...newItems]);
+      setLoadedCount(nextCount);
+      setIsLoading(false);
+    }, 300);
+  }, [isLoading, loadedCount, items]);
+
   // Load initial items
   useEffect(() => {
     const initialCount = Math.min(20, items.length);
@@ -154,23 +171,7 @@ export const ProgressiveList = <T,>({
         observerRef.current.disconnect();
       }
     };
-  }, [loadedCount, items.length, isLoading, threshold]);
-
-  const loadMoreItems = useCallback(() => {
-    if (isLoading || loadedCount >= items.length) return;
-
-    setIsLoading(true);
-    
-    // Simulate network delay
-    setTimeout(() => {
-      const nextCount = Math.min(loadedCount + 20, items.length);
-      const newItems = items.slice(loadedCount, nextCount);
-      
-      setVisibleItems(prev => [...prev, ...newItems]);
-      setLoadedCount(nextCount);
-      setIsLoading(false);
-    }, 300);
-  }, [isLoading, loadedCount, items]);
+  }, [loadedCount, items.length, isLoading, threshold, loadMoreItems]);
 
   if (items.length === 0) {
     return <>{emptyComponent || <div className="text-center p-8">No items found</div>}</>;
@@ -239,7 +240,6 @@ export const ProgressiveContent = <T,>({
     shouldShowContent,
     shouldShowError,
     data,
-    error,
     load,
     retry,
   } = useProgressiveLoading(loader, options);
