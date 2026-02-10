@@ -2505,6 +2505,7 @@ export const TEST_CONSTANTS = {
         GRADE_001: 'grade-001',
         GRADE_002: 'grade-002',
         GRADE_123: 'grade-123',
+        GRADE_NEW: 'grade-new',
 
         // Quiz IDs
         QUIZ_001: 'quiz-001',

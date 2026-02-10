@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } 
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
 import { getAuthToken, parseJwtPayload } from '../api/auth';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, TEST_CONSTANTS } from '../../constants';
 
 /* eslint-disable no-undef */
 // Define WebSocket constants
@@ -465,7 +465,7 @@ describe('WebSocketService', () => {
 
     it('should update grades in local storage', () => {
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
-        { id: 'grade-1', score: 80, studentId: 'student-1' },
+        { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -473,8 +473,8 @@ describe('WebSocketService', () => {
         const updateEvent: RealTimeEvent = {
           type: 'grade_updated',
           entity: 'grade',
-          entityId: 'grade-1',
-          data: { id: 'grade-1', score: 85, studentId: 'student-1' },
+          entityId: TEST_CONSTANTS.IDS.GRADE_1,
+          data: { id: TEST_CONSTANTS.IDS.GRADE_1, score: 85, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -496,7 +496,7 @@ describe('WebSocketService', () => {
           type: 'grade_created',
           entity: 'grade',
           entityId: 'grade-new',
-          data: { id: 'grade-new', score: 90, studentId: 'student-1' },
+          data: { id: TEST_CONSTANTS.IDS.GRADE_NEW, score: 90, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -511,7 +511,7 @@ describe('WebSocketService', () => {
 
     it('should delete grades from local storage', () => {
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
-        { id: 'grade-1', score: 80, studentId: 'student-1' },
+        { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -519,8 +519,8 @@ describe('WebSocketService', () => {
         const deleteEvent: RealTimeEvent = {
           type: 'grade_deleted',
           entity: 'grade',
-          entityId: 'grade-1',
-          data: { id: 'grade-1', score: 80, studentId: 'student-1' },
+          entityId: TEST_CONSTANTS.IDS.GRADE_1,
+          data: { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -534,7 +534,7 @@ describe('WebSocketService', () => {
 
     it('should update announcements in local storage', () => {
       localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify([
-        { id: 'ann-1', title: 'Old Title', content: 'Old Content' },
+        { id: TEST_CONSTANTS.IDS.ANN_1, title: 'Old Title', content: 'Old Content' },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -543,7 +543,7 @@ describe('WebSocketService', () => {
           type: 'announcement_updated',
           entity: 'announcement',
           entityId: 'ann-1',
-          data: { id: 'ann-1', title: 'New Title', content: 'New Content' },
+          data: { id: TEST_CONSTANTS.IDS.ANN_1, title: 'New Title', content: 'New Content' },
           timestamp: new Date().toISOString(),
           userRole: 'admin',
           userId: 'admin-1',
