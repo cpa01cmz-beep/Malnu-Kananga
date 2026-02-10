@@ -77,8 +77,9 @@ interface UseStudentInsightsReturn {
 export const useStudentInsights = ({
   autoRefresh = true,
   refreshInterval = TIME_MS.ONE_DAY, // 24 hours
-  enabled = true
-}: UseStudentInsightsOptions = {}): UseStudentInsightsReturn => {
+  enabled = true,
+  studentId: providedStudentId
+}: UseStudentInsightsOptions & { studentId?: string } = {}): UseStudentInsightsReturn => {
   const [insights, setInsights] = useState<StudentInsights | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export const useStudentInsights = ({
   const [isEnabled, setIsEnabled] = useState(enabled);
 
   const currentUser = authAPI.getCurrentUser();
-  const studentId = currentUser?.id;
+  const studentId = providedStudentId || currentUser?.id;
   
   // Ref for debouncing rapid updates
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
