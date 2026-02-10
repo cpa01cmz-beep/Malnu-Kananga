@@ -160,11 +160,14 @@ Recent branches **0-30 days old** (as of 2026-02-10):
 | fix/issue-1284-test-timeout-aftereach-hooks | 2026-01-31 | Active |
 | fix/issue-1323-circular-dependencies | 2026-02-01 | Active |
 | fix/skiplink-accessibility-tabindex | 2026-01-13 | Active |
-| fix/styling-system-debug | 2026-01-10 | Active |
 
 ### Stale Branches (>30 days)
 
-**0 branches** require attention (all stale branches have been pruned).
+**1 branch** requires attention:
+
+| Branch Name | Last Commit | Status |
+|------------|-------------|--------|
+| fix/styling-system-debug | 2026-01-10 | Stale - To be reviewed for deletion |
 
 **Last Cleanup**: 2026-02-10 (deleted 19 stale branches)
 - 6 feature branches
@@ -249,14 +252,14 @@ jobs:
 ## Summary
 
 - **Total Remote Branches**: 27 branches (19 pruned on 2026-02-10)
-- **Active Branches (0-30 days)**: 25 branches
-- **Stale Branches (>30 days)**: 0 branches
+- **Active Branches (0-30 days)**: 24 branches
+- **Stale Branches (>30 days)**: 1 branch (requires review)
 - **Next Cleanup Review**: 2026-03-10 (30 days from 2026-02-10)
 
-**Repository Status**: ✓ Clean - All stale branches have been pruned
+**Repository Status**: ⚠️ Review Needed - 1 stale branch requires attention
 
 ---
 
 **Last Updated**: 2026-02-10
-**Next Review**: 2026-03-10
-**Reviewed By**: RepoKeeper (Automated Maintenance)
+**Next Review**: 2026-02-17
+**Reviewed By**: RepoKeeper (ULW-Loop Automated Maintenance)
