@@ -38,6 +38,7 @@ export default [
         clearInterval: 'readonly',
         HTMLDivElement: 'readonly',
         HTMLFormElement: 'readonly',
+        HTMLUListElement: 'readonly',
         HTMLTextAreaElement: 'readonly',
         HTMLInputElement: 'readonly',
         HTMLLabelElement: 'readonly',
