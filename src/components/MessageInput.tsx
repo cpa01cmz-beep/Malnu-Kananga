@@ -97,7 +97,9 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           <button
             type="button"
             onClick={onCancelReply}
-            className="text-gray-400 hover:text-gray-600"
+            aria-label="Batalkan balasan"
+            title="Batalkan balasan"
+            className="text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -116,7 +118,9 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           <button
             type="button"
             onClick={handleRemoveFile}
-            className="text-blue-600 hover:text-blue-800"
+            aria-label={`Hapus file ${file.name}`}
+            title="Hapus file"
+            className="text-blue-600 transition-colors duration-200 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -140,6 +144,8 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           size="icon"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || isSending}
+          aria-label="Lampirkan file"
+          title="Lampirkan file (gambar, PDF, dokumen)"
         >
           <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -164,15 +170,20 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           type="button"
           onClick={handleSend}
           disabled={disabled || isSending || (!message.trim() && !file)}
+          aria-label={isSending ? 'Mengirim pesan...' : 'Kirim pesan'}
+          aria-busy={isSending}
           className="bg-blue-600 hover:bg-blue-700"
         >
           {isSending ? (
-            <svg className="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
+            <>
+              <svg className="h-5 w-5 animate-spin text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              <span className="sr-only">Mengirim pesan...</span>
+            </>
           ) : (
-            <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
             </svg>
           )}
