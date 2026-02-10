@@ -278,6 +278,7 @@ export function useUnifiedNotifications() {
   }, []);
 
   // Local Storage Monitoring (from useEventNotifications)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
     // Use a ref to store the callback to avoid re-triggering the effect when callback reference changes
     const onChangeRef = useRef(onChange);
@@ -329,6 +330,7 @@ export function useUnifiedNotifications() {
   };
 
   // OCR Validation Monitor (from useEventNotifications)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const useOCRValidationMonitor = () => {
     useEffect(() => {
       const handleOCRValidation = (event: Event) => {

@@ -55,6 +55,7 @@ export const SkeletonProvider: React.FC<SkeletonProviderProps> = ({ children }) 
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSkeleton = () => {
   const context = useContext(SkeletonContext);
   if (context === undefined) {
@@ -89,6 +90,7 @@ export const SkeletonBoundary: React.FC<SkeletonBoundaryProps> = ({
 };
 
 // Higher-order component for automatic skeleton loading
+// eslint-disable-next-line react-refresh/only-export-components
 export const withSkeleton = <P extends object>(
   Component: React.ComponentType<P>,
   skeletonConfig: SkeletonConfig
@@ -109,6 +111,7 @@ export const withSkeleton = <P extends object>(
 };
 
 // Hook for async operations with automatic skeleton states
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAsyncSkeleton = <T,>(
   asyncFn: () => Promise<T>,
   config: SkeletonConfig
@@ -148,6 +151,7 @@ export const useAsyncSkeleton = <T,>(
 };
 
 // Component presets for common use cases
+// eslint-disable-next-line react-refresh/only-export-components
 export const SkeletonPresets = {
   // Dashboard skeletons
   dashboardCard: { variant: 'card' as SkeletonVariant, lines: 4, className: 'mb-4' },
