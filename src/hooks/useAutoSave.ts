@@ -7,7 +7,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 import type { ActionType } from '../services/offlineActionQueueService';
-import { DEBOUNCE_DELAYS } from '../constants';
+import { DEBOUNCE_DELAYS, SCHEDULER_INTERVALS } from '../constants';
 
 export interface AutoSaveConfig<T> {
   /** Debounce delay in milliseconds (default: 2000) */
@@ -219,7 +219,7 @@ export function useAutoSave<T extends object>(
   // Update queued count periodically
   useEffect(() => {
     if (enableOffline) {
-      const interval = setInterval(updateQueuedCount, 5000);
+      const interval = setInterval(updateQueuedCount, SCHEDULER_INTERVALS.QUEUED_COUNT_UPDATE);
       return () => clearInterval(interval);
     }
   }, [enableOffline, updateQueuedCount]);

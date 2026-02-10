@@ -242,7 +242,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                         onBlur={() => {
                           setTouchedFields(prev => ({ ...prev, password: true }));
                           // Don't immediately hide requirements to give user time to reference them
-                          setTimeout(() => setShowPasswordRequirements(false), 3000);
+                          setTimeout(() => setShowPasswordRequirements(false), TIMEOUT_CONFIG.PASSWORD_REQUIREMENTS_HIDE_DELAY);
                         }}
                         errorText={touchedFields.password ? passwordError : undefined}
                         state={touchedFields.password ? (passwordError ? 'error' : 'success') : 'default'}
