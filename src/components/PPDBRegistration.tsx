@@ -23,7 +23,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, API_ENDPOINTS, HTTP } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, API_ENDPOINTS, HTTP, COMPONENT_DELAYS } from '../constants';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { VoiceLanguage } from '../types';
@@ -139,7 +139,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     initialFormData,
     {
       storageKey: STORAGE_KEYS.PPDB_DRAFT,
-      delay: 2000,
+      delay: COMPONENT_DELAYS.PPDB_REGISTRATION_INDICATOR,
       enableOffline: true,
       onSave: async () => {
         // Draft data is saved to localStorage by hook automatically

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
-import { STORAGE_KEYS, BYTES_PER_KB } from '../constants';
+import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { emailService } from '../services/emailService';
@@ -88,7 +88,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
   };
 
   const authUser = getCurrentUser();
-  const userRole = authUser?.role as UserRole || 'student';
+  const userRole = authUser?.role as UserRole || USER_ROLES.STUDENT;
   const userExtraRole = authUser?.extraRole as UserExtraRole;
 
   // Check permissions
@@ -118,7 +118,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       setRegistrants(updated);
       
       // Legacy template handling for 'approved' and 'rejected' (backward compatibility)
-      if ((newStatus === 'approved' || newStatus === 'rejected') && templateId) {
+      if ((newStatus === PPDB_LEGACY_STATUS.APPROVED || newStatus === PPDB_LEGACY_STATUS.REJECTED) && templateId) {
         const r = registrants.find(reg => reg.id === id);
         if (!r) return;
         
@@ -156,7 +156,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
         }
       }
       
-      onShowToast(`Status pendaftar berhasil diubah menjadi ${newStatus === 'approved' ? 'Diterima' : newStatus === 'rejected' ? 'Ditolak' : newStatus}.`, newStatus === 'approved' ? 'success' : 'info');
+      onShowToast(`Status pendaftar berhasil diubah menjadi ${newStatus === PPDB_LEGACY_STATUS.APPROVED ? 'Diterima' : newStatus === PPDB_LEGACY_STATUS.REJECTED ? 'Ditolak' : newStatus}.`, newStatus === PPDB_LEGACY_STATUS.APPROVED ? 'success' : 'info');
     } catch (error) {
       logger.error('Failed to update status:', error);
       onShowToast('Gagal memperbarui status pendaftar', 'error');
@@ -168,11 +168,11 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
    */
   const convertLegacyStatusToPipelineStatus = (status: PPDBRegistrant['status']): 'registered' | 'accepted' | 'rejected' => {
     switch (status) {
-      case 'pending':
+      case PPDB_LEGACY_STATUS.PENDING:
         return 'registered';
-      case 'approved':
+      case PPDB_LEGACY_STATUS.APPROVED:
         return 'accepted';
-      case 'rejected':
+      case PPDB_LEGACY_STATUS.REJECTED:
         return 'rejected';
       default:
         return status as 'registered' | 'accepted' | 'rejected';
@@ -307,7 +307,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
     if (!template || selectedIds.length === 0) return;
 
     selectedIds.forEach(id => {
-      updateStatus(id, action === 'approve' ? 'approved' : 'rejected', template.id);
+      updateStatus(id, action === 'approve' ? PPDB_LEGACY_STATUS.APPROVED : PPDB_LEGACY_STATUS.REJECTED, template.id);
       generatePDFLetter(registrants.find(r => r.id === id)!, action === 'approve' ? 'approval' : 'rejection');
     });
 
@@ -434,15 +434,15 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
             </Card>
             <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Perlu Verifikasi</p>
-                <p className="text-xl font-bold text-yellow-600">{registrants.filter(r => r.status === 'pending').length}</p>
+                <p className="text-xl font-bold text-yellow-600">{registrants.filter(r => r.status === PPDB_LEGACY_STATUS.PENDING).length}</p>
             </Card>
             <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Diterima</p>
-                <p className="text-xl font-bold text-green-600">{registrants.filter(r => r.status === 'approved').length}</p>
+                <p className="text-xl font-bold text-green-600">{registrants.filter(r => r.status === PPDB_LEGACY_STATUS.APPROVED).length}</p>
             </Card>
              <Card padding="sm" rounded="xl" shadow="sm" border="neutral-100">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">Ditolak</p>
-                <p className="text-xl font-bold text-red-600">{registrants.filter(r => r.status === 'rejected').length}</p>
+                <p className="text-xl font-bold text-red-600">{registrants.filter(r => r.status === PPDB_LEGACY_STATUS.REJECTED).length}</p>
             </Card>
         </div>
 
@@ -604,10 +604,10 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                     </td>
                                     <td className="px-6 py-4">
                                         <Badge
-                                            variant={reg.status === 'approved' ? 'success' : reg.status === 'rejected' ? 'error' : 'warning'}
+                                            variant={reg.status === PPDB_LEGACY_STATUS.APPROVED ? 'success' : reg.status === PPDB_LEGACY_STATUS.REJECTED ? 'error' : 'warning'}
                                             size="md"
                                         >
-                                            {reg.status === 'pending' ? 'Verifikasi' : reg.status === 'approved' ? 'Diterima' : 'Ditolak'}
+                                            {reg.status === PPDB_LEGACY_STATUS.PENDING ? 'Verifikasi' : reg.status === PPDB_LEGACY_STATUS.APPROVED ? 'Diterima' : 'Ditolak'}
                                         </Badge>
                                     </td>
                                     <td className="px-6 py-4 text-right">
@@ -632,7 +632,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                 onClick={() => setShowOCRModal(reg.id)}
                                               />
                                             )}
-                                            {reg.status === 'pending' && canApprovePPDB && (
+                                            {reg.status === PPDB_LEGACY_STATUS.PENDING && canApprovePPDB && (
                                               <>
                                                 <IconButton
                                                   icon={<CheckIcon className="w-5 h-5" />}
@@ -641,7 +641,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                   variant="success"
                                                   size="sm"
                                                   onClick={() => {
-                                                    updateStatus(reg.id, 'approved', 'approval-default');
+                                                    updateStatus(reg.id, PPDB_LEGACY_STATUS.APPROVED, 'approval-default');
                                                     generatePDFLetter(reg, 'approval');
                                                   }}
                                                 />
@@ -652,13 +652,13 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                   variant="danger"
                                                   size="sm"
                                                   onClick={() => {
-                                                    updateStatus(reg.id, 'rejected', 'rejection-default');
+                                                    updateStatus(reg.id, PPDB_LEGACY_STATUS.REJECTED, 'rejection-default');
                                                     generatePDFLetter(reg, 'rejection');
                                                   }}
                                                 />
                                               </>
                                             )}
-                                            {reg.status === 'approved' && canApprovePPDB && (
+                                            {reg.status === PPDB_LEGACY_STATUS.APPROVED && canApprovePPDB && (
                                               <IconButton
                                                 icon={<span className="text-lg">↩️</span>}
                                                 ariaLabel="Rollback akun siswa yang dibuat secara otomatis"

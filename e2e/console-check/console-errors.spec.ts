@@ -52,7 +52,8 @@ test.describe('Console Error Detection - BroCula', () => {
     expect(consoleErrors).toHaveLength(0);
   });
 
-  test.afterEach(async (_testFixtures, testInfo) => {
+  // eslint-disable-next-line no-empty-pattern
+  test.afterEach(async ({}, testInfo) => {
     if (consoleErrors.length > 0) {
       console.log('\n=== CONSOLE ERRORS FOUND ===');
       consoleErrors.forEach((error, i) => {

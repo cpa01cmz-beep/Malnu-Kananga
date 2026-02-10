@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, CACHE_TTL, TEXT_TRUNCATION } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CACHE_TTL, TEXT_TRUNCATION, AI_CACHE_SIZES } from '../constants';
 import type { CacheConfig, CacheEntry, CacheKeyParams, CacheStats, SerializedCacheData } from './aiCache.types';
 
 class AIResponseCache {
@@ -19,7 +19,7 @@ class AIResponseCache {
 
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
-      maxSize: 100,
+      maxSize: AI_CACHE_SIZES.DEFAULT,
       ttl: CACHE_TTL.AI_CACHE, // 30 minutes default
       ...config
     };
@@ -340,22 +340,22 @@ class AIResponseCache {
 export { AIResponseCache };
 
 export const chatCache = new AIResponseCache({
-  maxSize: 50,
+  maxSize: AI_CACHE_SIZES.CHAT,
   ttl: CACHE_TTL.AI_CHAT // 20 minutes for chat
 });
 
 export const analysisCache = new AIResponseCache({
-  maxSize: 30,
+  maxSize: AI_CACHE_SIZES.ANALYSIS,
   ttl: TIME_MS.ONE_HOUR // 1 hour for analysis results
 });
 
 export const editorCache = new AIResponseCache({
-  maxSize: 20,
+  maxSize: AI_CACHE_SIZES.EDITOR,
   ttl: CACHE_TTL.AI_EDITOR // 15 minutes for editor responses
 });
 
 export const ocrCache = new AIResponseCache({
-  maxSize: 40,
+  maxSize: AI_CACHE_SIZES.OCR,
   ttl: CACHE_TTL.AI_OCR // 45 minutes for OCR processing results
 });
 

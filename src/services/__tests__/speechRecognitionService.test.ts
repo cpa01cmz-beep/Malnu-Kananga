@@ -2,6 +2,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import SpeechRecognitionService from '../speechRecognitionService';
 import type { SpeechRecognitionEvent, SpeechRecognitionErrorEvent } from '../../types';
+import { TEST_DELAYS } from '../../constants';
 
 type PermissionState = 'granted' | 'denied' | 'prompt';
 
@@ -90,23 +91,23 @@ describe('SpeechRecognitionService Memory Leak Fix', () => {
 
   it('should remove permission change listener during cleanup', async () => {
     // Wait for constructor's async permission check to complete
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.MEDIUM));
+
     // Verify listener was added during initialization
     expect(mockPermission.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
-    
+
     // Capture the added listener function for verification
     const addedListener = mockPermission.addEventListener.mock.calls[0][1];
-    
+
     // Reset removeEventListener mock to track cleanup call
     mockPermission.removeEventListener.mockClear();
-    
+
     // Cleanup service
     service.cleanup();
-    
+
     // Wait for cleanup's async permission query to complete
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.MEDIUM));
+
     // Verify same listener was removed
     expect(mockPermission.removeEventListener).toHaveBeenCalledWith('change', addedListener);
   });

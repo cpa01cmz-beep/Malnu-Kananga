@@ -9,7 +9,7 @@
 // initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_DELAYS } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
 import { generateId, ID_CONFIG } from '../utils/idGenerator';
@@ -255,7 +255,7 @@ class OfflineActionQueueService {
 
         // Small delay between batches
         if (batches.indexOf(batch) !== batches.length - 1) {
-          await this.delay(100);
+          await this.delay(UI_DELAYS.SYNC_BATCH_DELAY);
         }
       }
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import VoiceMessageQueue from '../voiceMessageQueue';
-import { VOICE_CONFIG } from '../../constants';
+import { VOICE_CONFIG, TEST_DELAYS } from '../../constants';
 import { Sender } from '../../types/common';
 
 // Mock window.speechSynthesis
@@ -447,7 +447,7 @@ describe('VoiceMessageQueue', () => {
 
       // Wait for message processing to complete
       // waitForMessageEnd polls every 100ms, so we need to wait longer
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.VERY_LONG));
 
       expect(callback).toHaveBeenCalled();
     });
@@ -477,7 +477,7 @@ describe('VoiceMessageQueue', () => {
 
       queue.addMessages(messages);
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.LONG));
 
       expect(mockSpeakFunction).toHaveBeenCalledWith('Hello');
       expect(mockSpeakFunction).toHaveBeenCalledWith('World');
@@ -493,7 +493,7 @@ describe('VoiceMessageQueue', () => {
 
       // Wait for async processing - messages are processed sequentially
       // Each message needs time to complete
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.VERY_LONG));
 
       // After both messages complete, queue stops and resets index to 0
       // So we check that the queue was processed (not playing anymore)

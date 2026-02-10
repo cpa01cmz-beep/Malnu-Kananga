@@ -14,7 +14,7 @@ import Tab from './ui/Tab';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { EmptyState } from './ui/LoadingState';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS } from '../constants';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -59,7 +59,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     globalSettings,
     {
       storageKey: STORAGE_KEYS.NOTIFICATION_SETTINGS_KEY,
-      delay: 1500,
+      delay: COMPONENT_DELAYS.NOTIFICATION_SETTINGS_INDICATOR,
       enableOffline: true,
       onSave: async (settings) => {
         updateSettings(settings);
