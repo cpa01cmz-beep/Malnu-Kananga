@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
@@ -39,12 +39,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
   const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
 
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
-
-  const fetchSchedules = async () => {
-    const isRetry = error !== null;
+  const fetchSchedules = useCallback(async (isRetry = false) => {
     if (isRetry) {
       setIsRetrying(true);
     } else {
@@ -73,7 +68,11 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
         setLoading(false);
       }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchSchedules(false);
+  }, [fetchSchedules]);
 
   const getSubjectName = (subjectId: string): string => {
     const subject = subjects.find((s) => s.id === subjectId);
@@ -164,7 +163,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
         />
         <div className="text-center" aria-live="polite" aria-busy={isRetrying}>
           <Button
-            onClick={fetchSchedules}
+            onClick={() => fetchSchedules(true)}
             variant="red-solid"
             isLoading={isRetrying}
             disabled={isRetrying}
