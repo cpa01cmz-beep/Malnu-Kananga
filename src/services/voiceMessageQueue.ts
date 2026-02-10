@@ -1,5 +1,5 @@
  
-import { VOICE_CONFIG, VOICE_NOTIFICATION_CONFIG, ERROR_MESSAGES } from '../constants';
+import { VOICE_CONFIG, VOICE_NOTIFICATION_CONFIG, ERROR_MESSAGES, SCHEDULER_INTERVALS } from '../constants';
 import type { ChatMessage } from '../types';
 import { logger } from '../utils/logger';
 
@@ -162,7 +162,7 @@ class VoiceMessageQueue {
           clearInterval(checkInterval);
           resolve();
         }
-      }, 100);
+      }, SCHEDULER_INTERVALS.VOICE_MESSAGE_QUEUE_POLL);
     });
   }
 
@@ -180,7 +180,7 @@ class VoiceMessageQueue {
           clearInterval(checkInterval);
           resolve();
         }
-      }, 100);
+      }, SCHEDULER_INTERVALS.VOICE_MESSAGE_QUEUE_POLL);
 
       setTimeout(() => {
         clearInterval(checkInterval);

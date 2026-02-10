@@ -4,7 +4,7 @@ import { logger } from '../utils/logger';
 import { generateId, ID_CONFIG } from '../utils/idGenerator';
 
 class EmailQueueService {
-  private storageKey = STORAGE_KEYS.EMAIL_QUEUE || 'malnu_email_queue';
+  private storageKey = STORAGE_KEYS.EMAIL_QUEUE;
   private maxRetryAttempts = EMAIL_CONFIG.MAX_RETRY_ATTEMPTS;
   private retryDelays = EMAIL_CONFIG.RETRY_DELAYS;
 
