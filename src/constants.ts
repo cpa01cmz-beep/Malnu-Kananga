@@ -891,6 +891,11 @@ export const AI_CONFIG = {
     DEFAULT_CONFIDENCE_SCORE: 0.85,
     JSON_MIME_TYPE: 'application/json',
     MATERIAL_CONTENT_MAX: 500,
+    // Quiz generation defaults - Flexy: Never hardcode quiz defaults!
+    DEFAULT_QUIZ_TOTAL_POINTS: 100,
+    DEFAULT_QUIZ_DURATION_MINUTES: 30,
+    DEFAULT_QUIZ_PASSING_SCORE: 70,
+    DEFAULT_QUIZ_POINTS_PER_QUESTION: 10,
 } as const;
 
 // OCR configuration constants
