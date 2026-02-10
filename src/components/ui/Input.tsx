@@ -91,6 +91,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   value,
   onChange,
   onBlur,
+  onFocus,
   className = '',
   maxLength,
   ...props
@@ -134,6 +135,39 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
   const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
+
+  // Keyboard shortcut hint state for clearOnEscape feature
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Show escape hint when input is focused and has value
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (clearOnEscape && value && String(value).length > 0) {
+      // Delay showing hint to avoid flickering on quick interactions
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, 400);
+    }
+    onFocus?.(e);
+  };
+
+  // Hide escape hint when input loses focus
+  const handleBlurWithHint = (e: React.FocusEvent<HTMLInputElement>) => {
+    setShowEscapeHint(false);
+    if (escapeHintTimeoutRef.current) {
+      clearTimeout(escapeHintTimeoutRef.current);
+    }
+    handleBlur(e);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Initialize input mask if provided
   const maskFormatter = inputMask ? createFormatter(inputMask) : null;
@@ -317,11 +351,38 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           className={inputClasses}
           value={value}
           onChange={handleMaskedChange}
-          onBlur={handleBlur}
+          onBlur={handleBlurWithHint}
+          onFocus={handleFocus}
           onKeyDown={handleKeyDown}
           {...accessibilityProps}
           {...props}
         />
+
+        {/* Keyboard shortcut hint for clearOnEscape - Micro UX Delight */}
+        {clearOnEscape && showEscapeHint && (
+          <div
+            className={`
+              absolute -top-9 left-1/2 -translate-x-1/2 
+              px-2.5 py-1 
+              bg-neutral-800 dark:bg-neutral-700 
+              text-white text-[10px] font-medium 
+              rounded-md shadow-md 
+              whitespace-nowrap
+              transition-all duration-200 ease-out
+              pointer-events-none
+              z-10
+            `.replace(/\s+/g, ' ').trim()}
+            role="tooltip"
+            aria-hidden={!showEscapeHint}
+          >
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">ESC</kbd>
+              <span>bersihkan</span>
+            </span>
+            {/* Tooltip arrow */}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </div>
+        )}
 
         {rightIcon && (
           <div
