@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
-import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
+
+// Lazy load ChatWindow to reduce initial bundle size
+const ChatWindow = lazy(() => import('./components/ChatWindow'));
 import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
@@ -448,12 +450,14 @@ const App: React.FC = () => {
         }`}
         aria-hidden={!isChatOpen}
       >
-        <ChatWindow 
-          isOpen={isChatOpen} 
-          closeChat={() => setIsChatOpen(false)} 
-          siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
-          onShowToast={showToast}
-        />
+        <Suspense fallback={<SuspenseLoading message="Memuat asisten AI..." />}>
+          <ChatWindow
+            isOpen={isChatOpen}
+            closeChat={() => setIsChatOpen(false)}
+            siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
+            onShowToast={showToast}
+          />
+        </Suspense>
       </div>
 
       <LoginModal 
