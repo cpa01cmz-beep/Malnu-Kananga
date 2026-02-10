@@ -122,10 +122,11 @@ const IconButton: React.FC<IconButtonProps> = ({
     <button
       ref={buttonRef}
       className={classes}
+      disabled={disabled}
       aria-describedby={hasTooltip ? tooltipId : undefined}
       aria-busy={isLoading}
       aria-live="polite"
-      aria-label={isSuccessVisible ? `${ariaLabel} - Berhasil` : isLoading ? `${ariaLabel} - Memuat` : ariaLabel}
+      aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : ariaLabel}
       onMouseEnter={hasTooltip ? showTooltip : undefined}
       onMouseLeave={hasTooltip ? hideTooltip : undefined}
       onFocus={hasTooltip ? showTooltip : undefined}

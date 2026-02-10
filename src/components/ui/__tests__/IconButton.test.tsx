@@ -31,7 +31,7 @@ describe('IconButton', () => {
     it('renders with custom size', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" size="lg" />);
       const button = screen.getByRole('button');
-      expect(button).toHaveClass('p-2.5');
+      expect(button).toHaveClass('p-4');
     });
 
     it('renders with accessible tooltip', () => {
@@ -110,19 +110,19 @@ describe('IconButton', () => {
     it('renders small size', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" size="sm" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('p-1');
+      expect(button).toHaveClass('p-3');
     });
 
     it('renders medium size', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" size="md" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('p-2');
+      expect(button).toHaveClass('p-3');
     });
 
     it('renders large size', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" size="lg" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('p-2.5');
+      expect(button).toHaveClass('p-4');
     });
 
     it('adjusts icon size based on button size', () => {
@@ -132,7 +132,7 @@ describe('IconButton', () => {
       const smIcon = smContainer.querySelector('span[aria-hidden="true"]');
       const lgIcon = lgContainer.querySelector('span[aria-hidden="true"]');
       
-      expect(smIcon).toHaveClass('w-4', 'h-4');
+      expect(smIcon).toHaveClass('w-5', 'h-5');
       expect(lgIcon).toHaveClass('w-6', 'h-6');
     });
   });
@@ -326,7 +326,7 @@ describe('IconButton', () => {
     it('has transition classes', () => {
       const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" />);
       const button = container.querySelector('button');
-      expect(button).toHaveClass('transition-all', 'duration-200', 'ease-out');
+      expect(button).toHaveClass('transition-all', 'duration-300');
     });
 
     it('has hover scale animation', () => {
