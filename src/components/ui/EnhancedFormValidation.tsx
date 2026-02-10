@@ -8,7 +8,7 @@ import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
 
 export interface ValidationRule {
-  validate: (value: unknown, formData?: Record<string, unknown>) => boolean | Promise<boolean>;
+  validate: (value: string | number | boolean | undefined | null, formData?: Record<string, string | number | boolean | undefined | null>) => boolean | Promise<boolean>;
   message: string;
   type?: FeedbackType;
   debounceMs?: number;
@@ -38,11 +38,11 @@ export interface FormValidationConfig {
 }
 
 interface FormValidationContextType {
-  formData: Record<string, unknown>;
+  formData: Record<string, string | number | boolean | undefined | null>;
   fieldValidations: Record<string, FieldValidation>;
   isFormValid: boolean;
   isFormSubmitting: boolean;
-  updateField: (name: string, value: unknown) => void;
+  updateField: (name: string, value: string | number | boolean | undefined | null) => void;
   validateField: (name: string, rules: ValidationRule[]) => Promise<boolean>;
   validateForm: () => Promise<boolean>;
   resetValidation: () => void;
@@ -58,7 +58,7 @@ const FormValidationContext = createContext<FormValidationContextType | undefine
 
 interface FormValidationProviderProps {
   children: React.ReactNode;
-  initialValues?: Record<string, unknown>;
+  initialValues?: Record<string, string | number | boolean | undefined | null>;
   config?: FormValidationConfig;
 }
 
@@ -67,7 +67,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
   initialValues = {},
   config = {},
 }) => {
-  const [formData, setFormData] = useState<Record<string, unknown>>(initialValues);
+  const [formData, setFormData] = useState<Record<string, string | number | boolean | undefined | null>>(initialValues);
   const [fieldValidations, setFieldValidations] = useState<Record<string, FieldValidation>>({});
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
@@ -83,7 +83,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
     ...config,
   };
 
-  const updateField = useCallback((name: string, value: unknown) => {
+  const updateField = useCallback((name: string, value: string | number | boolean | undefined | null) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     
     if (!touchedFields[name]) {
@@ -110,7 +110,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
           message: rule.message,
           type: rule.type || (isValid ? 'success' : 'error'),
         };
-      } catch (_err) {
+      } catch {
         return {
           valid: false,
           message: rule.message,
@@ -241,18 +241,12 @@ export const ValidationRules = {
   }),
 
   minLength: (min: number, message?: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return value.length >= min;
-    },
+    validate: (value) => !value || (typeof value === 'string' && value.length >= min),
     message: message || `Must be at least ${min} characters`,
   }),
 
   maxLength: (max: number, message?: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return value.length <= max;
-    },
+    validate: (value) => !value || (typeof value === 'string' && value.length <= max),
     message: message || `Must be no more than ${max} characters`,
   }),
 
@@ -268,7 +262,7 @@ export const ValidationRules = {
   phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
     validate: (value) => {
       if (!value || typeof value !== 'string') return true;
-      const phoneRegex = /^[\d\s\-+()]+$/;
+      const phoneRegex = /[\d\s\-+()]+$/;
       return phoneRegex.test(value) && value.replace(/\D/g, '').length >= 10;
     },
     message,
@@ -287,19 +281,16 @@ export const ValidationRules = {
   }),
 
   pattern: (regex: RegExp, message: string): ValidationRule => ({
-    validate: (value) => {
-      if (!value || typeof value !== 'string') return true;
-      return regex.test(value);
-    },
+    validate: (value) => !value || (typeof value === 'string' && regex.test(value)),
     message,
   }),
 
-  custom: (validator: (value: unknown, formData?: Record<string, unknown>) => boolean, message: string): ValidationRule => ({
+  custom: (validator: (value: string | number | boolean | undefined | null, formData?: Record<string, string | number | boolean | undefined | null>) => boolean, message: string): ValidationRule => ({
     validate: validator,
     message,
   }),
 
-  async: (validator: (value: unknown, formData?: Record<string, unknown>) => Promise<boolean>, message: string): ValidationRule => ({
+  async: (validator: (value: string | number | boolean | undefined | null, formData?: Record<string, string | number | boolean | undefined | null>) => Promise<boolean>, message: string): ValidationRule => ({
     validate: validator,
     message,
     async: true,
