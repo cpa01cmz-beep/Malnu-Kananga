@@ -4,6 +4,7 @@ import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import { EmptyState } from './ui/LoadingState';
 import { ChatIcon } from './icons/ChatIcon';
+import LoadingSpinner from './ui/LoadingSpinner';
 import type { Conversation, ConversationFilter } from '../types';
 
 interface MessageListProps {
@@ -174,7 +175,7 @@ export function MessageList({
   if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        <LoadingSpinner size="md" color="primary" variant="ring" />
       </div>
     );
   }

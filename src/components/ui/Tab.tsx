@@ -84,14 +84,14 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const getButtonClasses = (tabId: string) => {
-    const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-2 relative';
+    const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-2 relative min-h-[44px] mobile-touch-target';
     const activeColorClasses = getColorClasses(tabId);
 
     if (variant === 'border') {
-      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium`;
+      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium min-h-[44px] mobile-touch-target focus-visible-enhanced`;
     }
 
-    return `${baseClasses} ${activeColorClasses}`;
+    return `${baseClasses} ${activeColorClasses} focus-visible-enhanced`;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
