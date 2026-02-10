@@ -14,6 +14,8 @@ import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
 import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { CommandPalette, Command } from './components/ui/CommandPalette';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -68,6 +70,7 @@ const App: React.FC = () => {
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
   const [resetToken, setResetToken] = useState<string | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -248,6 +251,75 @@ const App: React.FC = () => {
     (window as typeof window & { updatePWA?: () => void }).updatePWA?.();
     setIsSWUpdateConfirmOpen(false);
   };
+
+  // Define commands for Command Palette
+  const commands: Command[] = [
+    {
+      id: 'toggle-theme',
+      label: 'Ganti Tema',
+      description: 'Buka pemilih tema',
+      shortcut: 'Ctrl+Shift+T',
+      category: 'Tampilan',
+      action: () => setIsThemeSelectorOpen(true),
+    },
+    {
+      id: 'toggle-chat',
+      label: isChatOpen ? 'Tutup Chat' : 'Buka Chat',
+      description: 'Toggle jendela chat AI',
+      category: 'Navigasi',
+      action: () => setIsChatOpen(!isChatOpen),
+    },
+    {
+      id: 'open-docs',
+      label: 'Buka Dokumentasi',
+      description: 'Lihat dokumentasi aplikasi',
+      category: 'Bantuan',
+      action: () => setIsDocsOpen(true),
+    },
+    ...(isLoggedIn
+      ? [
+          {
+            id: 'logout',
+            label: 'Logout',
+            description: 'Keluar dari aplikasi',
+            category: 'Akun',
+            action: handleLogout,
+          },
+        ]
+      : [
+          {
+            id: 'login',
+            label: 'Login',
+            description: 'Masuk ke aplikasi',
+            category: 'Akun',
+            action: () => setIsLoginOpen(true),
+          },
+        ]),
+  ];
+
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    shortcuts: [
+      {
+        key: 'k',
+        metaKey: true,
+        description: 'Buka Command Palette (Cmd+K)',
+        action: () => setIsCommandPaletteOpen(true),
+      },
+      {
+        key: 'k',
+        ctrlKey: true,
+        description: 'Buka Command Palette (Ctrl+K)',
+        action: () => setIsCommandPaletteOpen(true),
+      },
+      {
+        key: 'Escape',
+        description: 'Tutup Command Palette',
+        action: () => setIsCommandPaletteOpen(false),
+        disabled: !isCommandPaletteOpen,
+      },
+    ],
+  });
 
   // Helper to render the correct dashboard based on role with permission checks
   const renderDashboard = () => {
@@ -447,6 +519,13 @@ const App: React.FC = () => {
         type="info"
         onConfirm={handleSWUpdate}
         onCancel={() => setIsSWUpdateConfirmOpen(false)}
+      />
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        commands={commands}
+        placeholder="Cari perintah atau navigasi... (ketik ? untuk bantuan)"
       />
       </div>
       )}
