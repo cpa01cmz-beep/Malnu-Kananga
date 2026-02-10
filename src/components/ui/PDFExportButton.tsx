@@ -1,6 +1,7 @@
 import React from 'react';
 import { DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import Button from './Button';
+import LoadingSpinner from './LoadingSpinner';
 
 interface PDFExportButtonProps {
   onExport: () => void;
@@ -30,7 +31,7 @@ const PDFExportButton: React.FC<PDFExportButtonProps> = ({
       className={className}
     >
       {loading ? (
-        <div className="animate-spin rounded-full h-4 w-4 border-2 border-t-transparent border-current" />
+        <LoadingSpinner size="sm" variant="ring" />
       ) : (
         <DocumentArrowDownIcon className="h-4 w-4" />
       )}

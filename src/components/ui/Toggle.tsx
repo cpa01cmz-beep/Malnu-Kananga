@@ -22,15 +22,15 @@ export interface ToggleProps extends Omit<React.ComponentPropsWithoutRef<'input'
 
 const sizeClasses = {
   sm: {
-    switch: 'w-9 h-5',
+    switch: 'w-9 h-5 min-w-[44px] min-h-[44px]',
     dot: 'after:h-4 after:w-4 after:top-0.5 after:left-0.5',
   },
   md: {
-    switch: 'w-11 h-6',
+    switch: 'w-11 h-6 min-w-[44px] min-h-[44px]',
     dot: 'after:h-5 after:w-5 after:top-[2px] after:left-[2px]',
   },
   lg: {
-    switch: 'w-14 h-8',
+    switch: 'w-14 h-8 min-w-[52px] min-h-[52px]',
     dot: 'after:h-6 after:w-6 after:top-1 after:left-1',
   },
 }
@@ -135,6 +135,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             ${disabled ? 'opacity-50' : 'cursor-pointer'}
             ${isPressed ? 'scale-95' : 'scale-100'}
             ${prefersReducedMotion ? '' : 'active:scale-95'}
+            focus-visible-enhanced
           `}
           aria-hidden="true"
           onMouseDown={handlePressStart}
@@ -150,7 +151,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
       return (
         <label
           className={`
-            relative inline-flex items-center gap-3
+            relative inline-flex items-center gap-3 mobile-touch-target
             ${disabled ? 'cursor-not-allowed' : ''}
             ${className}
           `}
@@ -165,7 +166,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         <label
           htmlFor={toggleId}
           className={`
-            relative inline-flex items-center gap-3
+            relative inline-flex items-center gap-3 mobile-touch-target
             ${disabled ? 'cursor-not-allowed' : ''}
             ${className}
           `}
@@ -196,7 +197,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         htmlFor={toggleId}
         className={`
           relative inline-flex items-center justify-between gap-3
-          w-full
+          w-full mobile-touch-target
           ${disabled ? 'cursor-not-allowed' : ''}
           ${className}
         `}

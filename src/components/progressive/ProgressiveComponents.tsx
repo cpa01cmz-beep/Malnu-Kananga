@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useProgressiveLoading } from '../../hooks/useProgressiveLoading';
+import LoadingSpinner from '../ui/LoadingSpinner';
 
 // Progressive image loading component
 interface ProgressiveImageProps {
@@ -202,7 +203,7 @@ export const ProgressiveList = <T,>({
             className="flex items-center justify-center"
           >
             {isLoading ? (
-              loadingComponent || <div className="animate-spin w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full" />
+              loadingComponent || <LoadingSpinner size="sm" variant="ring" />
             ) : (
               <div className="text-neutral-400 text-sm">Loading more...</div>
             )}

@@ -1043,6 +1043,52 @@ export const HTTP = {
     SERVER_ERROR_STATUSES: [500, 502, 503, 504] as const,
 } as const;
 
+// WebSocket close codes (RFC 6455) - Flexy: Never hardcode WebSocket codes!
+export const WEBSOCKET_CLOSE_CODES = {
+    NORMAL: 1000,
+    GOING_AWAY: 1001,
+    PROTOCOL_ERROR: 1002,
+    UNSUPPORTED_DATA: 1003,
+    NO_STATUS_RCVD: 1005,
+    ABNORMAL_CLOSURE: 1006,
+    INVALID_FRAME_PAYLOAD: 1007,
+    POLICY_VIOLATION: 1008,
+    MESSAGE_TOO_BIG: 1009,
+    MANDATORY_EXTENSION: 1010,
+    INTERNAL_ERROR: 1011,
+    SERVICE_RESTART: 1012,
+    TRY_AGAIN_LATER: 1013,
+} as const;
+
+// Time constants in seconds (for JWT expiration calculations) - Flexy: Never hardcode time calculations!
+export const TIME_SECONDS = {
+    ONE_MINUTE: 60,
+    FIVE_MINUTES: 300,
+    FIFTEEN_MINUTES: 900,
+    ONE_HOUR: 3600,
+    ONE_DAY: 86400,
+} as const;
+
+// Animation stagger delays in milliseconds - Flexy: Never hardcode animation timing!
+export const STAGGER_DELAYS = {
+    FAST: 25,
+    NORMAL: 50,
+    SLOW: 100,
+} as const;
+
+// Haptic feedback vibration patterns (milliseconds) - Flexy: Never hardcode haptic patterns!
+export const HAPTIC_PATTERNS = {
+    LIGHT: [10],
+    MEDIUM: [25],
+    HEAVY: [50],
+    DOUBLE: [10, 50, 10],
+    LONG: [100],
+    SUCCESS: [10, 30],
+    ERROR: [50, 30, 50],
+    WARNING: [30],
+    NOTIFICATION: [15, 10, 15],
+} as const;
+
 // UI Text Constants - Centralized to avoid hardcoded strings
 export const UI_STRINGS = {
     // Common actions

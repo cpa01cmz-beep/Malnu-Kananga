@@ -18,7 +18,7 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   onClear?: () => void;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer min-h-[44px] mobile-touch-target focus-visible-enhanced";
 
 const sizeClasses: Record<SelectSize, string> = {
   sm: "px-3 py-2 text-sm",
@@ -162,7 +162,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
             onMouseLeave={hideTooltip}
             onFocus={showTooltip}
             onBlur={hideTooltip}
-            className="absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10"
+            className="absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10 min-w-[44px] min-h-[44px] mobile-touch-target"
             aria-label={CLEAR_BUTTON_TOOLTIP_TEXT}
             aria-describedby={clearButtonTooltipId}
           >

@@ -1,5 +1,7 @@
 
 
+import { STAGGER_DELAYS, HAPTIC_PATTERNS } from '../constants';
+
 /**
  * Animation utilities for consistent, performant, and accessible micro-interactions
  */
@@ -145,10 +147,10 @@ export const PERFORMANCE_ANIMATIONS = {
  * Stagger animations for lists
  */
 export const STAGGER_ANIMATIONS = {
-  // CSS custom properties for staggering
-  staggerVar: '--stagger-delay: calc(var(--stagger-index) * 50ms)',
-  staggerFast: '--stagger-delay: calc(var(--stagger-index) * 25ms)',
-  staggerSlow: '--stagger-delay: calc(var(--stagger-index) * 100ms)',
+  // CSS custom properties for staggering - Flexy: Using STAGGER_DELAYS constant
+  staggerVar: `--stagger-delay: calc(var(--stagger-index) * ${STAGGER_DELAYS.NORMAL}ms)`,
+  staggerFast: `--stagger-delay: calc(var(--stagger-index) * ${STAGGER_DELAYS.FAST}ms)`,
+  staggerSlow: `--stagger-delay: calc(var(--stagger-index) * ${STAGGER_DELAYS.SLOW}ms)`,
   
   // Animation classes with staggering
   staggeredFadeIn: 'animate-fade-in [animation-delay:var(--stagger-delay)]',
@@ -164,13 +166,8 @@ export function buildStaggeredClasses(
   index: number, 
   delay: 'fast' | 'normal' | 'slow' = 'normal'
 ) {
-  const delayMap = {
-    fast: 25,
-    normal: 50,
-    slow: 100,
-  };
-  
-  const delayMs = delayMap[delay];
+  // Flexy: Using STAGGER_DELAYS constant instead of hardcoded values
+  const delayMs = STAGGER_DELAYS[delay.toUpperCase() as keyof typeof STAGGER_DELAYS];
   const actualDelay = index * delayMs;
   
   return `${baseClass} motion-reduce:animate-none` + 
@@ -178,19 +175,10 @@ export function buildStaggeredClasses(
 }
 
 /**
- * Haptic feedback patterns
+ * Re-export HAPTIC_PATTERNS from constants for backwards compatibility
+ * Flexy: Haptic patterns are now centralized in constants.ts
  */
-export const HAPTIC_PATTERNS = {
-  light: [10],
-  medium: [25],
-  heavy: [50],
-  double: [10, 50, 10],
-  long: [100],
-  success: [10, 30],
-  error: [50, 30, 50],
-  warning: [30],
-  notification: [15, 10, 15],
-} as const;
+export { HAPTIC_PATTERNS };
 
 /**
  * Trigger haptic feedback with accessibility support
