@@ -280,6 +280,14 @@ export function useUnifiedNotifications() {
 
   // Local Storage Monitoring (from useEventNotifications)
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
+    // Use a ref to store the callback to avoid re-triggering the effect when callback reference changes
+    const onChangeRef = useRef(onChange);
+    
+    // Update the ref when onChange changes
+    useEffect(() => {
+      onChangeRef.current = onChange;
+    }, [onChange]);
+    
     useEffect(() => {
       const handleStorageChange = (e: Event) => {
         const storageEvent = e as StorageEvent;
@@ -287,7 +295,7 @@ export function useUnifiedNotifications() {
           try {
             const newValue = JSON.parse(storageEvent.newValue);
             const oldValue = JSON.parse(storageEvent.oldValue || '{}');
-            onChange(newValue, oldValue);
+            onChangeRef.current(newValue, oldValue);
           } catch (error) {
             logger.error(`Error parsing localStorage change for ${key}:`, error);
           }
@@ -301,7 +309,7 @@ export function useUnifiedNotifications() {
             const newValue = JSON.parse(stored);
             const lastChecked = lastCheckedRef.current[key] || 0;
             if (Date.now() - lastChecked > UI_DELAYS.DEBOUNCE_SHORT) { // Avoid too frequent checks
-              onChange(newValue, {});
+              onChangeRef.current(newValue, {});
               lastCheckedRef.current[key] = Date.now();
             }
           } catch (error) {
@@ -318,7 +326,7 @@ export function useUnifiedNotifications() {
         window.removeEventListener('storage', handleStorageChange);
         clearInterval(interval);
       };
-    }, [key, onChange]);
+    }, [key]); // Only depend on key, not onChange
   };
 
   // OCR Validation Monitor (from useEventNotifications)
