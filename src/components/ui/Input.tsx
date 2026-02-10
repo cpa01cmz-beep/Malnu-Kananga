@@ -36,12 +36,12 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   showCharacterCount?: boolean;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg glass-effect-subtle hover-lift-enhanced focus-visible-enhanced";
 
 const sizeClasses: Record<InputSize, string> = {
-  sm: "px-3 py-3 text-sm min-h-[3rem]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[3.25rem]",
-  lg: "px-5 py-4 text-base sm:text-lg min-h-[3.75rem]",
+  sm: "px-3 py-3 text-sm min-h-[44px]",
+  md: "px-4 py-3 text-sm sm:text-base min-h-[48px]",
+  lg: "px-5 py-4 text-base sm:text-lg min-h-[52px]",
 };
 
 const sizeIconClasses: Record<InputSize, string> = {
@@ -122,9 +122,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
     switch (inputState) {
       case 'error':
-        return 'animate-input-shake-enhanced';
+        return 'animate-feedback-error';
       case 'success':
-        return showSuccessAnimation ? 'animate-success-pulse-enhanced' : '';
+        return showSuccessAnimation ? 'animate-feedback-success' : '';
       default:
         return '';
     }

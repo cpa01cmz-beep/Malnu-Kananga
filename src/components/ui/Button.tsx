@@ -39,7 +39,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const getBaseClasses = (prefersReducedMotion: boolean) => {
   const motionClasses = prefersReducedMotion 
     ? "transition-none"
-    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
+    : "active:animate-micro-interaction hover:scale-[1.02] disabled:hover:scale-100";
      
   return `${BUTTON_BASE_CLASSES} ${motionClasses}`;
 };
@@ -204,11 +204,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
           )}
         </>
       )}
-      {/* Ripple effect overlay */}
-      <span className="absolute inset-0 rounded-xl overflow-hidden">
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-      </span>
-      
       {/* Focus ring enhancement */}
       <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none"></span>
       
