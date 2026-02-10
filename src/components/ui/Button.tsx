@@ -36,10 +36,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const getBaseClasses = (prefersReducedMotion: boolean) => {
+  const getBaseClasses = (prefersReducedMotion: boolean) => {
   const motionClasses = prefersReducedMotion 
     ? "transition-none"
-    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
+    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 mobile-touch-enhanced focus-visible-enhanced";
      
   return `${BUTTON_BASE_CLASSES} ${motionClasses}`;
 };

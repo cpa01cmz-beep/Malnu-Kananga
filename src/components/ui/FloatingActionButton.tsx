@@ -86,8 +86,8 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Tab' && buttonRef.current) {
-        const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') as HTMLElementExtended[];
-        const focusableArray = Array.from(focusableElements);
+        const focusableElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        const focusableArray = Array.from(focusableElements) as HTMLElementExtended[];
         const currentIndex = focusableArray.indexOf(buttonRef.current);
         
         if (e.shiftKey && currentIndex === 0) {
