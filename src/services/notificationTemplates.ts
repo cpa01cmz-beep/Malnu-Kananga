@@ -1,6 +1,7 @@
 import { NotificationType, UserRole, PushNotification } from '../types';
 import { USER_ROLES } from '../constants';
 import { logger } from '../utils/logger';
+import { idGenerators } from '../utils/idGenerator';
 
 export interface NotificationTemplate {
   type: NotificationType;
@@ -122,7 +123,7 @@ export class NotificationTemplateService {
     const body = this.interpolate(template.bodyTemplate, context);
 
     return {
-      id: `notif-${type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.notification(),
       type,
       title,
       body,

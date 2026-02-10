@@ -24,6 +24,7 @@ import { OfflineIndicator } from './OfflineIndicator';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, API_ENDPOINTS, HTTP, COMPONENT_DELAYS } from '../constants';
+import { idGenerators } from '../utils/idGenerator';
 import { standardValidationRules } from '../hooks/useFieldValidation';
 import { HEIGHT_CLASSES } from '../config/heights';
 import { VoiceLanguage } from '../types';
@@ -157,7 +158,7 @@ const PPDBRegistration: React.FC<PPDBRegistrationProps> = ({ isOpen, onClose, on
     }
   );
 
-const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateTempId = () => idGenerators.temp();
 
   const cleanup = useCallback(() => {
     autoSaveActions.reset(initialFormData);
