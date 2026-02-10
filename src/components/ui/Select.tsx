@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useCallback, useState, useId } from 'react';
 import { XMarkIcon } from '../icons/MaterialIcons';
+import { generateComponentId } from '../../utils/idGenerator';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';
@@ -62,7 +63,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
 }, ref) => {
   const internalRef = useRef<HTMLSelectElement>(null);
   const selectRef = (ref as React.RefObject<HTMLSelectElement>) || internalRef;
-  const selectId = id || `select-${Math.random().toString(36).substr(2, 9)}`;
+  const selectId = id || generateComponentId('select');
   const helperTextId = helperText ? `${selectId}-helper` : undefined;
   const errorTextId = errorText ? `${selectId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
