@@ -157,14 +157,12 @@ const App: React.FC = () => {
     checkAuth();
     loadDefaultContent();
     
-    // Initialize push notification service
-    unifiedNotificationManager.requestPermission().then((granted: boolean) => {
-      if (granted) {
-        logger.info('Push notifications enabled on app initialization');
-      }
-    }).catch(error => {
-      logger.warn('Failed to enable push notifications:', error);
-    });
+    // Only check permission status, don't request on load (Lighthouse best practice)
+    // Permission will be requested when user interacts with notification settings
+    const permissionStatus = unifiedNotificationManager.isPermissionGranted();
+    if (permissionStatus) {
+      logger.info('Push notifications already granted');
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
