@@ -33,6 +33,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState('Senin');
   const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
@@ -43,7 +44,12 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   }, []);
 
   const fetchSchedules = async () => {
-    setLoading(true);
+    const isRetry = error !== null;
+    if (isRetry) {
+      setIsRetrying(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
     try {
       const [schedulesRes, subjectsRes] = await Promise.all([
@@ -61,7 +67,11 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
       setError('Terjadi kesalahan saat mengambil data jadwal');
       logger.error('Error fetching schedules:', err);
     } finally {
-      setLoading(false);
+      if (isRetry) {
+        setIsRetrying(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -152,12 +162,15 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           message={error}
           variant="card"
         />
-        <div className="text-center">
+        <div className="text-center" aria-live="polite" aria-busy={isRetrying}>
           <Button
             onClick={fetchSchedules}
             variant="red-solid"
+            isLoading={isRetrying}
+            disabled={isRetrying}
+            ariaLabel={isRetrying ? 'Memuat ulang jadwal, harap tunggu...' : 'Coba memuat jadwal lagi'}
           >
-            Coba Lagi
+            {isRetrying ? 'Memuat...' : 'Coba Lagi'}
           </Button>
         </div>
       </div>
