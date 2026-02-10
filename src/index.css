@@ -1814,13 +1814,6 @@
 .dark .warning-message {
   color: hsl(var(--color-warning-400));
 }
-  
-  .skip-link-enhanced {
-    background: currentColor;
-    color: hsl(var(--color-neutral-50));
-    border: 2px solid currentColor;
-  }
-}
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
