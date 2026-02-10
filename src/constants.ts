@@ -2139,14 +2139,14 @@ export const ANNOUNCEMENT_STATUS_LABELS = {
     [ANNOUNCEMENT_STATUS.EXPIRED]: 'Kadaluarsa',
 } as const;
 
-// Placeholder Images - Flexy: Centralize placeholder URLs!
+// Placeholder Images - Using local placeholders to avoid external dependencies
 export const PLACEHOLDER_IMAGES = {
-    SCHOOL: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=400&fit=crop',
-    STUDENT: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&h=100&fit=crop',
-    TEACHER: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    CLASS: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-    EVENT: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=400&fit=crop',
-    MATERIAL: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop',
+    SCHOOL: '/images/placeholder.svg',
+    STUDENT: '/images/placeholder.svg',
+    TEACHER: '/images/placeholder.svg',
+    CLASS: '/images/placeholder.svg',
+    EVENT: '/images/placeholder.svg',
+    MATERIAL: '/images/placeholder.svg',
 } as const;
 
 // Input Mask Placeholders - Flexy: Never hardcode mask placeholders!
