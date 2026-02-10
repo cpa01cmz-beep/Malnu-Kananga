@@ -10,6 +10,7 @@ import {
   handleAIError
 } from '../../utils/aiErrorHandler';
 import { idGenerators } from '../../utils/idGenerator';
+import { AI_CONFIG } from '../../constants';
 
 /**
  * Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
@@ -44,7 +45,7 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
         model: AI_MODELS.PRO_THINKING,
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });
@@ -144,7 +145,7 @@ export async function analyzeStudentPerformance(
         model: AI_MODELS.PRO_THINKING,
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });
@@ -288,7 +289,7 @@ export async function generateAssignmentFeedback(
         config: {
           responseMimeType: "application/json",
           responseSchema: schema,
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });

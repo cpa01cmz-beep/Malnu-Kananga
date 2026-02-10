@@ -685,6 +685,7 @@ export const SCHEDULER_INTERVALS = {
     AUTH_CHECK: 5 * 1000, // 5 seconds
     QUEUED_COUNT_UPDATE: 5 * 1000, // 5 seconds - for auto-save queue count updates
     SPEAKING_STATUS_CHECK: 1000, // 1 second - for voice notification speaking status
+    VOICE_MESSAGE_QUEUE_POLL: 100, // 100ms - for voice message queue status polling
 } as const;
 
 // Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
