@@ -28,7 +28,7 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   };
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced hover-lift-enhanced backdrop-blur-sm shadow-sm hover:shadow-md focus:shadow-lg";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced hover-lift-enhanced backdrop-blur-sm shadow-sm hover:shadow-md focus:shadow-lg group hover:border-primary-300 dark:hover:border-primary-600";
 
 const sizeClasses: Record<SearchInputSize, string> = {
   sm: "px-3 py-3 text-sm min-h-[3rem]",
@@ -212,7 +212,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           </div>
         )}
 
-        {/* Enhanced Clear button with ripple effect and better feedback */}
+           {/* Enhanced Clear button with improved visual feedback */}
         <button
           type="button"
           onClick={() => {
@@ -242,34 +242,34 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           onMouseUp={() => setIsClearPressed(false)}
           onFocus={() => setShowTooltip(true)}
           onBlur={() => setShowTooltip(false)}
-          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center ${
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center overflow-hidden group backdrop-blur-sm ${
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
           } ${
             value && String(value).length > 0 && !validation.state.isValidating
               ? 'opacity-100 scale-100 pointer-events-auto'
               : 'opacity-0 scale-75 pointer-events-none'
           } ${prefersReducedMotion ? '' : 'transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275)'} ${
-            isClearPressed ? (prefersReducedMotion ? '' : 'scale-95 rotate-90') : (prefersReducedMotion ? '' : 'hover:scale-110 hover:rotate-12')
+            isClearPressed ? (prefersReducedMotion ? '' : 'scale-95 rotate-90 bg-neutral-200 dark:bg-neutral-600') : (prefersReducedMotion ? '' : 'hover:scale-110 hover:rotate-12')
           }`}
           aria-label="Bersihkan pencarian (Tekan Escape)"
           aria-hidden={!(value && String(value).length > 0 && !validation.state.isValidating)}
         >
           <XMarkIcon className={`${sizeIconClasses[size]} ${prefersReducedMotion ? '' : 'transition-transform duration-300'} ${isClearPressed ? 'rotate-90' : 'hover:rotate-90'}`} aria-hidden="true" />
           
-          {/* Ripple effect overlay */}
-          <span className="absolute inset-0 rounded-xl overflow-hidden">
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-          </span>
+          {/* Enhanced ripple effect with multiple layers */}
+          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-60 -translate-x-full group-hover:translate-x-full transition-all duration-700 ease-out"></span>
+          <span className="absolute inset-0 rounded-full bg-white/20 scale-0 group-active:scale-100 transition-transform duration-300 ease-out"></span>
           
-          {/* Enhanced Tooltip with better positioning */}
+          {/* Enhanced Tooltip with better accessibility and micro-interactions */}
           {showTooltip && value && String(value).length > 0 && (
             <span 
-              className={`absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? '' : 'animate-scale-in'}`}
+              className={`absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? 'opacity-100' : 'animate-in fade-in slide-in-from-bottom-1 duration-200'} backdrop-blur-sm border border-neutral-700 dark:border-neutral-600`}
               role="tooltip"
+              id="clear-tooltip"
             >
               <span className="font-medium">Bersihkan</span>
-              <kbd className="ml-2 px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-600 dark:border-neutral-500">Esc</kbd>
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-neutral-900 dark:bg-neutral-700 rotate-45 border-r border-b border-neutral-600 dark:border-neutral-500" aria-hidden="true" />
+              <kbd className="ml-2 px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-600 dark:border-neutral-500 shadow-sm" aria-hidden="true">Esc</kbd>
+              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-neutral-900 dark:bg-neutral-700 rotate-45 border-r border-b border-neutral-700 dark:border-neutral-600" aria-hidden="true" />
             </span>
           )}
         </button>

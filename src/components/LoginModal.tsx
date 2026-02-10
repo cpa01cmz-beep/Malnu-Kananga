@@ -145,8 +145,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       className={HEIGHT_CLASSES.MODAL.FULL}
     >
       <div className="overflow-y-auto">
-            <div className={`mb-8 p-6 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-sm`}>
-                 <h3 className="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2.5 tracking-tight">
+            <div className={`mb-8 p-6 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-sm content-group card-interactive stagger-fade-in`}>
+                 <h3 className="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2.5 tracking-tight text-hierarchy-3">
                      <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                      </svg>
@@ -156,17 +156,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                     Pilih peran untuk login instan:
                 </p>
 
-                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')} className="mobile-touch-target">
-                          Siswa
-                       </Button>
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('teacher')} className="mobile-touch-target">
-                          Guru
-                       </Button>
-                       <Button variant="primary" size="md" onClick={() => handleSimulatedLogin('admin')} className="mobile-touch-target">
-                          Admin
-                       </Button>
-                  </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 mobile-card-stack">
+                        <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')} className="mobile-touch-target button-depth-hover">
+                           Siswa
+                        </Button>
+                        <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('teacher')} className="mobile-touch-target button-depth-hover">
+                           Guru
+                        </Button>
+                        <Button variant="primary" size="md" onClick={() => handleSimulatedLogin('admin')} className="mobile-touch-target button-depth-hover">
+                           Admin
+                        </Button>
+                   </div>
 
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                        <Button variant="info" size="md" onClick={() => handleSimulatedLogin('teacher', 'staff')} className="mobile-touch-target">

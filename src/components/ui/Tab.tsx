@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export type TabColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow' | 'neutral';
 
@@ -21,6 +21,7 @@ export interface TabProps {
   className?: string;
   orientation?: 'horizontal' | 'vertical';
   'aria-label'?: string;
+  enableSwipeGestures?: boolean;
 }
 
 const Tab: React.FC<TabProps> = ({
@@ -29,14 +30,19 @@ const Tab: React.FC<TabProps> = ({
   onTabChange,
   variant = 'pill',
   color = 'green',
-  className = '',
   orientation = 'horizontal',
   'aria-label': ariaLabel = 'Tabs',
+  enableSwipeGestures = true,
 }) => {
-  const containerClasses = orientation === 'horizontal'
-    ? 'flex gap-2 overflow-x-auto pb-2'
-    : 'flex flex-col gap-1';
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [currentX, setCurrentX] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+  
+  const containerClasses = orientation === 'horizontal'
+    ? `flex gap-2 overflow-x-auto pb-2 ${enableSwipeGestures ? 'snap-x snap-mandatory scroll-smooth' : ''}`
+    : 'flex flex-col gap-1';
 
   useEffect(() => {
     const activeTabButton = tabRefs.current.get(activeTab);
@@ -84,107 +90,109 @@ const Tab: React.FC<TabProps> = ({
   };
 
   const getButtonClasses = (tabId: string) => {
-    const baseClasses = 'px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-2 relative min-h-[44px] mobile-touch-target';
+    const baseClasses = `px-4 py-2 rounded-lg font-medium transition-all duration-200 whitespace-nowrap flex items-center gap-2 relative min-h-[44px] mobile-touch-target touch-manipulation ${
+      enableSwipeGestures ? 'snap-start' : ''
+    }`;
     const activeColorClasses = getColorClasses(tabId);
 
     if (variant === 'border') {
-      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium min-h-[44px] mobile-touch-target focus-visible-enhanced`;
+      return `${activeColorClasses} py-4 px-1 border-b-2 text-sm font-medium min-h-[44px] mobile-touch-target touch-manipulation focus-visible-enhanced`;
     }
 
-    return `${baseClasses} ${activeColorClasses} focus-visible-enhanced`;
+    return `${baseClasses} ${activeColorClasses} focus-visible-enhanced hover:scale-105 active:scale-95`;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!enableSwipeGestures) return;
+    setIsDragging(true);
+    setStartX(e.touches[0].clientX);
+    setCurrentX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!enableSwipeGestures || !isDragging) return;
+    setCurrentX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!enableSwipeGestures || !isDragging) return;
+    setIsDragging(false);
+    
+    const diff = startX - currentX;
+    const threshold = 50; // Minimum swipe distance
+    
+    if (Math.abs(diff) > threshold) {
+      const enabledOptions = options.filter((opt) => !opt.disabled);
+      const currentIndex = enabledOptions.findIndex((opt) => opt.id === activeTab);
+      
+      if (diff > 0 && currentIndex < enabledOptions.length - 1) {
+        // Swipe left - go to next tab
+        onTabChange(enabledOptions[currentIndex + 1].id);
+      } else if (diff < 0 && currentIndex > 0) {
+        // Swipe right - go to previous tab
+        onTabChange(enabledOptions[currentIndex - 1].id);
+      }
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, tabId: string) => {
     const enabledOptions = options.filter((opt) => !opt.disabled);
     const currentEnabledIndex = enabledOptions.findIndex((opt) => opt.id === tabId);
 
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
-      onTabChange(tabId);
-    } else if (orientation === 'horizontal' && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      const nextIndex = (currentEnabledIndex + 1) % enabledOptions.length;
+      onTabChange(enabledOptions[nextIndex].id);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault();
-      const direction = e.key === 'ArrowRight' ? 1 : -1;
-      const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
-      const nextTab = enabledOptions[nextEnabledIndex];
-      onTabChange(nextTab.id);
-    } else if (orientation === 'vertical' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      const prevIndex = currentEnabledIndex === 0 ? enabledOptions.length - 1 : currentEnabledIndex - 1;
+      onTabChange(enabledOptions[prevIndex].id);
+    } else if (e.key === 'Home') {
       e.preventDefault();
-      const direction = e.key === 'ArrowDown' ? 1 : -1;
-      const nextEnabledIndex = (currentEnabledIndex + direction + enabledOptions.length) % enabledOptions.length;
-      const nextTab = enabledOptions[nextEnabledIndex];
-      onTabChange(nextTab.id);
+      onTabChange(enabledOptions[0].id);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      onTabChange(enabledOptions[enabledOptions.length - 1].id);
     }
   };
 
   return (
-    <div className={className}>
-      {variant === 'border' && (
-        <div className="border-b border-neutral-200 dark:border-neutral-700">
-          <nav
-            className="flex space-x-8 px-6"
-            role="tablist"
-            aria-label={ariaLabel}
-            aria-orientation={orientation}
-          >
-            {options.map((option) => (
-              <button
-                key={option.id}
-                ref={(el) => { if (el) tabRefs.current.set(option.id, el); }}
-                onClick={() => !option.disabled && onTabChange(option.id)}
-                onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
-                disabled={option.disabled}
-                role="tab"
-                aria-selected={activeTab === option.id}
-                aria-controls={`panel-${option.id}`}
-                tabIndex={activeTab === option.id ? 0 : -1}
-                className={`relative ${getButtonClasses(option.id)}`}
-              >
-                {option.icon && <option.icon className="w-4 h-4" />}
-                {option.label}
-                {option.badge !== undefined && option.badge > 0 && (
-                  <span
-                    className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
-                    aria-label={`${option.badge} items`}
-                  >
-                    {option.badge}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
-      )}
-
-      {variant !== 'border' && (
-        <div className={containerClasses} role="tablist" aria-label={ariaLabel} aria-orientation={orientation}>
-          {options.map((option) => (
-            <button
-              key={option.id}
-              ref={(el) => { if (el) tabRefs.current.set(option.id, el); }}
-              onClick={() => !option.disabled && onTabChange(option.id)}
-              onKeyDown={(e) => !option.disabled && handleKeyDown(e, option.id)}
-              disabled={option.disabled}
-              role="tab"
-              aria-selected={activeTab === option.id}
-              aria-controls={`panel-${option.id}`}
-              tabIndex={activeTab === option.id ? 0 : -1}
-              className={`relative ${getButtonClasses(option.id)}`}
-            >
-              {option.icon && <option.icon className="w-4 h-4" />}
-              {option.label}
-              {option.badge !== undefined && option.badge > 0 && (
-                <span
-                  className="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold"
-                  aria-label={`${option.badge} items`}
-                >
-                  {option.badge}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <nav
+      ref={containerRef}
+      className={containerClasses}
+      role="tablist"
+      aria-label={ariaLabel}
+      style={orientation === 'horizontal' ? { scrollBehavior: 'smooth' } : undefined}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {options.map((tab) => (
+        <button
+          key={tab.id}
+          ref={(el) => {
+            if (el) tabRefs.current.set(tab.id, el);
+          }}
+          type="button"
+          role="tab"
+          aria-selected={activeTab === tab.id}
+          aria-controls={`panel-${tab.id}`}
+          disabled={tab.disabled}
+          className={getButtonClasses(tab.id)}
+          onClick={() => !tab.disabled && onTabChange(tab.id)}
+          onKeyDown={(e) => handleKeyDown(e, tab.id)}
+          tabIndex={tab.disabled ? -1 : 0}
+        >
+          {tab.icon && <tab.icon className="w-4 h-4" />}
+          <span className="truncate">{tab.label}</span>
+          {tab.badge && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+              {tab.badge > 99 ? '99+' : tab.badge}
+            </span>
+          )}
+        </button>
+      ))}
+    </nav>
   );
 };
 

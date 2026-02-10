@@ -395,118 +395,145 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
         {currentView === 'home' && (
             <>
-                <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 sm:p-8 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight">
+                <div className={`bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800 dark:to-neutral-900 rounded-2xl p-6 sm:p-8 shadow-lg border border-neutral-200/60 dark:border-neutral-700/60 section-rhythm-lg backdrop-blur-sm ${!isOnline ? 'animate-pulse' : 'animate-fade-in-up'}`}>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                        <div className="space-y-3">
+                            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent tracking-tight">
                                 Dashboard Administrator
-                                {!isOnline && <span className="ml-2 text-sm font-normal text-amber-600 dark:text-amber-400">(Offline)</span>}
+                                {!isOnline && <span className="ml-3 inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">(Offline)</span>}
                             </h1>
-                            <p className="mt-3 text-base text-neutral-600 dark:text-neutral-300 leading-relaxed font-medium">
-                                Selamat datang, Admin. Kelola konten website dan pengguna dari sini.
+                            <p className="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed font-medium max-w-2xl">
+                                Selamat datang, Admin. Kelola konten website dan pengguna dari sini dengan kontrol penuh.
                                 {dashboardData?.lastSync && (
-                                    <span className="text-xs text-neutral-500 dark:text-neutral-400 block mt-1">
-                                        Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
+                                    <span className="text-xs text-neutral-500 dark:text-neutral-500 block mt-2 font-normal">
+                                        <span className="inline-flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                                            </svg>
+                                            Terakhir diperbarui: {new Date(dashboardData.lastSync).toLocaleString('id-ID')}
+                                        </span>
                                     </span>
                                 )}
                             </p>
                         </div>
                         
-                        {/* Sync Controls */}
-                        <div className="flex items-center gap-3">
-                            {/* Sync Status Indicator */}
-                            {syncStatus !== 'idle' && (
-                                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-                                    syncStatus === 'syncing' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' :
-                                    syncStatus === 'synced' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300' :
-                                    'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                                }`}>
-                                    {syncStatus === 'syncing' && (
-                                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    )}
-                                    {syncStatus === 'synced' && '✓ Sinkronisasi Selesai'}
-                                    {syncStatus === 'failed' && '✕ Gagal Sinkronisasi'}
-                                </div>
-                            )}
+                         {/* Enhanced Sync Controls */}
+                         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                             {/* Sync Status Indicator */}
+                             {syncStatus !== 'idle' && (
+                                 <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-sm ${
+                                     syncStatus === 'syncing' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800' :
+                                     syncStatus === 'synced' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800' :
+                                     'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
+                                 }`}>
+                                     {syncStatus === 'syncing' && (
+                                         <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                         </svg>
+                                     )}
+                                     {syncStatus === 'synced' && (
+                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                         </svg>
+                                     )}
+                                     {syncStatus === 'failed' && (
+                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                         </svg>
+                                     )}
+                                     {syncStatus === 'syncing' ? 'Menyinkronkan...' : syncStatus === 'synced' ? 'Sinkronisasi Selesai' : 'Gagal Sinkronisasi'}
+                                 </div>
+                             )}
                             
-                            {/* Offline Action Queue Badge */}
-                            {(getPendingCount() > 0 || getFailedCount() > 0) && (
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium">
-                                    <span className="flex items-center gap-1">
-                                        {getPendingCount() > 0 && `${getPendingCount()} menunggu`}
-                                        {getPendingCount() > 0 && getFailedCount() > 0 && ' • '}
-                                        {getFailedCount() > 0 && `${getFailedCount()} gagal`}
-                                    </span>
-                                </div>
-                            )}
+                             {/* Offline Action Queue Badge */}
+                             {(getPendingCount() > 0 || getFailedCount() > 0) && (
+                                 <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 rounded-full text-sm font-medium shadow-sm border border-amber-200 dark:border-amber-800">
+                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                         <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                                     </svg>
+                                     <span className="flex items-center gap-1">
+                                         {getPendingCount() > 0 && `${getPendingCount()} menunggu`}
+                                         {getPendingCount() > 0 && getFailedCount() > 0 && ' • '}
+                                         {getFailedCount() > 0 && `${getFailedCount()} gagal`}
+                                     </span>
+                                 </div>
+                             )}
 
-                            {/* WebSocket Connection Status */}
-                            {isOnline && (
-                                <WebSocketStatus compact showReconnectButton={false} className="text-xs" />
-                            )}
+                             {/* WebSocket Connection Status */}
+                             {isOnline && (
+                                 <div className="flex items-center">
+                                     <WebSocketStatus compact showReconnectButton={false} className="text-xs" />
+                                 </div>
+                             )}
 
-                            {/* Manual Sync Button */}
-                            <SmallActionButton
-                                onClick={handleManualSync}
-                                disabled={syncStatus === 'syncing' || isActionQueueSyncing || !isOnline}
-                                title={isOnline ? 'Sinkronisasi manual' : 'Memerlukan koneksi internet'}
-                                className="flex items-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                Sync
-                            </SmallActionButton>
+                             {/* Manual Sync Button */}
+                             <SmallActionButton
+                                 onClick={handleManualSync}
+                                 disabled={syncStatus === 'syncing' || isActionQueueSyncing || !isOnline}
+                                 title={isOnline ? 'Sinkronisasi manual' : 'Memerlukan koneksi internet'}
+                                 className="flex items-center gap-2 px-4 py-2"
+                             >
+                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                 </svg>
+                                 <span>Sync</span>
+                             </SmallActionButton>
                         </div>
                     </div>
                 </div>
 
-                 {/* Voice Commands Section */}
-                 {voiceSupported && (
-                     <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
-                         <div className="flex items-center justify-between">
-                             <div>
-                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                                     Perintah Suara
-                                 </h2>
-                                 <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                                     Gunakan suara untuk navigasi cepat dashboard
-                                 </p>
-                             </div>
-                             <div className="flex items-center gap-2">
-                                 <SmallActionButton
-                                     onClick={() => setShowVoiceHelp(true)}
-                                 >
-                                     Bantuan
-                                 </SmallActionButton>
-                                 <VoiceInputButton
-                                     onTranscript={(transcript) => {
-                                       onShowToast(`Transkripsi: ${transcript}`, 'info');
-                                     }}
-                                     onCommand={handleVoiceCommandCallback}
-                                     onError={(errorMsg) => onShowToast(errorMsg, 'error')}
-                                     className="flex-shrink-0"
-                                 />
-                             </div>
-                         </div>
-                     </div>
-                 )}
+                  {/* Enhanced Voice Commands Section */}
+                  {voiceSupported && (
+                      <div className={`bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-6 shadow-lg border border-indigo-200/60 dark:border-indigo-800/60 section-rhythm-lg animate-fade-in-up backdrop-blur-sm`}>
+                          <div className="flex items-center justify-between gap-4">
+                              <div className="space-y-2">
+                                  <h2 className="text-lg font-semibold text-neutral-900 dark:text-white flex items-center gap-2">
+                                      <svg className="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+                                      </svg>
+                                      Perintah Suara
+                                  </h2>
+                                  <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                                      Kontrol dashboard dengan suara Anda untuk navigasi lebih cepat
+                                  </p>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                  <SmallActionButton
+                                      onClick={() => setShowVoiceHelp(true)}
+                                      className="px-4 py-2"
+                                  >
+                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                      Bantuan
+                                  </SmallActionButton>
+                                  <VoiceInputButton
+                                      onTranscript={(transcript) => {
+                                        onShowToast(`Transkripsi: ${transcript}`, 'info');
+                                      }}
+                                      onCommand={handleVoiceCommandCallback}
+                                      onError={(errorMsg) => onShowToast(errorMsg, 'error')}
+                                      className="flex-shrink-0"
+                                  />
+                              </div>
+                          </div>
+                      </div>
+                  )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 component-rhythm-lg animate-fade-in-up">
                     {canAccess('content.update').canAccess && (
                         <button
                             onClick={onOpenEditor}
                             aria-label="Buka AI Site Editor"
-                             className={`${getGradientClass('INDIGO_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}
+                             className={`${getGradientClass('INDIGO_MAIN')} rounded-2xl p-6 lg:p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 relative overflow-hidden`}
                         >
-                            <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
-                                <SparklesIcon className="w-6 h-6 text-white" aria-hidden="true" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700 ease-out"></div>
+                            <div className={`${OPACITY_TOKENS.WHITE_20} w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 ease-out`}>
+                                <SparklesIcon className="w-7 h-7 text-white" aria-hidden="true" />
                             </div>
-                            <h3 className="text-lg sm:text-xl font-semibold mb-2">AI Site Editor</h3>
-                            <p className="text-indigo-100 text-sm leading-relaxed">Edit konten Program Unggulan dan Berita menggunakan bantuan AI.</p>
+                            <h3 className="text-xl lg:text-2xl font-bold mb-3 relative z-10">AI Site Editor</h3>
+                            <p className="text-indigo-100 text-sm lg:text-base leading-relaxed relative z-10">Edit konten Program Unggulan dan Berita menggunakan bantuan AI yang canggih.</p>
                         </button>
                     )}
 

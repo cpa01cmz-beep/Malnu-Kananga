@@ -27,7 +27,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   pulseDuration?: number;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
+const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200 relative overflow-hidden group";
 
 const variantClasses: Record<BadgeVariant, Record<BadgeStyle, string>> = {
   success: {
@@ -119,7 +119,7 @@ const fullRoundedClasses: Record<BadgeSize, string> = {
 
 const pulseIntensityClasses: Record<BadgePulseIntensity, string> = {
   subtle: 'animate-badge-pulse-subtle',
-  moderate: 'animate-badge-pulse-moderate',
+  moderate: 'animate-badge-pulse-moderate', 
   strong: 'animate-badge-pulse-strong',
 };
 
@@ -147,6 +147,8 @@ const Badge: React.FC<BadgeProps> = ({
     ${sizeClasses[size]}
     ${rounded ? fullRoundedClasses[size] : roundedClasses[size]}
     ${shouldPulse ? pulseIntensityClasses[pulseIntensity] : ''}
+    ${shouldPulse ? 'animate-in fade-in zoom-in duration-300' : ''}
+    ${!shouldPulse ? 'transition-all duration-200 ease-out hover:scale-105 active:scale-95 hover:shadow-md active:shadow-sm' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -160,6 +162,18 @@ const Badge: React.FC<BadgeProps> = ({
       {...props}
     >
       {children}
+      {/* Enhanced visual feedback for interactive badges */}
+      {!decorative && role === 'status' && (
+        <>
+          <span className="absolute inset-0 rounded-inherit bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+          {/* Subtle shimmer effect on hover */}
+          <span className="absolute inset-0 rounded-inherit bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-700 ease-out pointer-events-none opacity-0 group-hover:opacity-100" />
+          {/* Pulse ring for attention-grabbing badges */}
+          {shouldPulse && pulseIntensity !== 'subtle' && (
+            <span className="absolute inset-0 rounded-inherit border-2 border-current opacity-20 animate-ping" style={{ animationDuration: `${pulseDuration * 1.5}s` }} />
+          )}
+        </>
+      )}
     </span>
   );
 };

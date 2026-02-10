@@ -68,7 +68,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm border border-neutral-200/60 dark:border-neutral-700/60";
+const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm border border-neutral-200/60 dark:border-neutral-700/60 hover:border-neutral-300/80 dark:hover:border-neutral-600/80 hover:backdrop-blur-md";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -172,11 +172,26 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         onKeyDown={handleKeyDown}
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
-        {children}
-         {/* Press state overlay - simplified */}
-         {isPressed && (
-           <span className="absolute inset-0 rounded-xl bg-black/4 dark:bg-white/4 pointer-events-none transition-opacity duration-150"></span>
-         )}
+      {children}
+       {/* Enhanced press state overlay */}
+       {isPressed && (
+         <span className="absolute inset-0 rounded-xl bg-black/6 dark:bg-white/6 pointer-events-none transition-opacity duration-150">
+           <span className="absolute inset-0 bg-gradient-to-br from-transparent via-black/2 to-black/4"></span>
+           <span className="absolute inset-0 rounded-xl border border-black/10 dark:border-white/10"></span>
+         </span>
+       )}
+        {/* Enhanced shimmer effect for interactive cards */}
+        {(variant === 'interactive' || variant === 'hover') && (
+          <>
+            <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></span>
+            </span>
+            {/* Additional subtle glow on hover */}
+            <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <span className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]"></span>
+            </span>
+          </>
+        )}
       </button>
     );
   }
@@ -191,11 +206,17 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       className={getCardClasses()}
     >
       {children}
-      {/* Subtle hover effect for non-interactive cards */}
+      {/* Enhanced hover effect for non-interactive cards */}
       {variant === 'hover' && (
-        <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-        </span>
+        <>
+          <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+          </span>
+          {/* Subtle inner glow on hover */}
+          <span className="absolute inset-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <span className="absolute inset-0 shadow-[inset_0_0_15px_rgba(0,0,0,0.03)] dark:shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]"></span>
+          </span>
+        </>
       )}
     </div>
   );

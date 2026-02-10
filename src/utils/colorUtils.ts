@@ -1,5 +1,5 @@
 /**
- * Color contrast utilities for WCAG compliance and visual accessibility
+ * Enhanced Color contrast utilities for WCAG compliance and visual accessibility
  */
 
 export const CONTRAST_RATIOS = {
@@ -14,6 +14,10 @@ export const TEXT_SIZES = {
   NORMAL: '16px',            // Default body text
   SMALL: '14px',             // Small text
 } as const;
+
+// Enhanced color intensity types
+export type ColorIntensity = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+export type SemanticColor = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info' | 'neutral';
 
 /**
  * Color combinations that meet WCAG AA standards

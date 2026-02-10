@@ -36,10 +36,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const getBaseClasses = (prefersReducedMotion: boolean) => {
+  const getBaseClasses = (prefersReducedMotion: boolean) => {
   const motionClasses = prefersReducedMotion 
     ? "transition-none"
-    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
+    : "active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 mobile-touch-enhanced focus-visible-enhanced";
      
   return `${BUTTON_BASE_CLASSES} ${motionClasses}`;
 };
@@ -67,32 +67,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 }, ref) => {
   const prefersReducedMotion = useReducedMotion();
   const { onTap, onPress } = useHapticFeedback();
-  // Map legacy variants to new ones
+  // Enhanced variant mapping with better UX intent preservation
   const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
-    // Map legacy solid colors to new intent system
-    if (variant === 'green-solid') return 'primary';
-    if (variant === 'blue-solid') return 'primary';
+    // Map legacy solid colors to new intent system with semantic meaning
+    if (variant === 'green-solid' || variant === 'teal-solid' || variant === 'success') return 'primary';
+    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo') return 'primary';
     if (variant === 'purple-solid') return 'primary';
     if (variant === 'red-solid' || variant === 'danger') return 'destructive';
     if (variant === 'orange-solid' || variant === 'warning') return 'primary';
-    if (variant === 'teal-solid' || variant === 'success') return 'primary';
-    if (variant === 'info' || variant === 'indigo') return 'primary';
     
     // Return if already a valid new variant
     return variant as ButtonVariant;
   };
 
-  // Determine intent from legacy variant if not explicitly provided
+  // Enhanced intent determination with better semantic mapping
   const getIntent = (): ButtonIntent => {
     if (intent !== 'default') return intent;
     
-    // Extract intent from legacy solid variants
-    if (variant === 'green-solid' || variant === 'success') return 'success';
-    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo') return 'info';
-    if (variant === 'red-solid' || variant === 'danger') return 'default';
+    // Extract intent from legacy solid variants with improved semantics
+    if (variant === 'green-solid' || variant === 'success' || variant === 'teal-solid') return 'success';
+    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo' || variant === 'purple-solid') return 'info';
+    if (variant === 'red-solid' || variant === 'danger') return 'default'; // Changed to default for destructive action
     if (variant === 'orange-solid' || variant === 'warning') return 'warning';
-    if (variant === 'purple-solid') return 'info';
-    if (variant === 'teal-solid') return 'success';
     
     return 'default';
   };
@@ -204,13 +200,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
           )}
         </>
       )}
-      {/* Ripple effect overlay */}
+      {/* Enhanced ripple effect overlay */}
       <span className="absolute inset-0 rounded-xl overflow-hidden">
         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+        <span className="absolute inset-0 bg-white/10 scale-0 group-active:scale-100 transition-transform duration-150 ease-out rounded-xl"></span>
       </span>
       
-      {/* Focus ring enhancement */}
-      <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none"></span>
+      {/* Enhanced focus ring with subtle glow */}
+      <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none group-hover:shadow-lg group-active:shadow-sm"></span>
       
       {/* Loading shimmer for loading state */}
       {isLoading && (

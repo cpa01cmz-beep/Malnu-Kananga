@@ -15,9 +15,9 @@ const HeroSection: React.FC = () => {
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO')}`}></div>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO_DECORATIVE', 'HERO_DECORATIVE')}`}></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        <div className={`inline-flex items-center ${UI_SPACING.GAP_TIGHT} ${UI_SPACING.PADDING_COMFORTABLE} mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-md hover:shadow-lg animate-scale-in transition-all duration-300 hover:scale-[1.05] group glass-effect text-contrast-enhanced mobile-gesture-feedback`}>
-          <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse ring-2 ring-primary-300 dark:ring-primary-700 group-hover:animate-pulse status-indicator"></span>
-          <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300 transition-colors duration-300 group-hover:text-primary-800 dark:group-hover:text-primary-200 text-contrast-enhanced">Penerimaan Siswa Baru 2025</span>
+        <div className={`inline-flex items-center ${UI_SPACING.GAP_TIGHT} ${UI_SPACING.PADDING_COMFORTABLE} mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-md hover:shadow-lg animate-scale-in transition-all duration-300 hover:scale-[1.05] group glass-effect text-contrast-enhanced mobile-gesture-feedback card-interactive button-depth-hover`}>
+          <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse ring-2 ring-primary-300 dark:ring-primary-700 group-hover:animate-pulse status-indicator badge-pulse"></span>
+          <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300 transition-colors duration-300 group-hover:text-primary-800 dark:group-hover:text-primary-200 text-contrast-enhanced link-underline-animated">Penerimaan Siswa Baru 2025</span>
         </div>
         <Heading
           id={headingId}
@@ -42,16 +42,18 @@ const HeroSection: React.FC = () => {
 })} text-neutral-600 dark:text-neutral-300 mb-8 sm:mb-10 lg:mb-12 animate-fade-in reading-comfortable text-contrast-enhanced`}>
           Mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
         </p>
-        <div className={`flex flex-col sm:flex-row ${UI_SPACING.GAP_NORMAL} sm:${UI_SPACING.GAP_LOOSE} justify-center items-center animate-fade-in-up`}>
+        <div className={`flex flex-col sm:flex-row ${UI_SPACING.GAP_NORMAL} sm:${UI_SPACING.GAP_LOOSE} justify-center items-center animate-fade-in-up mobile-touch-enhanced transition-all-smooth`}>
           <GradientButton
             variant="primary"
             href="#ppdb"
+            className="mobile-touch-enhanced hover-lift-enhanced transition-all-smooth"
           >
             Info PPDB 2025
           </GradientButton>
           <GradientButton
             variant="secondary"
             href="#profil"
+            className="mobile-touch-enhanced hover-lift-enhanced transition-all-smooth"
           >
             Jelajahi Profil
           </GradientButton>

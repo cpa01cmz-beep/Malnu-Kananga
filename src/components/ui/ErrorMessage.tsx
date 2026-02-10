@@ -19,6 +19,18 @@ interface ErrorMessageProps {
   correlationId?: string;
   showDetails?: boolean;
   onToggleDetails?: () => void;
+  userFriendlyMessage?: string;
+  contextualHelp?: {
+    title: string;
+    content: string;
+    link?: string;
+  };
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  autoRetry?: {
+    enabled: boolean;
+    delay?: number;
+    maxAttempts?: number;
+  };
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({
@@ -36,9 +48,15 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
   correlationId,
   showDetails = false,
   onToggleDetails,
+  userFriendlyMessage,
+  contextualHelp,
+  severity = 'medium',
+  autoRetry,
 }) => {
   const [isVisible, setIsVisible] = React.useState(true);
   const [detailsVisible, setDetailsVisible] = React.useState(showDetails);
+  const [retryCount, setRetryCount] = React.useState(0);
+  const [timeToNextRetry, setTimeToNextRetry] = React.useState<number | null>(null);
   
   React.useEffect(() => {
     if (variant === 'toast' && isVisible) {
@@ -49,6 +67,34 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
       return () => clearTimeout(timer);
     }
   }, [variant, isVisible, onDismiss]);
+
+  // Auto-retry functionality
+  React.useEffect(() => {
+    if (autoRetry?.enabled && retryAction && retryCount < (autoRetry.maxAttempts || 3)) {
+      const delay = autoRetry.delay || 5000;
+      setTimeToNextRetry(delay / 1000);
+      
+      const countdown = setInterval(() => {
+        setTimeToNextRetry(prev => {
+          if (prev !== null && prev > 1) {
+            return prev - 1;
+          }
+          clearInterval(countdown);
+          return null;
+        });
+      }, 1000);
+
+      const timer = setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+        retryAction.onRetry();
+      }, delay);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(countdown);
+      };
+    }
+  }, [autoRetry, retryAction, retryCount]);
 
   const handleDismiss = () => {
     setIsVisible(false);
@@ -155,42 +201,91 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
     switch (errorType) {
       case 'network':
         return [
-          'Check your internet connection',
-          'Try refreshing the page',
-          'Contact your network administrator',
+          'Periksa koneksi internet Anda',
+          'Coba muat ulang halaman',
+          'Hubungi administrator jaringan',
         ];
       case 'validation':
         return [
-          'Review all form fields',
-          'Check for required fields',
-          'Ensure all data is in correct format',
+          'Periksa semua kolom form',
+          'Cek field yang wajib diisi',
+          'Pastikan semua data dalam format benar',
         ];
       case 'permission':
         return [
-          'Contact your administrator',
-          'Request necessary permissions',
-          'Try logging in again',
+          'Hubungi administrator Anda',
+          'Request permission yang diperlukan',
+          'Coba login kembali',
         ];
       case 'not-found':
         return [
-          'Check the URL for typos',
-          'Go back to the previous page',
-          'Use the search function',
+          'Periksa URL untuk kesalahan ketik',
+          'Kembali ke halaman sebelumnya',
+          'Gunakan fungsi pencarian',
         ];
       case 'server':
       case 'timeout':
         return [
-          'Try again in a few moments',
-          'Refresh the page',
-          'Contact support if the issue persists',
+          'Coba lagi beberapa saat lagi',
+          'Muat ulang halaman',
+          'Hubungi support jika masalah berlanjut',
         ];
       default:
         return [
-          'Try refreshing the page',
-          'Check your internet connection',
-          'Contact support if needed',
+          'Coba muat ulang halaman',
+          'Periksa koneksi internet',
+          'Hubungi support jika diperlukan',
         ];
     }
+  };
+
+  // Get user-friendly display message
+  const getDisplayMessage = () => {
+    if (userFriendlyMessage) return userFriendlyMessage;
+    
+    const userFriendlyMessages = {
+      network: 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.',
+      validation: 'Ada kesalahan dalam input Anda. Silakan periksa kembali.',
+      permission: 'Anda tidak memiliki izin untuk melakukan aksi ini.',
+      'not-found': 'Halaman yang Anda cari tidak ditemukan.',
+      server: 'Terjadi kesalahan di server kami. Silakan coba lagi nanti.',
+      timeout: 'Permintaan terlalu lama. Silakan coba lagi.',
+      generic: 'Terjadi kesalahan yang tidak terduga.',
+    };
+    
+    return userFriendlyMessages[errorType] || message;
+  };
+
+  // Get severity color classes
+  const getSeverityClasses = () => {
+    const severityMap = {
+      low: {
+        border: 'border-amber-200 dark:border-amber-800',
+        bg: 'bg-amber-50 dark:bg-amber-900/20',
+        text: 'text-amber-800 dark:text-amber-200',
+        icon: 'text-amber-600'
+      },
+      medium: {
+        border: 'border-red-200 dark:border-red-800',
+        bg: 'bg-red-50 dark:bg-red-900/20',
+        text: 'text-red-800 dark:text-red-200',
+        icon: 'text-red-600'
+      },
+      high: {
+        border: 'border-red-300 dark:border-red-700',
+        bg: 'bg-red-100 dark:bg-red-900/30',
+        text: 'text-red-900 dark:text-red-100',
+        icon: 'text-red-700'
+      },
+      critical: {
+        border: 'border-red-400 dark:border-red-600',
+        bg: 'bg-red-200 dark:bg-red-900/40',
+        text: 'text-red-900 dark:text-red-50',
+        icon: 'text-red-800'
+      }
+    };
+    
+    return severityMap[severity];
   };
 
 if (variant === 'inline') {
@@ -202,20 +297,29 @@ if (variant === 'inline') {
     );
   }
 
+  const severityClasses = getSeverityClasses();
+  
   const content = (
     <div className={`${baseClasses} ${variantClasses[variant]} ${className} relative`} role="alert" aria-live="assertive">
+      {/* Severity indicator for critical/high errors */}
+      {['high', 'critical'].includes(severity) && (
+        <div className="absolute -top-2 -right-2">
+          <div className={`w-3 h-3 rounded-full ${severity === 'critical' ? 'bg-red-600 animate-pulse' : 'bg-red-500'}`}></div>
+        </div>
+      )}
+      
       <div className="flex items-start gap-3 flex-1">
         <div className="flex-shrink-0">
           {defaultIcon}
         </div>
         <div className="flex-1 min-w-0">
           {defaultTitle && (
-            <h3 className="font-semibold text-red-800 dark:text-red-200 mb-1 text-lg">
+            <h3 className={`font-semibold ${severityClasses.text} mb-1 text-lg`}>
               {defaultTitle}
             </h3>
           )}
-          <p className="text-red-700 dark:text-red-300 text-sm leading-relaxed mb-3">
-            {message}
+          <p className={`${severityClasses.text} text-sm leading-relaxed mb-3`}>
+            {getDisplayMessage()}
           </p>
           
           {/* Recovery Actions */}
@@ -240,19 +344,59 @@ if (variant === 'inline') {
               <div className="flex gap-2 flex-wrap">
                 {actions}
               </div>
-            )}
-            
-            {/* Suggestions */}
-            {!['inline', 'toast'].includes(variant) && (
-              <div className="text-sm">
-                <p className="font-medium text-red-800 dark:text-red-200 mb-2">What you can try:</p>
-                <ul className="list-disc list-inside space-y-1 text-red-700 dark:text-red-300">
-                  {getSuggestions().map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+             )}
+             
+             {/* Contextual Help */}
+             {contextualHelp && !['inline', 'toast'].includes(variant) && (
+               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                 <div className="flex items-start gap-2">
+                   <svg className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                   </svg>
+                   <div className="flex-1">
+                     <p className="font-medium text-blue-800 dark:text-blue-200 text-sm">{contextualHelp.title}</p>
+                     <p className="text-blue-700 dark:text-blue-300 text-xs mt-1">{contextualHelp.content}</p>
+                     {contextualHelp.link && (
+                       <a 
+                         href={contextualHelp.link} 
+                         target="_blank" 
+                         rel="noopener noreferrer"
+                         className="text-blue-600 dark:text-blue-400 text-xs hover:underline mt-1 inline-block"
+                       >
+                         Pelajari lebih lanjut →
+                       </a>
+                     )}
+                   </div>
+                 </div>
+               </div>
+             )}
+
+             {/* Auto-retry countdown */}
+             {autoRetry?.enabled && retryAction && retryCount < (autoRetry.maxAttempts || 3) && timeToNextRetry !== null && (
+               <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                 <div className="flex items-center gap-2">
+                   <svg className="w-4 h-4 text-amber-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                   </svg>
+                   <div className="text-sm">
+                     <p className="font-medium text-amber-800 dark:text-amber-200">Mencoba otomatis dalam {timeToNextRetry} detik...</p>
+                     <p className="text-amber-700 dark:text-amber-300 text-xs">Percobaan ke-{retryCount + 1} dari {autoRetry.maxAttempts || 3}</p>
+                   </div>
+                 </div>
+               </div>
+             )}
+
+             {/* Suggestions */}
+             {!['inline', 'toast'].includes(variant) && (
+               <div className="text-sm">
+                 <p className={`font-medium ${severityClasses.text} mb-2`}>Yang dapat Anda coba:</p>
+                 <ul className="list-disc list-inside space-y-1">
+                   {getSuggestions().map((suggestion, index) => (
+                     <li key={index} className={`${severityClasses.text} opacity-90`}>{suggestion}</li>
+                   ))}
+                 </ul>
+               </div>
+             )}
             
             {/* Error Details */}
             {(correlationId || timestamp) && (
