@@ -552,6 +552,67 @@
   }
 }
 
+/* Enhanced spacing system with consistent visual rhythm */
+:root {
+  /* Semantic spacing scale */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 0.75rem;   /* 12px */
+  --space-lg: 1rem;      /* 16px */
+  --space-xl: 1.25rem;   /* 20px */
+  --space-2xl: 1.5rem;   /* 24px */
+  --space-3xl: 2rem;     /* 32px */
+  --space-4xl: 2.5rem;   /* 40px */
+  --space-5xl: 3rem;     /* 48px */
+  --space-6xl: 4rem;     /* 64px */
+  
+  /* Section spacing for content hierarchy */
+  --space-section-sm: 1.5rem;   /* 24px */
+  --space-section-md: 2rem;     /* 32px */
+  --space-section-lg: 3rem;     /* 48px */
+  --space-section-xl: 4rem;     /* 64px */
+  
+  /* Component spacing for visual rhythm */
+  --space-component-xs: 0.5rem;   /* 8px */
+  --space-component-sm: 0.75rem;   /* 12px */
+  --space-component-md: 1rem;     /* 16px */
+  --space-component-lg: 1.5rem;   /* 24px */
+  --space-component-xl: 2rem;     /* 32px */
+}
+
+/* Consistent spacing utilities */
+.spacing-xs { margin: var(--space-xs); }
+.spacing-sm { margin: var(--space-sm); }
+.spacing-md { margin: var(--space-md); }
+.spacing-lg { margin: var(--space-lg); }
+.spacing-xl { margin: var(--space-xl); }
+.spacing-2xl { margin: var(--space-2xl); }
+.spacing-3xl { margin: var(--space-3xl); }
+.spacing-4xl { margin: var(--space-4xl); }
+.spacing-5xl { margin: var(--space-5xl); }
+.spacing-6xl { margin: var(--space-6xl); }
+
+.section-spacing-sm { margin: var(--space-section-sm); }
+.section-spacing-md { margin: var(--space-section-md); }
+.section-spacing-lg { margin: var(--space-section-lg); }
+.section-spacing-xl { margin: var(--space-section-xl); }
+
+.component-spacing-xs { margin: var(--space-component-xs); }
+.component-spacing-sm { margin: var(--space-component-sm); }
+.component-spacing-md { margin: var(--space-component-md); }
+.component-spacing-lg { margin: var(--space-component-lg); }
+.component-spacing-xl { margin: var(--space-component-xl); }
+
+/* Responsive spacing */
+@media (max-width: 640px) {
+  :root {
+    --space-section-sm: 1rem;    /* 16px on mobile */
+    --space-section-md: 1.5rem;  /* 24px on mobile */
+    --space-section-lg: 2rem;    /* 32px on mobile */
+    --space-section-xl: 2.5rem;  /* 40px on mobile */
+  }
+}
+
 /* Enhanced micro-interactions with better physics and spring animations */
 .hover-lift {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
@@ -567,6 +628,41 @@
 .hover-lift:hover:active {
   transform: translateY(-1px) scale(1.008);
   transition-duration: 0.1s;
+}
+
+/* Rhythmic spacing for cards and components */
+.card-rhythm {
+  margin-bottom: var(--space-component-lg);
+}
+
+.card-rhythm-sm {
+  margin-bottom: var(--space-component-md);
+}
+
+.card-rhythm-lg {
+  margin-bottom: var(--space-component-xl);
+}
+
+/* Section rhythm for content flow */
+.section-rhythm {
+  margin-bottom: var(--space-section-md);
+}
+
+.section-rhythm-sm {
+  margin-bottom: var(--space-section-sm);
+}
+
+.section-rhythm-lg {
+  margin-bottom: var(--space-section-lg);
+}
+
+/* Form spacing rhythm */
+.form-field-rhythm {
+  margin-bottom: var(--space-component-md);
+}
+
+.form-section-rhythm {
+  margin-bottom: var(--space-section-sm);
 }
 
 .hover-glow {

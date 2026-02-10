@@ -92,9 +92,36 @@ const Header: React.FC<HeaderProps> = ({
     const [isScrolled, setIsScrolled] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
     const [activePath, setActivePath] = useState<string>('');
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
     const _mobileMenuRef = useRef<HTMLDivElement>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
     const prefersReducedMotion = useReducedMotion();
+
+    // Touch gesture handling for swipe-to-close
+    const minSwipeDistance = 50;
+    
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        
+    const distance = touchStart - touchEnd;
+    const isRightSwipe = distance < -minSwipeDistance;
+        
+        // Swipe right to close menu
+        if (isRightSwipe && isMenuOpen) {
+            setIsMenuOpen(false);
+            triggerHapticFeedback('light');
+        }
+    };
 
     // Haptic feedback utility
     const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
@@ -304,11 +331,21 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuFocusRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect-elevated nav-polished modal-backdrop-enhanced`}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect-elevated nav-polished modal-backdrop-enhanced touch-manipulation`}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Menu navigasi mobile"
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+                    style={{
+                        transform: touchStart && touchEnd ? `translateX(${Math.min(0, (touchStart - touchEnd) * 0.3)}px)` : 'translateX(0)',
+                        transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    }}
                 >
+                    <div className="flex justify-center mb-3">
+                        <div className="w-12 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full"></div>
+                    </div>
                     <nav
                         id="mobile-menu"
                         className="flex flex-col gap-2 font-medium"
