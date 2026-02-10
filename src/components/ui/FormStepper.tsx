@@ -3,6 +3,7 @@ import Button from './Button';
 import FormProgress from './FormProgress';
 import FormFeedback from './FormFeedback';
 import { ChevronLeftIcon, ChevronRightIcon, CheckIcon } from '../icons/MaterialIcons';
+import { logger } from '../../utils/logger';
 
 export interface FormStep {
   id: string;
@@ -138,7 +139,7 @@ const FormStepper: React.FC<FormStepperProps> = ({
       }
       onSubmitComplete?.();
     } catch (error) {
-      console.error('Form submission error:', error);
+      logger.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

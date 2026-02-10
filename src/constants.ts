@@ -2216,6 +2216,19 @@ export type PPDBLegacyStatus = typeof PPDB_LEGACY_STATUS[keyof typeof PPDB_LEGAC
 // Student prefix for ID generation
 export const STUDENT_ID_PREFIX = 'student_';
 
+// Storage Migration Constants - Flexy: Never hardcode migration keys!
+export const STORAGE_MIGRATION = {
+    VERSION_KEY: 'malnu_storage_migration_version',
+    CURRENT_VERSION: '1.0.0',
+} as const;
+
+// Legacy Storage Keys - Flexy: Centralize legacy keys for migration cleanup!
+export const LEGACY_STORAGE_KEYS = {
+    STUDENT_GRADES_CACHE: 'malnu_student_grades_cache',
+    STUDENT_ATTENDANCE_CACHE: 'malnu_student_attendance_cache',
+    PARENT_CHILDREN_CACHE: 'malnu_parent_children_cache',
+} as const;
+
 // Number formatting constants - Flexy: Never hardcode decimal places!
 export const NUMBER_FORMAT = {
     DECIMAL_PLACES_GRADE: 1,
