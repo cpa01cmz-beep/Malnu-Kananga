@@ -1,8 +1,9 @@
 # BroCula Browser Console & Performance Audit Report
 
-**Date**: 2026-02-09  
+**Date**: 2026-02-10  
 **Auditor**: BroCula (Browser Console & Lighthouse Specialist)  
 **Branch**: `main`  
+**Status**: Follow-up audit after PR #1613 (Toggle component enhancement)  
 
 ---
 
@@ -44,13 +45,18 @@ PWA v1.2.0 - mode generateSW - precache 110 entries (4794.54 KiB)
 **Bundle Analysis**:
 | Bundle | Size | Gzipped |
 |--------|------|---------|
-| Main (index-*.js) | 790 KB | 232 KB |
-| Vendor Core (React) | 596 KB | 177 KB |
-| Vendor jsPDF | 380 KB | 124 KB |
-| Vendor GenAI | 248 KB | 47 KB |
-| html2canvas | 196 KB | 46 KB |
+| Main (index-*.js) | 739 KB | 219 KB |
+| Vendor Core (React) | 606 KB | 177 KB |
+| Vendor jsPDF | 386 KB | 124 KB |
+| Vendor GenAI | 250 KB | 47 KB |
+| html2canvas | 199 KB | 46 KB |
 
-**Total Precache**: 110 entries (4.7 MB)
+**Total Precache**: 126 entries (5.1 MB)
+
+**New Features**:
+- Enhanced Toggle component with haptic feedback (PR #1613)
+- Improved accessibility with reduced motion support
+- Visual pressed state for better UX
 
 ### 3. Lint Check ✅
 
