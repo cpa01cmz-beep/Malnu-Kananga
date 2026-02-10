@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { voiceNotificationService } from '../services/voiceNotificationService';
-import type { 
-    VoiceNotificationSettings, 
-    VoiceNotification, 
-    SpeechSynthesisVoice 
+import type {
+    VoiceNotificationSettings,
+    VoiceNotification,
+    SpeechSynthesisVoice
 } from '../types';
 import { logger } from '../utils/logger';
+import { SCHEDULER_INTERVALS } from '../constants';
 
 interface UseVoiceNotificationsReturn {
     settings: VoiceNotificationSettings;
@@ -47,7 +48,7 @@ export const useVoiceNotifications = (): UseVoiceNotificationsReturn => {
             setQueue(voiceNotificationService.getQueue());
         };
         
-        const interval = setInterval(checkSpeakingStatus, 1000);
+        const interval = setInterval(checkSpeakingStatus, SCHEDULER_INTERVALS.SPEAKING_STATUS_CHECK);
         
         return () => {
             clearInterval(interval);
