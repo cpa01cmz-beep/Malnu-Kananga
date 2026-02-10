@@ -4,7 +4,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, CACHE_TTL } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CACHE_TTL, TEXT_TRUNCATION } from '../constants';
 import type { CacheConfig, CacheEntry, CacheKeyParams, CacheStats, SerializedCacheData } from './aiCache.types';
 
 class AIResponseCache {
@@ -41,7 +41,7 @@ class AIResponseCache {
   private generateKey(params: CacheKeyParams): string {
     const keyData = {
       op: params.operation,
-      input: params.input.substring(0, 500), // Limit input length
+      input: params.input.substring(0, TEXT_TRUNCATION.MEDIUM_PREVIEW), // Limit input length
       ctx: params.context || '',
       model: params.model || 'default',
       thinking: params.thinkingMode || false

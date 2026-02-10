@@ -1,6 +1,6 @@
 import { Theme, themes, getThemeById } from '../config/themes';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, THEME_COLOR_PALETTE } from '../constants';
+import { STORAGE_KEYS, THEME_COLOR_PALETTE, RGB_VALUES } from '../constants';
 
 export class ThemeManager {
   private static instance: ThemeManager;
@@ -66,9 +66,9 @@ export class ThemeManager {
       b = parseInt(hex.substring(5, 7), 16);
     }
 
-    r /= 255;
-    g /= 255;
-    b /= 255;
+    r /= RGB_VALUES.WHITE;
+    g /= RGB_VALUES.WHITE;
+    b /= RGB_VALUES.WHITE;
 
     const max = Math.max(r, g, b), min = Math.min(r, g, b);
     let h = 0, s = 0, l = (max + min) / 2;
@@ -233,7 +233,9 @@ export class ThemeManager {
     });
 
     // Apply progress bar striped overlay color based on theme brightness
-    const overlayColor = theme.isDark ? '0 0 0' : '255 255 255';
+    const overlayColor = theme.isDark 
+      ? `${RGB_VALUES.BLACK} ${RGB_VALUES.BLACK} ${RGB_VALUES.BLACK}` 
+      : `${RGB_VALUES.WHITE} ${RGB_VALUES.WHITE} ${RGB_VALUES.WHITE}`;
     root.style.setProperty('--progress-bar-striped-overlay', overlayColor);
   }
 

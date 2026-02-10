@@ -886,7 +886,7 @@ class ParentGradeNotificationService {
       
       const mostRecentGrade = subjectGrades[0];
       const lastGradeDate = new Date(mostRecentGrade.createdAt);
-      const daysSinceLastGrade = Math.floor((now.getTime() - lastGradeDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysSinceLastGrade = Math.floor((now.getTime() - lastGradeDate.getTime()) / TIME_MS.ONE_DAY);
 
       // Check if enough time has passed since the last grade to expect a new one
       // Consider different assignment types and their typical frequency
