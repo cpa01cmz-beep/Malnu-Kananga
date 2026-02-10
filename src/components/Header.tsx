@@ -16,9 +16,9 @@ import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-250 ease-out backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced mobile-gesture-feedback min-h-[48px]";
+const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) backdrop-blur-sm hover-lift-premium text-contrast-enhanced mobile-gesture-feedback min-h-[48px] glass-effect focus-indicator-enhanced";
 
-const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-250 ease-out border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px] text-contrast-enhanced mobile-gesture-feedback haptic-feedback";
+const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px] text-contrast-enhanced mobile-gesture-feedback haptic-feedback glass-effect focus-indicator-enhanced";
 
 const NavLink = ({ href, children, isMobile = false, isActive = false }: { 
     href: string; 
@@ -279,7 +279,7 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuFocusRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect nav-polished`}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect-elevated nav-polished modal-backdrop-enhanced`}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Menu navigasi mobile"
