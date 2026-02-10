@@ -1094,11 +1094,77 @@
   }
 }
 
-/* Improved focus management */
+/* Enhanced focus management with better accessibility */
 .focus-trap:focus {
   outline: none;
   box-shadow: 0 0 0 4px hsl(var(--color-primary-500) / 0.3);
   border-radius: 8px;
+}
+
+/* Enhanced focus indicators for better keyboard navigation */
+.focus-visible-enhanced:focus-visible {
+  outline: 2px solid hsl(var(--color-primary-500));
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 4px hsl(var(--color-primary-500) / 0.2);
+}
+
+/* Focus management for interactive elements */
+.interactive-focus:focus {
+  outline: 2px solid hsl(var(--color-primary-500));
+  outline-offset: 2px;
+  border-radius: 6px;
+  background-color: hsl(var(--color-primary-50) / 0.5);
+}
+
+.dark .interactive-focus:focus {
+  background-color: hsl(var(--color-primary-900) / 0.3);
+}
+
+/* Skip links enhancement */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: hsl(var(--color-primary-600));
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Not screen reader only (for showing content on focus) */
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 /* Better smooth scroll for mobile */
@@ -1117,6 +1183,33 @@
   
   .enhanced-contrast:focus {
     border-width: 3px;
+  }
+  
+  /* Enhanced focus indicators for high contrast mode */
+  .focus-ring-enhanced:focus-visible {
+    outline-width: 3px;
+    outline-color: currentColor;
+    box-shadow: 0 0 0 6px currentColor;
+  }
+  
+  /* Better text contrast in high contrast mode */
+  .text-primary {
+    color: hsl(var(--color-primary-800));
+  }
+  
+  .dark .text-primary {
+    color: hsl(var(--color-primary-300));
+  }
+  
+  /* Enhanced button borders */
+  .btn-enhanced {
+    border-width: 2px;
+  }
+  
+  .btn-enhanced:focus-visible {
+    border-width: 3px;
+    outline: none;
+    box-shadow: 0 0 0 4px currentColor;
   }
 }
 

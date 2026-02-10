@@ -39,9 +39,9 @@ const usePrefersReducedMotion = (): boolean => {
 
 const baseClasses = "bg-neutral-200 dark:bg-neutral-700";
 const animationClasses = {
-  pulse: "animate-pulse",
+  pulse: "animate-pulse-slow",
   wave: "animate-wave",
-  shimmer: "animate-shimmer",
+  shimmer: "animate-shimmer skeleton-enhanced",
 };
 
 const variantClasses: Record<'text' | 'rectangular' | 'circular' | 'rounded', string> = {
