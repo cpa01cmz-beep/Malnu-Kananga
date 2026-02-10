@@ -32,6 +32,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   customType?: InputType;
   clearOnEscape?: boolean;
   showClearButton?: boolean;
+  showCharacterCount?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced";
@@ -85,10 +86,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   customType = 'text',
   clearOnEscape = false,
   showClearButton = false,
+  showCharacterCount = false,
   value,
   onChange,
   onBlur,
   className = '',
+  maxLength,
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLInputElement>(null);
@@ -96,6 +99,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const [shakeKey, setShakeKey] = useState(0);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  // Character counter logic
+  const currentLength = String(value || '').length;
+  const maxLengthNumber = maxLength ? parseInt(String(maxLength), 10) : undefined;
+  const showCounter = showCharacterCount && maxLengthNumber !== undefined;
+  const usagePercentage = maxLengthNumber ? (currentLength / maxLengthNumber) * 100 : 0;
+  
+  const getCounterColorClass = (): string => {
+    if (usagePercentage >= 100) {
+      return 'text-red-600 dark:text-red-400';
+    } else if (usagePercentage >= 80) {
+      return 'text-amber-600 dark:text-amber-400';
+    }
+    return 'text-neutral-400 dark:text-neutral-500';
+  };
 
   const getAnimationClass = (inputState: InputState): string => {
     if (prefersReducedMotion) return '';
@@ -378,6 +396,31 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500 italic`}>
           {maskFormatter && (maskFormatter as unknown as { options: MaskOptions }).options?.placeholder}
         </p>
+      )}
+
+      {/* Character counter */}
+      {showCounter && (
+        <div 
+          className="flex justify-end items-center gap-1"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <span 
+            className={`${helperTextSizeClasses[size]} ${getCounterColorClass()} transition-colors duration-200 font-medium ${
+              usagePercentage >= 80 && !prefersReducedMotion ? 'animate-pulse-subtle' : ''
+            }`}
+            aria-label={`${currentLength} dari ${maxLengthNumber} karakter digunakan`}
+          >
+            {currentLength}
+            <span className="text-neutral-300 dark:text-neutral-600 mx-0.5">/</span>
+            {maxLengthNumber}
+          </span>
+          {usagePercentage >= 100 && (
+            <span className="sr-only" role="alert">
+              Batas karakter tercapai
+            </span>
+          )}
+        </div>
       )}
     </div>
   );
