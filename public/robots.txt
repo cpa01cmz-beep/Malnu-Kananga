@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /teacher-dashboard/
+Disallow: /student-dashboard/
+Disallow: /parent-dashboard/
+Disallow: /api/
+
+Sitemap: https://malnu-kananga.pages.dev/sitemap.xml

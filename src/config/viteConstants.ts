@@ -51,6 +51,7 @@ export const BUILD_CONFIG = {
   MINIFY: 'terser' as const,
   TERSER_DROP_CONSOLE: true,
   TERSER_DROP_DEBUGGER: true,
+  SOURCEMAP: true,
 } as const;
 
 // Test Configuration

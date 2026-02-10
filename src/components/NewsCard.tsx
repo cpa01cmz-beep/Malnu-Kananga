@@ -36,6 +36,8 @@ const NewsCard: React.FC<NewsCardProps> = ({ newsItem, onClick, ariaLabel }) => 
           src={newsItem.imageUrl}
           alt={newsItem.title}
           fallbackText="Gambar Berita Tidak Tersedia"
+          width={800}
+          height={450}
         />
         <div className="absolute top-3 left-3">
           <Badge variant="primary" size="md" className="uppercase tracking-wider backdrop-blur-md shadow-sm">
