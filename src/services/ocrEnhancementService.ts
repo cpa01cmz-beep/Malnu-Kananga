@@ -7,10 +7,8 @@ import {
   ErrorType
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
+import { AI_MODELS } from './ai/geminiClient';
 import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';
-
-// Models
-const FLASH_MODEL = 'gemini-2.5-flash';
 
 // Lazy initialization of AI client with error handling
 let aiInstance: GoogleGenAIType | null = null;
@@ -85,7 +83,7 @@ export async function generateTextSummary(
 
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
-        model: FLASH_MODEL,
+        model: AI_MODELS.FLASH,
         contents,
         config: { systemInstruction: 'Anda adalah asisten yang membuat ringkasan.' }
       });
@@ -160,7 +158,7 @@ export async function compareTextsForSimilarity(
 
     const responseStream = await withCircuitBreaker(async () => {
       return await ai.models.generateContentStream({
-        model: FLASH_MODEL,
+        model: AI_MODELS.FLASH,
         contents,
         config: { systemInstruction: 'Anda adalah analis kemiripan teks.' }
       });

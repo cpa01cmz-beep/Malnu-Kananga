@@ -10,7 +10,7 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS } from '../constants';
+import { FILE_SIZE_LIMITS, CONVERSION } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -293,7 +293,7 @@ export class PPDBDocumentValidator {
     }
 
     // Validate file size for PPDB documents
-    const maxPPDBSize = 10 * 1024 * 1024; // 10MB for PPDB
+    const maxPPDBSize = 10 * CONVERSION.BYTES_PER_MB; // 10MB for PPDB
     if (file.size > maxPPDBSize) {
       warnings.push('Ukuran dokumen PPDB idealnya tidak melebihi 10MB untuk pemrosesan OCR yang optimal');
     }
@@ -353,8 +353,8 @@ export class PPDBDocumentValidator {
     let score = 100;
 
     // Validate file size for OCR
-    const minSize = 10 * 1024; // 10KB
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const minSize = 10 * CONVERSION.BYTES_PER_KB; // 10KB
+    const maxSize = 5 * CONVERSION.BYTES_PER_MB; // 5MB
 
     if (file.size < minSize) {
       errors.push('Ukuran gambar terlalu kecil untuk OCR yang optimal');
@@ -391,7 +391,7 @@ export class MaterialUploadValidator {
     // Default options
     const sanitizeName = options.sanitizeFileName !== false;
     const maxSize = options.maxSizeMB
-      ? options.maxSizeMB * 1024 * 1024
+      ? options.maxSizeMB * CONVERSION.BYTES_PER_MB
       : undefined;
 
     // Validate file name
@@ -429,12 +429,12 @@ export class MaterialUploadValidator {
 
     // Validate file size
     if (maxSize && file.size > maxSize) {
-      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+      const maxSizeMB = Math.round(maxSize / CONVERSION.BYTES_PER_MB);
       errors.push(`Ukuran file terlalu besar. Maksimal: ${maxSizeMB}MB`);
     } else if (fileType) {
       const maxTypeSize = MATERIAL_FILE_TYPES[fileType].maxSize;
       if (file.size > maxTypeSize) {
-        const maxSizeMB = Math.round(maxTypeSize / (1024 * 1024));
+        const maxSizeMB = Math.round(maxTypeSize / CONVERSION.BYTES_PER_MB);
         errors.push(`Ukuran ${MATERIAL_FILE_TYPES[fileType].displayName} tidak boleh melebihi ${maxSizeMB}MB`);
       }
     }
@@ -527,7 +527,7 @@ export class MaterialUploadValidator {
     }
 
     // Check batch size limit
-    const maxBatchSize = 500 * 1024 * 1024; // 500MB
+    const maxBatchSize = 500 * CONVERSION.BYTES_PER_MB; // 500MB
     const canUpload = overallValid && totalSize <= maxBatchSize;
 
     if (totalSize > maxBatchSize) {
@@ -548,10 +548,9 @@ export class MaterialUploadValidator {
 // Utility functions
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
-  const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
+  return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
 export const getAllowedFileExtensions = (
@@ -569,7 +568,7 @@ export const getAllowedFileExtensions = (
 
 export const getMaxFileSizeForType = (fileType: MaterialFileType): string => {
   const maxSize = MATERIAL_FILE_TYPES[fileType].maxSize;
-  const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+  const maxSizeMB = Math.round(maxSize / CONVERSION.BYTES_PER_MB);
   return `${maxSizeMB}MB`;
 };
 

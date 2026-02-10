@@ -6,6 +6,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import type { ELibrary as ELibraryType } from '../types';
 import { logger } from '../utils/logger';
+import { AI_MODELS } from '../services/ai/geminiClient';
 
 import { chatCache } from '../services/aiCacheService';
 
@@ -383,7 +384,7 @@ async function performSemanticAnalysis(prompt: string): Promise<AIAnalysisRespon
     const ai = new GoogleGenAI({ apiKey: (import.meta.env.VITE_GEMINI_API_KEY as string) || '' });
     
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: AI_MODELS.FLASH,
       contents: prompt,
       config: {
         responseMimeType: "application/json",

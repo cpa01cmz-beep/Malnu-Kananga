@@ -601,3 +601,51 @@ export const API_CONFIG = {
         LOGIN: '/api/auth/login',
     },
 } as const;
+
+// Conversion Utilities - Flexy: Never hardcode conversions!
+export const CONVERSION = {
+    BYTES_PER_KB: 1024,
+    BYTES_PER_MB: 1024 * 1024,
+    BYTES_PER_GB: 1024 * 1024 * 1024,
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 60 * 1000,
+    MS_PER_HOUR: 60 * 60 * 1000,
+} as const;
+
+/**
+ * Convert megabytes to bytes
+ * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
+ */
+export function mbToBytes(mb: number): number {
+    return mb * CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert bytes to megabytes
+ */
+export function bytesToMb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_MB;
+}
+
+/**
+ * Convert seconds to milliseconds
+ */
+export function secondsToMs(seconds: number): number {
+    return seconds * CONVERSION.MS_PER_SECOND;
+}
+
+/**
+ * Convert milliseconds to seconds
+ * Flexy says: Use this instead of hardcoded `Date.now() / 1000`
+ */
+export function msToSeconds(ms: number): number {
+    return Math.floor(ms / CONVERSION.MS_PER_SECOND);
+}
+
+/**
+ * Get current timestamp in seconds
+ * Flexy says: Use this instead of hardcoded `Math.floor(Date.now() / 1000)`
+ */
+export function getCurrentTimestampSeconds(): number {
+    return msToSeconds(Date.now());
+}
