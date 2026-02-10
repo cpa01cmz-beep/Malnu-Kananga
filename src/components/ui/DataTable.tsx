@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from './Table';
 import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
-import { EmptyState } from './LoadingState';
 import Button from './Button';
 import SearchInput from './SearchInput';
 import Card from './Card';
 import FunnelIcon from '../icons/FunnelIcon';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
+import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
 
 export interface Column<T = Record<string, unknown>> {
@@ -134,9 +134,9 @@ const DataTable = <T extends Record<string, unknown>>({
     }
   };
 
-  // Mobile Card View Component
+  // Enhanced Mobile Card View Component
   const MobileCardView = () => (
-    <div className="space-y-4 sm:hidden">
+    <div className="space-y-4 sm:hidden mobile-card-stack">
       {data.map((record, index) => {
         const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
         const titleColumn = cardTitleColumn || columns[0]?.key;
@@ -148,13 +148,19 @@ const DataTable = <T extends Record<string, unknown>>({
             key={selection ? selection.getRowKey(record) : index}
             variant={onRowClick ? 'interactive' : 'default'}
             className={`
-              ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
+              ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900' : ''}
               ${rowClassName?.(record, index) || ''}
-              transform transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]
+              transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] card-hover-enhanced mobile-gesture-feedback glass-effect-elevated
             `}
-            onClick={() => onRowClick?.(record, index)}
+            onClick={() => {
+              onRowClick?.(record, index);
+              // Haptic feedback for card interaction
+              if ('vibrate' in navigator) {
+                navigator.vibrate([5, 2, 5]);
+              }
+            }}
           >
-            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700/60">
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 {selection && (
                   <div className="relative">
@@ -163,31 +169,34 @@ const DataTable = <T extends Record<string, unknown>>({
                       checked={isSelected}
                       onChange={(e) => {
                         e.stopPropagation();
-                        // Haptic feedback for selection
+                        // Enhanced haptic feedback for selection
                         if ('vibrate' in navigator) {
-                          navigator.vibrate(10);
+                          navigator.vibrate(e.target.checked ? [15, 5, 15] : [10]);
                         }
                         selection.onSelect(selection.getRowKey(record), e.target.checked);
                       }}
-                      className="w-6 h-6 rounded-lg border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50 focus:ring-2 shrink-0 cursor-pointer touch-manipulation min-w-[44px] min-h-[44px]"
-                      aria-label={`Select ${titleValue}`}
+                      className="w-6 h-6 rounded-lg border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 shrink-0 cursor-pointer touch-manipulation min-w-[44px] min-h-[44px] mobile-touch-target"
+                      aria-label={`Pilih ${titleValue}`}
                     />
+                    {isSelected && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary-500 rounded-full animate-pulse" aria-hidden="true" />
+                    )}
                   </div>
                 )}
                 <div className="min-w-0 flex-1 pr-2">
-                  <h3 className="font-semibold text-base text-neutral-900 dark:text-white truncate leading-tight">
+                  <h3 className="font-semibold text-base text-neutral-900 dark:text-white truncate leading-tight typography-enhanced">
                     {titleValue}
                   </h3>
                 </div>
                 {onRowClick && (
-                  <div className="flex-shrink-0 p-2 -mr-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation">
-                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 rotate-180" />
+                  <div className="flex-shrink-0 p-3 -mr-3 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation mobile-gesture-feedback rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
+                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 dark:text-neutral-500 rotate-180 transition-transform duration-200" />
                   </div>
                 )}
               </div>
             </div>
             
-            <div className="pt-4 space-y-4">
+            <div className="pt-4 space-y-3">
               {columns
                 .filter(col => col.key !== titleColumn)
                 .map((column) => {
@@ -197,22 +206,24 @@ const DataTable = <T extends Record<string, unknown>>({
                   return (
                     <div 
                       key={column.key} 
-                      className="flex flex-col gap-1 p-3 -m-3 rounded-xl touch-manipulation hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors duration-150"
+                      className="flex flex-col gap-1.5 p-3.5 -m-3.5 rounded-xl touch-manipulation hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all duration-200 mobile-gesture-feedback group"
                       onTouchStart={() => {
                         // Light haptic feedback on touch
                         if ('vibrate' in navigator) {
-                          navigator.vibrate(5);
+                          navigator.vibrate(3);
                         }
                       }}
                     >
-                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider opacity-70 group-hover:opacity-100 transition-opacity duration-150">
                         {column.title}
                       </p>
-                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[20px]">
+                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[24px] mobile-text-responsive">
                         {isEmpty ? (
-                          <span className="text-neutral-400 dark:text-neutral-500 italic">Tidak ada data</span>
+                          <span className="text-neutral-400 dark:text-neutral-500 italic text-sm">— Tidak ada data —</span>
                         ) : (
-                          value
+                          <span className="group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">
+                            {value}
+                          </span>
                         )}
                       </p>
                     </div>
@@ -235,17 +246,70 @@ const DataTable = <T extends Record<string, unknown>>({
     return (
       <LoadingOverlay
         isLoading={loading}
-        message={loading ? 'Loading data...' : undefined}
+        message={loading ? 'Memuat data...' : undefined}
         className={HEIGHTS.CONTENT.TABLE}
       >
         {error && (
-          <div className="text-center py-12">
-            <div className="text-red-500 mb-2">Error loading data</div>
-            <div className="text-neutral-600 dark:text-neutral-400">{error}</div>
+          <div className="text-center py-16 px-6 max-w-md mx-auto">
+            <div className="mb-6 flex justify-center">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Terjadi Kesalahan</h3>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">{error}</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => window.location.reload()}
+                className="touch-manipulation haptic-feedback"
+              >
+                Muat Ulang Halaman
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  // Retry mechanism could be passed as prop
+                  if (onRowClick) {
+                    onRowClick({} as T, 0);
+                  }
+                }}
+                className="touch-manipulation haptic-feedback"
+              >
+                Coba Lagi
+              </Button>
+            </div>
           </div>
         )}
         {empty && !loading && !error && (
-          <EmptyState message={emptyMessage} />
+          <div className="text-center py-16 px-6">
+            <div className="mb-6 flex justify-center">
+              <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Tidak Ada Data</h3>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed max-w-sm mx-auto">{emptyMessage}</p>
+            {filter?.searchable && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSearch('')}
+                  icon={<XMarkIcon className="w-4 h-4" />}
+                  className="touch-manipulation haptic-feedback"
+                >
+                  Hapus Pencarian
+                </Button>
+              </div>
+            )}
+          </div>
         )}
       </LoadingOverlay>
     );
@@ -256,19 +320,33 @@ const DataTable = <T extends Record<string, unknown>>({
 
   return (
     <div className="space-y-4">
-      {(filter?.searchable || selection) && (
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+       {(filter?.searchable || selection) && (
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mobile-spacing-enhanced">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
             {filter?.searchable && (
-              <SearchInput
-                value={localSearch}
-                onChange={(e) => handleSearch(e.target.value)}
-                placeholder={filter?.placeholder || 'Search...'}
-                size="sm"
-                fullWidth={true}
-                showIcon={true}
-                className="sm:max-w-xs"
-              />
+              <div className="w-full sm:w-auto">
+                <SearchInput
+                  value={localSearch}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  placeholder={filter?.placeholder || 'Cari data...'}
+                  size="sm"
+                  fullWidth={true}
+                  showIcon={true}
+                  className="sm:max-w-xs mobile-text-responsive"
+                />
+                {localSearch && (
+                  <div className="mt-2 text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                    <span>Menemukan hasil untuk</span>
+                    <kbd className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded text-[10px] font-mono">{localSearch}</kbd>
+                    <button
+                      onClick={() => handleSearch('')}
+                      className="text-primary-600 hover:text-primary-700 dark:text-primary-400 hover:underline ml-1 touch-manipulation"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
             {sort && (
               <Button
@@ -279,24 +357,48 @@ const DataTable = <T extends Record<string, unknown>>({
                   // Reset sort
                   sort.onSortChange('', 'asc');
                 }}
+                className="touch-manipulation haptic-feedback mobile-touch-target"
               >
-                Clear Sort
+                <span className="hidden sm:inline">Hapus Urutan</span>
+                <span className="sm:hidden">Urutan</span>
               </Button>
             )}
           </div>
           
           {selection && (
-            <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-              <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                {selection.selectedRowKeys.length} selected
-              </span>
+            <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end safe-area-enhanced">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-neutral-600 dark:text-neutral-400 mobile-text-responsive">
+                  {selection.selectedRowKeys.length} dipilih
+                </span>
+                {selection.selectedRowKeys.length > 0 && (
+                  <div className="flex -space-x-2">
+                    {selection.selectedRowKeys.slice(0, 3).map((key, i) => (
+                      <div
+                        key={key}
+                        className="w-6 h-6 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full border-2 border-white dark:border-neutral-800 flex items-center justify-center text-xs font-medium"
+                        aria-hidden="true"
+                      >
+                        {i + 1}
+                      </div>
+                    ))}
+                    {selection.selectedRowKeys.length > 3 && (
+                      <div className="w-6 h-6 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-full border-2 border-white dark:border-neutral-800 flex items-center justify-center text-xs font-medium">
+                        +{selection.selectedRowKeys.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
               {selection.selectedRowKeys.length > 0 && (
                 <Button
-                  variant="secondary"
+                  variant="destructive"
                   size="sm"
                   onClick={() => selection?.onSelectAll(false)}
+                  className="touch-manipulation haptic-feedback mobile-touch-target"
                 >
-                  Clear Selection
+                  <span className="hidden sm:inline">Hapus Pilihan</span>
+                  <span className="sm:hidden">Hapus</span>
                 </Button>
               )}
             </div>
