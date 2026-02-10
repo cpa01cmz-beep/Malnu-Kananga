@@ -49,25 +49,25 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   const renderDots = () => (
     <div className="flex items-center gap-2">
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.32s] shadow-sm`}></div>
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce [animation-delay:-0.16s] shadow-sm`}></div>
-      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-bounce shadow-sm`}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`} style={{ animationDelay: '0.16s' }}></div>
+      <div className={`${dotSizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-bounce shadow-sm micro-bounce`} style={{ animationDelay: '0.32s' }}></div>
     </div>
   );
 
   const renderPulse = () => (
-    <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-pulse-slow shadow-lg`}></div>
+    <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-loading-pulse shadow-lg micro-pulse`}></div>
   );
 
   const renderRing = () => (
-    <div className={`${sizeClasses[size]} border-2 ${colorClassesBorder[color]} border-t-transparent rounded-full animate-spin shadow-sm`}></div>
+    <div className={`${sizeClasses[size]} border-2 ${colorClassesBorder[color]} border-t-transparent rounded-full animate-spin shadow-sm spinner-micro`}></div>
   );
 
   const renderSkeleton = () => (
     <div className="flex gap-2">
-      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-shimmer`}></div>
-      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-shimmer`} style={{ animationDelay: '0.2s' }}></div>
-      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-shimmer`} style={{ animationDelay: '0.4s' }}></div>
+      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-enhanced micro-scale`}></div>
+      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-enhanced micro-scale`} style={{ animationDelay: '0.2s' }}></div>
+      <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded skeleton-enhanced micro-scale`} style={{ animationDelay: '0.4s' }}></div>
     </div>
   );
 
@@ -88,11 +88,23 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     return (
       <div className={`${containerClasses} ${className}`}>
         <div className="flex flex-col items-center gap-6 animate-scale-in">
-          {getSpinner()}
+          <div className="relative">
+            {getSpinner()}
+            {/* Subtle glow effect */}
+            <div className={`absolute inset-0 ${colorClasses[color]} opacity-20 rounded-full blur-lg animate-pulse-slow`}></div>
+          </div>
           {text && (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-fade-in font-medium text-reveal max-w-xs text-center">
-              {text}
-            </p>
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-fade-in font-medium max-w-xs text-center micro-fade-in">
+                {text}
+              </p>
+              {/* Progress indicator dots */}
+              <div className="flex gap-1">
+                <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0s' }}></div>
+                <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0.4s' }}></div>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -101,9 +113,17 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
   // Simple spinner for inline use
   return (
-    <div className={`${className} inline-flex items-center`}>
-      {getSpinner()}
-      <span className="sr-only">Loading...</span>
+    <div className={`${className} inline-flex items-center gap-2`}>
+      <div className="relative">
+        {getSpinner()}
+        <span className="sr-only">Loading...</span>
+      </div>
+      {/* Optional inline text indicator */}
+      <div className="flex gap-1">
+        <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0s' }}></div>
+        <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full animate-loading-dots" style={{ animationDelay: '0.4s' }}></div>
+      </div>
     </div>
   );
 };
