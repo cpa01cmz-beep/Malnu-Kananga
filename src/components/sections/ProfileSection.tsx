@@ -4,13 +4,14 @@ import Badge from '../ui/Badge';
 import Section from '../ui/Section';
 import { getResponsiveGradient } from '../../config/gradients';
 import { GRADIENT_CLASSES } from '../../config/gradients';
+import { SECTION_TITLES } from '../../constants';
 
 const ProfileSection: React.FC = () => {
   return (
     <Section
       id="profil"
-      title="Profil Madrasah"
-      subtitle="Mengenal Lebih Dekat MA Malnu Kananga"
+      title={SECTION_TITLES.PROFILE}
+      subtitle={SECTION_TITLES.PROFILE_SUBTITLE}
       className={getResponsiveGradient('PROFILE')}
     >
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">

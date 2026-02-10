@@ -13,7 +13,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { STORAGE_KEYS, COMPONENT_DELAYS } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS, UI_STRINGS } from '../constants';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -143,7 +143,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
           <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-between">
             {isAutoSaving ? (
               <div className="flex items-center gap-2 flex-1">
-                <LoadingSpinner size="sm" color="primary" text="Menyimpan..." />
+                <LoadingSpinner size="sm" color="primary" text={UI_STRINGS.SAVING} />
               </div>
             ) : (
               <span className="text-sm text-amber-800 dark:text-amber-200">

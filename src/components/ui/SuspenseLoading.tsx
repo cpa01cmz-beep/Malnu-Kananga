@@ -1,4 +1,5 @@
 import React from 'react';
+import { UI_STRINGS } from '../../constants';
 
 export type SuspenseLoadingSize = 'sm' | 'md' | 'lg';
 export type SuspenseLoadingVariant = 'default' | 'shimmer' | 'dots';
@@ -11,7 +12,7 @@ export interface SuspenseLoadingProps {
 }
 
 const SuspenseLoading: React.FC<SuspenseLoadingProps> = ({
-  message = 'Memuat...',
+  message = UI_STRINGS.LOADING,
   size = 'md',
   className = '',
   variant = 'shimmer'

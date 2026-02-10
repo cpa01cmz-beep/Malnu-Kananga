@@ -22,7 +22,7 @@ import { CheckCircleIcon, AlertCircleIcon } from './icons/StatusIcons';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, UI_STRINGS } from '../constants';
 
 interface AssignmentGradingProps {
   onBack: () => void;
@@ -876,7 +876,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   disabled={submitting}
                   className="flex-1"
                 >
-                  {submitting ? 'Menyimpan...' : 'Simpan Nilai'}
+                  {submitting ? UI_STRINGS.SAVING : 'Simpan Nilai'}
                 </Button>
                 <Button
                   onClick={handleBackToSubmissions}
