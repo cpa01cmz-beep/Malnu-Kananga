@@ -1,6 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
-import { EXTERNAL_URLS, STORAGE_KEYS, TIME_MS, VALIDATION_LIMITS } from '../constants';
+import { EXTERNAL_URLS, STORAGE_KEYS, TIME_MS, VALIDATION_LIMITS, AI_EDITOR_LIMITS, RATE_LIMITING, CONVERSION } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -161,8 +161,9 @@ const DANGEROUS_PATTERNS = [
   /convert\s*\(/gi,
 ];
 
-const MAX_PROGRAMS = 20;
-const MAX_NEWS = 50;
+// Flexy: All limits are imported from constants - never hardcoded!
+const MAX_PROGRAMS = AI_EDITOR_LIMITS.MAX_PROGRAMS;
+const MAX_NEWS = AI_EDITOR_LIMITS.MAX_NEWS;
 const MAX_TITLE_LENGTH = VALIDATION_LIMITS.TITLE_MAX;
 const MAX_DESCRIPTION_LENGTH = VALIDATION_LIMITS.DESCRIPTION_MAX;
 
@@ -175,10 +176,10 @@ interface RequestTracker {
 // In-memory rate limiting for AI editor requests
 const RATE_LIMIT_MAP = new Map<string, RequestTracker>();
 const RATE_LIMIT_WINDOW = TIME_MS.ONE_MINUTE;
-const MAX_REQUESTS_PER_MINUTE = 10;
+const MAX_REQUESTS_PER_MINUTE = RATE_LIMITING.MAX_REQUESTS_PER_MINUTE;
 
 // Audit log storage
-const MAX_AUDIT_ENTRIES = 100;
+const MAX_AUDIT_ENTRIES = AI_EDITOR_LIMITS.MAX_AUDIT_ENTRIES;
 
 export interface AuditLogEntry {
   timestamp: number;
@@ -301,9 +302,9 @@ export function validateAICommand(prompt: string, userId?: string): AICommandVal
         commandHash: hashCommand(prompt),
         reason: 'Rate limit terlampaui'
       });
-      return { 
-        isValid: false, 
-        error: `Terlalu banyak permintaan. Silakan tunggu ${Math.ceil((rateLimit.resetTime! - Date.now()) / 1000)} detik.` 
+      return {
+        isValid: false,
+        error: `Terlalu banyak permintaan. Silakan tunggu ${Math.ceil((rateLimit.resetTime! - Date.now()) / CONVERSION.MS_PER_SECOND)} detik.`
       };
     }
   }
@@ -637,19 +638,19 @@ function validateContentChanges(
   const currentNewsCount = current.latestNews.length;
   const proposedNewsCount = proposed.latestNews.length;
 
-  // Too many programs added at once
-  if (proposedProgramsCount > currentProgramsCount + 10) {
-    return { 
-      isValid: false, 
-      error: 'Terlalu banyak program yang ditambahkan dalam satu permintaan (maksimal 10)' 
+  // Too many programs added at once - Flexy: Uses RATE_LIMITING constant
+  if (proposedProgramsCount > currentProgramsCount + RATE_LIMITING.MAX_PROGRAMS_ADDITION) {
+    return {
+      isValid: false,
+      error: `Terlalu banyak program yang ditambahkan dalam satu permintaan (maksimal ${RATE_LIMITING.MAX_PROGRAMS_ADDITION})`
     };
   }
 
-  // Too many news items added at once
-  if (proposedNewsCount > currentNewsCount + 20) {
-    return { 
-      isValid: false, 
-      error: 'Terlalu banyak berita yang ditambahkan dalam satu permintaan (maksimal 20)' 
+  // Too many news items added at once - Flexy: Uses RATE_LIMITING constant
+  if (proposedNewsCount > currentNewsCount + RATE_LIMITING.MAX_NEWS_ADDITION) {
+    return {
+      isValid: false,
+      error: `Terlalu banyak berita yang ditambahkan dalam satu permintaan (maksimal ${RATE_LIMITING.MAX_NEWS_ADDITION})`
     };
   }
 
