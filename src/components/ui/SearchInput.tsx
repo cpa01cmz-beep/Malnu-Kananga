@@ -1,7 +1,8 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -80,6 +81,9 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   onBlur,
   ...props
 }, ref) => {
+  const [isClearPressed, setIsClearPressed] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
   const searchId = id || `search-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${searchId}-helper` : undefined;
   const errorTextId = errorText ? `${searchId}-error` : undefined;
@@ -205,7 +209,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           </div>
         )}
 
-        {/* Clear button - appears when there's a value */}
+        {/* Clear button - appears when there's a value with enhanced UX */}
         <button
           type="button"
           onClick={() => {
@@ -217,8 +221,18 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
             if (ref && 'current' in ref && ref.current) {
               ref.current.focus();
             }
+            setShowTooltip(false);
           }}
-          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all duration-200 ease-out ${
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => {
+            setShowTooltip(false);
+            setIsClearPressed(false);
+          }}
+          onMouseDown={() => setIsClearPressed(true)}
+          onMouseUp={() => setIsClearPressed(false)}
+          onFocus={() => setShowTooltip(true)}
+          onBlur={() => setShowTooltip(false)}
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 ${
             size === 'sm' ? 'p-1.5 min-w-[36px] min-h-[36px]' : 'p-2 min-w-[40px] min-h-[40px]'
           } ${
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
@@ -226,12 +240,25 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
             value && String(value).length > 0 && !validation.state.isValidating
               ? 'opacity-100 scale-100 pointer-events-auto'
               : 'opacity-0 scale-75 pointer-events-none'
+          } ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'} ${
+            isClearPressed ? (prefersReducedMotion ? '' : 'scale-90') : (prefersReducedMotion ? '' : 'hover:scale-110')
           }`}
-          aria-label="Bersihkan pencarian"
-          title="Bersihkan pencarian"
+          aria-label="Bersihkan pencarian (Tekan Escape)"
           aria-hidden={!(value && String(value).length > 0 && !validation.state.isValidating)}
         >
-          <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+          <XMarkIcon className={`${sizeIconClasses[size]} ${prefersReducedMotion ? '' : 'transition-transform duration-150'} ${isClearPressed ? '' : 'group-hover:rotate-90'}`} aria-hidden="true" />
+          
+          {/* Enhanced Tooltip */}
+          {showTooltip && value && String(value).length > 0 && (
+            <span 
+              className={`absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? '' : 'animate-scale-in'}`}
+              role="tooltip"
+            >
+              <span className="font-medium">Bersihkan</span>
+              <kbd className="ml-1.5 px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-500 rounded text-[10px] font-mono">Esc</kbd>
+              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45" aria-hidden="true" />
+            </span>
+          )}
         </button>
 
         {validation.state.isValidating && (

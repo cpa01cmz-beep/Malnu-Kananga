@@ -60,7 +60,6 @@ export const useProgressiveLoading = <T = unknown>(
     optimisticData,
     rollbackOnError = true,
     onLoadStart,
-    onLoadProgress,
     onLoadComplete,
     onLoadError,
   } = options;
@@ -69,13 +68,12 @@ export const useProgressiveLoading = <T = unknown>(
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<T | null>(optimisticData ?? null);
+  const [data, setData] = useState<T | null>((optimisticData as T | null) ?? null);
   const [progress, setProgress] = useState(0);
 
   const loadingStartTime = useRef<number>(0);
   const loadingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const minimumLoadingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // eslint-disable-next-line no-undef
   const abortController = useRef<AbortController | null>(null);
 
   const resetState = useCallback(() => {
@@ -109,7 +107,7 @@ export const useProgressiveLoading = <T = unknown>(
     loadingStartTime.current = Date.now();
     
     // Create new abort controller
-    // eslint-disable-next-line no-undef
+     
     abortController.current = new AbortController();
     
     // Set up timeout
@@ -125,7 +123,7 @@ export const useProgressiveLoading = <T = unknown>(
     
     // Set up minimum loading time
     minimumLoadingTimeout.current = setTimeout(() => {
-      if (isLoading && !hasError) {
+      if (!hasError) {
         // Minimum loading time completed, can show content
         setIsLoaded(true);
       }
@@ -184,7 +182,7 @@ export const useProgressiveLoading = <T = unknown>(
       
       // Rollback to optimistic data if available
       if (rollbackOnError && optimisticData) {
-        setData(optimisticData);
+        setData(optimisticData as T | null);
       }
       
       onLoadError?.(error);
@@ -195,7 +193,7 @@ export const useProgressiveLoading = <T = unknown>(
         minimumLoadingTimeout.current = null;
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [
     loader,
     isLoading,
@@ -205,7 +203,6 @@ export const useProgressiveLoading = <T = unknown>(
     optimisticData,
     rollbackOnError,
     onLoadStart,
-    onLoadProgress,
     onLoadComplete,
     onLoadError,
     resetState,

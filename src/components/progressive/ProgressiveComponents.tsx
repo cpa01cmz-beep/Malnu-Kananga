@@ -123,8 +123,25 @@ export const ProgressiveList = <T,>({
   const [isLoading, setIsLoading] = useState(false);
   const [loadedCount, setLoadedCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line no-undef
+   
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Load more items callback - defined before useEffect
+  const loadMoreItems = useCallback(() => {
+    if (isLoading || loadedCount >= items.length) return;
+
+    setIsLoading(true);
+    
+    // Simulate network delay
+    setTimeout(() => {
+      const nextCount = Math.min(loadedCount + 20, items.length);
+      const newItems = items.slice(loadedCount, nextCount);
+      
+      setVisibleItems(prev => [...prev, ...newItems]);
+      setLoadedCount(nextCount);
+      setIsLoading(false);
+    }, 300);
+  }, [isLoading, loadedCount, items]);
 
   // Load initial items
   useEffect(() => {
@@ -137,7 +154,7 @@ export const ProgressiveList = <T,>({
   useEffect(() => {
     if (!containerRef.current || loadedCount >= items.length) return;
 
-    // eslint-disable-next-line no-undef
+     
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
@@ -160,22 +177,6 @@ export const ProgressiveList = <T,>({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedCount, items.length, isLoading, threshold]);
-
-  const loadMoreItems = useCallback(() => {
-    if (isLoading || loadedCount >= items.length) return;
-
-    setIsLoading(true);
-    
-    // Simulate network delay
-    setTimeout(() => {
-      const nextCount = Math.min(loadedCount + 20, items.length);
-      const newItems = items.slice(loadedCount, nextCount);
-      
-      setVisibleItems(prev => [...prev, ...newItems]);
-      setLoadedCount(nextCount);
-      setIsLoading(false);
-    }, 300);
-  }, [isLoading, loadedCount, items]);
 
   if (items.length === 0) {
     return <>{emptyComponent || <div className="text-center p-8">No items found</div>}</>;
@@ -244,7 +245,6 @@ export const ProgressiveContent = <T,>({
     shouldShowContent,
     shouldShowError,
     data,
-    error,
     load,
     retry,
   } = useProgressiveLoading(loader, options);
@@ -258,7 +258,7 @@ export const ProgressiveContent = <T,>({
       <>
         {errorComponent || (
           <div className="text-center p-8">
-            <div className="text-red-500 mb-2">{error?.message || 'Error loading content'}</div>
+            <div className="text-red-500 mb-2">Error loading content</div>
             <button 
               onClick={retry}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"

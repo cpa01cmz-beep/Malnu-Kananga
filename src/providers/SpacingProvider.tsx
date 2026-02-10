@@ -1,15 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { SpacingContext } from '../hooks/useSpacing';
 
 export type Density = 'comfortable' | 'compact' | 'spacious';
-
-interface SpacingContextType {
-  density: Density;
-  setDensity: (density: Density) => void;
-  getSpacing: (category: 'component' | 'section' | 'layout' | 'micro', size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => string;
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const SpacingContext = createContext<SpacingContextType | undefined>(undefined);
 
 const SPACING_PRESETS = {
   comfortable: {

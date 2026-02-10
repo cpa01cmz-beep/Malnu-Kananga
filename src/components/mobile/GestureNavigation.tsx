@@ -189,43 +189,41 @@ const useSwipeGestureInternal = ({
     const element = elementRef.current;
     if (!element) return;
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    const handleStart = (e: any) => {
-      const clientPos = direction === 'horizontal'
-        ? 'touches' in e ? (e as any).touches[0].clientX : (e as MouseEvent).clientX
-        : 'touches' in e ? (e as any).touches[0].clientY : (e as MouseEvent).clientY;
-
+    const handleStart = (e: TouchEvent | MouseEvent) => {
+      const clientPos = direction === 'horizontal' 
+        ? 'touches' in e ? e.touches[0].clientX : e.clientX
+        : 'touches' in e ? e.touches[0].clientY : e.clientY;
+      
       startPos.current = clientPos;
       isDragging.current = true;
       onSwipeStart?.(clientPos);
     };
 
-    const handleMove = (e: any) => {
+    const handleMove = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
-
-      if ('preventDefault' in e) {
-        (e as Event).preventDefault();
+      
+      if (e.cancelable) {
+        e.preventDefault();
       }
-
+      
       const clientPos = direction === 'horizontal'
-        ? 'touches' in e ? (e as any).touches[0].clientX : (e as MouseEvent).clientX
-        : 'touches' in e ? (e as any).touches[0].clientY : (e as MouseEvent).clientY;
+        ? 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX
+        : 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY;
 
       onSwipeMove?.(clientPos, startPos.current);
     };
 
-    const handleEnd = (e: any) => {
+    const handleEnd = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
 
       isDragging.current = false;
 
       const clientPos = direction === 'horizontal'
-        ? 'changedTouches' in e ? (e as any).changedTouches[0].clientX : (e as MouseEvent).clientX
-        : 'changedTouches' in e ? (e as any).changedTouches[0].clientY : (e as MouseEvent).clientY;
+        ? 'changedTouches' in e ? e.changedTouches[0].clientX : (e as MouseEvent).clientX
+        : 'changedTouches' in e ? e.changedTouches[0].clientY : (e as MouseEvent).clientY;
 
       onSwipeEnd?.(clientPos, startPos.current);
     };
-    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     // Touch events
     element.addEventListener('touchstart', handleStart, { passive: true });

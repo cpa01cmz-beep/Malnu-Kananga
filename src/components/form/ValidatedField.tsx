@@ -67,7 +67,11 @@ export const ValidatedField: React.FC<ValidatedFieldProps> = ({
               }
               ${disabled ? 'bg-neutral-100 dark:bg-neutral-800 cursor-not-allowed' : ''}
             `}
-            {...fieldProps}
+            onChange={fieldProps?.onChange ? (e) => fieldProps.onChange?.(e.target.value) : undefined}
+            onBlur={fieldProps?.onBlur}
+            onFocus={fieldProps?.onFocus}
+            aria-invalid={fieldProps?.['aria-invalid']}
+            aria-describedby={fieldProps?.['aria-describedby']}
           />
         )}
         

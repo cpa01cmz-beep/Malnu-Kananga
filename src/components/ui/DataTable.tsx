@@ -150,6 +150,7 @@ const DataTable = <T extends Record<string, unknown>>({
             className={`
               ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
               ${rowClassName?.(record, index) || ''}
+              transform transition-all duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]
             `}
             onClick={() => onRowClick?.(record, index)}
           >
@@ -162,9 +163,13 @@ const DataTable = <T extends Record<string, unknown>>({
                       checked={isSelected}
                       onChange={(e) => {
                         e.stopPropagation();
+                        // Haptic feedback for selection
+                        if ('vibrate' in navigator) {
+                          navigator.vibrate(10);
+                        }
                         selection.onSelect(selection.getRowKey(record), e.target.checked);
                       }}
-                      className="w-5 h-5 rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50% shrink-0 cursor-pointer"
+                      className="w-6 h-6 rounded-lg border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50 focus:ring-2 shrink-0 cursor-pointer touch-manipulation min-w-[44px] min-h-[44px]"
                       aria-label={`Select ${titleValue}`}
                     />
                   </div>
@@ -175,7 +180,7 @@ const DataTable = <T extends Record<string, unknown>>({
                   </h3>
                 </div>
                 {onRowClick && (
-                  <div className="flex-shrink-0 p-1 -mr-1">
+                  <div className="flex-shrink-0 p-2 -mr-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation">
                     <ChevronLeftIcon className="w-5 h-5 text-neutral-400 rotate-180" />
                   </div>
                 )}
@@ -190,7 +195,16 @@ const DataTable = <T extends Record<string, unknown>>({
                   const isEmpty = value === null || value === undefined || value === '';
                   
                   return (
-                    <div key={column.key} className="flex flex-col gap-1 p-2 -m-2 rounded-lg touch-manipulation">
+                    <div 
+                      key={column.key} 
+                      className="flex flex-col gap-1 p-3 -m-3 rounded-xl touch-manipulation hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors duration-150"
+                      onTouchStart={() => {
+                        // Light haptic feedback on touch
+                        if ('vibrate' in navigator) {
+                          navigator.vibrate(5);
+                        }
+                      }}
+                    >
                       <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
                         {column.title}
                       </p>

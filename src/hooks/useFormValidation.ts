@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import type { FormEvent } from 'react';
 import { ValidationRule, ValidationResult } from '../utils/validation';
 
 /**
@@ -30,14 +31,14 @@ interface UseFormValidationReturn {
   isValidating: Record<string, boolean>;
 
   // Validation methods
-  validateField: (name: string, value: unknown, rules?: ValidationRule[]) => ValidationResult;
-  validateForm: (data: Record<string, unknown>) => ValidationResult;
+  validateField: (name: string, value: string, rules?: ValidationRule[]) => ValidationResult;
+  validateForm: (data: Record<string, string>) => ValidationResult;
   clearErrors: (fieldName?: string) => void;
   setFieldError: (fieldName: string, error: string) => void;
 
   // Field helpers
   getFieldProps: (name: string) => {
-    onChange: (value: unknown) => void;
+    onChange: (value: string) => void;
     onBlur: () => void;
     onFocus: () => void;
     error: string | null;
@@ -48,12 +49,12 @@ interface UseFormValidationReturn {
   };
 
   // Form submission
-  handleSubmit: (onSubmit: (data: Record<string, unknown>) => void | Promise<void>) => (e: React.FormEvent) => void;
+  handleSubmit: (onSubmit: (data: Record<string, string>) => void | Promise<void>) => (e: FormEvent) => void;
   isSubmitting: boolean;
 }
 
 export const useFormValidation = (
-  initialValues: Record<string, unknown> = {},
+  initialValues: Record<string, string> = {},
   validationRules: Record<string, ValidationRule[]> = {},
   options: UseFormValidationOptions = {}
 ): UseFormValidationReturn => {
@@ -78,8 +79,8 @@ export const useFormValidation = (
 
   // Validate a single field
   const validateField = useCallback((
-    name: string,
-    value: unknown,
+    name: string, 
+    value: string, 
     rules?: ValidationRule[]
   ): ValidationResult => {
     const fieldRules = rules || validationRules[name] || [];
@@ -115,7 +116,7 @@ export const useFormValidation = (
   }, [validationRules, announceErrors]);
 
   // Validate entire form
-  const validateForm = useCallback((data: Record<string, unknown>): ValidationResult => {
+  const validateForm = useCallback((data: Record<string, string>): ValidationResult => {
     let allErrors: string[] = [];
     const fieldErrors: Record<string, string[]> = {};
 
@@ -166,7 +167,7 @@ export const useFormValidation = (
 
   // Get field props for controlled components
   const getFieldProps = useCallback((name: string) => {
-    const handleChange = (value: unknown) => {
+    const handleChange = (value: string) => {
       setValues(prev => ({ ...prev, [name]: value }));
       setTouched(prev => ({ ...prev, [name]: true }));
 
@@ -190,7 +191,7 @@ export const useFormValidation = (
 
     const handleBlur = () => {
       if (validateOnBlur) {
-        validateField(name, values[name]);
+        validateField(name, String(values[name] ?? ''));
       }
     };
 
@@ -228,8 +229,8 @@ export const useFormValidation = (
   ]);
 
   // Handle form submission
-  const handleSubmit = useCallback((onSubmit: (data: Record<string, unknown>) => void | Promise<void>) => {
-    return async (e: React.FormEvent) => {
+  const handleSubmit = useCallback((onSubmit: (data: Record<string, string>) => void | Promise<void>) => {
+    return async (e: FormEvent) => {
       e.preventDefault();
       
       const result = validateForm(values);
