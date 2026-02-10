@@ -3,7 +3,9 @@
  * Real-time validation with sophisticated feedback patterns
  */
 
-import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import React, { useState, useCallback, useRef, createContext, useContext } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
 
@@ -110,7 +112,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
           message: rule.message,
           type: rule.type || (isValid ? 'success' : 'error'),
         };
-      } catch (error) {
+      } catch (_error) {
         return {
           valid: false,
           message: rule.message,
@@ -262,7 +264,7 @@ export const ValidationRules = {
   phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
     validate: (value) => {
       if (!value) return true;
-      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      const phoneRegex = /^[\d\s\-+()]+$/;
       return phoneRegex.test(value) && value.replace(/\D/g, '').length >= 10;
     },
     message,
@@ -367,7 +369,7 @@ export const useFieldValidation = (
   const { updateField, validateField, isFieldValid, isFieldTouched, getFieldError } = useFormValidation();
   const { validateOnChange = true, validateOnBlur = true, debounceMs = 300 } = options;
   
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;

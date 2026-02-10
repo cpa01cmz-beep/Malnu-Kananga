@@ -159,6 +159,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({
 
     return React.Children.map(children, (child, index) => {
       if (React.isValidElement(child)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const childProps = child.props as any;
         return React.cloneElement(child, {
           ...childProps,
