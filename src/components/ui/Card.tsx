@@ -109,6 +109,12 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
     }
   };
 
+  const handleInteractionLeave = () => {
+    if (variant === 'interactive' && !disabled) {
+      setIsPressed(false);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (variant === 'interactive' && !disabled && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
@@ -126,25 +132,25 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
+        classes += ' hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] cursor-pointer hover:border-primary-200 dark:hover:border-primary-700 group transition-all duration-300 ease-out';
         break;
       case 'interactive':
-        classes += ` hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer ${
-          isPressed ? 'scale-[0.98] shadow-sm translate-y-0' : ''
+        classes += ` hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] cursor-pointer hover:border-primary-200 dark:hover:border-primary-700 group transition-all duration-300 ease-out ${
+          isPressed ? 'scale-[0.97] shadow-md translate-y-0 border-primary-300 dark:border-primary-600' : ''
         }`;
         break;
       case 'gradient':
         if (gradient) {
           classes = classes.replace('bg-white/95 dark:bg-neutral-800/95', '');
-          classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to}`;
+          classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to} group`;
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
+          classes += ' hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] cursor-pointer transition-all duration-300 ease-out';
         }
         break;
       default:
-        classes += ' hover:shadow-md';
+        classes += ' hover:shadow-md hover:scale-[1.005] transition-all duration-300 ease-out';
         break;
     }
 
@@ -168,14 +174,27 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         onMouseDown={handleInteractionStart}
         onTouchEnd={handleInteractionEnd}
         onMouseUp={handleInteractionEnd}
-        onMouseLeave={() => setIsPressed(false)}
+        onMouseLeave={handleInteractionLeave}
+        onTouchCancel={handleInteractionLeave}
         onKeyDown={handleKeyDown}
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
-         {/* Press state overlay - simplified */}
+         {/* Enhanced press state overlay */}
          {isPressed && (
-           <span className="absolute inset-0 rounded-xl bg-black/4 dark:bg-white/4 pointer-events-none transition-opacity duration-150"></span>
+           <span className="absolute inset-0 rounded-xl bg-black/6 dark:bg-white/6 pointer-events-none transition-opacity duration-150"></span>
+         )}
+         
+         {/* Hover overlay for interactive cards */}
+         {variant === 'interactive' && (
+           <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+           </span>
+         )}
+         
+         {/* Subtle border glow for interactive cards */}
+         {variant === 'interactive' && (
+           <span className="absolute inset-0 rounded-xl shadow-primary-500/20 shadow-outer-glow pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
          )}
       </button>
     );

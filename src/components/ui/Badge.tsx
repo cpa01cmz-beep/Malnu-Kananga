@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { getColorClasses } from '../../config/colors';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'outline' | 'default' | 'gray' | 'blue' | 'purple' | 'orange' | 'green' | 'red' | 'yellow';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -25,6 +26,12 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   pulseIntensity?: BadgePulseIntensity;
   /** Duration of one pulse cycle in seconds */
   pulseDuration?: number;
+  /** Enable interactive hover effects */
+  interactive?: boolean;
+  /** Callback for click/tap events */
+  onClick?: () => void;
+  /** Show subtle scale animation on mount */
+  animateOnMount?: boolean;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
@@ -136,10 +143,26 @@ const Badge: React.FC<BadgeProps> = ({
   pulse = false,
   pulseIntensity = 'subtle',
   pulseDuration = 2,
+  interactive = false,
+  onClick,
+  animateOnMount = false,
   ...props
 }) => {
   const prefersReducedMotion = useReducedMotion();
   const shouldPulse = pulse && !prefersReducedMotion;
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  const [isVisible, setIsVisible] = useState(!animateOnMount);
+  const badgeRef = useRef<HTMLSpanElement>(null);
+  const { onTap, onPress } = useHapticFeedback();
+
+  // Animate on mount
+  React.useEffect(() => {
+    if (animateOnMount && !prefersReducedMotion) {
+      const timer = setTimeout(() => setIsVisible(true), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [animateOnMount, prefersReducedMotion]);
 
   const classes = `
     ${baseClasses}
@@ -147,19 +170,78 @@ const Badge: React.FC<BadgeProps> = ({
     ${sizeClasses[size]}
     ${rounded ? fullRoundedClasses[size] : roundedClasses[size]}
     ${shouldPulse ? pulseIntensityClasses[pulseIntensity] : ''}
+    ${interactive ? 'cursor-pointer transition-all duration-200' : ''}
+    ${isHovered && interactive ? 'scale-110 shadow-lg' : ''}
+    ${isPressed && interactive ? 'scale-95' : ''}
+    ${animateOnMount && !isVisible ? 'scale-0 opacity-0' : ''}
+    ${animateOnMount && isVisible ? 'scale-100 opacity-100' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
+  const handleInteractionStart = () => {
+    if (interactive) {
+      setIsPressed(true);
+      onTap();
+    }
+  };
+
+  const handleInteractionEnd = () => {
+    if (interactive) {
+      setIsPressed(false);
+      onPress();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (interactive && (e.key === 'Enter' || e.key === ' ') && onClick) {
+      e.preventDefault();
+      onClick();
+      onTap();
+      setTimeout(() => onPress(), 100);
+    }
+  };
+
   return (
     <span
+      ref={badgeRef}
       className={classes}
       role={role}
       aria-label={decorative ? undefined : ariaLabel}
       aria-hidden={decorative}
-      {...(shouldPulse && { style: { animationDuration: `${pulseDuration}s` } })}
+      tabIndex={interactive ? 0 : undefined}
+      onKeyDown={handleKeyDown}
+      onMouseDown={handleInteractionStart}
+      onMouseUp={handleInteractionEnd}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsPressed(false);
+      }}
+      onTouchStart={handleInteractionStart}
+      onTouchEnd={handleInteractionEnd}
+      onClick={(e) => {
+        if (interactive && onClick) {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      style={{
+        ...(shouldPulse && { animationDuration: `${pulseDuration}s` }),
+        ...(animateOnMount && { transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease-out' })
+      }}
       {...props}
     >
       {children}
+      {/* Subtle shimmer effect for interactive badges */}
+      {interactive && !prefersReducedMotion && (
+        <span className="absolute inset-0 rounded-inherit overflow-hidden pointer-events-none">
+          <span 
+            className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-out ${
+              isHovered ? 'translate-x-full' : '-translate-x-full'
+            }`}
+          />
+        </span>
+      )}
     </span>
   );
 };

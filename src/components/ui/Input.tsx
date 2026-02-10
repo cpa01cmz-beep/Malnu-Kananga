@@ -51,9 +51,9 @@ const sizeIconClasses: Record<InputSize, string> = {
 };
 
 const stateClasses: Record<InputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01]",
-  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01]",
-  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01]",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01] focus:shadow-input-focus",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01] focus:shadow-input-error animate-error-border",
+  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01] focus:shadow-input-success animate-success-border",
 };
 
 const labelSizeClasses: Record<InputSize, string> = {
@@ -122,9 +122,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
     switch (inputState) {
       case 'error':
-        return 'animate-input-shake-subtle';
+        return 'animate-input-shake-enhanced';
       case 'success':
-        return showSuccessAnimation ? 'animate-success-pulse' : '';
+        return showSuccessAnimation ? 'animate-success-pulse-enhanced' : '';
       default:
         return '';
     }
@@ -223,20 +223,28 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     }
   };
 
-  // Trigger subtle shake animation when validation errors occur
+  // Trigger enhanced shake animation when validation errors occur
   useEffect(() => {
     if (validation.state.errors.length > 0 && validation.state.isTouched && !prefersReducedMotion) {
       setShakeKey(prev => prev + 1);
+      // Add haptic feedback for error
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([100, 50, 100]);
+      }
     }
   }, [validation.state.errors, validation.state.isTouched, prefersReducedMotion]);
 
-  // Trigger success animation when validation passes
+  // Trigger enhanced success animation when validation passes
   useEffect(() => {
     if (validation.state.isValid && validation.state.isTouched && state === 'success') {
       setShowSuccessAnimation(true);
+      // Add haptic feedback for success
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate(50);
+      }
       const timer = setTimeout(() => {
         setShowSuccessAnimation(false);
-      }, 600);
+      }, 800); // Slightly longer for better visibility
       return () => clearTimeout(timer);
     }
   }, [validation.state.isValid, validation.state.isTouched, state]);
@@ -396,7 +404,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         {/* Error state icon */}
         {finalState === 'error' && !rightIcon && (
           <div
-            className={`absolute top-1/2 -translate-y-1/2 ${hasClearButton ? 'right-10' : 'right-3'}`}
+            className={`absolute top-1/2 -translate-y-1/2 ${hasClearButton ? 'right-10' : 'right-3'} animate-error-pulse`}
             aria-hidden="true"
           >
             <AlertCircleIcon size={size} color="danger" />
@@ -406,7 +414,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         {/* Success state icon */}
         {finalState === 'success' && !rightIcon && !validation.state.isValidating && (
           <div
-            className={`absolute top-1/2 -translate-y-1/2 ${hasClearButton ? 'right-10' : 'right-3'}`}
+            className={`absolute top-1/2 -translate-y-1/2 ${hasClearButton ? 'right-10' : 'right-3'} ${showSuccessAnimation ? 'animate-success-checkmark' : ''}`}
             aria-hidden="true"
           >
             <CheckCircleIcon size={size} color="success" />

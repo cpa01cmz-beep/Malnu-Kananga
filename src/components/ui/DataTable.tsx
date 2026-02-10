@@ -189,9 +189,9 @@ const DataTable = <T extends Record<string, unknown>>({
             key={selection ? selection.getRowKey(record) : index}
             variant={onRowClick ? 'interactive' : 'default'}
             className={`
-              ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900' : ''}
+              ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900 animate-selection-pulse' : ''}
               ${rowClassName?.(record, index) || ''}
-              transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] card-hover-enhanced mobile-gesture-feedback glass-effect-elevated
+              transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] card-hover-enhanced mobile-gesture-feedback glass-effect-elevated relative overflow-hidden group
             `}
             onClick={() => {
               onRowClick?.(record, index);
@@ -201,7 +201,10 @@ const DataTable = <T extends Record<string, unknown>>({
               }
             }}
           >
-            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700/60">
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700/60 relative">
+              {/* Subtle gradient border on hover */}
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-500/20 via-primary-500/50 to-primary-500/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+              
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 {selection && (
                   <div className="relative">
@@ -230,8 +233,8 @@ const DataTable = <T extends Record<string, unknown>>({
                   </h3>
                 </div>
                 {onRowClick && (
-                  <div className="flex-shrink-0 p-3 -mr-3 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation mobile-gesture-feedback rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
-                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 dark:text-neutral-500 rotate-180 transition-transform duration-200" />
+                  <div className="flex-shrink-0 p-3 -mr-3 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation mobile-gesture-feedback rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/20">
+                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 dark:text-neutral-500 rotate-180 transition-all duration-200 group-hover:text-primary-600 dark:group-hover:text-primary-400 group-hover:translate-x-0.5" />
                   </div>
                 )}
               </div>
@@ -247,7 +250,7 @@ const DataTable = <T extends Record<string, unknown>>({
                   return (
                     <div 
                       key={column.key} 
-                      className="flex flex-col gap-1.5 p-3.5 -m-3.5 rounded-xl touch-manipulation hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all duration-200 mobile-gesture-feedback group"
+                      className="flex flex-col gap-1.5 p-3.5 -m-3.5 rounded-xl touch-manipulation hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-all duration-200 mobile-gesture-feedback group relative overflow-hidden"
                       onTouchStart={() => {
                         // Light haptic feedback on touch
                         if ('vibrate' in navigator) {
@@ -255,14 +258,17 @@ const DataTable = <T extends Record<string, unknown>>({
                         }
                       }}
                     >
-                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider opacity-70 group-hover:opacity-100 transition-opacity duration-150">
+                      {/* Subtle background gradient on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      
+                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider opacity-70 group-hover:opacity-100 transition-all duration-150 group-hover:text-primary-600 dark:group-hover:text-primary-400">
                         {column.title}
                       </p>
-                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[24px] mobile-text-responsive">
+                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[24px] mobile-text-responsive relative z-10">
                         {isEmpty ? (
-                          <span className="text-neutral-400 dark:text-neutral-500 italic text-sm">— Tidak ada data —</span>
+                          <span className="text-neutral-400 dark:text-neutral-500 italic text-sm group-hover:text-neutral-500 dark:group-hover:text-neutral-400 transition-colors duration-200">— Tidak ada data —</span>
                         ) : (
-                          <span className="group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200">
+                          <span className="group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 group-hover:font-medium">
                             {value}
                           </span>
                         )}

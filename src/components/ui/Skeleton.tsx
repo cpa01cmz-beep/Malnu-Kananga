@@ -38,11 +38,11 @@ const usePrefersReducedMotion = (): boolean => {
   return prefersReducedMotion;
 };
 
-const baseClasses = "bg-neutral-200 dark:bg-neutral-700";
+const baseClasses = "bg-neutral-200 dark:bg-neutral-700 skeleton-enhanced";
 const animationClasses = {
-  pulse: "animate-pulse-slow",
-  wave: "animate-wave",
-  shimmer: "animate-shimmer skeleton-enhanced",
+  pulse: "animate-pulse-slow skeleton-pulse-enhanced",
+  wave: "animate-wave skeleton-wave-enhanced", 
+  shimmer: "animate-shimmer skeleton-shimmer-enhanced",
 };
 
 const variantClasses: Record<'text' | 'rectangular' | 'circular' | 'rounded', string> = {
@@ -110,12 +110,12 @@ const Skeleton: React.FC<SkeletonProps> = ({
 };
 
 export const CardSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden ${className}`}>
-    <Skeleton variant="rectangular" height="200" className="w-full" />
+  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden group hover:shadow-lg transition-shadow duration-300 ${className}`}>
+    <Skeleton variant="rectangular" height="200" className="w-full skeleton-shimmer-enhanced" />
     <div className="p-6 space-y-4">
-      <Skeleton variant="text" height={28} className="w-3/4" />
-      <Skeleton variant="text" height={20} className="w-full" />
-      <Skeleton variant="text" height={20} className="w-5/6" />
+      <Skeleton variant="text" height={28} className="w-3/4 skeleton-pulse-enhanced" />
+      <Skeleton variant="text" height={20} className="w-full skeleton-wave-enhanced" />
+      <Skeleton variant="text" height={20} className="w-5/6 skeleton-wave-enhanced" />
     </div>
   </div>
 );
@@ -313,5 +313,71 @@ export const NotificationSkeleton: React.FC<{ items?: number; className?: string
     ))}
   </div>
 );
+
+// Enhanced skeleton with interactive micro-animations
+export const InteractiveCardSkeleton: React.FC<{ className?: string; interactive?: boolean }> = ({ 
+  className = '', 
+  interactive = false 
+}) => (
+  <div className={`
+    bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 overflow-hidden
+    ${interactive ? 'group cursor-pointer hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] transition-all duration-300' : ''}
+    ${className}
+  `}>
+    <Skeleton 
+      variant="rectangular" 
+      height="200" 
+      className="w-full skeleton-shimmer-enhanced group-hover:opacity-90 transition-opacity duration-200" 
+    />
+    <div className="p-6 space-y-4">
+      <div className="flex items-start justify-between">
+        <Skeleton variant="circular" width={48} height={48} className="skeleton-pulse-enhanced" />
+        <Skeleton variant="text" height={20} className="w-16 skeleton-wave-enhanced" />
+      </div>
+      <Skeleton variant="text" height={28} className="w-4/5 skeleton-pulse-enhanced" />
+      <div className="space-y-2">
+        <Skeleton variant="text" height={16} className="w-full skeleton-wave-enhanced" />
+        <Skeleton variant="text" height={16} className="w-3/4 skeleton-wave-enhanced" />
+      </div>
+      <div className="flex gap-2 pt-2">
+        <Skeleton variant="rectangular" height={32} className="w-20 skeleton-pulse-enhanced" />
+        <Skeleton variant="rectangular" height={32} className="w-24 skeleton-pulse-enhanced" />
+      </div>
+    </div>
+  </div>
+);
+
+// Progressive loading skeleton that simulates content loading
+export const ProgressiveSkeleton: React.FC<{ 
+  stage?: 'initial' | 'loading' | 'almost-done'; 
+  className?: string 
+}> = ({ stage = 'initial', className = '' }) => {
+  const getOpacity = (index: number) => {
+    switch (stage) {
+      case 'initial': return 1;
+      case 'loading': return index < 2 ? 0.7 : 0.4;
+      case 'almost-done': return index === 0 ? 0.3 : index === 1 ? 0.6 : 0.9;
+      default: return 1;
+    }
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div 
+          key={index} 
+          className="transition-opacity duration-500"
+          style={{ opacity: getOpacity(index) }}
+        >
+          <Skeleton 
+            variant="rectangular" 
+            height={60} 
+            className="w-full skeleton-wave-enhanced" 
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default Skeleton;

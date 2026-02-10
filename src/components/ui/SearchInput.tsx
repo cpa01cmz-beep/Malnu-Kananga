@@ -137,16 +137,58 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     }
   };
 
-  // Enhanced key down handler
+  // Enhanced key down handler with comprehensive shortcuts
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Clear value on Escape key
     if (e.key === 'Escape') {
-      // Clear value on Escape key
+      e.preventDefault();
       onDelete();
       const syntheticEvent = {
         target: { value: '' }
       } as React.ChangeEvent<HTMLInputElement>;
       handleChange(syntheticEvent);
+      return;
     }
+
+    // Clear value on Ctrl+K (Cmd+K on Mac)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      onDelete();
+      const syntheticEvent = {
+        target: { value: '' }
+      } as React.ChangeEvent<HTMLInputElement>;
+      handleChange(syntheticEvent);
+      return;
+    }
+
+    // Clear value on Delete when value is selected
+    if (e.key === 'Delete' && e.target && (e.target as HTMLInputElement).value) {
+      const input = e.target as HTMLInputElement;
+      if (input.selectionStart === 0 && input.selectionEnd === input.value.length) {
+        e.preventDefault();
+        onDelete();
+        const syntheticEvent = {
+          target: { value: '' }
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleChange(syntheticEvent);
+        return;
+      }
+    }
+
+    // Handle navigation shortcuts
+    if (e.ctrlKey || e.metaKey) {
+      switch (e.key) {
+        case 'a':
+          // Select all
+          if (props.onKeyDown) {
+            props.onKeyDown(e);
+          }
+          return;
+        default:
+          break;
+      }
+    }
+
     if (props.onKeyDown) {
       props.onKeyDown(e);
     }
@@ -193,7 +235,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           id={searchId}
           type="search"
           role="searchbox"
-          placeholder={placeholder}
+          placeholder={placeholder || (value ? undefined : 'Cari... (Esc untuk bersihkan)')}
           className={inputClasses}
           aria-describedby={describedBy}
           aria-invalid={finalState === 'error' ? 'true' : 'false'}
@@ -246,7 +288,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
           } ${
             value && String(value).length > 0 && !validation.state.isValidating
-              ? 'opacity-100 scale-100 pointer-events-auto'
+              ? 'opacity-100 scale-100 pointer-events-auto animate-fade-in-up'
               : 'opacity-0 scale-75 pointer-events-none'
           } ${prefersReducedMotion ? '' : 'transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275)'} ${
             isClearPressed ? (prefersReducedMotion ? '' : 'scale-95 rotate-90') : (prefersReducedMotion ? '' : 'hover:scale-110 hover:rotate-12')
@@ -256,21 +298,31 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         >
           <XMarkIcon className={`${sizeIconClasses[size]} ${prefersReducedMotion ? '' : 'transition-transform duration-300'} ${isClearPressed ? 'rotate-90' : 'hover:rotate-90'}`} aria-hidden="true" />
           
-          {/* Ripple effect overlay */}
-          <span className="absolute inset-0 rounded-xl overflow-hidden">
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+          {/* Enhanced ripple effect overlay */}
+          <span className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
+            <span className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out ${
+              isClearPressed ? 'translate-x-0' : '-translate-x-full hover:translate-x-full'
+            }`} />
           </span>
           
-          {/* Enhanced Tooltip with better positioning */}
+          {/* Enhanced Tooltip with better positioning and shortcuts */}
           {showTooltip && value && String(value).length > 0 && (
             <span 
-              className={`absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? '' : 'animate-scale-in'}`}
+              className={`absolute -top-14 left-1/2 -translate-x-1/2 px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? '' : 'animate-scale-in'}`}
               role="tooltip"
             >
-              <span className="font-medium">Bersihkan</span>
-              <kbd className="ml-2 px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-600 dark:border-neutral-500">Esc</kbd>
+              <span className="font-medium block mb-1">Bersihkan Pencarian</span>
+              <div className="flex items-center gap-2">
+                <kbd className="px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-600 dark:border-neutral-500">Esc</kbd>
+                <kbd className="px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-600 dark:border-neutral-500">Ctrl+K</kbd>
+              </div>
               <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-neutral-900 dark:bg-neutral-700 rotate-45 border-r border-b border-neutral-600 dark:border-neutral-500" aria-hidden="true" />
             </span>
+          )}
+
+          {/* Success indicator overlay */}
+          {!prefersReducedMotion && value && String(value).length > 0 && isClearPressed && (
+            <span className="absolute inset-0 rounded-full bg-green-500/20 animate-success-ping pointer-events-none" />
           )}
         </button>
 
