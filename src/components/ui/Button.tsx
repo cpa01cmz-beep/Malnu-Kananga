@@ -1,5 +1,18 @@
 import React from 'react';
 import { XML_NAMESPACES } from '../../constants';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
+
+// Haptic feedback utility
+const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
+  if ('vibrate' in navigator && window.innerWidth <= 768) {
+    const pattern = {
+      light: [10],
+      medium: [25],
+      heavy: [50]
+    };
+    navigator.vibrate(pattern[type]);
+  }
+};
 
 // New simplified variants
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'outline';
@@ -26,7 +39,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated";
+const getBaseClasses = (prefersReducedMotion: boolean) => {
+  const motionClasses = prefersReducedMotion 
+    ? "transition-none"
+    : "transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
+    
+  return `inline-flex items-center justify-center font-semibold rounded-xl ${motionClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated`;
+};
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:shadow-primary-500/20 btn-hover-primary focus-visible-enhanced hover-glow-enhanced border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect-elevated",
@@ -45,16 +64,16 @@ const intentClasses: Record<ButtonIntent, string> = {
 
 const sizeClasses: Record<ButtonSize, string> = {
   icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "px-4 py-2.5 text-sm min-h-[48px] sm:min-h-[52px] mobile-touch-target",
-  md: "px-5 py-3 text-sm sm:text-base min-h-[52px] sm:min-h-[56px] mobile-touch-target",
-  lg: "px-6 py-4 text-base sm:text-lg min-h-[56px] sm:min-h-[60px] mobile-touch-target",
+  sm: "px-4 py-2.5 text-sm min-h-[52px] sm:min-h-[56px] mobile-touch-target",
+  md: "px-5 py-3 text-sm sm:text-base min-h-[56px] sm:min-h-[60px] mobile-touch-target",
+  lg: "px-6 py-4 text-base sm:text-lg min-h-[60px] sm:min-h-[64px] mobile-touch-target",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
   icon: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "p-3 min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px]",
-  md: "p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
-  lg: "p-4 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]",
+  sm: "p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
+  md: "p-3 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]",
+  lg: "p-4 min-w-[60px] min-h-[60px] sm:min-w-[64px] sm:min-h-[64px]",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
@@ -73,6 +92,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   disabledReason,
   ...props
 }, ref) => {
+  const prefersReducedMotion = useReducedMotion();
   // Map legacy variants to new ones
   const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
     // Map legacy solid colors to new intent system
@@ -122,14 +142,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     
     // Use intent classes for primary variant when intent is specified
     if (normalizedVariant === 'primary' && determinedIntent !== 'default') {
-      return `${baseClasses} ${intentClasses[determinedIntent]} shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover focus-visible-enhanced hover-glow-enhanced`;
+      const motionClasses = prefersReducedMotion ? '' : 'hover:scale-[1.02]';
+      return `${intentClasses[determinedIntent]} shadow-md hover:shadow-lg ${motionClasses} gradient-hover focus-visible-enhanced hover-glow-enhanced`;
     }
     
     return variantClasses[normalizedVariant];
   };
 
   const classes = `
-    ${baseClasses}
+    ${getBaseClasses(prefersReducedMotion)}
     ${getVariantClasses()}
     ${iconOnly ? iconOnlySizes[size] : sizeClasses[size]}
     ${fullWidth ? 'w-full' : ''}
@@ -152,6 +173,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const isDisabled = disabled || isLoading;
 
+  const handlePressStart = () => {
+    if (!isDisabled) {
+      triggerHapticFeedback(normalizedVariant === 'primary' ? 'medium' : 'light');
+    }
+  };
+
   return (
     <button
       ref={ref}
@@ -159,6 +186,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       disabled={isDisabled}
       aria-live={isLoading ? 'polite' : undefined}
       aria-disabled={isDisabled}
+      onTouchStart={handlePressStart}
+      onMouseDown={handlePressStart}
       {...ariaProps}
       {...props}
     >

@@ -15,18 +15,32 @@ import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 
-const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) backdrop-blur-sm hover-lift-premium text-contrast-enhanced mobile-gesture-feedback min-h-[48px] glass-effect focus-indicator-enhanced";
+const getNavLinkClasses = (prefersReducedMotion: boolean) => {
+  const motionClasses = prefersReducedMotion 
+    ? ""
+    : "hover:scale-[1.02] active:scale-[0.98] transition-all duration-300";
+    
+  return `text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation min-h-[48px] ${motionClasses}`;
+};
 
-const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px] text-contrast-enhanced mobile-gesture-feedback haptic-feedback glass-effect focus-indicator-enhanced";
+const getMobileNavLinkClasses = (prefersReducedMotion: boolean) => {
+  const motionClasses = prefersReducedMotion 
+    ? ""
+    : "active:scale-[0.98] transition-all duration-300";
+    
+  return `block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 touch-manipulation border-b border-neutral-100/60 dark:border-neutral-800/60 min-h-[52px] ${motionClasses}`;
+};
 
-const NavLink = ({ href, children, isMobile = false, isActive = false }: { 
+const NavLink = ({ href, children, isMobile = false, isActive = false, prefersReducedMotion = false }: { 
     href: string; 
     children: React.ReactNode; 
     isMobile?: boolean; 
     isActive?: boolean; 
+    prefersReducedMotion?: boolean;
 }) => {
-    const linkClass = isMobile ? mobileNavLinkClass : navLinkClass;
+    const linkClass = isMobile ? getMobileNavLinkClasses(prefersReducedMotion) : getNavLinkClasses(prefersReducedMotion);
     const activeClasses = isActive ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-l-4 border-primary-500' : '';
     
     return (
@@ -40,16 +54,16 @@ const NavLink = ({ href, children, isMobile = false, isActive = false }: {
     );
 };
 
-const NavLinks = ({ isMobile = false, activePath }: { isMobile?: boolean; activePath?: string }) => {
+const NavLinks = ({ isMobile = false, activePath, prefersReducedMotion = false }: { isMobile?: boolean; activePath?: string; prefersReducedMotion?: boolean }) => {
     const isActive = (href: string) => activePath === href;
     
     return (
         <>
-            <NavLink href="#home" isActive={isActive('#home')} isMobile={isMobile}>{HEADER_NAV_STRINGS.HOME}</NavLink>
-            <NavLink href="#profil" isActive={isActive('#profil')} isMobile={isMobile}>{HEADER_NAV_STRINGS.PROFILE}</NavLink>
-            <NavLink href="#berita" isActive={isActive('#berita')} isMobile={isMobile}>{HEADER_NAV_STRINGS.NEWS}</NavLink>
-            <NavLink href="#download" isActive={isActive('#download')} isMobile={isMobile}>{HEADER_NAV_STRINGS.DOWNLOAD}</NavLink>
-            <NavLink href="#login-email" isActive={isActive('#login-email')} isMobile={isMobile}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</NavLink>
+            <NavLink href="#home" isActive={isActive('#home')} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion}>{HEADER_NAV_STRINGS.HOME}</NavLink>
+            <NavLink href="#profil" isActive={isActive('#profil')} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion}>{HEADER_NAV_STRINGS.PROFILE}</NavLink>
+            <NavLink href="#berita" isActive={isActive('#berita')} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion}>{HEADER_NAV_STRINGS.NEWS}</NavLink>
+            <NavLink href="#download" isActive={isActive('#download')} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion}>{HEADER_NAV_STRINGS.DOWNLOAD}</NavLink>
+            <NavLink href="#login-email" isActive={isActive('#login-email')} isMobile={isMobile} prefersReducedMotion={prefersReducedMotion}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</NavLink>
         </>
     );
 };
@@ -87,6 +101,24 @@ const Header: React.FC<HeaderProps> = ({
     const [activePath, setActivePath] = useState<string>('');
     const _mobileMenuRef = useRef<HTMLDivElement>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
+    const prefersReducedMotion = useReducedMotion();
+
+    // Haptic feedback utility
+    const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
+        if ('vibrate' in navigator && window.innerWidth <= 768) {
+            const pattern = {
+                light: [10],
+                medium: [25],
+                heavy: [50]
+            };
+            navigator.vibrate(pattern[type]);
+        }
+    };
+
+    const handleMenuToggle = () => {
+        triggerHapticFeedback('medium');
+        setIsMenuOpen(!isMenuOpen);
+    };
 
     useEffect(() => {
         const themeManager = ThemeManager.getInstance();
@@ -192,7 +224,7 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
 
                     <nav className="hidden md:flex items-center gap-1" aria-label="Menu navigasi desktop">
-                        <NavLinks activePath={activePath} />
+                        <NavLinks activePath={activePath} prefersReducedMotion={prefersReducedMotion} />
                     </nav>
 
                     <div className="flex items-center gap-2">
@@ -261,11 +293,11 @@ const Header: React.FC<HeaderProps> = ({
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     tooltip={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     size="lg"
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    onClick={handleMenuToggle}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter' || e.key === ' ') {
                                             e.preventDefault();
-                                            setIsMenuOpen(!isMenuOpen);
+                                            handleMenuToggle();
                                         }
                                     }}
                                     aria-expanded={isMenuOpen}
@@ -291,23 +323,31 @@ const Header: React.FC<HeaderProps> = ({
                         aria-label="Menu navigasi utama"
                     >
                         <div className="mobile-nav-enhanced">
-                            <NavLinks isMobile={true} activePath={activePath} />
+                            <NavLinks isMobile={true} activePath={activePath} prefersReducedMotion={prefersReducedMotion} />
                         </div>
                             <div className="pt-6 border-t border-neutral-200/60 dark:border-neutral-700/60 flex flex-col gap-4">
                                   {isLoggedIn ? (
                                      <>
-                                           <Button
-                                               variant="secondary"
-                                               onClick={() => { onTogglePublicView(); setIsMenuOpen(false); }}
-                                               fullWidth
-                                               size="lg"
-                                               className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
-                                           >
+                                    <Button
+                                                variant="secondary"
+                                                onClick={() => { 
+                                                    triggerHapticFeedback('light');
+                                                    onTogglePublicView(); 
+                                                    setIsMenuOpen(false); 
+                                                }}
+                                                fullWidth
+                                                size="lg"
+                                                className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
+                                            >
                                                {isPublicView ? 'Lihat Dashboard' : 'Lihat Website'}
                                            </Button>
 <Button
                                                 variant="destructive"
-                                                onClick={() => { onLogout(); setIsMenuOpen(false); }}
+                                                onClick={() => { 
+                                                    triggerHapticFeedback('heavy');
+                                                    onLogout(); 
+                                                    setIsMenuOpen(false); 
+                                                }}
                                                 fullWidth
                                                 size="lg"
                                                 className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
@@ -316,13 +356,17 @@ const Header: React.FC<HeaderProps> = ({
                                            </Button>
                                       </>
                                   ) : (
-                                          <Button
-                                              variant="primary"
-                                              onClick={() => { onLoginClick(); setIsMenuOpen(false); }}
-                                              fullWidth
-                                              size="lg"
-                                              className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
-                                          >
+<Button
+                                               variant="primary"
+                                               onClick={() => { 
+                                                   triggerHapticFeedback('medium');
+                                                   onLoginClick(); 
+                                                   setIsMenuOpen(false); 
+                                               }}
+                                               fullWidth
+                                               size="lg"
+                                               className="mobile-touch-target haptic-feedback mobile-button mobile-nav-enhanced"
+                                           >
                                               Login
                                           </Button>
                                    )}

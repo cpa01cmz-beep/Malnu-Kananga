@@ -71,6 +71,58 @@ export const COLOR_SYSTEM = `
 .color-info-900 { color: #0c4a6e; background-color: #0c4a6e; }
 .color-info-950 { color: #082f49; background-color: #082f49; }
 
+/* Educational Amber - Warm, encouraging color for learning */
+.color-amber-50 { color: #fffbeb; background-color: #fffbeb; }
+.color-amber-100 { color: #fef3c7; background-color: #fef3c7; }
+.color-amber-200 { color: #fde68a; background-color: #fde68a; }
+.color-amber-300 { color: #fcd34d; background-color: #fcd34d; }
+.color-amber-400 { color: #fbbf24; background-color: #fbbf24; }
+.color-amber-500 { color: #f59e0b; background-color: #f59e0b; }
+.color-amber-600 { color: #d97706; background-color: #d97706; }
+.color-amber-700 { color: #b45309; background-color: #b45309; }
+.color-amber-800 { color: #92400e; background-color: #92400e; }
+.color-amber-900 { color: #78350f; background-color: #78350f; }
+.color-amber-950 { color: #451a03; background-color: #451a03; }
+
+/* Achievement Emerald - Success and progress */
+.color-emerald-50 { color: #ecfdf5; background-color: #ecfdf5; }
+.color-emerald-100 { color: #d1fae5; background-color: #d1fae5; }
+.color-emerald-200 { color: #a7f3d0; background-color: #a7f3d0; }
+.color-emerald-300 { color: #6ee7b7; background-color: #6ee7b7; }
+.color-emerald-400 { color: #34d399; background-color: #34d399; }
+.color-emerald-500 { color: #10b981; background-color: #10b981; }
+.color-emerald-600 { color: #059669; background-color: #059669; }
+.color-emerald-700 { color: #047857; background-color: #047857; }
+.color-emerald-800 { color: #065f46; background-color: #065f46; }
+.color-emerald-900 { color: #064e3b; background-color: #064e3b; }
+.color-emerald-950 { color: #022c22; background-color: #022c22; }
+
+/* Learning Indigo - Knowledge and wisdom */
+.color-indigo-50 { color: #eef2ff; background-color: #eef2ff; }
+.color-indigo-100 { color: #e0e7ff; background-color: #e0e7ff; }
+.color-indigo-200 { color: #c7d2fe; background-color: #c7d2fe; }
+.color-indigo-300 { color: #a5b4fc; background-color: #a5b4fc; }
+.color-indigo-400 { color: #818cf8; background-color: #818cf8; }
+.color-indigo-500 { color: #6366f1; background-color: #6366f1; }
+.color-indigo-600 { color: #4f46e5; background-color: #4f46e5; }
+.color-indigo-700 { color: #4338ca; background-color: #4338ca; }
+.color-indigo-800 { color: #3730a3; background-color: #3730a3; }
+.color-indigo-900 { color: #312e81; background-color: #312e81; }
+.color-indigo-950 { color: #1e1b4b; background-color: #1e1b4b; }
+
+/* Creative Rose - Art and expression */
+.color-rose-50 { color: #fff1f2; background-color: #fff1f2; }
+.color-rose-100 { color: #ffe4e6; background-color: #ffe4e6; }
+.color-rose-200 { color: #fecdd3; background-color: #fecdd3; }
+.color-rose-300 { color: #fda4af; background-color: #fda4af; }
+.color-rose-400 { color: #fb7185; background-color: #fb7185; }
+.color-rose-500 { color: #f43f5e; background-color: #f43f5e; }
+.color-rose-600 { color: #e11d48; background-color: #e11d48; }
+.color-rose-700 { color: #be123c; background-color: #be123c; }
+.color-rose-800 { color: #9f1239; background-color: #9f1239; }
+.color-rose-900 { color: #881337; background-color: #881337; }
+.color-rose-950 { color: #4c0519; background-color: #4c0519; }
+
 /* Neutral Colors */
 .color-neutral-50 { color: #fafafa; background-color: #fafafa; }
 .color-neutral-100 { color: #f5f5f5; background-color: #f5f5f5; }

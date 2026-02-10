@@ -319,7 +319,7 @@ export const useSkeleton = (isLoading: boolean, delay = 200) => {
   const [showSkeleton, setShowSkeleton] = useState(false);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (isLoading) {
       timeout = setTimeout(() => {
