@@ -431,10 +431,10 @@ function QuestionCard({ question, index, isEditing, onEdit, onSave, onDelete }: 
               )}
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="ghost" onClick={onEdit}>
+              <Button size="sm" variant="ghost" onClick={onEdit} aria-label="Edit question">
                 <PencilIcon className="w-4 h-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={onDelete}>
+              <Button size="sm" variant="ghost" onClick={onDelete} aria-label="Delete question">
                 <TrashIcon className="w-4 h-4 text-red-600 dark:text-red-400" />
               </Button>
             </div>
