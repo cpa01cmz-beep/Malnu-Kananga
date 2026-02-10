@@ -7,6 +7,7 @@ import Button from './Button';
 import SearchInput from './SearchInput';
 import FunnelIcon from '../icons/FunnelIcon';
 import { HEIGHTS } from '../../config/heights';
+import { ExclamationCircleIcon } from '../icons/MaterialIcons';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -142,9 +143,32 @@ const DataTable = <T extends Record<string, unknown>>({
         className={HEIGHTS.CONTENT.TABLE}
       >
         {error && (
-          <div className="text-center py-12">
-            <div className="text-red-500 mb-2">Error loading data</div>
-            <div className="text-neutral-600 dark:text-neutral-400">{error}</div>
+          <div 
+            className="text-center py-12 px-6"
+            role="alert"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full bg-red-100 dark:bg-red-900/20">
+              <ExclamationCircleIcon className="w-8 h-8 text-red-500 dark:text-red-400" aria-hidden="true" />
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+              Terjadi Kesalahan
+            </h3>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4 max-w-md mx-auto">
+              {error}
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-500 mb-6">
+              Coba refresh halaman atau hubungi admin jika masalah berlanjut
+            </p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => window.location.reload()}
+              aria-label="Refresh halaman untuk mencoba lagi"
+            >
+              Coba Lagi
+            </Button>
           </div>
         )}
         {empty && !loading && !error && (
