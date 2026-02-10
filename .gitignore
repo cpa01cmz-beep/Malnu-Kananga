@@ -136,3 +136,6 @@ Desktop.ini
 # Local deployment
 .wrangler/deployments/
 .local-wrangler/playwright-report/
+
+# ULW-Loop / Ralph-Loop local files
+.sisyphus/
