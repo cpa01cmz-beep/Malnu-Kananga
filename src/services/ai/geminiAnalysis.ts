@@ -4,6 +4,7 @@ import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import { AI_CONFIG } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
