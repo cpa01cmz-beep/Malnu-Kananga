@@ -15,6 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import { OFFLINE_INDICATOR_CONFIG } from '../constants';
 import Alert from './ui/Alert';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
@@ -64,10 +65,10 @@ export function OfflineIndicator({
         setShowSyncStatus(true);
         logger.info('Sync completed', result);
 
-        // Auto-hide sync status after 3 seconds
+        // Auto-hide sync status after configured delay
         setTimeout(() => {
           setShowSyncStatus(false);
-        }, 3000);
+        }, OFFLINE_INDICATOR_CONFIG.SYNC_STATUS_AUTO_HIDE_MS);
       });
     }
   }, [onSyncComplete]);

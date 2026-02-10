@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Button from './Button';
+import { PAGINATION_OPTIONS } from '../../constants';
 
 export type PaginationVariant = 'default' | 'compact' | 'minimal';
 export type PaginationSize = 'sm' | 'md' | 'lg';
@@ -239,10 +240,11 @@ const Pagination: React.FC<PaginationProps> = ({
               className="border border-neutral-300 dark:border-neutral-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500/50%"
               aria-label="Items per page"
             >
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={100}>100</option>
+              {PAGINATION_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
             </select>
             <span className="text-sm text-neutral-600 dark:text-neutral-400">
               per page
