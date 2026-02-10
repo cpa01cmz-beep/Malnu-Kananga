@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MagnifyingGlassIcon, XMarkIcon } from '../icons/MaterialIcons';
+import { DEBOUNCE_DELAYS, COMPONENT_LIMITS } from '../../constants';
 
 export interface SearchItem {
   id: string | number;
@@ -36,8 +37,8 @@ const Search: React.FC<SearchProps> = ({
   className = '',
   size = 'md',
   variant = 'default',
-  debounceMs = 300,
-  maxSuggestions = 8,
+  debounceMs = DEBOUNCE_DELAYS.SEARCH_INPUT,
+  maxSuggestions = COMPONENT_LIMITS.SEARCH_MAX_SUGGESTIONS,
   showCategories = true,
   showKeywords = false,
   allowEmptySearch = false,

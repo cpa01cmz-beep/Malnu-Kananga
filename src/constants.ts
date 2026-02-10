@@ -2215,3 +2215,41 @@ export type PPDBLegacyStatus = typeof PPDB_LEGACY_STATUS[keyof typeof PPDB_LEGAC
 
 // Student prefix for ID generation
 export const STUDENT_ID_PREFIX = 'student_';
+
+// Number formatting constants - Flexy: Never hardcode decimal places!
+export const NUMBER_FORMAT = {
+    DECIMAL_PLACES_GRADE: 1,
+    DECIMAL_PLACES_GPA: 2,
+    DECIMAL_PLACES_PERCENTAGE: 1,
+    DECIMAL_PLACES_FILE_SIZE: 2,
+    DECIMAL_PLACES_VOICE: 1,
+    DECIMAL_PLACES_STATS: 2,
+} as const;
+
+// Animation delays in milliseconds - Flexy: Never hardcode animation timing!
+export const ANIMATION_DELAYS = {
+    TYPING_INDICATOR: [0, 200, 400] as const, // in ms
+    STAGGER_DELAY: 100, // ms between staggered items
+    FADE_IN_DURATION: 300,
+    SLIDE_DURATION: 300,
+} as const;
+
+// Component-specific limits - Flexy: Never hardcode component limits!
+export const COMPONENT_LIMITS = {
+    SEARCH_MAX_SUGGESTIONS: 8,
+    IMPORT_ERROR_MAX_DISPLAY: 5,
+    MATERIAL_RECOMMENDATIONS_MAX: 6,
+    OCR_COMPARISON_MAX_MATERIALS: 5,
+    COMMUNICATION_LOG_MAX_PREVIEW: 5,
+    PERMISSIONS_MAX_DISPLAY: 3,
+    SITE_EDITOR_MAX_LOGS: 100,
+} as const;
+
+// AI Cache sizes - Flexy: Never hardcode cache sizes!
+export const AI_CACHE_SIZES = {
+    DEFAULT: 100,
+    CHAT: 50,
+    ANALYSIS: 30,
+    EDITOR: 20,
+    OCR: 40,
+} as const;
