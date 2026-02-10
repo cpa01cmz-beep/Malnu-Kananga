@@ -2139,6 +2139,61 @@
   }
 }
 
+/* ============================================
+   BADGE PULSE ANIMATIONS - Micro UX Delight
+   Subtle attention-drawing animations for badges
+   ============================================ */
+
+@keyframes badge-pulse-subtle {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  50% { 
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px currentColor;
+  }
+}
+
+@keyframes badge-pulse-moderate {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px currentColor;
+    opacity: 0.95;
+  }
+}
+
+@keyframes badge-pulse-strong {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 currentColor;
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.06);
+    box-shadow: 0 0 0 5px currentColor;
+    filter: brightness(1.1);
+  }
+}
+
+/* Badge pulse animation classes */
+.animate-badge-pulse-subtle {
+  animation: badge-pulse-subtle var(--badge-pulse-duration, 2s) ease-in-out infinite;
+}
+
+.animate-badge-pulse-moderate {
+  animation: badge-pulse-moderate var(--badge-pulse-duration, 2s) ease-in-out infinite;
+}
+
+.animate-badge-pulse-strong {
+  animation: badge-pulse-strong var(--badge-pulse-duration, 2s) ease-in-out infinite;
+}
+
 /* Icon color state variants */
 .icon-primary { 
   color: hsl(var(--color-primary-600)); 
