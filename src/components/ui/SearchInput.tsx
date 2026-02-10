@@ -3,6 +3,7 @@ import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -84,6 +85,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   const [isClearPressed, setIsClearPressed] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const { onTap, onSelection, onDelete } = useHapticFeedback();
   const searchId = id || `search-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${searchId}-helper` : undefined;
   const errorTextId = errorText ? `${searchId}-error` : undefined;
@@ -139,6 +141,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       // Clear value on Escape key
+      onDelete();
       const syntheticEvent = {
         target: { value: '' }
       } as React.ChangeEvent<HTMLInputElement>;
@@ -213,6 +216,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         <button
           type="button"
           onClick={() => {
+            onDelete();
             const syntheticEvent = {
               target: { value: '' }
             } as React.ChangeEvent<HTMLInputElement>;
@@ -222,17 +226,19 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
               ref.current.focus();
             }
             setShowTooltip(false);
-            // Haptic feedback for mobile
-            if ('vibrate' in navigator && window.innerWidth <= 768) {
-              navigator.vibrate([10, 5, 10]);
-            }
           }}
-          onMouseEnter={() => setShowTooltip(true)}
+          onMouseEnter={() => {
+            setShowTooltip(true);
+            onTap();
+          }}
           onMouseLeave={() => {
             setShowTooltip(false);
             setIsClearPressed(false);
           }}
-          onMouseDown={() => setIsClearPressed(true)}
+          onMouseDown={() => {
+            setIsClearPressed(true);
+            onSelection();
+          }}
           onMouseUp={() => setIsClearPressed(false)}
           onFocus={() => setShowTooltip(true)}
           onBlur={() => setShowTooltip(false)}

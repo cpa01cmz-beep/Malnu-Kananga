@@ -1,18 +1,7 @@
 import React, { forwardRef, ButtonHTMLAttributes, useState } from 'react';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
-
-// Haptic feedback utility
-const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
-  if ('vibrate' in navigator && window.innerWidth <= 768) {
-    const pattern = {
-      light: [5],
-      medium: [15],
-      heavy: [30]
-    };
-    navigator.vibrate(pattern[type]);
-  }
-};
 export type CardRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
 export type CardShadow = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'card' | 'float';
 export type CardBorder = 'none' | 'neutral-200' | 'neutral-100';
@@ -99,6 +88,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   ...rest
 }, ref) => {
   const [isPressed, setIsPressed] = useState(false);
+  const { onTap, onPress } = useHapticFeedback();
 
   const paddingClass = paddingClasses[padding];
   const roundedClass = roundedClasses[rounded];
@@ -108,21 +98,21 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   const handleInteractionStart = () => {
     if (variant === 'interactive' && !disabled) {
       setIsPressed(true);
-      triggerHapticFeedback('light');
+      onTap();
     }
   };
 
   const handleInteractionEnd = () => {
     if (variant === 'interactive' && !disabled) {
       setIsPressed(false);
-      triggerHapticFeedback('medium');
+      onPress();
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (variant === 'interactive' && !disabled && (e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault();
-      triggerHapticFeedback('light');
+      onTap();
       setIsPressed(true);
       // Trigger the button's native click event
       (e.target as HTMLButtonElement).click();
