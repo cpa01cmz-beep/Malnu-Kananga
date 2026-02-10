@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useRef, useId } from 'react';
+import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 import { XML_NAMESPACES } from '../../constants';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type SmallActionButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'neutral';
 export type SmallActionButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -14,6 +15,10 @@ interface SmallActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   children: React.ReactNode;
   tooltip?: string;
   tooltipPosition?: SmallActionButtonTooltipPosition;
+  /** Show success checkmark briefly after action */
+  showSuccess?: boolean;
+  /** Duration to show success state in milliseconds */
+  successDuration?: number;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-1.5 min-h-[44px] mobile-touch-target focus-visible-enhanced";
@@ -38,16 +43,47 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
   children,
   tooltip,
   tooltipPosition = 'bottom',
+  showSuccess = false,
+  successDuration = 2000,
   className = '',
   disabled,
   ...props
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
-  const hasTooltip = Boolean(tooltip);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible;
 
-  const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
+  // Handle success state with auto-reset
+  useEffect(() => {
+    if (showSuccess) {
+      setIsSuccessVisible(true);
+
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+
+      successTimeoutRef.current = setTimeout(() => {
+        setIsSuccessVisible(false);
+      }, successDuration);
+    }
+
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, [showSuccess, successDuration]);
+
+  const showTooltip = useCallback(() => {
+    if (!isSuccessVisible && !isLoading) {
+      setIsTooltipVisible(true);
+    }
+  }, [isSuccessVisible, isLoading]);
+
   const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
 
   const classes = `
@@ -55,13 +91,18 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
     ${variantClasses[variant]}
     ${fullWidth ? 'flex-1' : ''}
     ${isLoading ? 'cursor-wait' : ''}
+    ${isSuccessVisible ? 'cursor-default' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
   const ariaProps: Record<string, string | boolean | undefined> = {};
-  
+
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';
+  }
+
+  if (isSuccessVisible) {
+    ariaProps['aria-label'] = 'Berhasil';
   }
 
   const tooltipPositionClasses: Record<SmallActionButtonTooltipPosition, string> = {
@@ -77,6 +118,8 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
     left: 'left-full top-1/2 -translate-y-1/2 -ml-1 border-t-transparent border-b-transparent border-r-transparent',
     right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-t-transparent border-b-transparent border-l-transparent',
   };
+
+  const tooltipText = isSuccessVisible ? 'Berhasil!' : tooltip;
 
   return (
     <button
@@ -99,6 +142,24 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
           </svg>
           <span>{loadingText || children}</span>
         </>
+      ) : isSuccessVisible ? (
+        <>
+          <span className={`mr-1.5 flex items-center ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}>
+            <svg
+              className="h-4 w-4 text-green-600 dark:text-green-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+          <span className="text-green-700 dark:text-green-300">{children}</span>
+        </>
       ) : (
         <>
           {icon && iconPosition === 'left' && (
@@ -111,22 +172,23 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
         </>
       )}
       
-      {hasTooltip && (
+      {(hasTooltip || isSuccessVisible) && (
         <span
           id={tooltipId}
           role="tooltip"
           className={`
-            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 
-            rounded-md shadow-lg whitespace-nowrap pointer-events-none
+            absolute z-50 px-2.5 py-1.5 text-xs font-medium rounded-md shadow-lg whitespace-nowrap pointer-events-none
             transition-all duration-200 ease-out
+            ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500 text-white' : 'bg-neutral-800 dark:bg-neutral-700 text-white'}
             ${tooltipPositionClasses[tooltipPosition]}
-            ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${isTooltipVisible || isSuccessVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
-          {tooltip}
+          {tooltipText}
           <span
             className={`
-              absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
+              absolute w-2 h-2 rotate-45
+              ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
               ${tooltipArrowClasses[tooltipPosition]}
             `.replace(/\s+/g, ' ').trim()}
             aria-hidden="true"
