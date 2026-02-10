@@ -60,10 +60,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [uploadSpeed, setUploadSpeed] = useState<number>(0);
   const [estimatedTimeRemaining, setEstimatedTimeRemaining] = useState<number>(0);
   const [uploadedBytes, setUploadedBytes] = useState<number>(0);
+  const [announcement, setAnnouncement] = useState<string>('');
   const uploadStartTimeRef = useRef<number>(0);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);  
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const announceToScreenReader = useCallback((message: string) => {
+    setAnnouncement(message);
+    setTimeout(() => setAnnouncement(''), 1000);
+  }, []);  
 
   useEffect(() => {
     return () => {
@@ -155,6 +161,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       setEstimatedTimeRemaining(0);
       setUploadedBytes(0);
       uploadStartTimeRef.current = Date.now();
+      announceToScreenReader(`Starting upload of ${file.name}`);
 
       const abortController = new AbortController();  
       abortControllerRef.current = abortController;
@@ -176,6 +183,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
               const eta = speed > 0 ? remainingBytes / speed : 0;
               setEstimatedTimeRemaining(eta);
             }
+
+            if (progress.percentage % 25 === 0 && progress.percentage > 0) {
+              announceToScreenReader(`Upload ${progress.percentage}% complete`);
+            }
           },
           abortController,
         });
@@ -193,18 +204,22 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
           setFiles((prev) => [...prev, newFile]);
           onFileUploaded?.(response.data);
+          announceToScreenReader(`Upload complete. ${file.name} has been uploaded successfully.`);
 
           if (fileInputRef.current) {
             fileInputRef.current.value = '';
           }
         } else {
           setError(response.message || 'Upload failed');
+          announceToScreenReader(`Upload failed. ${response.message || 'Please try again.'}`);
         }
       } catch (err) {
         if ((err as Error).message === 'Upload cancelled') {
           setError('Upload cancelled by user');
+          announceToScreenReader('Upload cancelled');
         } else {
           setError('Failed to upload file. Please try again.');
+          announceToScreenReader('Upload failed. Please try again.');
           logger.error('Upload error:', err);
         }
       } finally {
@@ -216,7 +231,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         abortControllerRef.current = null;
       }
     }
-  }, [files, maxFiles, allowMultiple, uploadPath, onFileUploaded, validateFile, createPreview]);
+  }, [files, maxFiles, allowMultiple, uploadPath, onFileUploaded, validateFile, createPreview, announceToScreenReader]);
 
   const handleCancelUpload = () => {
     if (abortControllerRef.current) {
@@ -231,11 +246,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       if (response.success) {
         setFiles((prev) => prev.filter((f) => f.id !== file.id));
         onFileDeleted?.(file.key);
+        announceToScreenReader(`${file.name} has been deleted successfully.`);
       } else {
         setError(response.message || 'Delete failed');
+        announceToScreenReader(`Delete failed. ${response.message || 'Please try again.'}`);
       }
     } catch (err) {
       setError('Failed to delete file. Please try again.');
+      announceToScreenReader('Delete failed. Please try again.');
       logger.error('Delete error:', err);
     }
   };
@@ -393,8 +411,21 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         </Button>
       )}
 
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        role="status"
+      >
+        {announcement}
+      </div>
+
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 text-sm text-red-700 dark:text-red-300">
+        <div
+          className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 text-sm text-red-700 dark:text-red-300"
+          role="alert"
+          aria-live="assertive"
+        >
           {error}
         </div>
       )}

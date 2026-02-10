@@ -1,7 +1,7 @@
 import { Permission, UserRole, UserExtraRole, AccessResult, AuditLog } from '../types/permissions';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../config/permissions';
 import { logger } from '../utils/logger';
-import { PERMISSION_CONFIG } from '../constants';
+import { PERMISSION_CONFIG, USER_ROLES, USER_EXTRA_ROLES } from '../constants';
 
 const EXTRA_ROLE_PERMISSIONS: Record<string, string[]> = {};
 
@@ -286,29 +286,29 @@ class PermissionService {
       return false;
     }
 
-    const validRoles: UserRole[] = ['admin', 'teacher', 'student', 'parent'];
+    const validRoles: UserRole[] = [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.PARENT];
     if (validRoles.indexOf(userRole) === -1) {
       return false;
     }
 
-    const validExtraRoles: UserExtraRole[] = ['staff', 'osis', 'wakasek', 'kepsek', null];
+    const validExtraRoles: UserExtraRole[] = [USER_EXTRA_ROLES.STAFF, USER_EXTRA_ROLES.OSIS, USER_EXTRA_ROLES.WAKASEK, USER_EXTRA_ROLES.KEPSEK, null];
     if (validExtraRoles.indexOf(userExtraRole) === -1) {
       return false;
     }
 
     // Based on existing validation rules from UserManagement.tsx
-    if (userRole === 'admin') return userExtraRole === null;
-    if (userRole === 'teacher' && userExtraRole === 'osis') return false;
-    if (userRole === 'student' && userExtraRole === 'staff') return false;
-    if (userRole === 'parent' && userExtraRole !== null) return false;
+    if (userRole === USER_ROLES.ADMIN) return userExtraRole === null;
+    if (userRole === USER_ROLES.TEACHER && userExtraRole === USER_EXTRA_ROLES.OSIS) return false;
+    if (userRole === USER_ROLES.STUDENT && userExtraRole === USER_EXTRA_ROLES.STAFF) return false;
+    if (userRole === USER_ROLES.PARENT && userExtraRole !== null) return false;
     
     // Academic leadership roles - only teachers can have these extra roles
-    if ((userExtraRole === 'wakasek' || userExtraRole === 'kepsek') && userRole !== 'teacher') {
+    if ((userExtraRole === USER_EXTRA_ROLES.WAKASEK || userExtraRole === USER_EXTRA_ROLES.KEPSEK) && userRole !== USER_ROLES.TEACHER) {
       return false;
     }
-    
+
     // Only one academic leadership role allowed
-    if (userExtraRole === 'wakasek' || userExtraRole === 'kepsek') {
+    if (userExtraRole === USER_EXTRA_ROLES.WAKASEK || userExtraRole === USER_EXTRA_ROLES.KEPSEK) {
       return true; // valid for teachers
     }
     

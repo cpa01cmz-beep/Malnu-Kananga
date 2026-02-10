@@ -53,8 +53,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
   const [_navigatingView, setNavigatingView] = useState<string | null>(null);
-  const [initializingNotifications, setInitializingNotifications] = useState(false);
-  
+
   const networkStatus = useNetworkStatus();
 
   // Initialize offline services
@@ -62,10 +61,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const { syncStatus, isCached } = useOfflineData('parent');
 
   // Initialize push notifications
-  const { 
-    showNotification, 
-    createNotification,
-    requestPermission 
+  const {
+    showNotification,
+    createNotification
   } = usePushNotifications();
 
   // Initialize event notifications for automated grade monitoring
@@ -223,31 +221,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     fetchChildren();
   }, [onShowToast, networkStatus.isOnline, offlineDataService]);
 
-  // Request notification permission on first load
+  // Check notification permission status without requesting on page load
+  // Permission will only be requested after explicit user interaction
   useEffect(() => {
-    const initializeNotifications = async () => {
-      setInitializingNotifications(true);
-      try {
-        const granted = await requestPermission();
-        if (granted) {
-          logger.info('Parent notifications enabled');
-          await showNotification(
-            createNotification(
-              'system',
-              'Notifikasi Orang Tua Aktif',
-              'Sistem notifikasi orang tua telah diaktifkan'
-            )
-          );
-        }
-      } catch (error) {
-        logger.error('Failed to initialize parent notifications:', error);
-      } finally {
-        setInitializingNotifications(false);
+    const checkNotificationStatus = async () => {
+      // Only check if permission is already granted, don't request on page load
+      if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
+        logger.info('Parent notifications already enabled');
+        await showNotification(
+          createNotification(
+            'system',
+            'Notifikasi Orang Tua Aktif',
+            'Sistem notifikasi orang tua telah diaktifkan'
+          )
+        );
       }
     };
 
-    initializeNotifications();
-  }, [requestPermission, showNotification, createNotification]);
+    checkNotificationStatus();
+  }, [showNotification, createNotification]);
 
   // Initialize grade notification monitoring  
   useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue: unknown, oldValue: unknown) => {
@@ -487,18 +479,6 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 </p>
               </div>
             </Card>
-
-            {/* Notification Initialization Loading */}
-            {initializingNotifications && (
-                <Card className={`mb-8 animate-fade-in-up bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800`}>
-                    <div className="flex items-center gap-3 p-4">
-                        <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                        <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
-                            Menginisialisasi notifikasi orang tua...
-                        </span>
-                    </div>
-                </Card>
-            )}
 
             {/* Child Selection */}
             {children.length > 1 && (

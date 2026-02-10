@@ -61,12 +61,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [_offlineData, setOfflineData] = useState<CachedAdminData | null>(null);
   const [navigatingView, setNavigatingView] = useState<string | null>(null);
-  const [initializingNotifications, setInitializingNotifications] = useState(false);
 
   const {
     showNotification,
-    createNotification,
-    requestPermission
+    createNotification
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
@@ -225,31 +223,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     }
   }, [isSlow, isOnline, onShowToast]);
 
-  // Request notification permission on first load
+  // Check notification permission status without requesting on page load
+  // Permission will only be requested after explicit user interaction
   useEffect(() => {
-    const initializeNotifications = async () => {
-      setInitializingNotifications(true);
-      try {
-        const granted = await requestPermission();
-        if (granted) {
-          logger.info('Admin notifications enabled');
-          await showNotification(
-            createNotification(
-              'system',
-              'Notifikasi Aktif',
-              'Sistem notifikasi admin telah diaktifkan'
-            )
-          );
-        }
-      } catch (error) {
-        logger.error('Failed to initialize notifications:', error);
-      } finally {
-        setInitializingNotifications(false);
+    const checkNotificationStatus = async () => {
+      // Only check if permission is already granted, don't request on page load
+      if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
+        logger.info('Admin notifications already enabled');
+        await showNotification(
+          createNotification(
+            'system',
+            'Notifikasi Aktif',
+            'Sistem notifikasi admin telah diaktifkan'
+          )
+        );
       }
     };
 
-    initializeNotifications();
-  }, [requestPermission, showNotification, createNotification]);
+    checkNotificationStatus();
+  }, [showNotification, createNotification]);
 
   // Initialize voice commands
   const {
@@ -499,18 +491,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                      className="flex-shrink-0"
                                  />
                              </div>
-                         </div>
-                     </div>
-                 )}
-
-                 {/* Notification Initialization Loading */}
-                 {initializingNotifications && (
-                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800 mb-8 animate-fade-in-up">
-                         <div className="flex items-center gap-3">
-                             <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                             <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
-                                 Menginisialisasi notifikasi...
-                             </span>
                          </div>
                      </div>
                  )}

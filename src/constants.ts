@@ -2266,3 +2266,103 @@ export const AI_CACHE_SIZES = {
     EDITOR: 20,
     OCR: 40,
 } as const;
+
+// Timeline Configuration - Flexy: Never hardcode timeline values!
+export const TIMELINE_CONFIG = {
+    CACHE_TTL_MS: 5 * 60 * 1000, // 5 minutes
+    CONTENT_TRUNCATION_LENGTH: 150,
+    ATTENDANCE_ICONS: {
+        HADIR: '✅',
+        SAKIT: '🤒',
+        IZIN: '📋',
+        ALPA: '❌',
+    } as const,
+    ATTENDANCE_COLORS: {
+        HADIR: 'text-green-600',
+        SAKIT: 'text-blue-600',
+        IZIN: 'text-yellow-600',
+        ALPA: 'text-red-600',
+    } as const,
+    TIMELINE_ICONS: {
+        GRADE: '📊',
+        ASSIGNMENT: '📝',
+        SUBMISSION: '📤',
+        MATERIAL_ACCESS: '📖',
+        MATERIAL_DOWNLOAD: '⬇️',
+        BOOKMARK: '🔖',
+        RATING: '⭐',
+        MESSAGE_SENT: '✉️',
+        MESSAGE_RECEIVED: '📨',
+        ANNOUNCEMENT: '📢',
+        EVENT: '🎉',
+    } as const,
+} as const;
+
+// Progress Report Configuration - Flexy: Never hardcode report values!
+export const PROGRESS_REPORT_CONFIG = {
+    CACHE_TTL_DAYS: 7,
+    MAX_REPORTS_PER_STUDENT: 10,
+    GRADE_TREND_THRESHOLD: 5, // Difference threshold for trend calculation
+    LETTER_GRADE_THRESHOLDS: {
+        A: 90,
+        B: 80,
+        C: 70,
+        D: 60,
+    } as const,
+    DEFAULT_SETTINGS: {
+        frequency: 'weekly' as const,
+        enableNotifications: true,
+        quietHoursStart: '22:00',
+        quietHoursEnd: '07:00',
+    },
+} as const;
+
+// Pagination Options - Flexy: Never hardcode page sizes!
+export const PAGINATION_OPTIONS = [10, 25, 50, 100] as const;
+
+// Micro-interactions Configuration - Flexy: Never hardcode interaction values!
+export const MICRO_INTERACTIONS_CONFIG = {
+    VIBRATION_PATTERNS: {
+        light: [10],
+        medium: [20],
+        heavy: [30],
+    } as const,
+    ANIMATION_DURATIONS: {
+        success: 0.6,
+        error: 0.5,
+        warning: 0.5,
+        info: 0.3,
+    } as const,
+    ANIMATION_EASING: {
+        success: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        error: 'ease-in-out',
+        warning: 'ease-in-out',
+        info: 'ease-in-out',
+    } as const,
+    INTERACTION_RESET_DELAY_MS: 300,
+    HOVER_DELAY_MS: 100,
+    HOVER_TRANSFORM: 'translateY(-2px) scale(1.02)',
+    FOCUS_OUTLINE_WIDTH: '2px',
+    FOCUS_OUTLINE_COLOR: 'hsl(var(--color-primary-500))',
+    FOCUS_OUTLINE_OFFSET: '2px',
+} as const;
+
+// Offline Indicator Configuration - Flexy: Never hardcode UI timeouts!
+export const OFFLINE_INDICATOR_CONFIG = {
+    SYNC_STATUS_AUTO_HIDE_MS: 3000,
+    MIN_CARD_WIDTH_PX: 120,
+    STATUS_INDICATOR_SIZE: 3, // w-3 h-3
+} as const;
+
+// DataTable Configuration - Flexy: Never hardcode table values!
+export const DATATABLE_CONFIG = {
+    MOBILE_BREAKPOINT_PX: 640,
+    DEFAULT_MOBILE_LAYOUT: 'cards' as const,
+    SELECTION_ANIMATION_DURATION_MS: 300,
+    VIBRATION_PATTERNS: {
+        CARD_TAP: [5, 2, 5],
+        SELECTION_CHECK: [15, 5, 15],
+        SELECTION_UNCHECK: [10],
+        TOUCH_LIGHT: 3,
+    } as const,
+} as const;
