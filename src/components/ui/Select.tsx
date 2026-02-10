@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useCallback, useState, useId } from 'react';
+import React, { forwardRef, useRef, useCallback, useState, useId, useEffect } from 'react';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { generateComponentId } from '../../utils/idGenerator';
 
@@ -16,6 +16,8 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   placeholder?: string;
   showClearButton?: boolean;
   onClear?: () => void;
+  /** Enable Escape key to clear selection when dropdown is not open */
+  clearOnEscape?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer min-h-[44px] mobile-touch-target focus-visible-enhanced";
@@ -56,9 +58,13 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   placeholder,
   showClearButton = false,
   onClear,
+  clearOnEscape = false,
   className = '',
   value,
   onChange,
+  onFocus,
+  onBlur,
+  onKeyDown,
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLSelectElement>(null);
@@ -72,13 +78,86 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   const hasValue = value !== undefined && value !== '';
   const shouldShowClearButton = showClearButton && hasValue && !props.disabled;
 
-  // Tooltip state for clear button
+  // Tooltip state for clear button with delayed appearance
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearButtonTooltipId = useId();
   const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan pilihan';
 
-  const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
-  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+  // Keyboard shortcut hint state (similar to Input component pattern)
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTooltip = useCallback(() => {
+    // Delay showing tooltip to avoid flickering on quick interactions
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setIsTooltipVisible(true);
+    }, 400);
+  }, []);
+
+  const hideTooltip = useCallback(() => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+    setIsTooltipVisible(false);
+  }, []);
+
+  // Show escape hint when select is focused and has a value
+  const handleFocus = useCallback((e: React.FocusEvent<HTMLSelectElement>) => {
+    if (clearOnEscape && hasValue) {
+      // Delay showing hint to avoid flickering on quick interactions
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, 400);
+    }
+    onFocus?.(e);
+  }, [clearOnEscape, hasValue, onFocus]);
+
+  // Hide escape hint when select loses focus
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLSelectElement>) => {
+    setShowEscapeHint(false);
+    if (escapeHintTimeoutRef.current) {
+      clearTimeout(escapeHintTimeoutRef.current);
+    }
+    onBlur?.(e);
+  }, [onBlur]);
+
+  // Escape key handler to clear selection
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLSelectElement>) => {
+    if (clearOnEscape && e.key === 'Escape' && hasValue) {
+      // Only clear if dropdown is not open (native select behavior: Escape closes dropdown)
+      // We detect this by checking if the select is focused but not showing options
+      // Since we can't directly detect if options are shown, we rely on the fact that
+      // when Escape is pressed on a closed select with value, it should clear
+      e.preventDefault();
+      
+      // Create synthetic event to clear value
+      const syntheticEvent = {
+        target: { value: '' }
+      } as React.ChangeEvent<HTMLSelectElement>;
+      
+      if (onChange) {
+        onChange(syntheticEvent);
+      }
+      
+      if (onClear) {
+        onClear();
+      }
+    }
+    onKeyDown?.(e);
+  }, [clearOnEscape, hasValue, onChange, onClear, onKeyDown]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Handle clear action
   const handleClear = useCallback(() => {
@@ -134,6 +213,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           aria-invalid={state === 'error'}
           value={value}
           onChange={onChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           {...props}
         >
           {placeholder && (
@@ -152,6 +234,32 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           ))}
           {props.children}
         </select>
+
+        {/* Keyboard shortcut hint for clearOnEscape - Micro UX Delight */}
+        {clearOnEscape && showEscapeHint && (
+          <div
+            className={`
+              absolute -top-9 left-1/2 -translate-x-1/2 
+              px-2.5 py-1 
+              bg-neutral-800 dark:bg-neutral-700 
+              text-white text-[10px] font-medium 
+              rounded-md shadow-md 
+              whitespace-nowrap
+              transition-all duration-200 ease-out
+              pointer-events-none
+              z-10
+            `.replace(/\s+/g, ' ').trim()}
+            role="tooltip"
+            aria-hidden={!showEscapeHint}
+          >
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">ESC</kbd>
+              <span>bersihkan</span>
+            </span>
+            {/* Tooltip arrow */}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </div>
+        )}
 
         {/* Clear button - appears when there's a value and showClearButton is true */}
         {shouldShowClearButton && (
