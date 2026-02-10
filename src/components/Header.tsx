@@ -16,9 +16,9 @@ import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-250 ease-out backdrop-blur-sm";
+const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-250 ease-out backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced mobile-gesture-feedback";
 
-const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-250 ease-out border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px]";
+const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-250 ease-out border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px] hover-lift-enhanced text-contrast-enhanced mobile-gesture-feedback haptic-feedback";
 
 const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
     const linkClass = isMobile ? mobileNavLinkClass : navLinkClass;
@@ -138,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
                         <div className="flex items-center gap-3">
-                        <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}>
+                        <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-lift-enhanced mobile-touch-target haptic-feedback focus-visible-enhanced`}>
                             {HEADER_NAV_STRINGS.LOGO_TEXT}
                         </div>
                         <div>
