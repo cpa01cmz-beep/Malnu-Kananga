@@ -32,13 +32,14 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   }
 
   return (
-    <img 
-      src={src} 
-      alt={alt} 
+    <img
+      src={src}
+      alt={alt}
       className={className}
       loading={lazy ? "lazy" : "eager"}
+      decoding="async"
       onError={() => setHasError(true)}
-      {...props} 
+      {...props}
     />
   );
 };

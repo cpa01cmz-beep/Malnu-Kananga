@@ -66,13 +66,11 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
   const [_offlineData, setOfflineData] = useState<CachedTeacherData | null>(null);
   const [navigatingView, setNavigatingView] = useState<string | null>(null);
-  const [initializingNotifications, setInitializingNotifications] = useState(false);
 
   // Initialize push notifications
   const {
     showNotification,
-    createNotification,
-    requestPermission
+    createNotification
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
@@ -194,31 +192,25 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     }
   }, [isSlow, isOnline, handleToast]);
 
-  // Request notification permission on first load
+  // Check notification permission status without requesting on page load
+  // Permission will only be requested after explicit user interaction
   useEffect(() => {
-    const initializeNotifications = async () => {
-      setInitializingNotifications(true);
-      try {
-        const granted = await requestPermission();
-        if (granted) {
-          logger.info('Teacher notifications enabled');
-          await showNotification(
-            createNotification(
-              'system',
-              'Notifikasi Guru Aktif',
-              'Sistem notifikasi guru telah diaktifkan'
-            )
-          );
-        }
-      } catch (error) {
-        logger.error('Failed to initialize teacher notifications:', error);
-      } finally {
-        setInitializingNotifications(false);
+    const checkNotificationStatus = async () => {
+      // Only check if permission is already granted, don't request on page load
+      if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
+        logger.info('Teacher notifications already enabled');
+        await showNotification(
+          createNotification(
+            'system',
+            'Notifikasi Guru Aktif',
+            'Sistem notifikasi guru telah diaktifkan'
+          )
+        );
       }
     };
 
-    initializeNotifications();
-  }, [requestPermission, showNotification, createNotification]);
+    checkNotificationStatus();
+  }, [showNotification, createNotification]);
 
   // Initialize voice commands
   const {
@@ -476,18 +468,6 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                         )}
                     </Card>
                 )}
-
-                 {/* Notification Initialization Loading */}
-                 {initializingNotifications && (
-                     <Card padding="md" className={`mb-8 animate-fade-in-up bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800`}>
-                         <div className="flex items-center gap-3">
-                             <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                             <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
-                                 Menginisialisasi notifikasi guru...
-                             </span>
-                         </div>
-                     </Card>
-                 )}
 
                 {/* Activity Feed */}
                 <Card padding="lg" className={`mb-8 animate-fade-in-up`}>

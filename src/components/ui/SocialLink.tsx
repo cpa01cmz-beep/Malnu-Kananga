@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export type SocialLinkVariant = 'default' | 'primary' | 'secondary';
 export type SocialLinkSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -14,9 +14,11 @@ interface BaseSocialLinkProps {
   target?: string;
   rel?: string;
   disabled?: boolean;
+  /** Show tooltip on hover for better accessibility */
+  showTooltip?: boolean;
 }
 
-const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed relative group";
 
 const sizeClasses: Record<SocialLinkSize, string> = {
   sm: 'p-2',
@@ -64,7 +66,9 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
   target,
   rel = 'noopener noreferrer',
   disabled = false,
+  showTooltip = true,
 }) => {
+  const [isPressed, setIsPressed] = useState(false);
   const variantStyle = variantClasses[variant];
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
   const classes = `
@@ -75,13 +79,38 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
     ${variantStyle.hoverBg}
     ${variantStyle.hoverBgDark}
     ${disabledClasses}
+    ${isPressed ? 'scale-90' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
+  const handleMouseDown = () => setIsPressed(true);
+  const handleMouseUp = () => setIsPressed(false);
+  const handleMouseLeave = () => setIsPressed(false);
+  const handleTouchStart = () => setIsPressed(true);
+  const handleTouchEnd = () => setIsPressed(false);
+
   const content = (
-    <span className={iconSizeClasses[size]} aria-hidden="true">
-      {icon}
-    </span>
+    <>
+      <span className={`${iconSizeClasses[size]} transition-transform duration-200 ${isPressed ? 'scale-90' : 'group-hover:scale-105'}`} aria-hidden="true">
+        {icon}
+      </span>
+      
+      {/* Tooltip for better accessibility */}
+      {showTooltip && (
+        <span 
+          className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 ease-out z-50"
+          role="tooltip"
+        >
+          {label}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+        </span>
+      )}
+      
+      {/* Subtle ripple effect on press */}
+      {isPressed && !disabled && (
+        <span className="absolute inset-0 rounded-xl bg-white/20 dark:bg-white/10 animate-pulse-once pointer-events-none" aria-hidden="true" />
+      )}
+    </>
   );
 
   if (href) {
@@ -96,6 +125,11 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : undefined}
         onClick={disabled ? (e) => e.preventDefault() : undefined}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {content}
       </a>
@@ -109,6 +143,11 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
       aria-label={label}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {content}
     </button>

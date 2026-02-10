@@ -1,5 +1,5 @@
 // storageMigration.ts - Handles migration from old localStorage keys to new STORAGE_KEYS
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_MIGRATION } from '../constants';
 import { logger } from '../utils/logger';
 
 interface MigrationMap {
@@ -39,8 +39,9 @@ const MIGRATIONS: MigrationMap[] = [
   { oldKey: 'malnu_material_stats', newKey: STORAGE_KEYS.MATERIAL_STATS },
 ];
 
-const MIGRATION_VERSION_KEY = 'malnu_storage_migration_version';
-const CURRENT_MIGRATION_VERSION = '1.0.0';
+// Flexy: Using centralized constants instead of hardcoded values
+const MIGRATION_VERSION_KEY = STORAGE_MIGRATION.VERSION_KEY;
+const CURRENT_MIGRATION_VERSION = STORAGE_MIGRATION.CURRENT_VERSION;
 
 /**
  * Runs migration from old localStorage keys to new STORAGE_KEYS constants

@@ -132,7 +132,6 @@ export const StudentTimeline: React.FC<StudentTimelineProps> = ({
       logger.info(`StudentTimeline: Exported timeline for ${studentId} to PDF`);
     } catch (err) {
       logger.error(`StudentTimeline: Failed to export timeline for ${studentId}`, err);
-      window.alert('Gagal mengekspor timeline ke PDF');
     }
   };
 
