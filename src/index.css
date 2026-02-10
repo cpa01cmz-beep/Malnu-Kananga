@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);
@@ -4690,11 +4689,7 @@ html {
 .dark .warning-message {
   color: hsl(var(--color-warning-400));
 }
-.skip-link-enhanced {
-  background: currentColor;
-  color: hsl(var(--color-neutral-50));
-  border: 2px solid currentColor;
-}
+
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
