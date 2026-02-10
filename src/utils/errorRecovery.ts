@@ -1,3 +1,4 @@
+import { RETRY_CONFIG, HTTP } from "../constants";
 export interface RetryOptions {
   maxAttempts: number;
   initialDelay: number;
@@ -26,8 +27,8 @@ export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {
     maxAttempts: 3,
-    initialDelay: 1000,
-    maxDelay: 10000,
+    initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+    maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
     backoffFactor: 2,
   }
 ): Promise<T> {
@@ -80,9 +81,9 @@ export class CircuitBreaker {
   };
 
   constructor(private options: CircuitBreakerOptions = {
-    failureThreshold: 5,
-    resetTimeout: 60000,
-    monitoringPeriod: 10000,
+    failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+    resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
+    monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
   }) {}
 
   async execute<T>(fn: () => Promise<T>): Promise<T> {
@@ -163,16 +164,16 @@ export class ErrorRecoveryStrategy {
   ) {
     this.retryOptions = {
       maxAttempts: 3,
-      initialDelay: 1000,
-      maxDelay: 10000,
+      initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+      maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
       backoffFactor: 2,
       ...retryOptions,
     };
 
     this.circuitBreaker = new CircuitBreaker({
-      failureThreshold: 5,
-      resetTimeout: 60000,
-      monitoringPeriod: 10000,
+      failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+      resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
+      monitoringPeriod: RETRY_CONFIG.DEFAULT_MONITORING_PERIOD,
       ...circuitBreakerOptions,
     });
   }
@@ -266,4 +267,55 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
       }, limit);
     }
   };
+}
+
+/**
+ * Check if an error is a network error
+ */
+export function isNetworkError(error: Error): boolean {
+  const networkErrorMessages = [
+    'Network Error',
+    'fetch failed',
+    'Failed to fetch',
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'ENOTFOUND',
+    'EAI_AGAIN'
+  ];
+
+  return networkErrorMessages.some(msg => error.message.includes(msg));
+}
+
+/**
+ * Check if an error is a rate limit error
+ */
+export function isRateLimitError(error: Error): boolean {
+  return error.message.includes(String(HTTP.STATUS_CODES.TOO_MANY_REQUESTS)) ||
+         error.message.toLowerCase().includes('rate limit') ||
+         error.message.toLowerCase().includes('too many requests');
+}
+
+/**
+ * Check if an error is a server error
+ */
+export function isServerError(error: Error): boolean {
+  return HTTP.SERVER_ERROR_STATUSES.some(status =>
+    error.message.includes(`status ${status}`) ||
+    error.message.includes(`${status}`)
+  );
+}
+
+/**
+ * Check if an error is retryable
+ */
+export function isRetryableError(error: Error): boolean {
+  return isNetworkError(error) || isRateLimitError(error) || isServerError(error);
+}
+
+/**
+ * Calculate retry delay with exponential backoff
+ */
+export function getRetryDelay(attempt: number, initialDelay: number = RETRY_CONFIG.DEFAULT_INITIAL_DELAY, maxDelay: number = RETRY_CONFIG.DEFAULT_MAX_DELAY): number {
+  const backoffDelay = initialDelay * Math.pow(2, attempt - 1);
+  return Math.min(backoffDelay, maxDelay);
 }

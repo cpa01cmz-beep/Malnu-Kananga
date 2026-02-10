@@ -26,7 +26,7 @@ import {
   AnalyticsRecommendation,
   StudyPlanHistory
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { logger } from '../utils/logger';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -145,7 +145,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
       });
 
       const weeklyActivity: WeeklyActivity[] = [];
-      const weeks = Math.floor((new Date(plan.validUntil).getTime() - new Date(plan.createdAt).getTime()) / (7 * 24 * 60 * 60 * 1000));
+      const weeks = Math.floor((new Date(plan.validUntil).getTime() - new Date(plan.createdAt).getTime()) / TIME_MS.ONE_WEEK);
 
       for (let i = 1; i <= Math.min(weeks, 8); i++) {
         const startDate = new Date(plan.createdAt);
@@ -256,7 +256,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
       setStudyPlan(activePlan);
 
       const cachedAnalytics = await loadAnalytics();
-      const shouldRecalculate = !cachedAnalytics || (new Date().getTime() - new Date(cachedAnalytics.lastUpdated).getTime() > 24 * 60 * 60 * 1000);
+      const shouldRecalculate = !cachedAnalytics || (new Date().getTime() - new Date(cachedAnalytics.lastUpdated).getTime() > TIME_MS.ONE_DAY);
 
       const analyticsData = shouldRecalculate ? await calculateAnalytics(activePlan) : cachedAnalytics;
       setAnalytics(analyticsData);

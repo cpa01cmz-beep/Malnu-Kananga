@@ -484,6 +484,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       src={photo.photoUrl}
                       alt={photo.caption || 'Foto kegiatan'}
                       className="w-full h-48 object-cover rounded-lg"
+                      width={400}
+                      height={192}
+                      loading="lazy"
                     />
                     {photo.caption && (
                       <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-300">{photo.caption}</p>

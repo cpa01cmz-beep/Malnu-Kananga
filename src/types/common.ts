@@ -1,6 +1,7 @@
-export type UserRole = 'admin' | 'teacher' | 'student' | 'parent';
+import type { USER_ROLES, USER_EXTRA_ROLES } from '../constants';
 
-export type UserExtraRole = 'staff' | 'osis' | 'wakasek' | 'kepsek' | null;
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES] | null;
 
 export enum Sender {
   User = 'user',

@@ -76,7 +76,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledby}
           aria-describedby={ariaDescribedby}
-          aria-checked={checked ?? false}
+          aria-checked={checked ?? defaultChecked ?? false}
           role="switch"
           {...props}
         />

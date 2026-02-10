@@ -63,14 +63,14 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
             </Alert>
           )}
 
-          {(validationResults.grades?.warnings.length > 0 ||
-            validationResults.attendance?.warnings.length > 0) && (
+          {((validationResults.grades?.warnings?.length || 0) > 0 ||
+            (validationResults.attendance?.warnings?.length || 0) > 0) && (
             <Alert variant="info" size="md" fullWidth className="mt-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-blue-800 dark:text-blue-200">Validasi Data</p>
                   <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
-                    {validationResults.grades?.warnings.length || 0} peringatan nilai, {validationResults.attendance?.warnings.length || 0} peringatan kehadiran
+                    {(validationResults.grades?.warnings?.length || 0)} peringatan nilai, {(validationResults.attendance?.warnings?.length || 0)} peringatan kehadiran
                   </p>
                 </div>
                 <Button
@@ -86,7 +86,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
 
           {showValidationDetails && (
             <div className="mt-2 space-y-2">
-              {validationResults.grades?.warnings.length > 0 && (
+              {(validationResults.grades?.warnings?.length || 0) > 0 && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200 mb-2">Peringatan Nilai</h4>
                   <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
@@ -96,7 +96,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
                   </ul>
                 </div>
               )}
-              {validationResults.attendance?.warnings.length > 0 && (
+              {(validationResults.attendance?.warnings?.length || 0) > 0 && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200 mb-2">Peringatan Kehadiran</h4>
                   <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
@@ -109,15 +109,15 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
             </div>
           )}
 
-          {(validationResults.student?.errors.length > 0 ||
-            validationResults.grades?.errors.length > 0 ||
-            validationResults.attendance?.errors.length > 0) && (
+          {((validationResults.student?.errors?.length || 0) > 0 ||
+            (validationResults.grades?.errors?.length || 0) > 0 ||
+            (validationResults.attendance?.errors?.length || 0) > 0) && (
             <Alert variant="error" size="md" fullWidth className="mt-2">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-red-800 dark:text-red-200">Error Validasi Data</p>
                   <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                    {validationResults.student?.errors.length || 0} error siswa, {validationResults.grades?.errors.length || 0} error nilai, {validationResults.attendance?.errors.length || 0} error kehadiran
+                    {(validationResults.student?.errors?.length || 0)} error siswa, {(validationResults.grades?.errors?.length || 0)} error nilai, {(validationResults.attendance?.errors?.length || 0)} error kehadiran
                   </p>
                 </div>
                 <Button
@@ -131,11 +131,11 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
             </Alert>
           )}
 
-          {showValidationDetails && (validationResults.student?.errors.length > 0 ||
-            validationResults.grades?.errors.length > 0 ||
-            validationResults.attendance?.errors.length > 0) && (
+          {showValidationDetails && ((validationResults.student?.errors?.length || 0) > 0 ||
+            (validationResults.grades?.errors?.length || 0) > 0 ||
+            (validationResults.attendance?.errors?.length || 0) > 0) && (
             <div className="mt-2 space-y-2">
-              {validationResults.student?.errors.length > 0 && (
+              {(validationResults.student?.errors?.length || 0) > 0 && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                   <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Siswa</h4>
                   <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
@@ -145,7 +145,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
                   </ul>
                 </div>
               )}
-              {validationResults.grades?.errors.length > 0 && (
+              {(validationResults.grades?.errors?.length || 0) > 0 && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                   <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Nilai</h4>
                   <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
@@ -155,7 +155,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
                   </ul>
                 </div>
               )}
-              {validationResults.attendance?.errors.length > 0 && (
+              {(validationResults.attendance?.errors?.length || 0) > 0 && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                   <h4 className="font-semibold text-sm text-red-800 dark:text-red-200 mb-2">Error Data Kehadiran</h4>
                   <ul className="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">

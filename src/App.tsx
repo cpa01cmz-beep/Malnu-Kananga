@@ -3,8 +3,10 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
-import ChatWindow from './components/ChatWindow';
 import Toast, { ToastType } from './components/Toast';
+
+// Lazy load ChatWindow to reduce initial bundle size
+const ChatWindow = lazy(() => import('./components/ChatWindow'));
 import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
@@ -14,6 +16,8 @@ import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
 import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { CommandPalette, Command } from './components/ui/CommandPalette';
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -36,7 +40,7 @@ const NewsSection = lazy(() => import('./components/sections/NewsSection'));
 const PPDBSection = lazy(() => import('./components/sections/PPDBSection'));
 
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
-import { STORAGE_KEYS } from './constants';
+import { STORAGE_KEYS, USER_ROLES, ROLE_DISPLAY_NAMES } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
@@ -68,6 +72,7 @@ const App: React.FC = () => {
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
   const [resetToken, setResetToken] = useState<string | null>(null);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -133,12 +138,18 @@ const App: React.FC = () => {
     };
     
     const loadDefaultContent = async () => {
-      if (!hasLoadedContent.current && (siteContent.featuredPrograms.length === 0 || siteContent.latestNews.length === 0)) {
+      if (!hasLoadedContent.current) {
         hasLoadedContent.current = true;
         const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
-        setSiteContent({
-          featuredPrograms: INITIAL_PROGRAMS,
-          latestNews: INITIAL_NEWS
+        setSiteContent((prevContent: SiteContent) => {
+          // Only set defaults if content is empty
+          if (prevContent.featuredPrograms.length === 0 || prevContent.latestNews.length === 0) {
+            return {
+              featuredPrograms: INITIAL_PROGRAMS,
+              latestNews: INITIAL_NEWS
+            };
+          }
+          return prevContent;
         });
       }
     };
@@ -154,7 +165,8 @@ const App: React.FC = () => {
     }).catch(error => {
       logger.warn('Failed to enable push notifications:', error);
     });
-  }, [siteContent.featuredPrograms.length, siteContent.latestNews.length, setAuthSession, setSiteContent]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleSWUpdate = () => setIsSWUpdateConfirmOpen(true);
@@ -198,7 +210,7 @@ const App: React.FC = () => {
       ip: window.location.hostname
     });
     
-    let roleName = role === 'admin' ? 'Administrator' : role === 'teacher' ? 'Guru' : role === 'parent' ? 'Wali Murid' : 'Siswa';
+    let roleName = ROLE_DISPLAY_NAMES[role];
     if (extraRole === 'staff') roleName += ' (Staff)';
     if (extraRole === 'osis') roleName += ' (Pengurus OSIS)';
 
@@ -242,6 +254,75 @@ const App: React.FC = () => {
     setIsSWUpdateConfirmOpen(false);
   };
 
+  // Define commands for Command Palette
+  const commands: Command[] = [
+    {
+      id: 'toggle-theme',
+      label: 'Ganti Tema',
+      description: 'Buka pemilih tema',
+      shortcut: 'Ctrl+Shift+T',
+      category: 'Tampilan',
+      action: () => setIsThemeSelectorOpen(true),
+    },
+    {
+      id: 'toggle-chat',
+      label: isChatOpen ? 'Tutup Chat' : 'Buka Chat',
+      description: 'Toggle jendela chat AI',
+      category: 'Navigasi',
+      action: () => setIsChatOpen(!isChatOpen),
+    },
+    {
+      id: 'open-docs',
+      label: 'Buka Dokumentasi',
+      description: 'Lihat dokumentasi aplikasi',
+      category: 'Bantuan',
+      action: () => setIsDocsOpen(true),
+    },
+    ...(isLoggedIn
+      ? [
+          {
+            id: 'logout',
+            label: 'Logout',
+            description: 'Keluar dari aplikasi',
+            category: 'Akun',
+            action: handleLogout,
+          },
+        ]
+      : [
+          {
+            id: 'login',
+            label: 'Login',
+            description: 'Masuk ke aplikasi',
+            category: 'Akun',
+            action: () => setIsLoginOpen(true),
+          },
+        ]),
+  ];
+
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    shortcuts: [
+      {
+        key: 'k',
+        metaKey: true,
+        description: 'Buka Command Palette (Cmd+K)',
+        action: () => setIsCommandPaletteOpen(true),
+      },
+      {
+        key: 'k',
+        ctrlKey: true,
+        description: 'Buka Command Palette (Ctrl+K)',
+        action: () => setIsCommandPaletteOpen(true),
+      },
+      {
+        key: 'Escape',
+        description: 'Tutup Command Palette',
+        action: () => setIsCommandPaletteOpen(false),
+        disabled: !isCommandPaletteOpen,
+      },
+    ],
+  });
+
   // Helper to render the correct dashboard based on role with permission checks
   const renderDashboard = () => {
       // Validate user can access dashboard
@@ -260,7 +341,7 @@ const App: React.FC = () => {
       }
 
       switch (userRole) {
-          case 'admin':
+          case USER_ROLES.ADMIN:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
                     <AdminDashboard
@@ -269,7 +350,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'teacher':
+          case USER_ROLES.TEACHER:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard guru..." />}>
                     <TeacherDashboard
@@ -278,7 +359,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'parent':
+          case USER_ROLES.PARENT:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat dashboard wali murid..." />}>
                     <ParentDashboard
@@ -286,7 +367,7 @@ const App: React.FC = () => {
                     />
                 </Suspense>
               );
-          case 'student':
+          case USER_ROLES.STUDENT:
           default:
               return (
                 <Suspense fallback={<SuspenseLoading message="Memuat portal siswa..." />}>
@@ -364,17 +445,19 @@ const App: React.FC = () => {
       />
 
       <div
-        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
           isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
         aria-hidden={!isChatOpen}
       >
-        <ChatWindow 
-          isOpen={isChatOpen} 
-          closeChat={() => setIsChatOpen(false)} 
-          siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
-          onShowToast={showToast}
-        />
+        <Suspense fallback={<SuspenseLoading message="Memuat asisten AI..." />}>
+          <ChatWindow
+            isOpen={isChatOpen}
+            closeChat={() => setIsChatOpen(false)}
+            siteContext={siteContent || { featuredPrograms: [], latestNews: [] }}
+            onShowToast={showToast}
+          />
+        </Suspense>
       </div>
 
       <LoginModal 
@@ -440,6 +523,13 @@ const App: React.FC = () => {
         type="info"
         onConfirm={handleSWUpdate}
         onCancel={() => setIsSWUpdateConfirmOpen(false)}
+      />
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        commands={commands}
+        placeholder="Cari perintah atau navigasi... (ketik ? untuk bantuan)"
       />
       </div>
       )}

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { SparklesIcon } from './icons/SparklesIcon';
 import { UsersIcon } from './icons/UsersIcon';
 
@@ -34,6 +34,7 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { RealTimeEventType } from '../services/webSocketService';
 import { WebSocketStatus } from './WebSocketStatus';
 
 interface AdminDashboardProps {
@@ -59,11 +60,11 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
   const [showVoiceHelp, setShowVoiceHelp] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [_offlineData, setOfflineData] = useState<CachedAdminData | null>(null);
+  const [navigatingView, setNavigatingView] = useState<string | null>(null);
 
   const {
     showNotification,
-    createNotification,
-    requestPermission
+    createNotification
   } = usePushNotifications();
 
   const { isOnline, isSlow } = useNetworkStatus();
@@ -75,32 +76,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
      isSyncing: isActionQueueSyncing
    } = useOfflineActionQueue();
 
-   const { isConnected, isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'user_role_changed',
-      'user_status_changed',
-      'announcement_created',
-      'announcement_updated',
-      'notification_created',
-      'grade_updated',
-      'attendance_updated',
-      'message_created',
-      'message_updated',
-    ],
-    enabled: isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; type: string; data?: Record<string, unknown> };
+  const adminEventTypes = useMemo(() => [
+    'user_role_changed',
+    'user_status_changed',
+    'announcement_created',
+    'announcement_updated',
+    'notification_created',
+    'grade_updated',
+    'attendance_updated',
+    'message_created',
+    'message_updated',
+  ] as RealTimeEventType[], []);
 
-      if (typedEvent.entity === 'user') {
-        logger.info('Real-time event: user updated');
-        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
-      } else if (typedEvent.entity === 'announcement') {
-        logger.info('Real-time event: announcement updated');
-        setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
-      } else if (typedEvent.type === 'notification_created') {
-        logger.info('Real-time event: notification created');
-      }
-    }, []),
+  const handleAdminRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; type: string; data?: Record<string, unknown> };
+
+    if (typedEvent.entity === 'user') {
+      logger.info('Real-time event: user updated');
+      setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+    } else if (typedEvent.entity === 'announcement') {
+      logger.info('Real-time event: announcement updated');
+      setDashboardData(prev => ({ ...prev, lastSync: new Date().toISOString() }));
+    } else if (typedEvent.type === 'notification_created') {
+      logger.info('Real-time event: notification created');
+    }
+  }, []);
+
+  const { isConnected, isConnecting } = useRealtimeEvents({
+    eventTypes: adminEventTypes,
+    enabled: isOnline,
+    onEvent: handleAdminRealtimeEvent,
   });
 
   const getCurrentUserId = (): string => {
@@ -218,28 +223,25 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     }
   }, [isSlow, isOnline, onShowToast]);
 
-  // Request notification permission on first load
+  // Check notification permission status without requesting on page load
+  // Permission will only be requested after explicit user interaction
   useEffect(() => {
-    const initializeNotifications = async () => {
-      try {
-        const granted = await requestPermission();
-        if (granted) {
-          logger.info('Admin notifications enabled');
-          await showNotification(
-            createNotification(
-              'system',
-              'Notifikasi Aktif',
-              'Sistem notifikasi admin telah diaktifkan'
-            )
-          );
-        }
-      } catch (error) {
-        logger.error('Failed to initialize notifications:', error);
+    const checkNotificationStatus = async () => {
+      // Only check if permission is already granted, don't request on page load
+      if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
+        logger.info('Admin notifications already enabled');
+        await showNotification(
+          createNotification(
+            'system',
+            'Notifikasi Aktif',
+            'Sistem notifikasi admin telah diaktifkan'
+          )
+        );
       }
     };
 
-    initializeNotifications();
-  }, [requestPermission, showNotification, createNotification]);
+    checkNotificationStatus();
+  }, [showNotification, createNotification]);
 
   // Initialize voice commands
   const {
@@ -305,6 +307,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
       onShowToast('Sinkronisasi gagal. Silakan coba lagi', 'error');
     }
   }, [isOnline, sync, onShowToast]);
+
+  const handleViewNavigation = useCallback((view: DashboardView) => {
+    setNavigatingView(view);
+    // Simulate navigation delay to show loading state
+    setTimeout(() => {
+      setCurrentView(view);
+      setNavigatingView(null);
+    }, 300);
+  }, []);
 
   // Notify admin of new PPDB registrations
   useEffect(() => {
@@ -453,36 +464,36 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     </div>
                 </div>
 
-                {/* Voice Commands Section */}
-                {voiceSupported && (
-                    <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                                    Perintah Suara
-                                </h2>
-                                <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-                                    Gunakan suara untuk navigasi cepat dashboard
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <SmallActionButton
-                                    onClick={() => setShowVoiceHelp(true)}
-                                >
-                                    Bantuan
-                                </SmallActionButton>
-                                <VoiceInputButton
-                                    onTranscript={(transcript) => {
-                                      onShowToast(`Transkripsi: ${transcript}`, 'info');
-                                    }}
-                                    onCommand={handleVoiceCommandCallback}
-                                    onError={(errorMsg) => onShowToast(errorMsg, 'error')}
-                                    className="flex-shrink-0"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                )}
+                 {/* Voice Commands Section */}
+                 {voiceSupported && (
+                     <div className={`bg-white dark:bg-neutral-800 rounded-xl p-6 shadow-card border border-neutral-200 dark:border-neutral-700 mb-8 animate-fade-in-up`}>
+                         <div className="flex items-center justify-between">
+                             <div>
+                                 <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                                     Perintah Suara
+                                 </h2>
+                                 <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                                     Gunakan suara untuk navigasi cepat dashboard
+                                 </p>
+                             </div>
+                             <div className="flex items-center gap-2">
+                                 <SmallActionButton
+                                     onClick={() => setShowVoiceHelp(true)}
+                                 >
+                                     Bantuan
+                                 </SmallActionButton>
+                                 <VoiceInputButton
+                                     onTranscript={(transcript) => {
+                                       onShowToast(`Transkripsi: ${transcript}`, 'info');
+                                     }}
+                                     onCommand={handleVoiceCommandCallback}
+                                     onError={(errorMsg) => onShowToast(errorMsg, 'error')}
+                                     className="flex-shrink-0"
+                                 />
+                             </div>
+                         </div>
+                     </div>
+                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
                     {canAccess('content.update').canAccess && (
@@ -514,7 +525,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                                 statusBadge="Aktif"
                                 offlineBadge="Mode Tertunda"
                                 isOnline={isOnline}
-                                onClick={() => isOnline ? setCurrentView('ppdb') : onShowToast('Memerlukan koneksi internet untuk mengakses PPDB Management', 'error')}
+                                disabled={navigatingView === 'ppdb' || !isOnline}
+                                onClick={() => isOnline ? handleViewNavigation('ppdb') : onShowToast('Memerlukan koneksi internet untuk mengakses PPDB Management', 'error')}
                                 ariaLabel="Buka Manajemen PPDB Online"
                             />
                         </div>
@@ -528,42 +540,48 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                             colorTheme="blue"
                             statusBadge="Aktif"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('users')}
+                            disabled={navigatingView === 'users'}
+                            onClick={() => handleViewNavigation('users')}
                             ariaLabel="Buka Manajemen User"
                         />
                     )}
 
-                    {canAccess('system.stats').canAccess && (
-                        <DashboardActionCard
-                            icon={<ChartBarIcon />}
-                            title="Laporan & Log"
-                            description="Pantau statistik sistem dan factory reset."
-                            colorTheme="primary"
-                            statusBadge="Aktif"
-                            isOnline={isOnline}
-                            onClick={() => setCurrentView('stats')}
-                            ariaLabel="Buka Laporan & Log Sistem"
-                        />
-                    )}
+                        {canAccess('system.stats').canAccess && (
+                            <DashboardActionCard
+                                icon={<ChartBarIcon />}
+                                title="Laporan & Log"
+                                description="Pantau statistik sistem dan factory reset."
+                                colorTheme="primary"
+                                statusBadge="Aktif"
+                                isOnline={isOnline}
+                                disabled={navigatingView === 'stats'}
+                                onClick={() => handleViewNavigation('stats')}
+                                ariaLabel="Buka Laporan & Log Sistem"
+                            />
+                        )}
 
-                    {canAccess('announcements.manage').canAccess && (
-                        <DashboardActionCard
-                            icon={<MegaphoneIcon />}
-                            title="Pengumuman"
-                            description="Buat dan kelola pengumuman sekolah."
-                            colorTheme="purple"
-                            statusBadge="Aktif"
-                            isOnline={isOnline}
-                            onClick={() => setCurrentView('announcements')}
-                            ariaLabel="Buka Manajemen Pengumuman"
-                        />
-                    )}
+                        {canAccess('announcements.manage').canAccess && (
+                            <DashboardActionCard
+                                icon={<MegaphoneIcon />}
+                                title="Pengumuman"
+                                description="Buat dan kelola pengumuman sekolah."
+                                colorTheme="purple"
+                                statusBadge="Aktif"
+                                isOnline={isOnline}
+                                disabled={navigatingView === 'announcements'}
+                                onClick={() => handleViewNavigation('announcements')}
+                                ariaLabel="Buka Manajemen Pengumuman"
+                            />
+                        )}
+
+
 
                     {canAccess('system.admin').canAccess && (
                         <button
-                            onClick={() => setCurrentView('ai-cache')}
+                            onClick={() => handleViewNavigation('ai-cache')}
+                            disabled={navigatingView === 'ai-cache'}
                             aria-label="Buka AI Cache Manager"
-                             className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('GREEN_TEAL')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${navigatingView === 'ai-cache' ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
                                 <ChartBarIcon className="w-6 h-6 text-white" />
@@ -575,9 +593,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {canAccess('system.admin').canAccess && (
                         <button
-                            onClick={() => setCurrentView('permissions')}
+                            onClick={() => handleViewNavigation('permissions')}
+                            disabled={navigatingView === 'permissions'}
                             aria-label="Buka Permission System"
-                             className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900`}
+                             className={`${getGradientClass('PURPLE_MAIN')} rounded-xl p-6 text-white shadow-card transition-all duration-200 ease-out hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${navigatingView === 'permissions' ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             <div className={`${OPACITY_TOKENS.WHITE_20} w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:${OPACITY_TOKENS.WHITE_30.replace('bg-white/', '')} group-hover:scale-110 transition-all duration-300 ease-out`}>
                                 <UsersIcon className="w-6 h-6 text-white" />

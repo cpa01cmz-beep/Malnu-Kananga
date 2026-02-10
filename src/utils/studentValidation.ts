@@ -1,4 +1,5 @@
 import type { Grade, Subject, Attendance, Student } from '../types';
+import { ACADEMIC, TIME_MS, GRADE_THRESHOLDS, GRADE_LIMITS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -13,7 +14,7 @@ export interface GradeValidationOptions {
 
 export function validateStudentGrade(grade: Grade, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (!grade.studentId || grade.studentId.trim() === '') {
     errors.push('Student ID is required');
@@ -31,7 +32,7 @@ export function validateStudentGrade(grade: Grade, options: GradeValidationOptio
     errors.push('Academic year is required');
   }
 
-  if (!grade.semester || !['1', '2'].includes(grade.semester)) {
+  if (!grade.semester || !ACADEMIC.SEMESTERS.includes(grade.semester as typeof ACADEMIC.SEMESTERS[number])) {
     errors.push('Semester must be either "1" or "2"');
   }
 
@@ -62,8 +63,8 @@ export function validateStudent(student: Student): ValidationResult {
 
   if (!student.nisn || student.nisn.trim() === '') {
     errors.push('NISN is required');
-  } else if (student.nisn.length !== 10) {
-    errors.push('NISN must be exactly 10 digits');
+  } else if (student.nisn.length !== ACADEMIC.NISN_LENGTH) {
+    errors.push(`NISN must be exactly ${ACADEMIC.NISN_LENGTH} digits`);
   }
 
   if (!student.nis || student.nis.trim() === '') {
@@ -101,9 +102,9 @@ export function validateStudent(student: Student): ValidationResult {
     if (isNaN(dob.getTime())) {
       errors.push('Invalid date of birth');
     } else {
-      const age = Math.floor((new Date().getTime() - dob.getTime()) / 31557600000);
-      if (age < 6 || age > 25) {
-        errors.push('Student age must be between 6 and 25 years old');
+      const age = Math.floor((new Date().getTime() - dob.getTime()) / TIME_MS.ONE_YEAR);
+      if (age < ACADEMIC.AGE_LIMITS.STUDENT_MIN || age > ACADEMIC.AGE_LIMITS.STUDENT_MAX) {
+        errors.push(`Student age must be between ${ACADEMIC.AGE_LIMITS.STUDENT_MIN} and ${ACADEMIC.AGE_LIMITS.STUDENT_MAX} years old`);
       }
     }
   }
@@ -159,7 +160,7 @@ export function validateAttendance(attendance: Attendance): ValidationResult {
     }
   }
 
-  if (!['hadir', 'sakit', 'izin', 'alpa'].includes(attendance.status)) {
+  if (!ACADEMIC.ATTENDANCE_STATUS_LIST.includes(attendance.status as typeof ACADEMIC.ATTENDANCE_STATUS_LIST[number])) {
     errors.push('Invalid attendance status');
   }
 
@@ -187,8 +188,8 @@ export function validateStudentProgress(goal: {
 
   if (typeof goal.currentGrade !== 'number' || isNaN(goal.currentGrade)) {
     errors.push('Current grade must be a valid number');
-  } else if (goal.currentGrade < 0 || goal.currentGrade > 100) {
-    errors.push('Current grade must be between 0 and 100');
+  } else if (goal.currentGrade < GRADE_LIMITS.MIN || goal.currentGrade > GRADE_LIMITS.MAX) {
+    errors.push(`Current grade must be between ${GRADE_LIMITS.MIN} and ${GRADE_LIMITS.MAX}`);
   }
 
   if (!goal.deadline || goal.deadline.trim() === '') {
@@ -209,19 +210,23 @@ export function validateStudentProgress(goal: {
 }
 
 export function calculateGradeLetter(score: number): string {
-  if (score >= 85) return 'A';
-  if (score >= 75) return 'B';
-  if (score >= 60) return 'C';
+  if (score >= GRADE_THRESHOLDS.A) return 'A';
+  if (score >= GRADE_THRESHOLDS.B) return 'B';
+  if (score >= GRADE_THRESHOLDS.C) return 'C';
   return 'D';
 }
 
 export function calculateFinalScore(assignment: number, midExam: number, finalExam: number): number {
-  return Math.round((assignment * 0.3) + (midExam * 0.3) + (finalExam * 0.4));
+  return Math.round(
+    (assignment * ACADEMIC.GRADE_WEIGHTS.ASSIGNMENT) + 
+    (midExam * ACADEMIC.GRADE_WEIGHTS.MID_EXAM) + 
+    (finalExam * ACADEMIC.GRADE_WEIGHTS.FINAL_EXAM)
+  );
 }
 
 export function validateGradeInput(score: number, fieldName: string, options: GradeValidationOptions = {}): ValidationResult {
   const errors: string[] = [];
-  const { allowZero = false, maxScore = 100, requireMinScore = 0 } = options;
+  const { allowZero = false, maxScore = GRADE_LIMITS.MAX, requireMinScore = GRADE_LIMITS.MIN } = options;
 
   if (typeof score !== 'number' || isNaN(score)) {
     errors.push(`${fieldName} must be a valid number`);
@@ -243,16 +248,16 @@ export function validateGradeInput(score: number, fieldName: string, options: Gr
 
 export function validateAndSanitizeGrade(score: string | number): number {
   const numValue = typeof score === 'string' ? parseFloat(score) : score;
-  return isNaN(numValue) ? 0 : Math.min(100, Math.max(0, numValue));
+  return isNaN(numValue) ? GRADE_LIMITS.MIN : Math.min(GRADE_LIMITS.MAX, Math.max(GRADE_LIMITS.MIN, numValue));
 }
 
 export function getGradeMinScore(grade: string): number {
   switch (grade) {
-    case 'A': return 85;
-    case 'B': return 75;
-    case 'C': return 60;
-    case 'D': return 0;
-    default: return 0;
+    case 'A': return GRADE_THRESHOLDS.A;
+    case 'B': return GRADE_THRESHOLDS.B;
+    case 'C': return GRADE_THRESHOLDS.C;
+    case 'D': return GRADE_THRESHOLDS.D;
+    default: return GRADE_THRESHOLDS.D;
   }
 }
 

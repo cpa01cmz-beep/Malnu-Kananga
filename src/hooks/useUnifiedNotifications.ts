@@ -12,6 +12,7 @@ import {
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
+import { SCHEDULER_INTERVALS, UI_DELAYS } from '../constants';
 
 interface PushSubscription {
   readonly endpoint: string;
@@ -299,7 +300,7 @@ export function useUnifiedNotifications() {
           try {
             const newValue = JSON.parse(stored);
             const lastChecked = lastCheckedRef.current[key] || 0;
-            if (Date.now() - lastChecked > 5000) { // Avoid too frequent checks
+            if (Date.now() - lastChecked > UI_DELAYS.DEBOUNCE_SHORT) { // Avoid too frequent checks
               onChange(newValue, {});
               lastCheckedRef.current[key] = Date.now();
             }
@@ -311,7 +312,7 @@ export function useUnifiedNotifications() {
 
       window.addEventListener('storage', handleStorageChange);
       checkNow();
-      const interval = setInterval(checkNow, 30000); // Check every 30 seconds
+      const interval = setInterval(checkNow, SCHEDULER_INTERVALS.OFFLINE_SYNC_CHECK); // Check every 30 seconds
 
       return () => {
         window.removeEventListener('storage', handleStorageChange);
@@ -333,7 +334,7 @@ export function useUnifiedNotifications() {
       return () => {
         window.removeEventListener('ocrValidation', handleOCRValidation);
       };
-    });
+    }, []);
   };
 
   // Template Getters

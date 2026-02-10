@@ -13,7 +13,7 @@ import { VoiceLanguage } from '../types';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { GRADIENT_CLASSES } from '../config/gradients';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
 import Button from './ui/Button';
@@ -404,7 +404,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
         const now = new Date();
         let matchDate = true;
         if (filterDateRange === 'week') {
-          matchDate = materialDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          matchDate = materialDate >= new Date(now.getTime() - TIME_MS.ONE_WEEK);
         } else if (filterDateRange === 'month') {
           matchDate = materialDate >= new Date(now.getFullYear(), now.getMonth(), 1);
         } else if (filterDateRange === 'semester') {
@@ -484,7 +484,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       const now = new Date();
       let matchDate = true;
       if (filterDateRange === 'week') {
-        matchDate = materialDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        matchDate = materialDate >= new Date(now.getTime() - TIME_MS.ONE_WEEK);
       } else if (filterDateRange === 'month') {
         matchDate = materialDate >= new Date(now.getFullYear(), now.getMonth(), 1);
       } else if (filterDateRange === 'semester') {
@@ -1558,7 +1558,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           ))
         ) : (
           <div className="col-span-full">
-            <EmptyState 
+            <EmptyState
               message="Tidak ada materi ditemukan untuk filter ini"
               icon={
                 <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
@@ -1567,6 +1567,26 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               }
               size="lg"
               ariaLabel="Tidak ada materi ditemukan"
+              suggestedActions={[
+                {
+                  label: 'Hapus Semua Filter',
+                  onClick: () => {
+                    setFilterSubject('Semua');
+                    setSearch('');
+                    setFilterTeacher('');
+                    setFilterDateRange('all');
+                    setFilterRating(0);
+                    setShowOnlyFavorites(false);
+                    setSortBy('date');
+                  },
+                  variant: 'primary'
+                },
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
             />
           </div>
         )}

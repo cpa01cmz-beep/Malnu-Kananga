@@ -5,6 +5,7 @@
 import React from 'react';
 import { OperationResult } from './teacherValidation';
 import { API_ERROR_MESSAGES } from './errorMessages';
+import { HTTP, RETRY_CONFIG, CONVERSION, BACKOFF_CONFIG } from '../constants';
 
 export interface ErrorBoundaryState {
   hasError: boolean;
@@ -33,8 +34,8 @@ export interface AsyncOperation<T> {
  */
 const DEFAULT_RETRY_CONFIG: RetryConfig = {
   maxRetries: 3,
-  retryDelay: 1000,
-  backoffMultiplier: 2,
+  retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
+  backoffMultiplier: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
   shouldRetry: (error) => {
     // Retry on network errors and server errors (5xx)
     return error.message.includes('fetch') || 
@@ -117,30 +118,30 @@ export const handleApiError = (error: unknown): string => {
     return API_ERROR_MESSAGES.ABORT_ERROR;
   }
 
-  // HTTP status errors
+  // HTTP status errors - Flexy: Using HTTP.STATUS_CODES constants instead of hardcoded numbers
   if (err.status) {
     switch (err.status) {
-      case 400:
+      case HTTP.STATUS_CODES.BAD_REQUEST:
         return err.message || API_ERROR_MESSAGES.BAD_REQUEST;
-      case 401:
+      case HTTP.STATUS_CODES.UNAUTHORIZED:
         return API_ERROR_MESSAGES.UNAUTHORIZED;
-      case 403:
+      case HTTP.STATUS_CODES.FORBIDDEN:
         return API_ERROR_MESSAGES.FORBIDDEN;
-      case 404:
+      case HTTP.STATUS_CODES.NOT_FOUND:
         return API_ERROR_MESSAGES.NOT_FOUND;
-      case 409:
+      case HTTP.STATUS_CODES.CONFLICT:
         return API_ERROR_MESSAGES.CONFLICT;
-      case 422:
+      case HTTP.STATUS_CODES.UNPROCESSABLE_ENTITY:
         return err.message || API_ERROR_MESSAGES.UNPROCESSABLE_ENTITY;
-      case 429:
+      case HTTP.STATUS_CODES.TOO_MANY_REQUESTS:
         return API_ERROR_MESSAGES.TOO_MANY_REQUESTS;
-      case 500:
+      case HTTP.STATUS_CODES.INTERNAL_SERVER_ERROR:
         return API_ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
-      case 502:
+      case HTTP.STATUS_CODES.BAD_GATEWAY:
         return API_ERROR_MESSAGES.BAD_GATEWAY;
-      case 503:
+      case HTTP.STATUS_CODES.SERVICE_UNAVAILABLE:
         return API_ERROR_MESSAGES.SERVICE_UNAVAILABLE;
-      case 504:
+      case HTTP.STATUS_CODES.GATEWAY_TIMEOUT:
         return API_ERROR_MESSAGES.GATEWAY_TIMEOUT;
       default:
         return `Terjadi kesalahan (${err.status}). ${API_ERROR_MESSAGES.OPERATION_FAILED}`;
@@ -249,11 +250,11 @@ export const createLoadingManager = (initialState = false) => {
  */
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes';
-  
-  const k = 1024;
+
+  const k = CONVERSION.BYTES_PER_KB;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 

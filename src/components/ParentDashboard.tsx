@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { UserIcon } from './icons/UserIcon';
+import { BrainIcon } from './icons/BrainIcon';
 import ParentScheduleView from './ParentScheduleView';
 import ParentGradesView from './ParentGradesView';
 import ParentAttendanceView from './ParentAttendanceView';
@@ -24,7 +25,7 @@ import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -33,6 +34,7 @@ import SuspenseLoading from './ui/SuspenseLoading';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import { RealTimeEventType } from '../services/webSocketService';
+import { useStudentInsights } from '../hooks/useStudentInsights';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -52,7 +54,8 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [offlineData, setOfflineData] = useState<CachedParentData | null>(null);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
-  
+  const [_navigatingView, setNavigatingView] = useState<string | null>(null);
+
   const networkStatus = useNetworkStatus();
 
   // Initialize offline services
@@ -60,10 +63,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const { syncStatus, isCached } = useOfflineData('parent');
 
   // Initialize push notifications
-  const { 
-    showNotification, 
-    createNotification,
-    requestPermission 
+  const {
+    showNotification,
+    createNotification
   } = usePushNotifications();
 
   // Initialize event notifications for automated grade monitoring
@@ -111,7 +113,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
           try {
             const childrenData: Record<string, CachedStudentData> = {};
             const now = Date.now();
-            const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+            const CACHE_DURATION = TIME_MS.ONE_DAY; // 24 hours
 
             // Fetch schedules once for all children
             const schedulesResponse = await schedulesAPI.getAll();
@@ -221,28 +223,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     fetchChildren();
   }, [onShowToast, networkStatus.isOnline, offlineDataService]);
 
-  // Request notification permission on first load
+  // Check notification permission status without requesting on page load
+  // Permission will only be requested after explicit user interaction
   useEffect(() => {
-    const initializeNotifications = async () => {
-      try {
-        const granted = await requestPermission();
-        if (granted) {
-          logger.info('Parent notifications enabled');
-          await showNotification(
-            createNotification(
-              'system',
-              'Notifikasi Orang Tua Aktif',
-              'Sistem notifikasi orang tua telah diaktifkan'
-            )
-          );
-        }
-      } catch (error) {
-        logger.error('Failed to initialize parent notifications:', error);
+    const checkNotificationStatus = async () => {
+      // Only check if permission is already granted, don't request on page load
+      if (typeof window !== 'undefined' && 'Notification' in window && window.Notification.permission === 'granted') {
+        logger.info('Parent notifications already enabled');
+        await showNotification(
+          createNotification(
+            'system',
+            'Notifikasi Orang Tua Aktif',
+            'Sistem notifikasi orang tua telah diaktifkan'
+          )
+        );
       }
     };
 
-    initializeNotifications();
-  }, [requestPermission, showNotification, createNotification]);
+    checkNotificationStatus();
+  }, [showNotification, createNotification]);
 
   // Initialize grade notification monitoring  
   useMonitorLocalStorage(STORAGE_KEYS.GRADES, (newValue: unknown, oldValue: unknown) => {
@@ -278,7 +277,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       // Check every 6 hours
       const interval = setInterval(() => {
         parentGradeNotificationService.checkMissingGrades(children);
-      }, 6 * 60 * 60 * 1000);
+      }, TIME_MS.SIX_HOURS);
 
       return () => clearInterval(interval);
     }
@@ -344,6 +343,15 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     setCurrentView('home');
   };
 
+  const handleViewNavigation = useCallback((view: PortalView) => {
+    setNavigatingView(view);
+    // Simulate navigation delay to show loading state
+    setTimeout(() => {
+      setCurrentView(view);
+      setNavigatingView(null);
+    }, 300);
+  }, []);
+
   // Handle manual sync
   const handleSync = async () => {
     if (!networkStatus.isOnline) {
@@ -403,26 +411,45 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     }
   }, [networkStatus.isOnline, offlineData, offlineDataService, onShowToast]);
 
-  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
-    eventTypes: [
-      'grade_updated',
-      'grade_created',
-      'attendance_marked',
-      'attendance_updated',
-      'announcement_created',
-      'announcement_updated',
-      'event_created',
-      'event_updated',
-    ] as RealTimeEventType[],
-    enabled: networkStatus.isOnline,
-    onEvent: useCallback((event: unknown) => {
-      const typedEvent = event as { entity: string; data: { studentId: string } };
-      if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
-        if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
-          refreshChildData(selectedChild.studentId);
-        }
+  const parentEventTypes = useMemo(() => [
+    'grade_updated',
+    'grade_created',
+    'attendance_marked',
+    'attendance_updated',
+    'announcement_created',
+    'announcement_updated',
+    'event_created',
+    'event_updated',
+  ] as RealTimeEventType[], []);
+
+  const handleParentRealtimeEvent = useCallback((event: unknown) => {
+    const typedEvent = event as { entity: string; data: { studentId: string } };
+    if (typedEvent.entity === 'grade' || typedEvent.entity === 'attendance') {
+      if (selectedChild && typedEvent.data.studentId === selectedChild.studentId) {
+        refreshChildData(selectedChild.studentId);
       }
-    }, [selectedChild, refreshChildData]),
+    }
+  }, [selectedChild, refreshChildData]);
+
+  const { isConnected: _isConnected, isConnecting: _isConnecting } = useRealtimeEvents({
+    eventTypes: parentEventTypes,
+    enabled: networkStatus.isOnline,
+    onEvent: handleParentRealtimeEvent,
+  });
+
+  // Initialize student insights for selected child
+  const {
+    insights: studentInsights,
+    loading: insightsLoading,
+    error: insightsError,
+    refreshInsights,
+    enabled: insightsEnabled,
+    setEnabled: setInsightsEnabled
+  } = useStudentInsights({
+    studentId: selectedChild?.studentId,
+    autoRefresh: true,
+    refreshInterval: TIME_MS.SIX_HOURS,
+    enabled: true
   });
 
   
@@ -515,6 +542,178 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
               </Card>
             )}
 
+            {/* Show Insights Toggle */}
+            {selectedChild && !insightsEnabled && (
+              <Card className="mb-8 animate-fade-in-up">
+                <div className="flex items-center justify-between p-4">
+                  <div>
+                    <h3 className="font-semibold text-neutral-900 dark:text-white">Wawasan Akademik</h3>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+                      Dapatkan analisis mendalam tentang performa {selectedChild.studentName}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setInsightsEnabled(true)}
+                    className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium text-sm"
+                  >
+                    Tampilkan Wawasan
+                  </button>
+                </div>
+              </Card>
+            )}
+
+            {/* Student Insights */}
+            {selectedChild && insightsEnabled && (
+              <Card className="mb-8 animate-fade-in-up">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                    Wawasan Akademik {selectedChild.studentName}
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setInsightsEnabled(false)}
+                      className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    >
+                      Sembunyikan
+                    </button>
+                    <button
+                      onClick={refreshInsights}
+                      disabled={insightsLoading}
+                      className="text-sm px-3 py-1 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 rounded-lg disabled:opacity-50"
+                    >
+                      {insightsLoading ? 'Memuat...' : 'Perbarui'}
+                    </button>
+                  </div>
+                </div>
+
+                {insightsError && (
+                  <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-700 dark:text-red-300">{insightsError}</p>
+                  </div>
+                )}
+
+                {insightsLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                    <span className="ml-3 text-neutral-600 dark:text-neutral-400">Memuat wawasan akademik...</span>
+                  </div>
+                ) : studentInsights ? (
+                  <div className="space-y-6">
+                    {/* Overall Performance */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {studentInsights.overallPerformance.gpa.toFixed(1)}
+                        </div>
+                        <div className="text-sm text-blue-700 dark:text-blue-300">IPK</div>
+                      </div>
+                      <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                          {studentInsights.overallPerformance.totalSubjects}
+                        </div>
+                        <div className="text-sm text-green-700 dark:text-green-300">Mata Pelajaran</div>
+                      </div>
+                      <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                          {studentInsights.attendanceInsight.percentage.toFixed(0)}%
+                        </div>
+                        <div className="text-sm text-purple-700 dark:text-purple-300">Kehadiran</div>
+                      </div>
+                      <div className="text-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                          {studentInsights.overallPerformance.improvementRate > 0 ? '+' : ''}{studentInsights.overallPerformance.improvementRate.toFixed(1)}%
+                        </div>
+                        <div className="text-sm text-orange-700 dark:text-orange-300">Perbaikan</div>
+                      </div>
+                    </div>
+
+                    {/* AI Analysis */}
+                    {studentInsights.aiAnalysis && (
+                      <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0">
+                            <BrainIcon />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2">Analisis AI</h3>
+                            <p className="text-sm text-indigo-700 dark:text-indigo-300 leading-relaxed">
+                              {studentInsights.aiAnalysis}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Motivational Message */}
+                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                        💡 {studentInsights.motivationalMessage}
+                      </p>
+                    </div>
+
+                    {/* Subject Performance */}
+                    {studentInsights.gradePerformance.length > 0 && (
+                      <div>
+                        <h3 className="font-semibold text-neutral-900 dark:text-white mb-3">Performa Mata Pelajaran</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {studentInsights.gradePerformance.slice(0, 6).map((subject, index) => (
+                            <div key={index} className="p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-medium text-neutral-900 dark:text-white text-sm">{subject.subject}</span>
+                                <span className={`text-xs px-2 py-1 rounded-full ${
+                                  subject.trend === 'improving' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                                  subject.trend === 'declining' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                                }`}>
+                                  {subject.trend === 'improving' ? '↗ Meningkat' : 
+                                   subject.trend === 'declining' ? '↗ Menurun' : '→ Stabil'}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-lg font-bold text-neutral-900 dark:text-white">{subject.averageScore.toFixed(1)}</span>
+                                <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">{subject.grade}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Study Recommendations */}
+                    {studentInsights.studyRecommendations.length > 0 && (
+                      <div>
+                        <h3 className="font-semibold text-neutral-900 dark:text-white mb-3">Rekomendasi Belajar</h3>
+                        <div className="space-y-2">
+                          {studentInsights.studyRecommendations.slice(0, 3).map((rec, index) => (
+                            <div key={index} className={`p-3 rounded-lg border ${
+                              rec.priority === 'high' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' :
+                              rec.priority === 'medium' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' :
+                              'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                            }`}>
+                              <div className="flex items-start gap-2">
+                                <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                                  rec.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                                  rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                  'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                }`}>
+                                  {rec.priority === 'high' ? 'TINGGI' : rec.priority === 'medium' ? 'SEDANG' : 'RENDAH'}
+                                </span>
+                                <div className="flex-1">
+                                  <div className="font-medium text-neutral-900 dark:text-white text-sm">{rec.subject}</div>
+                                  <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{rec.recommendation}</div>
+                                  <div className="text-xs text-neutral-500 dark:text-neutral-500 mt-1">⏱ {rec.timeAllocation}</div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+              </Card>
+            )}
+
             {/* Activity Feed */}
             <Card className="mb-8 animate-fade-in-up">
               <ActivityFeed
@@ -554,7 +753,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -563,7 +762,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'grades' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -572,7 +771,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'attendance' && selectedChild && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
           </div>
@@ -581,25 +780,25 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'library' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
-            <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
+            <ELibrary onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
           </div>
         )}
 
         {currentView === 'events' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
-            <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+            <OsisEvents onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} />
           </div>
         )}
 
         {currentView === 'reports' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
           </div>
@@ -608,7 +807,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'messaging' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentMessagingView onShowToast={onShowToast} children={children} />
           </div>
@@ -617,7 +816,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'payments' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentPaymentsView onShowToast={onShowToast} children={children} />
           </div>
@@ -626,7 +825,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         {currentView === 'meetings' && (
           <div className="animate-fade-in-up">
             <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => setCurrentView('home')} variant="green" />
+              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
             </div>
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>

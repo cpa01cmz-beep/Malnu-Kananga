@@ -4,17 +4,18 @@ import {
   CommunicationLogExportOptions,
   CommunicationLogStats,
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TEXT_TRUNCATION } from '../constants';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { pdfExportService } from '../services/pdfExportService';
+import { generateId } from '../utils/idGenerator';
 import Papa from 'papaparse';
 
 class CommunicationLogService {
   private storageKey: string = STORAGE_KEYS.COMMUNICATION_LOG;
 
   private generateId(): string {
-    return `comm_log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return generateId({ prefix: 'comm_log' });
   }
 
   private getLogsFromStorage(): CommunicationLogEntry[] {
@@ -34,8 +35,8 @@ class CommunicationLogService {
 
     let plainText = body.replace(/<[^>]+>/g, '');
 
-    if (plainText.length > 200) {
-      plainText = plainText.substring(0, 200) + '...';
+    if (plainText.length > TEXT_TRUNCATION.PREVIEW) {
+      plainText = plainText.substring(0, TEXT_TRUNCATION.PREVIEW) + '...';
     }
 
     return plainText;
@@ -542,7 +543,7 @@ class CommunicationLogService {
   }
 
   private formatLogForExport(log: CommunicationLogEntry): Record<string, string> {
-    const formatDate = (date: string) => {
+    const formatDate = (date: string): string => {
       return new Date(date).toLocaleString('id-ID', {
         day: '2-digit',
         month: '2-digit',

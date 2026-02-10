@@ -46,6 +46,7 @@ export { default as Pagination } from './Pagination';
 
 // Loading Components
 export { default as LoadingState, EmptyState, ErrorState } from './LoadingState';
+export type { SuggestedAction } from './LoadingState';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as SuspenseLoading } from './SuspenseLoading';
 export { default as LoadingOverlay } from './LoadingOverlay';

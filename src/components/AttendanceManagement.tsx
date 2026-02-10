@@ -14,6 +14,7 @@ import { useNetworkStatus } from '../utils/networkStatus';
 import ProgressBar from './ui/ProgressBar';
 import { UserRole, UserExtraRole } from '../types';
 import { useErrorHandler } from '../hooks/useErrorHandler';
+import { FILE_SIZE_LIMITS, USER_ROLES, ACADEMIC } from '../constants';
 
 interface AttendanceManagementProps {
   onBack: () => void;
@@ -21,20 +22,20 @@ interface AttendanceManagementProps {
 }
 
 interface StudentAttendanceRow extends AttendanceStudentInfo {
-  status: 'hadir' | 'sakit' | 'izin' | 'alpa';
+  status: typeof ACADEMIC.ATTENDANCE_STATUSES[keyof typeof ACADEMIC.ATTENDANCE_STATUSES];
   notes?: string;
   isEdited?: boolean;
 }
 
 const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onShowToast }) => {
   const { user, canAccess } = useCanAccess();
-  const userRole = user?.role as UserRole || 'student';
+  const userRole = user?.role as UserRole || USER_ROLES.STUDENT;
   const _userExtraRole = user?.extraRole as UserExtraRole;
   
   // Check permissions
   const canManageAttendance = canAccess('academic.attendance').canAccess;
   const canUseOCRParsing = canAccess('academic.attendance').canAccess && 
-    ['teacher', 'wakasek', 'kepsek'].includes(userRole);
+    ([USER_ROLES.TEACHER, USER_ROLES.WAKASEK, USER_ROLES.KEPSEK] as UserRole[]).includes(userRole);
 
   const { isOnline } = useNetworkStatus();
   const { handleAsyncError, clearError } = useErrorHandler();
@@ -75,7 +76,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
         id: s.id,
         nis: s.nis,
         name: s.className || s.nis,
-        status: 'hadir' as const,
+        status: ACADEMIC.ATTENDANCE_STATUSES.PRESENT,
         isEdited: false
       }));
       setStudents(attendanceRows);
@@ -100,8 +101,8 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
     }
 
     // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      onShowToast('Ukuran file terlalu besar (maksimal 10MB).', 'error');
+    if (file.size > FILE_SIZE_LIMITS.MATERIAL_DEFAULT) {
+      onShowToast('Ukuran file terlalu besar (maksimal 50MB).', 'error');
       return;
     }
 

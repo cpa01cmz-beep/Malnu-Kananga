@@ -1,6 +1,7 @@
 // performanceMonitor.ts - API performance monitoring and metrics
 
 import { logger } from '../utils/logger';
+import { STORAGE_LIMITS, PERFORMANCE_THRESHOLDS, HTTP } from '../constants';
 
 // Type declarations for Web API
 declare global {
@@ -52,16 +53,16 @@ export interface AlertThreshold {
 class PerformanceMonitor {
   private metrics: PerformanceMetric[] = [];
   private config: SlowRequestConfig = {
-    threshold: 3000, // 3 seconds
+    threshold: PERFORMANCE_THRESHOLDS.SLOW_REQUEST_MS,
     enabled: true,
   };
   private alertThresholds: AlertThreshold = {
-    errorRate: 10, // 10% error rate
-    averageResponseTime: 5000, // 5 seconds
-    consecutiveFailures: 5,
+    errorRate: PERFORMANCE_THRESHOLDS.ERROR_RATE_ALERT_PERCENT,
+    averageResponseTime: PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS,
+    consecutiveFailures: PERFORMANCE_THRESHOLDS.CONSECUTIVE_FAILURES_ALERT,
   };
   private consecutiveFailures: number = 0;
-  private readonly maxMetrics: number = 1000;
+  private readonly maxMetrics: number = STORAGE_LIMITS.METRICS_MAX;
   private monitoringEnabled: boolean = false;
 
   /**
@@ -158,7 +159,7 @@ class PerformanceMonitor {
    * Record API response
    */
   recordResponse(endpoint: string, method: string, startTime: number, status: number): void {
-    const success = status >= 200 && status < 300;
+    const success = status >= HTTP.STATUS_CODES.OK && status < 300;
     this.endRequest(endpoint, method, startTime, status, success);
   }
 

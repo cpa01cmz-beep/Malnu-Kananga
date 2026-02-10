@@ -3,7 +3,7 @@
 
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, USER_ROLES } from '../constants';
 import { gradesAPI } from './apiService';
 import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
@@ -88,7 +88,7 @@ class ParentGradeNotificationService {
   private async handleOCRValidationEvent(event: OCRValidationEvent): Promise<void> {
     try {
       // Only process events for students whose parents are the current user
-      if (event.userRole !== 'parent' && !this.isChildDocument(event.userId)) {
+      if (event.userRole !== USER_ROLES.PARENT && !this.isChildDocument(event.userId)) {
         logger.info('OCR validation event not relevant to current parent user');
         return;
       }
@@ -121,7 +121,7 @@ class ParentGradeNotificationService {
       );
       
       // Check if current user is a parent
-      if (currentUser.role !== 'parent') {
+      if (currentUser.role !== USER_ROLES.PARENT) {
         return false;
       }
 
@@ -202,7 +202,7 @@ class ParentGradeNotificationService {
             timestamp: new Date().toISOString(),
             read: false,
             priority: 'low' as const,
-            targetRoles: ['parent'],
+            targetRoles: [USER_ROLES.PARENT],
             data: { type: 'ocr_validation', skipped: true }
           };
         }
@@ -222,7 +222,7 @@ class ParentGradeNotificationService {
       timestamp: new Date().toISOString(),
       read: false,
       priority,
-      targetRoles: ['parent'],
+      targetRoles: [USER_ROLES.PARENT],
       data: {
         type: 'ocr_validation' as const,
         validationType: type,
@@ -601,7 +601,7 @@ class ParentGradeNotificationService {
       timestamp: new Date().toISOString(),
       read: false,
       priority: data.isBelowThreshold ? 'high' : 'normal',
-      targetRoles: ['parent'],
+      targetRoles: [USER_ROLES.PARENT],
       data: {
         type: 'grade_notification',
         studentName: data.studentName,
@@ -648,9 +648,9 @@ class ParentGradeNotificationService {
     const id = `digest-${frequency}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const now = Date.now();
     
-    const scheduledFor = frequency === 'daily' 
-      ? now + (24 * 60 * 60 * 1000) // 24 hours
-      : now + (7 * 24 * 60 * 60 * 1000); // 7 days
+    const scheduledFor = frequency === 'daily'
+      ? now + TIME_MS.ONE_DAY // 24 hours
+      : now + TIME_MS.ONE_WEEK; // 7 days
 
     const notification: QueuedNotification = {
       id,
@@ -671,12 +671,12 @@ class ParentGradeNotificationService {
     // Setup daily digest timer
     const dailyTimer = setInterval(() => {
       this.processDigestNotifications('daily');
-    }, 24 * 60 * 60 * 1000); // Daily
+    }, TIME_MS.ONE_DAY); // Daily
 
     // Setup weekly digest timer  
     const weeklyTimer = setInterval(() => {
       this.processDigestNotifications('weekly');
-    }, 7 * 24 * 60 * 60 * 1000); // Weekly
+    }, TIME_MS.ONE_WEEK); // Weekly
 
     this.digestTimers.set('daily', dailyTimer);
     this.digestTimers.set('weekly', weeklyTimer);
@@ -688,7 +688,7 @@ class ParentGradeNotificationService {
     setInterval(() => {
       this.processScheduledNotifications();
       this.processQueuedOCRValidations(); // Also process OCR validation queue
-    }, 60 * 1000); // Every minute
+    }, TIME_MS.ONE_MINUTE); // Every minute
   }
 
   // Process notifications that are scheduled to be sent now
@@ -782,7 +782,7 @@ class ParentGradeNotificationService {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         data: {
           type: 'grade_digest',
           frequency,
@@ -886,7 +886,7 @@ class ParentGradeNotificationService {
       
       const mostRecentGrade = subjectGrades[0];
       const lastGradeDate = new Date(mostRecentGrade.createdAt);
-      const daysSinceLastGrade = Math.floor((now.getTime() - lastGradeDate.getTime()) / (1000 * 60 * 60 * 24));
+      const daysSinceLastGrade = Math.floor((now.getTime() - lastGradeDate.getTime()) / TIME_MS.ONE_DAY);
 
       // Check if enough time has passed since the last grade to expect a new one
       // Consider different assignment types and their typical frequency
@@ -958,7 +958,7 @@ class ParentGradeNotificationService {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'high',
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         data: {
           type: 'missing_grades',
           studentName: child.studentName,

@@ -1,7 +1,10 @@
 /**
  * Enhanced input masking utilities for form validation
  * Supports Indonesian data formats (NISN, phone numbers, dates)
+ * Flexy: All mask patterns are imported from constants - never hardcoded!
  */
+
+import { INPUT_MASKS, INPUT_MASK_PLACEHOLDERS, DATE_VALIDATION, DAYS_IN_MONTH } from '../constants';
 
 export interface MaskOptions {
   mask: string;
@@ -12,37 +15,41 @@ export interface MaskOptions {
 
 /**
  * NISN masking (10 digits)
+ * Flexy: Uses INPUT_MASKS constant
  */
 export const nisnMask: MaskOptions = {
-  mask: '9999999999',
-  placeholder: 'NISN 10 digit',
+  mask: INPUT_MASKS.NISN,
+  placeholder: INPUT_MASK_PLACEHOLDERS.NISN,
   permanentChars: []
 };
 
 /**
  * Phone number masking (Indonesian format)
+ * Flexy: Uses INPUT_MASKS constant
  */
 export const phoneMask: MaskOptions = {
-  mask: '999-9999-99999',
-  placeholder: '081-2345-67890',
+  mask: INPUT_MASKS.PHONE,
+  placeholder: INPUT_MASK_PLACEHOLDERS.PHONE,
   permanentChars: []
 };
 
 /**
  * Date masking (DD-MM-YYYY)
+ * Flexy: Uses INPUT_MASKS constant
  */
 export const dateMask: MaskOptions = {
-  mask: '99-99-9999',
-  placeholder: 'DD-MM-YYYY',
+  mask: INPUT_MASKS.DATE,
+  placeholder: INPUT_MASK_PLACEHOLDERS.DATE,
   permanentChars: ['-', '-']
 };
 
 /**
  * Year masking (YYYY)
+ * Flexy: Uses INPUT_MASKS constant
  */
 export const yearMask: MaskOptions = {
-  mask: '9999',
-  placeholder: '2024',
+  mask: INPUT_MASKS.YEAR,
+  placeholder: INPUT_MASK_PLACEHOLDERS.YEAR,
   permanentChars: []
 };
 
@@ -247,28 +254,28 @@ export class DateFormatter extends InputFormatter {
     const month = parseInt(cleanValue.substring(2, 4));
     const year = parseInt(cleanValue.substring(4, 8));
     
-    // Basic date validation
+    // Basic date validation - Flexy: Uses DATE_VALIDATION constant
     if (day < 1 || day > 31) return false;
     if (month < 1 || month > 12) return false;
-    if (year < 1900 || year > new Date().getFullYear() + 1) return false;
+    if (year < DATE_VALIDATION.MIN_YEAR || year > new Date().getFullYear() + DATE_VALIDATION.MAX_YEAR_OFFSET) return false;
     
-    // Month-specific day validation
-    const daysInMonth = [
-      31, // Jan
-      (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28, // Feb
-      31, // Mar
-      30, // Apr
-      31, // May
-      30, // Jun
-      31, // Jul
-      31, // Aug
-      30, // Sep
-      31, // Oct
-      30, // Nov
-      31  // Dec
+    // Month-specific day validation - Flexy: Uses DAYS_IN_MONTH pattern
+    const daysInMonthArray = [
+      DAYS_IN_MONTH[0], // Jan: 31
+      (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : DAYS_IN_MONTH[1], // Feb
+      DAYS_IN_MONTH[2], // Mar: 31
+      DAYS_IN_MONTH[3], // Apr: 30
+      DAYS_IN_MONTH[4], // May: 31
+      DAYS_IN_MONTH[5], // Jun: 30
+      DAYS_IN_MONTH[6], // Jul: 31
+      DAYS_IN_MONTH[7], // Aug: 31
+      DAYS_IN_MONTH[8], // Sep: 30
+      DAYS_IN_MONTH[9], // Oct: 31
+      DAYS_IN_MONTH[10], // Nov: 30
+      DAYS_IN_MONTH[11], // Dec: 31
     ];
     
-    return day <= daysInMonth[month - 1];
+    return day <= daysInMonthArray[month - 1];
   }
 }
 

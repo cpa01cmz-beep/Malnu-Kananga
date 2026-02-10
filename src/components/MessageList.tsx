@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { apiService } from '../services/apiService';
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { EmptyState } from './ui/LoadingState';
+import { ChatIcon } from './icons/ChatIcon';
 import type { Conversation, ConversationFilter } from '../types';
 
 interface MessageListProps {
@@ -9,6 +11,7 @@ interface MessageListProps {
   selectedConversationId?: string;
   filter?: 'all' | 'direct' | 'group';
   onManageGroup?: (conversation: Conversation) => void;
+  onStartNewConversation?: () => void;
 }
 
 export function MessageList({
@@ -16,6 +19,7 @@ export function MessageList({
   selectedConversationId,
   filter: externalFilter,
   onManageGroup,
+  onStartNewConversation,
 }: MessageListProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -192,6 +196,7 @@ export function MessageList({
             value={searchQuery}
             onChange={handleSearch}
             placeholder="Cari percakapan..."
+            aria-label="Cari percakapan"
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
@@ -200,7 +205,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('all')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'all'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -211,7 +216,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('direct')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'direct'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -222,7 +227,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('group')}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'group'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -233,7 +238,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-              className={`rounded-lg px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 showUnreadOnly
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -247,12 +252,31 @@ export function MessageList({
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 ? (
-          <div className="flex h-full items-center justify-center text-gray-500">
-            <p className="text-center">
-              {searchQuery || filterType !== 'all' || showUnreadOnly
-                ? 'Tidak ada percakapan yang sesuai'
-                : 'Belum ada percakapan. Mulai percakapan baru!'}
-            </p>
+          <div className="flex h-full items-center justify-center">
+            <EmptyState
+              message={
+                searchQuery || filterType !== 'all' || showUnreadOnly
+                  ? 'Tidak ada percakapan yang sesuai'
+                  : 'Belum ada percakapan'
+              }
+              subMessage={
+                searchQuery || filterType !== 'all' || showUnreadOnly
+                  ? 'Coba ubah filter atau kata kunci pencarian'
+                  : 'Mulai percakapan baru untuk berkomunikasi'
+              }
+              icon={<ChatIcon />}
+              size="md"
+              variant="default"
+              action={
+                onStartNewConversation && !searchQuery && filterType === 'all' && !showUnreadOnly
+                  ? {
+                      label: 'Mulai Percakapan',
+                      onClick: onStartNewConversation,
+                    }
+                  : undefined
+              }
+              ariaLabel="Tidak ada percakapan"
+            />
           </div>
         ) : (
           <div>
@@ -274,11 +298,13 @@ export function MessageList({
                    <div className="flex items-start gap-3">
                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
                        {typeof avatar === 'string' && avatar.startsWith('http') ? (
-                         <img
-                           src={avatar}
-                           alt={name}
-                           className="h-full w-full rounded-full object-cover"
-                         />
+<img
+                            src={avatar}
+                            alt={name}
+                            className="h-full w-full rounded-full object-cover"
+                            width={48}
+                            height={48}
+                          />
                        ) : (
                          avatar
                        )}
@@ -294,18 +320,19 @@ export function MessageList({
                            )}
                          </div>
                          <div className="flex items-center gap-2">
-                           {conversation.type === 'group' && onManageGroup && (
-                             <button
-                               type="button"
-                               onClick={(e) => {
-                                 e.stopPropagation();
-                                 onManageGroup(conversation);
-                               }}
-                               className="p-1 text-gray-400 hover:text-gray-600"
-                             >
-                               ⚙️
-                             </button>
-                           )}
+                            {conversation.type === 'group' && onManageGroup && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onManageGroup(conversation);
+                                }}
+                                aria-label="Kelola grup"
+                                className="p-1 text-gray-400 hover:text-gray-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                              >
+                                ⚙️
+                              </button>
+                            )}
                            <span className="ml-2 flex-shrink-0 text-xs text-gray-500">
                              {conversation.lastMessageAt ? formatTime(conversation.lastMessageAt) : ''}
                            </span>

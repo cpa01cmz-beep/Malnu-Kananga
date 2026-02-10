@@ -3,6 +3,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ocrService } from '../ocrService';
 import { logger } from '../../utils/logger';
+import { TEST_DELAYS } from '../../constants';
 // OCR service is mocked above
 
 // Mock localStorage
@@ -169,7 +170,7 @@ describe('OCR Validation Integration', () => {
     );
 
     // Wait for event processing (simulated with setTimeout)
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.LONG));
 
     // Verify that the OCR validation event was emitted
     expect(ocrEvents).toHaveLength(1);
@@ -231,7 +232,7 @@ describe('OCR Validation Integration', () => {
     );
 
     // Wait for event processing
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.LONG));
 
     // Should still store the OCR validation event even during quiet hours
     expect(ocrEvents).toHaveLength(1);
@@ -279,7 +280,7 @@ describe('OCR Validation Integration', () => {
     );
 
     // Wait for event processing
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.LONG));
 
     // Should not send notification to teacher user
     expect(mockShowNotification).not.toHaveBeenCalled();
@@ -301,7 +302,7 @@ describe('OCR Validation Integration', () => {
     );
 
     // Wait for event processing
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, TEST_DELAYS.LONG));
 
     // Should not send notification for non-child document
     expect(mockShowNotification).not.toHaveBeenCalled();

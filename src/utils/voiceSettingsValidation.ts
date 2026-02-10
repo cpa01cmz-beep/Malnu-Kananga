@@ -5,6 +5,7 @@ import type {
   VoiceCommand,
   VoiceLanguage,
 } from '../types';
+import { VOICE_CONFIG, VOICE_BOUNDS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -101,8 +102,8 @@ export function validateSpeechRecognitionConfig(config: unknown): ValidationResu
   if (c.maxAlternatives !== undefined) {
     if (typeof c.maxAlternatives !== 'number') {
       errors.push('maxAlternatives must be a number');
-    } else if (c.maxAlternatives < 1 || c.maxAlternatives > 10) {
-      errors.push('maxAlternatives must be between 1 and 10');
+    } else if (c.maxAlternatives < VOICE_BOUNDS.MAX_ALTERNATIVES.MIN || c.maxAlternatives > VOICE_BOUNDS.MAX_ALTERNATIVES.MAX) {
+      errors.push(`maxAlternatives must be between ${VOICE_BOUNDS.MAX_ALTERNATIVES.MIN} and ${VOICE_BOUNDS.MAX_ALTERNATIVES.MAX}`);
     } else if (!Number.isInteger(c.maxAlternatives)) {
       errors.push('maxAlternatives must be an integer');
     }
@@ -130,24 +131,24 @@ export function validateSpeechSynthesisConfig(config: unknown): ValidationResult
   if (c.rate !== undefined) {
     if (typeof c.rate !== 'number') {
       errors.push('rate must be a number');
-    } else if (c.rate < 0.1 || c.rate > 10) {
-      errors.push('rate must be between 0.1 and 10');
+    } else if (c.rate < VOICE_CONFIG.RATE_BOUNDS.MIN || c.rate > VOICE_CONFIG.RATE_BOUNDS.MAX) {
+      errors.push(`rate must be between ${VOICE_CONFIG.RATE_BOUNDS.MIN} and ${VOICE_CONFIG.RATE_BOUNDS.MAX}`);
     }
   }
 
   if (c.pitch !== undefined) {
     if (typeof c.pitch !== 'number') {
       errors.push('pitch must be a number');
-    } else if (c.pitch < 0 || c.pitch > 2) {
-      errors.push('pitch must be between 0 and 2');
+    } else if (c.pitch < VOICE_CONFIG.PITCH_BOUNDS.MIN || c.pitch > VOICE_CONFIG.PITCH_BOUNDS.MAX) {
+      errors.push(`pitch must be between ${VOICE_CONFIG.PITCH_BOUNDS.MIN} and ${VOICE_CONFIG.PITCH_BOUNDS.MAX}`);
     }
   }
 
   if (c.volume !== undefined) {
     if (typeof c.volume !== 'number') {
       errors.push('volume must be a number');
-    } else if (c.volume < 0 || c.volume > 1) {
-      errors.push('volume must be between 0 and 1');
+    } else if (c.volume < VOICE_CONFIG.VOLUME_BOUNDS.MIN || c.volume > VOICE_CONFIG.VOLUME_BOUNDS.MAX) {
+      errors.push(`volume must be between ${VOICE_CONFIG.VOLUME_BOUNDS.MIN} and ${VOICE_CONFIG.VOLUME_BOUNDS.MAX}`);
     }
   }
 

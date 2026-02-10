@@ -1,6 +1,6 @@
 import { eLibraryAPI, subjectsAPI } from './apiService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, STORAGE_KEY_PATTERNS } from '../constants';
 import { classifyError, logError } from '../utils/errorHandler';
 import type { StudyPlan, MaterialRecommendation } from '../types';
 import type { ELibrary } from '../types';
@@ -312,7 +312,7 @@ class StudyPlanMaterialService {
       localStorage.removeItem(STORAGE_KEYS.STUDY_PLAN_MATERIAL_RECOMMENDATIONS(studyPlanId));
     } else {
       Object.keys(localStorage)
-        .filter((key) => key.includes('malnu_study_plan_material_recommendations_'))
+        .filter((key) => key.includes(STORAGE_KEY_PATTERNS.STUDY_PLAN_RECOMMENDATIONS))
         .forEach((key) => localStorage.removeItem(key));
     }
   }
@@ -333,7 +333,7 @@ class StudyPlanMaterialService {
   }
 
   private isCacheValid(cached: { timestamp: number }): boolean {
-    const CACHE_TTL = 24 * 60 * 60 * 1000;
+    const CACHE_TTL = TIME_MS.ONE_DAY;
     return Date.now() - cached.timestamp < CACHE_TTL;
   }
 

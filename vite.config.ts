@@ -3,6 +3,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
+import {
+  PWA_CONFIG,
+  CACHE_CONFIG,
+  URL_PATTERNS,
+  BUILD_CONFIG,
+  TEST_CONFIG,
+  ANALYZER_CONFIG,
+  PWA_MANIFEST,
+  WORKBOX_CONFIG,
+  VENDOR_CHUNKS,
+  EXTERNAL_DEPS,
+} from './src/config/viteConstants'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -15,120 +27,103 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       VitePWA({
-        registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+        registerType: WORKBOX_CONFIG.REGISTER_TYPE,
+        includeAssets: [...PWA_MANIFEST.INCLUDE_ASSETS],
         manifest: {
-          name: 'MA Malnu Kananga Smart Portal',
-          short_name: 'MA Malnu App',
-          description: 'Aplikasi Portal Pintar MA Malnu Kananga dengan Asisten AI',
-          theme_color: '#10b981',
-          display: 'standalone',
-          orientation: 'portrait',
-          start_url: '/',
-          icons: [
-            {
-              src: 'pwa-192x192.svg',
-              sizes: '192x192',
-              type: 'image/svg+xml'
-            },
-            {
-              src: 'pwa-512x512.svg',
-              sizes: '512x512',
-              type: 'image/svg+xml'
-            },
-            {
-              src: 'pwa-512x512.svg',
-              sizes: '512x512',
-              type: 'image/svg+xml',
-              purpose: 'any maskable'
-            }
-          ]
+          name: PWA_MANIFEST.NAME,
+          short_name: PWA_MANIFEST.SHORT_NAME,
+          description: PWA_MANIFEST.DESCRIPTION,
+          theme_color: PWA_CONFIG.THEME_COLOR,
+          display: PWA_CONFIG.DISPLAY_MODE,
+          orientation: PWA_CONFIG.ORIENTATION,
+          start_url: PWA_CONFIG.START_URL,
+          icons: PWA_MANIFEST.ICONS.map(icon => ({ ...icon })),
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+          globPatterns: [...WORKBOX_CONFIG.GLOB_PATTERNS],
           runtimeCaching: [
             {
-              urlPattern: /\.css$/,
+              urlPattern: URL_PATTERNS.CSS,
               handler: 'StaleWhileRevalidate',
               options: {
-                cacheName: 'css-cache',
+                cacheName: CACHE_CONFIG.CSS.NAME,
                 expiration: {
-                  maxEntries: 50,
-                  maxAgeSeconds: 60 * 60 * 24 // <== 24 hours
+                  maxEntries: CACHE_CONFIG.CSS.MAX_ENTRIES,
+                  maxAgeSeconds: CACHE_CONFIG.CSS.MAX_AGE_SECONDS,
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
+                  statuses: [...CACHE_CONFIG.CSS.STATUSES],
+                },
+              },
             },
             {
-              urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+              urlPattern: URL_PATTERNS.GOOGLE_FONTS_API,
               handler: 'CacheFirst',
               options: {
-                cacheName: 'google-fonts-cache',
+                cacheName: CACHE_CONFIG.GOOGLE_FONTS.NAME,
                 expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                  maxEntries: CACHE_CONFIG.GOOGLE_FONTS.MAX_ENTRIES,
+                  maxAgeSeconds: CACHE_CONFIG.GOOGLE_FONTS.MAX_AGE_SECONDS,
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
+                  statuses: [...CACHE_CONFIG.GOOGLE_FONTS.STATUSES],
+                },
+              },
             },
             {
-              urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+              urlPattern: URL_PATTERNS.GOOGLE_FONTS_STATIC,
               handler: 'CacheFirst',
               options: {
-                cacheName: 'gstatic-fonts-cache',
+                cacheName: CACHE_CONFIG.GSTATIC_FONTS.NAME,
                 expiration: {
-                  maxEntries: 10,
-                  maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                  maxEntries: CACHE_CONFIG.GSTATIC_FONTS.MAX_ENTRIES,
+                  maxAgeSeconds: CACHE_CONFIG.GSTATIC_FONTS.MAX_AGE_SECONDS,
                 },
                 cacheableResponse: {
-                  statuses: [0, 200]
-                }
-              }
-            }
-          ]
-        }
+                  statuses: [...CACHE_CONFIG.GSTATIC_FONTS.STATUSES],
+                },
+              },
+            },
+          ],
+        },
       }),
       // Bundle analyzer - generates stats.html after build
       visualizer({
-        filename: 'dist/stats.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      })
+        filename: ANALYZER_CONFIG.FILENAME,
+        open: ANALYZER_CONFIG.OPEN,
+        gzipSize: ANALYZER_CONFIG.GZIP_SIZE,
+        brotliSize: ANALYZER_CONFIG.BROTLI_SIZE,
+      }),
     ],
     define: {
       'process.env.VITE_GEMINI_API_KEY': JSON.stringify(process.env.VITE_GEMINI_API_KEY)
     },
     build: {
       rollupOptions: {
-        external: ['fsevents'],
+        external: [...EXTERNAL_DEPS.ROLLUP],
         output: {
           manualChunks: (id: string) => {
             // Optimize chunking to reduce bundle size and improve load times
 
             // Google GenAI library (very large, keep separate)
             if (id.includes('@google/genai')) {
-              return 'vendor-genai';
+              return VENDOR_CHUNKS.GENAI;
             }
 
             // Tesseract.js (OCR - large library)
             if (id.includes('tesseract.js')) {
-              return 'vendor-tesseract';
+              return VENDOR_CHUNKS.TESSERACT;
             }
 
             // PDF generation libraries (split into smaller chunks)
             if (id.includes('jspdf-autotable')) {
-              return 'vendor-jpdf-autotable';
+              return VENDOR_CHUNKS.JSPDF_AUTOTABLE;
             }
             if (id.includes('html2canvas')) {
-              return 'vendor-html2canvas';
+              return VENDOR_CHUNKS.HTML2CANVAS;
             }
             if (id.includes('jspdf')) {
-              return 'vendor-jpdf';
+              return VENDOR_CHUNKS.JSPDF;
             }
 
             // React core, React Router, and Charts together (avoid circular dependency)
@@ -139,41 +134,41 @@ export default defineConfig(({ mode }) => {
                 id.includes('/node_modules/@remix-run/') ||
                 id.includes('recharts') ||
                 id.includes('d3')) {
-              return 'vendor-core';
+              return VENDOR_CHUNKS.CORE;
             }
 
             // Test libraries (only in test mode)
             if (id.includes('vitest') || id.includes('@vitest')) {
-              return 'tests';
+              return VENDOR_CHUNKS.TESTS;
             }
 
             // Group UI component libraries
             if (id.includes('@heroicons/react')) {
-              return 'vendor-icons';
+              return VENDOR_CHUNKS.ICONS;
             }
 
             // Fix circular dependency: Keep apiService.ts and services/api in same chunk
             if (id.includes('/services/api') || id.includes('/services/apiService')) {
-              return 'vendor-api';
+              return VENDOR_CHUNKS.API;
             }
 
             // Don't split application code
             return undefined;
-          }
-        }
+          },
+        },
       },
       // Increased from 500KB to 800KB to accommodate large vendor chunks (React ecosystem, etc.)
       // Application code chunks should still aim for <500KB for optimal performance
-      chunkSizeWarningLimit: 800,
-      target: 'esnext',
-      minify: 'terser' as const,
+      chunkSizeWarningLimit: BUILD_CONFIG.CHUNK_SIZE_WARNING_LIMIT,
+      target: BUILD_CONFIG.TARGET,
+      minify: BUILD_CONFIG.MINIFY,
       terserOptions: {
         compress: {
-          drop_console: true,
-          drop_debugger: true,
+          drop_console: BUILD_CONFIG.TERSER_DROP_CONSOLE,
+          drop_debugger: BUILD_CONFIG.TERSER_DROP_DEBUGGER,
         },
       },
-    }
+    },
   }
 
   // Add test config only for testing mode
@@ -181,23 +176,23 @@ export default defineConfig(({ mode }) => {
     return {
       ...config,
       test: {
-        globals: true,
-        environment: 'jsdom',
-        setupFiles: ['./test-setup.ts'],
+        globals: TEST_CONFIG.GLOBALS,
+        environment: TEST_CONFIG.ENVIRONMENT,
+        setupFiles: [...TEST_CONFIG.SETUP_FILES],
         // Increased timeouts for CI environment (Issue #1394)
-        testTimeout: 10000,
-        hookTimeout: 10000,
-        include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}', '__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}'],
-        exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', '.opencode', 'e2e'],
+        testTimeout: TEST_CONFIG.TIMEOUT,
+        hookTimeout: TEST_CONFIG.HOOK_TIMEOUT,
+        include: [...TEST_CONFIG.INCLUDE_PATTERNS],
+        exclude: [...TEST_CONFIG.EXCLUDE_PATTERNS],
         // NOTE: bail: 1 disabled for full test suite runs (Issue #1382)
         // Enable bail: 1 for CI/CD PR checks to fail fast on first error
         // Use threads pool for parallel test execution (Issue #1346, #1382, #1394)
         // Significantly reduces test suite duration by utilizing multiple CPU cores
         // Vitest 4: poolOptions moved to top-level options
-        pool: 'threads',
-        minThreads: 2,
-        maxThreads: 8,
-      }
+        pool: TEST_CONFIG.POOL_TYPE,
+        minThreads: TEST_CONFIG.POOL_MIN_THREADS,
+        maxThreads: TEST_CONFIG.POOL_MAX_THREADS,
+      },
     }
   }
 

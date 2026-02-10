@@ -135,4 +135,4 @@ Desktop.ini
 
 # Local deployment
 .wrangler/deployments/
-.local-wrangler/
+.local-wrangler/playwright-report/

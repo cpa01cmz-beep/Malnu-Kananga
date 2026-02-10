@@ -1,6 +1,21 @@
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 
+// Mock window.matchMedia for responsive components
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+
 // Mock @google/genai package to prevent actual API calls
 vi.mock('@google/genai', () => ({
   GoogleGenAI: class MockGoogleGenAI {

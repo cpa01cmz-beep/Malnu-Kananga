@@ -4,7 +4,7 @@ import { studentsAPI, gradesAPI } from '../../services/apiService';
 import { parentGradeNotificationService } from '../../services/parentGradeNotificationService';
 import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { useOfflineActionQueue, type SyncResult } from '../../services/offlineActionQueueService';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS } from '../../constants';
 import { DEFAULT_API_BASE_URL } from '../../config';
 import { logger } from '../../utils/logger';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
@@ -216,8 +216,7 @@ export const useGradingData = (
 
       setGradeHistory(prev => {
         const newHistory = [historyEntry, ...prev];
-        const maxHistoryEntries = 100;
-        const finalHistory = newHistory.length > maxHistoryEntries ? newHistory.slice(0, maxHistoryEntries) : newHistory;
+        const finalHistory = newHistory.length > GRADE_LIMITS.HISTORY_MAX_ENTRIES ? newHistory.slice(0, GRADE_LIMITS.HISTORY_MAX_ENTRIES) : newHistory;
 
         try {
           localStorage.setItem(STORAGE_KEYS.GRADE_HISTORY, JSON.stringify(finalHistory));
@@ -308,7 +307,7 @@ export const useGradingData = (
         setHasUnsavedChanges(false);
 
         if (isSlow) {
-          setTimeout(() => sync().catch((error) => logger.error('Sync failed:', error)), 5000);
+          setTimeout(() => sync().catch((error) => logger.error('Sync failed:', error)), SCHEDULER_INTERVALS.AUTH_CHECK);
         }
 
         return;
@@ -500,7 +499,7 @@ export const useGradingData = (
                       subjectId: subjectId,
                       subjectName: subjectId,
                       score: finalScore,
-                      maxScore: 100,
+                      maxScore: GRADE_LIMITS.MAX,
                       assignmentType: 'Tugas',
                       assignmentName: 'Nilai Semester',
                       teacherId: '',

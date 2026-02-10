@@ -5,7 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS } from '../constants';
 import { useRealtimeEvent } from './useWebSocket';
 import type { RealTimeEvent } from '../services/webSocketService';
 
@@ -76,9 +76,10 @@ interface UseStudentInsightsReturn {
 
 export const useStudentInsights = ({
   autoRefresh = true,
-  refreshInterval = 24 * 60 * 60 * 1000, // 24 hours
-  enabled = true
-}: UseStudentInsightsOptions = {}): UseStudentInsightsReturn => {
+  refreshInterval = TIME_MS.ONE_DAY, // 24 hours
+  enabled = true,
+  studentId: providedStudentId
+}: UseStudentInsightsOptions & { studentId?: string } = {}): UseStudentInsightsReturn => {
   const [insights, setInsights] = useState<StudentInsights | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +87,7 @@ export const useStudentInsights = ({
   const [isEnabled, setIsEnabled] = useState(enabled);
 
   const currentUser = authAPI.getCurrentUser();
-  const studentId = currentUser?.id;
+  const studentId = providedStudentId || currentUser?.id;
   
   // Ref for debouncing rapid updates
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -147,10 +148,10 @@ export const useStudentInsights = ({
 
   const processAttendanceData = useCallback((attendance: Attendance[]): AttendanceInsight => {
     const totalDays = attendance.length;
-    const present = attendance.filter(a => a.status === 'hadir').length;
-    const sick = attendance.filter(a => a.status === 'sakit').length;
-    const permitted = attendance.filter(a => a.status === 'izin').length;
-    const absent = attendance.filter(a => a.status === 'alpa').length;
+    const present = attendance.filter(a => a.status === ACADEMIC.ATTENDANCE_STATUSES.PRESENT).length;
+    const sick = attendance.filter(a => a.status === ACADEMIC.ATTENDANCE_STATUSES.SICK).length;
+    const permitted = attendance.filter(a => a.status === ACADEMIC.ATTENDANCE_STATUSES.PERMITTED).length;
+    const absent = attendance.filter(a => a.status === ACADEMIC.ATTENDANCE_STATUSES.ABSENT).length;
     const percentage = totalDays > 0 ? (present / totalDays) * 100 : 0;
 
     let impactOnGrades = '';
@@ -198,7 +199,7 @@ export const useStudentInsights = ({
 
       const data = monthlyData.get(monthKey)!;
       data.totalDays++;
-      if (att.status === 'hadir') data.attendanceCount++;
+      if (att.status === ACADEMIC.ATTENDANCE_STATUSES.PRESENT) data.attendanceCount++;
     });
 
     return Array.from(monthlyData.entries())
@@ -387,7 +388,7 @@ export const useStudentInsights = ({
     refreshTimeoutRef.current = setTimeout(() => {
       logger.info('StudentInsights: Refreshing insights due to grade update');
       fetchInsights();
-    }, 2000); // 2 second debounce
+    }, COMPONENT_DELAYS.INSIGHTS_REFRESH); // 2 second debounce
   }, [fetchInsights]);
   
   // Subscribe to real-time grade updates for current student

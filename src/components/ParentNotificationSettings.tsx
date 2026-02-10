@@ -13,7 +13,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS } from '../constants';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -47,7 +47,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
     defaultSettings,
     {
       storageKey: STORAGE_KEYS.PARENT_NOTIFICATION_SETTINGS,
-      delay: 1500, // Slightly faster for settings
+      delay: COMPONENT_DELAYS.NOTIFICATION_SETTINGS_INDICATOR, // Slightly faster for settings
       enableOffline: true,
       onSave: async (settings) => {
         parentGradeNotificationService.saveSettings(settings);

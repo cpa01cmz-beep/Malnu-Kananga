@@ -18,6 +18,7 @@ import {
   announceValidation,
   getPasswordRequirements
 } from '../utils/validation';
+import { TIMEOUT_CONFIG, LOGIN_UI_STRINGS } from '../constants';
 
 const EyeIcon = () => (
   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +67,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             setShowPasswordRequirements(false);
             setTouchedFields({ email: false, password: false });
             setShowForgotPassword(false);
-        }, 300);
+        }, TIMEOUT_CONFIG.UI_ANIMATION_DURATION);
     }
   }, [isOpen]);
 
@@ -95,7 +96,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       // Validate form
       const validation = validateLoginForm(email, password);
       if (!validation.isValid) {
-        setError('Periksa kembali data yang Anda masukkan');
+        setError(LOGIN_UI_STRINGS.VALIDATION_ERROR);
         announceValidation('Form login belum lengkap atau tidak valid');
         return;
       }
@@ -144,71 +145,71 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       className={HEIGHT_CLASSES.MODAL.FULL}
     >
       <div className="overflow-y-auto">
-            <div className={`mb-6 p-5 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-xl border border-neutral-200/70 dark:border-neutral-700/70`}>
-                 <h3 className="text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-2.5 flex items-center gap-2">
-                     <svg className="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className={`mb-8 p-6 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-sm`}>
+                 <h3 className="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2.5 tracking-tight">
+                     <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                      </svg>
                      Login Cepat (Demo)
                  </h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-5 leading-relaxed">
                     Pilih peran untuk login instan:
                 </p>
 
-                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')}>
+                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')} className="mobile-touch-target">
                           Siswa
                        </Button>
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('teacher')}>
+                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('teacher')} className="mobile-touch-target">
                           Guru
                        </Button>
-                       <Button variant="indigo" size="md" onClick={() => handleSimulatedLogin('admin')}>
+                       <Button variant="primary" size="md" onClick={() => handleSimulatedLogin('admin')} className="mobile-touch-target">
                           Admin
                        </Button>
                   </div>
 
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3">
-                       <Button variant="info" size="md" onClick={() => handleSimulatedLogin('teacher', 'staff')}>
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                       <Button variant="info" size="md" onClick={() => handleSimulatedLogin('teacher', 'staff')} className="mobile-touch-target">
                           Guru (Staff)
                        </Button>
-                       <Button variant="warning" size="md" onClick={() => handleSimulatedLogin('student', 'osis')}>
+                       <Button variant="warning" size="md" onClick={() => handleSimulatedLogin('student', 'osis')} className="mobile-touch-target">
                           Siswa (OSIS)
                        </Button>
                   </div>
             </div>
 
-              <div className="relative my-6">
+              <div className="relative my-8">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                      <div className="w-full border-t border-neutral-200 dark:border-neutral-700/60"></div>
+                      <div className="w-full border-t border-neutral-200/60 dark:border-neutral-700/60"></div>
                   </div>
                   <div className="relative flex justify-center">
-                      <span className="px-4 py-1.5 bg-white dark:bg-neutral-800 text-sm text-neutral-500 font-semibold rounded-full border border-neutral-200 dark:border-neutral-700">atau</span>
+                      <span className="px-6 py-2 bg-white dark:bg-neutral-800 text-sm text-neutral-500 font-semibold rounded-full border border-neutral-200/60 dark:border-neutral-700/60 shadow-sm">atau</span>
                   </div>
               </div>
 
            {formState === 'success' ? (
-             <div className="text-center py-8">
-               <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-xl bg-primary-100 dark:bg-primary-900/50 shadow-md">
-                   <svg className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                   </svg>
-               </div>
-                <h3 className="mt-5 text-2xl font-semibold text-neutral-900 dark:text-white">Login Berhasil!</h3>
-                <p className="mt-2 text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  Anda akan diarahkan ke dashboard...
-                </p>
+              <div className="text-center py-10">
+                <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-2xl bg-primary-100 dark:bg-primary-900/50 shadow-lg">
+                    <svg className="h-8 w-8 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                 <h3 className="mt-6 text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">Login Berhasil!</h3>
+                 <p className="mt-3 text-base text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                   Anda akan diarahkan ke dashboard...
+                 </p>
                     <Button
                       variant="primary"
                       size="lg"
                       fullWidth
                       onClick={onClose}
-                      className="mt-6 py-3.5"
+                      className="mt-8 mobile-touch-target"
                     >
                       Selesai
                    </Button>
               </div>
                  ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                    {error && (
                      <Alert variant="error" size="md" border="left">
                        {error}
@@ -241,7 +242,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                         onBlur={() => {
                           setTouchedFields(prev => ({ ...prev, password: true }));
                           // Don't immediately hide requirements to give user time to reference them
-                          setTimeout(() => setShowPasswordRequirements(false), 3000);
+                          setTimeout(() => setShowPasswordRequirements(false), TIMEOUT_CONFIG.PASSWORD_REQUIREMENTS_HIDE_DELAY);
                         }}
                         errorText={touchedFields.password ? passwordError : undefined}
                         state={touchedFields.password ? (passwordError ? 'error' : 'success') : 'default'}
@@ -302,9 +303,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                         </div>
                       </Alert>
                     )}
-                  <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth className="py-3.5">
-                    {formState === 'loading' ? '' : 'Login'}
-                  </Button>
+                   <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth size="lg" className="mobile-touch-target">
+                     {formState === 'loading' ? '' : 'Login'}
+                   </Button>
 
                   <div className="text-center pt-2">
                     <button

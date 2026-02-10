@@ -24,6 +24,13 @@ interface LoadingStateProps {
   className?: string;
 }
 
+export interface SuggestedAction {
+  label: string;
+  onClick: () => void;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  icon?: ReactNode;
+}
+
 export interface EmptyStateProps {
   message: string;
   submessage?: string;
@@ -34,6 +41,7 @@ export interface EmptyStateProps {
     label: string;
     onClick: () => void;
   };
+  suggestedActions?: SuggestedAction[];
   size?: LoadingStateSize;
   variant?: 'default' | 'minimal' | 'illustrated';
   ariaLabel?: string;
@@ -64,13 +72,14 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   icon,
   action,
+  suggestedActions,
   size = 'md',
   variant = 'default',
   ariaLabel
 }) => {
   const variantClasses = {
-    default: 'text-center',
-    minimal: 'text-left',
+    default: 'text-center py-12',
+    minimal: 'text-left py-8',
     illustrated: 'text-center py-16'
   };
 
@@ -80,28 +89,28 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   }
 
   return (
-    <div 
-      className={`${sizeClasses[size]} ${variantClasses[variant]}`}
+    <div
+      className={`${sizeClasses[size]} ${variantClasses[variant]} mobile-spacing-enhanced`}
       role="status"
       aria-live="polite"
       {...ariaProps}
     >
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-6 max-w-md mx-auto">
         {icon && (
-          <div className={`${iconSizeClasses[size]} text-neutral-400 dark:text-neutral-500 animate-fade-in`}>
+          <div className={`${iconSizeClasses[size]} text-neutral-400 dark:text-neutral-500 animate-fade-in hover-lift-enhanced p-4 rounded-2xl bg-neutral-100 dark:bg-neutral-800 glass-effect`}>
             {icon}
           </div>
         )}
         {title && (
-          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white animate-fade-in">
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white animate-fade-in typography-headline text-contrast-enhanced">
             {title}
           </h3>
         )}
-        <p className="text-neutral-600 dark:text-neutral-400 font-medium animate-fade-in">
+        <p className="text-neutral-600 dark:text-neutral-400 font-medium animate-fade-in text-center leading-relaxed typography-body">
           {message}
         </p>
         {(submessage || subMessage) && (
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-fade-in">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 animate-fade-in text-center leading-relaxed typography-small">
             {submessage || subMessage}
           </p>
         )}
@@ -110,9 +119,37 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             variant="primary"
             onClick={action.onClick}
             size={size === 'lg' ? 'lg' : 'md'}
+            className="touch-manipulation haptic-feedback mobile-touch-target hover-lift-enhanced"
           >
             {action.label}
           </Button>
+        )}
+        {suggestedActions && suggestedActions.length > 0 && (
+          <div
+            className="flex flex-wrap items-center justify-center gap-3 mt-4"
+            role="group"
+            aria-label="Aksi yang disarankan"
+          >
+            {suggestedActions.map((suggestedAction, index) => (
+              <Button
+                key={index}
+                variant={suggestedAction.variant || 'secondary'}
+                onClick={() => {
+                  suggestedAction.onClick();
+                  // Haptic feedback
+                  if ('vibrate' in navigator && window.innerWidth <= 768) {
+                    navigator.vibrate(10);
+                  }
+                }}
+                size={size === 'lg' ? 'lg' : 'md'}
+                icon={suggestedAction.icon}
+                iconPosition="left"
+                className="touch-manipulation haptic-feedback mobile-touch-target hover-lift-enhanced"
+              >
+                {suggestedAction.label}
+              </Button>
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -124,22 +161,44 @@ const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
   size = 'md'
 }) => (
-  <div className={`${sizeClasses[size]} text-center`}>
-    <div className="flex flex-col items-center justify-center space-y-4">
-      <div className={`${iconSizeClasses[size]} text-red-400 dark:text-red-500`}>
+  <div className={`${sizeClasses[size]} text-center mobile-spacing-enhanced`} role="alert" aria-live="assertive">
+    <div className="flex flex-col items-center justify-center space-y-6 max-w-md mx-auto">
+      <div className={`${iconSizeClasses[size]} text-red-500 dark:text-red-400 p-4 rounded-full bg-red-100 dark:bg-red-900/30 animate-fade-in hover-lift-enhanced`}>
         <AlertCircleIcon />
       </div>
-      <p className="text-neutral-700 dark:text-neutral-300 font-medium">
-        {message}
-      </p>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white animate-fade-in typography-headline">
+          Terjadi Kesalahan
+        </h3>
+        <p className="text-neutral-600 dark:text-neutral-400 animate-fade-in text-center leading-relaxed typography-body">
+          {message}
+        </p>
+      </div>
       {onRetry && (
-        <Button
-          variant="primary"
-          onClick={onRetry}
-          size={size === 'lg' ? 'lg' : 'md'}
-        >
-          Coba Lagi
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3 animate-fade-in">
+          <Button
+            variant="primary"
+            onClick={() => {
+              onRetry();
+              // Haptic feedback for retry
+              if ('vibrate' in navigator && window.innerWidth <= 768) {
+                navigator.vibrate([15, 5, 15]);
+              }
+            }}
+            size={size === 'lg' ? 'lg' : 'md'}
+            className="touch-manipulation haptic-feedback mobile-touch-target hover-lift-enhanced"
+          >
+            Coba Lagi
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => window.location.reload()}
+            size={size === 'lg' ? 'lg' : 'md'}
+            className="touch-manipulation haptic-feedback mobile-touch-target"
+          >
+            Muat Ulang Halaman
+          </Button>
+        </div>
       )}
     </div>
   </div>
@@ -282,26 +341,62 @@ const InlineLoadingState: React.FC<{ size: LoadingStateSize }> = ({ size }) => {
 
   const sizeClasses = {
     sm: 'h-4 w-4',
-    md: 'h-5 w-5',
+    md: 'h-6 w-6',
     lg: 'h-8 w-8',
   };
 
+  const loadingMessages = [
+    'Memuat...',
+    'Sedang diproses...',
+    'Mohon tunggu...',
+    'Sedang mengambil data...'
+  ];
+
+  const [messageIndex, setMessageIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [loadingMessages.length]);
+
   return (
-    <div className="flex items-center justify-center space-x-3">
-      <svg
-        className={`animate-spin ${sizeClasses[spinnerSize]} text-primary-600`}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        role="status"
-        aria-hidden="true"
-      >
-        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <span className={`${textClass} text-neutral-600 dark:text-neutral-400 animate-pulse`}>
-        Memuat...
+    <div className="flex flex-col items-center justify-center space-y-4 p-6">
+      <div className="relative">
+        <svg
+          className={`animate-spin ${sizeClasses[spinnerSize]} text-primary-600`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          role="status"
+          aria-hidden="true"
+        >
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        {/* Animated rings */}
+        <div className="absolute inset-0 animate-ping">
+          <div className={`${sizeClasses[spinnerSize]} rounded-full border-2 border-primary-200 dark:border-primary-800 opacity-75`}></div>
+        </div>
+      </div>
+      <span className={`${textClass} text-neutral-600 dark:text-neutral-400 animate-fade-in text-center leading-relaxed`}>
+        {loadingMessages[messageIndex]}
       </span>
+      {/* Progress dots */}
+      <div className="flex space-x-1">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className={`w-2 h-2 bg-primary-400 dark:bg-primary-600 rounded-full animate-pulse`}
+            style={{
+              animationDelay: `${i * 0.2}s`,
+              animationDuration: '1.4s'
+            }}
+            aria-hidden="true"
+          />
+        ))}
+      </div>
     </div>
   );
 };

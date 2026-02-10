@@ -1,11 +1,12 @@
 import type { EmailData, EmailQueueItem } from '../types/email.types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, EMAIL_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+import { generateId, ID_CONFIG } from '../utils/idGenerator';
 
 class EmailQueueService {
   private storageKey = STORAGE_KEYS.EMAIL_QUEUE || 'malnu_email_queue';
-  private maxRetryAttempts = 3;
-  private retryDelays = [60000, 300000, 900000];
+  private maxRetryAttempts = EMAIL_CONFIG.MAX_RETRY_ATTEMPTS;
+  private retryDelays = EMAIL_CONFIG.RETRY_DELAYS;
 
   constructor() {
     logger.info('EmailQueueService initialized');
@@ -30,7 +31,7 @@ class EmailQueueService {
   }
 
   private generateId(): string {
-    return `email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return generateId({ prefix: ID_CONFIG.PREFIXES.NOTIFICATION });
   }
 
   enqueue(emailData: EmailData, scheduledFor?: Date): EmailQueueItem {
@@ -211,7 +212,7 @@ class EmailQueueService {
         failed++;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, EMAIL_CONFIG.QUEUE_PROCESSING_DELAY_MS));
     }
 
     return { processed, failed };

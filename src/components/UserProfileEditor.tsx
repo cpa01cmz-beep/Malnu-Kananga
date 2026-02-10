@@ -16,6 +16,9 @@ import PageHeader from './ui/PageHeader';
 import { CameraIcon } from './icons/CameraIcon';
 import { SaveIcon } from './icons/SaveIcon';
 import { LockIcon } from './icons/LockIcon';
+import EyeIcon from './icons/EyeIcon';
+import EyeSlashIcon from './icons/EyeSlashIcon';
+import IconButton from './ui/IconButton';
 import AccessDenied from './AccessDenied';
 
 interface UserProfileEditorProps {
@@ -53,6 +56,12 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
+  });
+
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
   });
 
   const [passwordError, setPasswordError] = useState('');
@@ -198,6 +207,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
 
         setIsPasswordModalOpen(false);
         setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setPasswordVisibility({ currentPassword: false, newPassword: false, confirmPassword: false });
         onShowToast?.('Password berhasil diubah', 'success');
       }
     } finally {
@@ -266,6 +276,8 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
                     src={formData.avatar}
                     alt={`${formData.name}'s avatar`}
                     className="w-32 h-32 rounded-2xl object-cover border-4 border-white dark:border-neutral-700 shadow-lg"
+                    width={128}
+                    height={128}
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
@@ -418,6 +430,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
           setIsPasswordModalOpen(false);
           setPasswordError('');
           setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+          setPasswordVisibility({ currentPassword: false, newPassword: false, confirmPassword: false });
         }}
         title="Ubah Password"
         size="md"
@@ -433,42 +446,72 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <p className="text-sm text-red-600 dark:text-red-400">{errorState.feedback?.message}</p>
           )}
 
-          <Input
-            id="current-password"
-            label="Password Saat Ini"
-            name="currentPassword"
-            type="password"
-            required
-            value={passwordForm.currentPassword}
-            onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
-            fullWidth
-            autoComplete="current-password"
-          />
+          <div className="relative">
+            <Input
+              id="current-password"
+              label="Password Saat Ini"
+              name="currentPassword"
+              type={passwordVisibility.currentPassword ? 'text' : 'password'}
+              required
+              value={passwordForm.currentPassword}
+              onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
+              fullWidth
+              autoComplete="current-password"
+              className="pr-12"
+            />
+            <IconButton
+              icon={passwordVisibility.currentPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              ariaLabel={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              size="sm"
+              onClick={() => setPasswordVisibility(prev => ({ ...prev, currentPassword: !prev.currentPassword }))}
+              className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+            />
+          </div>
 
-          <Input
-            id="new-password"
-            label="Password Baru"
-            name="newPassword"
-            type="password"
-            required
-            value={passwordForm.newPassword}
-            onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
-            fullWidth
-            autoComplete="new-password"
-            helperText="Minimal 8 karakter"
-          />
+          <div className="relative">
+            <Input
+              id="new-password"
+              label="Password Baru"
+              name="newPassword"
+              type={passwordVisibility.newPassword ? 'text' : 'password'}
+              required
+              value={passwordForm.newPassword}
+              onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+              fullWidth
+              autoComplete="new-password"
+              helperText="Minimal 8 karakter"
+              className="pr-12"
+            />
+            <IconButton
+              icon={passwordVisibility.newPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              ariaLabel={passwordVisibility.newPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              size="sm"
+              onClick={() => setPasswordVisibility(prev => ({ ...prev, newPassword: !prev.newPassword }))}
+              className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+            />
+          </div>
 
-          <Input
-            id="confirm-password"
-            label="Konfirmasi Password Baru"
-            name="confirmPassword"
-            type="password"
-            required
-            value={passwordForm.confirmPassword}
-            onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
-            fullWidth
-            autoComplete="new-password"
-          />
+          <div className="relative">
+            <Input
+              id="confirm-password"
+              label="Konfirmasi Password Baru"
+              name="confirmPassword"
+              type={passwordVisibility.confirmPassword ? 'text' : 'password'}
+              required
+              value={passwordForm.confirmPassword}
+              onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+              fullWidth
+              autoComplete="new-password"
+              className="pr-12"
+            />
+            <IconButton
+              icon={passwordVisibility.confirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+              ariaLabel={passwordVisibility.confirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              size="sm"
+              onClick={() => setPasswordVisibility(prev => ({ ...prev, confirmPassword: !prev.confirmPassword }))}
+              className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+            />
+          </div>
 
           <div className="flex gap-3 pt-2">
             <Button
@@ -478,6 +521,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
                 setIsPasswordModalOpen(false);
                 setPasswordError('');
                 setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                setPasswordVisibility({ currentPassword: false, newPassword: false, confirmPassword: false });
               }}
               fullWidth
             >

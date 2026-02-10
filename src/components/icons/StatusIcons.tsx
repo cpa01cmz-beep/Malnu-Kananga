@@ -1,7 +1,40 @@
 import React from 'react';
 
-export const ArrowPathIcon: React.FC<{ className?: string }> = ({
-  className = 'w-6 h-6'
+interface IconProps {
+  className?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  ariaHidden?: boolean;
+  ariaLabel?: string;
+  animated?: boolean;
+}
+
+const sizeClasses = {
+  xs: 'w-3 h-3',
+  sm: 'w-4 h-4',
+  md: 'w-5 h-5',
+  lg: 'w-6 h-6',
+  xl: 'w-8 h-8',
+  '2xl': 'w-10 h-10'
+};
+
+const colorClasses = {
+  primary: 'text-primary-600 dark:text-primary-400',
+  secondary: 'text-neutral-600 dark:text-neutral-400',
+  success: 'text-green-600 dark:text-green-400',
+  warning: 'text-orange-600 dark:text-orange-400',
+  danger: 'text-red-600 dark:text-red-400',
+  info: 'text-blue-600 dark:text-blue-400',
+  neutral: 'text-neutral-500 dark:text-neutral-400'
+};
+
+export const ArrowPathIcon: React.FC<IconProps> = ({
+  className = '',
+  size = 'md',
+  color = 'neutral',
+  ariaHidden = true,
+  ariaLabel,
+  animated = false
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -9,8 +42,9 @@ export const ArrowPathIcon: React.FC<{ className?: string }> = ({
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className={className}
-    aria-hidden="true"
+    className={`${sizeClasses[size]} ${colorClasses[color]} ${animated ? 'animate-spin' : ''} ${className} transition-transform duration-200 ease-in-out`}
+    aria-hidden={ariaHidden}
+    aria-label={ariaLabel}
   >
     <path
       strokeLinecap="round"
@@ -20,8 +54,12 @@ export const ArrowPathIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const AlertCircleIcon: React.FC<{ className?: string }> = ({
-  className = 'w-6 h-6'
+export const AlertCircleIcon: React.FC<IconProps> = ({
+  className = '',
+  size = 'md',
+  color = 'warning',
+  ariaHidden = true,
+  ariaLabel
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +67,9 @@ export const AlertCircleIcon: React.FC<{ className?: string }> = ({
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className={className}
-    aria-hidden="true"
+    className={`${sizeClasses[size]} ${colorClasses[color]} ${className} transition-all duration-200 ease-in-out`}
+    aria-hidden={ariaHidden}
+    aria-label={ariaLabel}
   >
     <path
       strokeLinecap="round"
@@ -40,8 +79,12 @@ export const AlertCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const CheckCircleIcon: React.FC<{ className?: string }> = ({
-  className = 'w-6 h-6'
+export const CheckCircleIcon: React.FC<IconProps> = ({
+  className = '',
+  size = 'md',
+  color = 'success',
+  ariaHidden = true,
+  ariaLabel
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -49,8 +92,9 @@ export const CheckCircleIcon: React.FC<{ className?: string }> = ({
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className={className}
-    aria-hidden="true"
+    className={`${sizeClasses[size]} ${colorClasses[color]} ${className} transition-all duration-200 ease-in-out`}
+    aria-hidden={ariaHidden}
+    aria-label={ariaLabel}
   >
     <path
       strokeLinecap="round"
@@ -60,8 +104,12 @@ export const CheckCircleIcon: React.FC<{ className?: string }> = ({
   </svg>
 );
 
-export const AlertTriangleIcon: React.FC<{ className?: string }> = ({
-  className = 'w-6 h-6'
+export const AlertTriangleIcon: React.FC<IconProps> = ({
+  className = '',
+  size = 'md',
+  color = 'danger',
+  ariaHidden = true,
+  ariaLabel
 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -69,8 +117,9 @@ export const AlertTriangleIcon: React.FC<{ className?: string }> = ({
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className={className}
-    aria-hidden="true"
+    className={`${sizeClasses[size]} ${colorClasses[color]} ${className} transition-all duration-200 ease-in-out`}
+    aria-hidden={ariaHidden}
+    aria-label={ariaLabel}
   >
     <path
       strokeLinecap="round"

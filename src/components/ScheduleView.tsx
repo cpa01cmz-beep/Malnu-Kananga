@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
@@ -33,17 +33,18 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeDay, setActiveDay] = useState('Senin');
   const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
   const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
 
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
-
-  const fetchSchedules = async () => {
-    setLoading(true);
+  const fetchSchedules = useCallback(async (isRetry = false) => {
+    if (isRetry) {
+      setIsRetrying(true);
+    } else {
+      setLoading(true);
+    }
     setError(null);
     try {
       const [schedulesRes, subjectsRes] = await Promise.all([
@@ -61,9 +62,17 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
       setError('Terjadi kesalahan saat mengambil data jadwal');
       logger.error('Error fetching schedules:', err);
     } finally {
-      setLoading(false);
+      if (isRetry) {
+        setIsRetrying(false);
+      } else {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchSchedules(false);
+  }, [fetchSchedules]);
 
   const getSubjectName = (subjectId: string): string => {
     const subject = subjects.find((s) => s.id === subjectId);
@@ -152,12 +161,15 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           message={error}
           variant="card"
         />
-        <div className="text-center">
+        <div className="text-center" aria-live="polite" aria-busy={isRetrying}>
           <Button
-            onClick={fetchSchedules}
+            onClick={() => fetchSchedules(true)}
             variant="red-solid"
+            isLoading={isRetrying}
+            disabled={isRetrying}
+            ariaLabel={isRetrying ? 'Memuat ulang jadwal, harap tunggu...' : 'Coba memuat jadwal lagi'}
           >
-            Coba Lagi
+            {isRetrying ? 'Memuat...' : 'Coba Lagi'}
           </Button>
         </div>
       </div>
