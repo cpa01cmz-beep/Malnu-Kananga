@@ -3,6 +3,7 @@ import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { COMPONENT_SIZES } from '../../config/designTokens';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -30,9 +31,9 @@ interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
 const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced hover-lift-enhanced backdrop-blur-sm shadow-sm hover:shadow-md focus:shadow-lg";
 
 const sizeClasses: Record<SearchInputSize, string> = {
-  sm: "px-3 py-3 text-sm min-h-[3rem]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[3.25rem]",
-  lg: "px-5 py-4 text-base sm:text-lg min-h-[3.75rem]",
+  sm: COMPONENT_SIZES.input.sm,
+  md: COMPONENT_SIZES.input.md,
+  lg: COMPONENT_SIZES.input.lg,
 };
 
 const sizeIconClasses: Record<SearchInputSize, string> = {
@@ -42,9 +43,9 @@ const sizeIconClasses: Record<SearchInputSize, string> = {
 };
 
 const stateClasses: Record<SearchInputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01] glass-effect",
-  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01] animate-input-shake-subtle",
-  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01] animate-success-pulse",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 glass-effect",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500",
+  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500",
 };
 
 const labelSizeClasses: Record<SearchInputSize, string> = {

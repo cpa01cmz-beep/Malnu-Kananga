@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
+import { COMPONENT_SIZES } from '../../config/designTokens';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'bottom-sheet';
 export type ModalAnimation = 'fade-in' | 'fade-in-up' | 'scale-in' | 'slide-up';
@@ -24,12 +25,12 @@ export interface ModalProps {
 }
 
 const sizeClasses: Record<ModalSize, string> = {
-  sm: 'max-w-sm w-full',
-  md: 'max-w-md w-full',
-  lg: 'max-w-lg w-full',
-  xl: 'max-w-xl w-full',
+  sm: 'max-w-sm w-full mx-4 sm:mx-auto',
+  md: 'max-w-md w-full mx-4 sm:mx-auto',
+  lg: 'max-w-lg w-full mx-4 sm:mx-auto',
+  xl: 'max-w-xl w-full mx-4 sm:mx-auto',
   full: 'w-full h-full m-0 rounded-none',
-  'bottom-sheet': 'w-full max-w-full mx-4 rounded-t-2xl',
+  'bottom-sheet': 'w-full max-w-full mx-0 rounded-t-2xl min-h-[40vh]',
 };
 
 const animationClasses: Record<ModalAnimation, string> = {
@@ -108,12 +109,12 @@ const Modal: React.FC<ModalProps> = ({
     }
   };
 
-  // Determine container classes based on position
+  // Determine container classes based on position with mobile-first approach
   const getContainerClasses = () => {
     if (position === 'bottom' || size === 'bottom-sheet') {
-      return 'fixed inset-0 bg-black/60 backdrop-blur-md flex items-end justify-center z-50 transition-all duration-300';
+      return 'fixed inset-0 bg-black/60 backdrop-blur-md flex items-end justify-center z-50 transition-all duration-300 safe-area-inset-bottom';
     }
-    return 'fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all duration-300';
+    return 'fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 sm:p-6 transition-all duration-300 safe-area-inset-top safe-area-inset-bottom';
   };
 
   // Determine modal classes
@@ -121,7 +122,7 @@ const Modal: React.FC<ModalProps> = ({
     const baseClasses = 'bg-white/95 dark:bg-neutral-800/95 shadow-2xl border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-md';
     
     if (size === 'bottom-sheet') {
-      return `${baseClasses} ${sizeClasses[size]} ${animationClasses[animation]} ${className} max-h-[80vh] overflow-y-auto`;
+      return `${baseClasses} ${sizeClasses[size]} ${animationClasses[animation]} ${className} max-h-[75vh] overflow-y-auto overscroll-contain`;
     }
     
     return `${baseClasses} ${sizeClasses[size]} ${animationClasses[animation]} ${className} rounded-xl`;
@@ -152,7 +153,7 @@ const Modal: React.FC<ModalProps> = ({
         )}
         
         {(title || showCloseButton) && (
-          <div className={`flex items-center justify-between ${size === 'bottom-sheet' ? 'px-6 pb-4' : 'p-6'} border-b border-neutral-200/60 dark:border-neutral-700/60`}>
+          <div className={`flex items-center justify-between ${size === 'bottom-sheet' ? 'px-4 pb-4 pt-2' : 'p-4 sm:p-6'} border-b border-neutral-200/60 dark:border-neutral-700/60`}>
             {title && (
               <h2 id="modal-title" className="text-xl font-bold text-neutral-900 dark:text-white tracking-tight">
                 {title}
@@ -183,7 +184,7 @@ const Modal: React.FC<ModalProps> = ({
             {description}
           </p>
         )}
-        <div className={size === 'bottom-sheet' ? 'px-6 pb-6' : 'p-6'}>{children}</div>
+        <div className={size === 'bottom-sheet' ? 'px-4 pb-6' : 'p-4 sm:p-6'}>{children}</div>
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ import { XMarkIcon, InformationCircleIcon } from '../icons/MaterialIcons';
 import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
 import IconButton from './IconButton';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { buildAriaAttributes, buildFocusClasses } from '../../utils/accessibilityUtils';
+import { COMPONENT_SIZES } from '../../config/designTokens';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -35,12 +37,12 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   showCharacterCount?: boolean;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm";
 
 const sizeClasses: Record<InputSize, string> = {
-  sm: "px-3 py-3 text-sm min-h-[3rem]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[3.25rem]",
-  lg: "px-5 py-4 text-base sm:text-lg min-h-[3.75rem]",
+  sm: COMPONENT_SIZES.input.sm,
+  md: COMPONENT_SIZES.input.md,
+  lg: COMPONENT_SIZES.input.lg,
 };
 
 const sizeIconClasses: Record<InputSize, string> = {
@@ -50,9 +52,9 @@ const sizeIconClasses: Record<InputSize, string> = {
 };
 
 const stateClasses: Record<InputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01]",
-  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01]",
-  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01]",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500",
+  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500",
 };
 
 const labelSizeClasses: Record<InputSize, string> = {
@@ -116,16 +118,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   };
 
   const getAnimationClass = (inputState: InputState): string => {
+    // Simplified animations - removed shake and pulse for better UX
     if (prefersReducedMotion) return '';
-
-    switch (inputState) {
-      case 'error':
-        return 'animate-input-shake-subtle';
-      case 'success':
-        return showSuccessAnimation ? 'animate-success-pulse' : '';
-      default:
-        return '';
-    }
+    return '';
   };
 
   const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
@@ -175,44 +170,36 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     }
   };
 
-  // Escape key handler to clear input value
+  // Enhanced keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Clear on Escape
     if (clearOnEscape && e.key === 'Escape') {
       const syntheticEvent = {
         target: { value: '' }
       } as React.ChangeEvent<HTMLInputElement>;
       handleMaskedChange(syntheticEvent);
+      return;
     }
+    
+    // Handle form submission on Enter
+    if (e.key === 'Enter' && props.type !== 'textarea') {
+      // Let the form handle submission
+      if (props.onKeyDown) {
+        props.onKeyDown(e);
+      }
+      return;
+    }
+    
     if (props.onKeyDown) {
       props.onKeyDown(e);
     }
   };
 
-  // Trigger subtle shake animation when validation errors occur
-  useEffect(() => {
-    if (validation.state.errors.length > 0 && validation.state.isTouched && !prefersReducedMotion) {
-      setShakeKey(prev => prev + 1);
-    }
-  }, [validation.state.errors, validation.state.isTouched, prefersReducedMotion]);
+  // Removed shake and success animations for cleaner UX
 
-  // Trigger success animation when validation passes
+  // Simplified auto-focus - only focus on new validation errors
   useEffect(() => {
-    if (validation.state.isValid && validation.state.isTouched && state === 'success') {
-      setShowSuccessAnimation(true);
-      const timer = setTimeout(() => {
-        setShowSuccessAnimation(false);
-      }, 600);
-      return () => clearTimeout(timer);
-    }
-  }, [validation.state.isValid, validation.state.isTouched, state]);
-
-  // Auto-focus management for validation errors (only for new errors, not on every re-render)
-  useEffect(() => {
-    const hasNewError = validation.state.errors.length > 0 && validation.state.isTouched;
-    const hadPreviousError = validation.state.errors.length > 0;
-    
-    // Only auto-focus if this is a new error, not continuing an existing one
-    if (hasNewError && !hadPreviousError && inputRef.current) {
+    if (validation.state.errors.length > 0 && validation.state.isTouched && inputRef.current) {
       inputRef.current.focus();
     }
   }, [validation.state.errors.length, validation.state.isTouched, inputRef]);
@@ -236,19 +223,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     ${getAnimationClass(finalState)}
     ${fullWidth ? 'w-full' : ''}
     ${leftIconSpacing} ${rightIconSpacing}
-    mobile-touch-target focus-enhanced hover-lift-enhanced transition-smooth
+    mobile-touch-target transition-smooth
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
   // Enhanced accessibility attributes
-  const accessibilityProps = {
-    'aria-describedby': describedBy,
-    'aria-invalid': finalState === 'error',
-    'aria-required': props.required,
-    'aria-errormessage': finalErrorText ? errorTextId : undefined,
-    ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
-    ...(validation.state.isValidating && { 'aria-busy': true })
-  };
+  const accessibilityProps = buildAriaAttributes({
+    describedby: describedBy,
+    invalid: finalState === 'error',
+    required: props.required,
+    errormessage: finalErrorText ? errorTextId : undefined,
+    busy: validation.state.isValidating,
+  });
 
   return (
     <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
@@ -277,7 +263,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         </label>
       )}
 
-      <div key={shakeKey} className="relative">
+      <div className="relative">
         {leftIcon && (
           <div
             className={`absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 ${sizeIconClasses[size]}`}
@@ -410,9 +396,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           aria-atomic="true"
         >
           <span 
-            className={`${helperTextSizeClasses[size]} ${getCounterColorClass()} transition-colors duration-200 font-medium ${
-              usagePercentage >= 80 && !prefersReducedMotion ? 'animate-pulse-subtle' : ''
-            }`}
+            className={`${helperTextSizeClasses[size]} ${getCounterColorClass()} transition-colors duration-200 font-medium`}
             aria-label={`${currentLength} dari ${maxLengthNumber} karakter digunakan`}
           >
             {currentLength}

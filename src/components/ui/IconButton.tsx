@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useId } from 'react';
+import { COMPONENT_SIZES } from '../../config/designTokens';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -15,7 +16,7 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
+const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target button-enhanced glass-effect";
 
 const variantClasses: Record<IconButtonVariant, string> = {
   default: "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-primary-500/50 hover:scale-110 active:scale-95 active:bg-neutral-200 dark:active:bg-neutral-600 focus-visible-enhanced glass-effect focus-indicator-enhanced",
@@ -29,9 +30,9 @@ const variantClasses: Record<IconButtonVariant, string> = {
 };
 
 const sizeClasses: Record<IconButtonSize, string> = {
-  sm: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  md: "p-3 min-w-[48px] min-h-[48px]",
-  lg: "p-4 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
+  sm: COMPONENT_SIZES.button.icon.sm,
+  md: COMPONENT_SIZES.button.icon.md,
+  lg: COMPONENT_SIZES.button.icon.lg,
 };
 
 const iconSizeClasses: Record<IconButtonSize, string> = {

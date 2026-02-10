@@ -1,5 +1,6 @@
 import { UI_SPACING } from '../constants';
 import { enhanceInteractiveElement } from './accessibilityUtils';
+import { COMPONENT_SIZES } from '../config/designTokens';
 
 /**
  * Utility function to build consistent button class names
@@ -38,24 +39,14 @@ export function buildButtonClasses(options: {
 }
 
 /**
- * Size class mapping using spacing constants
+ * Size class mapping using unified design tokens
  */
-export const BUTTON_SIZE_CLASSES = {
-  icon: `p-3 text-sm ${UI_SPACING.TOUCH_TARGET_MIN} sm:${UI_SPACING.TOUCH_TARGET_NORMAL}`,
-  sm: `px-4 py-2.5 text-sm min-h-[52px] sm:min-h-[56px] mobile-touch-target`,
-  md: `px-5 py-3 text-sm sm:text-base min-h-[56px] sm:min-h-[60px] mobile-touch-target`,
-  lg: `px-6 py-4 text-base sm:text-lg min-h-[60px] sm:min-h-[64px] mobile-touch-target`,
-} as const;
+export const BUTTON_SIZE_CLASSES = COMPONENT_SIZES.button;
 
 /**
- * Icon-only size class mapping using spacing constants
+ * Icon-only size class mapping using unified design tokens
  */
-export const BUTTON_ICON_ONLY_SIZES = {
-  icon: `p-3 ${UI_SPACING.TOUCH_TARGET_MIN} sm:${UI_SPACING.TOUCH_TARGET_NORMAL}`,
-  sm: `p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]`,
-  md: `p-3 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]`,
-  lg: `p-4 min-w-[60px] min-h-[60px] sm:min-w-[64px] sm:min-h-[64px]`,
-} as const;
+export const BUTTON_ICON_ONLY_SIZES = COMPONENT_SIZES.button.icon;
 
 /**
  * Base button classes with mobile enhancements

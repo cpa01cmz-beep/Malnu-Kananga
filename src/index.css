@@ -1616,6 +1616,72 @@
   }
 }
 
+/* Mobile-responsive typography */
+.text-mobile-responsive {
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+  line-height: 1.5;
+}
+
+.text-mobile-heading {
+  font-size: clamp(1.25rem, 4vw, 1.75rem);
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.text-mobile-subheading {
+  font-size: clamp(1rem, 3vw, 1.375rem);
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+.text-mobile-body {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  line-height: 1.5;
+}
+
+.text-mobile-caption {
+  font-size: clamp(0.75rem, 2vw, 0.875rem);
+  line-height: 1.4;
+}
+
+/* Responsive font size classes */
+.text-responsive-xs {
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+}
+
+.text-responsive-sm {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.text-responsive-base {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+}
+
+.text-responsive-lg {
+  font-size: clamp(1.125rem, 3vw, 1.25rem);
+}
+
+.text-responsive-xl {
+  font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+}
+
+/* Safe area insets for mobile devices */
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-inset-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-inset-right {
+  padding-right: env(safe-area-inset-right);
+}
+
 @media (min-width: 768px) {
   .mobile-card-stack {
     display: grid;
@@ -15644,9 +15710,54 @@ html {
   color: hsl(var(--color-neutral-400));
 }
 
+/* Enhanced focus indicators for better accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-offset-2 ring-offset-white dark:ring-offset-neutral-900;
+}
+
+.focus-ring-primary {
+  @apply focus:ring-primary-500/50;
+}
+
+.focus-ring-error {
+  @apply focus:ring-red-500/50;
+}
+
+.focus-ring-success {
+  @apply focus:ring-green-500/50;
+}
+
+.focus-ring-warning {
+  @apply focus:ring-orange-500/50;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .focus-ring {
+    @apply focus:ring-4 focus:ring-offset-4;
+  }
+  
+  .border-neutral-200 {
+    @apply border-neutral-400;
+  }
+  
+  .border-neutral-300 {
+    @apply border-neutral-500;
+  }
+}
+
+/* Enhanced color contrast for text */
+.text-contrast-enhanced {
+  color: hsl(220 39% 8%);
+}
+
+.dark .text-contrast-enhanced {
+  color: hsl(220 20% 97%);
+}
+
 /* Simplified state colors with better contrast */
 .text-state-success {
-  color: hsl(var(--color-green-700));
+  color: hsl(142 72% 30%);
   font-weight: 500;
 }
 

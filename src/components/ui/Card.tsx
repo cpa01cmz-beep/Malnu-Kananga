@@ -1,4 +1,5 @@
 import React, { forwardRef, ButtonHTMLAttributes, useState } from 'react';
+import { COMPONENT_SIZES } from '../../config/designTokens';
 
 export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
 
@@ -45,12 +46,7 @@ interface InteractiveCardProps extends Omit<CardProps, 'onClick' | 'role'>, Omit
   role?: string;
 }
 
-const paddingClasses = {
-  none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-6 sm:p-8'
-};
+const paddingClasses = COMPONENT_SIZES.card.padding;
 
 const roundedClasses: Record<CardRounded, string> = {
   none: 'rounded-none',
@@ -79,7 +75,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm border border-neutral-200/60 dark:border-neutral-700/60";
+const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 border border-neutral-200 dark:border-neutral-700";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -136,25 +132,25 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
+        classes += ' hover:shadow-md cursor-pointer';
         break;
       case 'interactive':
-        classes += ` hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer ${
-          isPressed ? 'scale-[0.98] shadow-sm translate-y-0' : ''
+        classes += ` hover:shadow-md cursor-pointer ${
+          isPressed ? 'shadow-sm' : ''
         }`;
         break;
       case 'gradient':
         if (gradient) {
-          classes = classes.replace('bg-white/95 dark:bg-neutral-800/95', '');
+          classes = classes.replace('bg-white dark:bg-neutral-800', '');
           classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to}`;
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
+          classes += ' hover:shadow-md cursor-pointer';
         }
         break;
       default:
-        classes += ' hover:shadow-md';
+        classes += ' hover:shadow-sm';
         break;
     }
 
@@ -201,12 +197,10 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       className={getCardClasses()}
     >
       {children}
-      {/* Subtle hover effect for non-interactive cards */}
-      {variant === 'hover' && (
-        <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
-          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-        </span>
-      )}
+       {/* Simplified hover effect for non-interactive cards */}
+       {variant === 'hover' && (
+         <span className="absolute inset-0 rounded-xl bg-white/5 dark:bg-white/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
+       )}
     </div>
   );
 });

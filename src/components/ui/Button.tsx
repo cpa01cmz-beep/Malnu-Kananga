@@ -1,6 +1,7 @@
 import React from 'react';
 import { XML_NAMESPACES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { buildAriaAttributes, buildFocusClasses } from '../../utils/accessibilityUtils';
 import { 
   buildButtonClasses, 
   BUTTON_SIZE_CLASSES, 
@@ -10,15 +11,11 @@ import {
   BUTTON_INTENT_CLASSES 
 } from '../../utils/buttonUtils';
 
-// Haptic feedback utility
+// Reduced haptic feedback - only for primary actions
 const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
-  if ('vibrate' in navigator && window.innerWidth <= 768) {
-    const pattern = {
-      light: [10],
-      medium: [25],
-      heavy: [50]
-    };
-    navigator.vibrate(pattern[type]);
+  if ('vibrate' in navigator && window.innerWidth <= 768 && type === 'medium') {
+    // Only vibrate for primary/important actions
+    navigator.vibrate([15]);
   }
 };
 
@@ -145,21 +142,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : ariaLabel;
 
-  const ariaProps: Record<string, string | boolean | undefined> = {};
-
-  if (computedAriaLabel) {
-    ariaProps['aria-label'] = computedAriaLabel;
-  }
-
-  if (isLoading) {
-    ariaProps['aria-busy'] = 'true';
-  }
+  const ariaProps = buildAriaAttributes({
+    label: computedAriaLabel,
+    busy: isLoading,
+    required: props.required,
+    expanded: props['aria-expanded'],
+    pressed: props['aria-pressed'],
+  });
 
   const isDisabled = disabled || isLoading;
 
   const handlePressStart = () => {
-    if (!isDisabled) {
-      triggerHapticFeedback(normalizedVariant === 'primary' ? 'medium' : 'light');
+    if (!isDisabled && normalizedVariant === 'primary') {
+      triggerHapticFeedback('medium');
     }
   };
 
@@ -167,7 +162,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     // Enhanced keyboard navigation
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      triggerHapticFeedback('light');
+      // Let the native click handler handle the action
+    }
+    // Handle Escape key for cancelable actions
+    if (e.key === 'Escape' && props.onClick) {
+      e.preventDefault();
+      // Could trigger a cancel action if needed
     }
   };
 
