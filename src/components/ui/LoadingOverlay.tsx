@@ -45,8 +45,8 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   const { onNotification } = useHapticFeedback();
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    let minDisplayTimeoutId: NodeJS.Timeout | undefined;
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let minDisplayTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
     if (isLoading) {
       // Delay showing the overlay
