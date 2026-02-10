@@ -21,6 +21,7 @@ export interface StatsCardProps {
   className?: string;
   variant?: 'default' | 'gradient' | 'elevated';
   size?: 'sm' | 'md' | 'lg';
+  tooltip?: string;
 }
 
 const sizeClasses = {
@@ -51,6 +52,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
   className = '',
   variant = 'default',
   size = 'md',
+  tooltip,
 }) => {
   const [_isHovered, _setIsHovered] = useState(false);
 
@@ -162,10 +164,21 @@ const StatsCard: React.FC<StatsCardProps> = ({
 
   return (
     <div
-      className={`${getCardClasses()} ${sizeClasses[size]} ${className}`}
+      className={`${getCardClasses()} ${sizeClasses[size]} ${className} relative`}
       onMouseEnter={() => _setIsHovered(true)}
       onMouseLeave={() => _setIsHovered(false)}
+      aria-describedby={tooltip ? `tooltip-${title}` : undefined}
     >
+      {tooltip && _isHovered && (
+        <div
+          id={`tooltip-${title}`}
+          className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full z-50 px-3 py-2 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-xl whitespace-nowrap animate-in fade-in zoom-in-95 duration-200 pointer-events-none"
+          role="tooltip"
+        >
+          {tooltip}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" />
+        </div>
+      )}
       <div className="flex items-start justify-between mb-4">
         <div className={`${iconSizeClasses[size]} p-2 rounded-lg bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400`}>
           {icon}
