@@ -134,7 +134,7 @@ See `.opencode/README.md` for detailed usage instructions.
 
 ### Branch Cleanup Status (2026-02-10)
 
-**Current Status:** ✅ All stale branches deleted - 16 remote branches remaining
+**Current Status:** ✅ All stale branches deleted - 24 remote branches remaining
 
 #### Deleted Stale Branches (10 branches)
 All branches >1 week old have been successfully removed:
@@ -149,24 +149,41 @@ All branches >1 week old have been successfully removed:
 - ✅ `fix/issue-1323-circular-dependencies` (Feb 1)
 - ✅ `feature/remove-duplicate-api-url-definitions` (Feb 1)
 
-#### Active Branches (16 branches)
+#### Active Branches (24 branches)
 All remaining branches are from Feb 9-10 with active development:
-- `feature/modularize-hardcoded-values`
-- `fix/console-errors-and-optimization`
-- `feature/searchinput-clear-button-ux`
-- `feature/ux-improvements`
+
+**Feature Branches (12):**
+- `feature/enhanced-ui-ux-improvements`
 - `feature/enhanced-ux-ui-mobile-first`
-- `fix/icon-fast-refresh-warning`
-- `fix/fatal-build-errors`
-- `fix/brocula-console-errors-warnings`
-- `fix/build-errors-and-lint-warnings`
-- `fix/build-errors-20260209`
-- `feature/ux-improve-datatable-error-state`
-- `fix/modal-test-updates`
 - `feature/flexy-eliminate-hardcoded`
+- `feature/flexy-eliminate-hardcoded-values`
+- `feature/iconbutton-keyboard-shortcut-ux`
+- `feature/modularize-hardcoded-values`
+- `feature/searchinput-clear-button-animation`
+- `feature/searchinput-clear-button-ux`
+- `feature/select-clear-button-tooltip-ux`
+- `feature/ux-improve-datatable-error-state`
+- `feature/ux-improvements`
+
+**Fix Branches (10):**
+- `fix/brocula-console-errors-warnings`
+- `fix/brocula-console-lighthouse-optimizations`
+- `fix/build-errors-20260209`
+- `fix/build-errors-and-lint-warnings`
+- `fix/console-errors-and-optimization`
+- `fix/css-unexpected-closing-brace`
+- `fix/fatal-build-errors`
+- `fix/icon-fast-refresh-warning`
+- `fix/modal-test-updates`
+- `fix/schedule-view-lint-warning`
+- `fix/scheduleview-lint-warning`
+
+**Maintenance Branches (2):**
+- `repokeeper/maintenance-2026-02-10`
+- `repokeeper/maintenance-2026-02-10-update`
+
+**Main Branch (1):**
 - `main`
-- `fix/infinite-loop-issues`
-- `feature/ui-ux-enhancements`
 
 ### Cleanup Commands
 ```bash
@@ -185,4 +202,4 @@ git for-each-ref --sort=committerdate refs/remotes/origin/ --format='%(committer
 - ✅ No temp files found
 - ✅ .gitignore: Comprehensive (138 lines)
 - ✅ Documentation: 24 docs files up to date
-- ✅ Branches: 16 total, 0 stale candidates
+- ✅ Branches: 24 total, 0 stale candidates
