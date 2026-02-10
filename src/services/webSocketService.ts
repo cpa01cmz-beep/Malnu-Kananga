@@ -6,6 +6,7 @@
     API_CONFIG,
     TIME_CONVERSION,
     WEBSOCKET_CONSTANTS,
+    WEBSOCKET_CLOSE_CODES,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -748,7 +749,7 @@ private updateEventsData(event: RealTimeEvent): void {
         type: 'disconnect',
         timestamp: new Date().toISOString(),
       }));
-      this.ws.close(1000, 'Client disconnect');
+      this.ws.close(WEBSOCKET_CLOSE_CODES.NORMAL, 'Client disconnect');
     }
     
     this.ws = null;
