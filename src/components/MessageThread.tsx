@@ -308,7 +308,8 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
                     <div className={`mt-1 ${isOwn ? 'text-right' : 'text-left'}`}>
                       <button
                         onClick={() => handleReply(message)}
-                        className="text-xs text-gray-500 hover:text-blue-600"
+                        className="text-xs text-gray-500 hover:text-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-1 rounded px-1.5 py-0.5 transition-colors duration-150 active:scale-95"
+                        aria-label={`Balas pesan dari ${sender?.name || message.senderName}`}
                       >
                         Balas
                       </button>
