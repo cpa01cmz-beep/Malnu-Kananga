@@ -33,7 +33,7 @@ export const MOBILE_ENHANCEMENTS = `
   }
 }
 
-/* Touch-Optimized Button System */
+/* Enhanced Touch-Optimized Button System */
 .btn-touch {
   min-height: 44px;
   min-width: 44px;
@@ -41,18 +41,28 @@ export const MOBILE_ENHANCEMENTS = `
   border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  will-change: transform, box-shadow;
+}
+
+/* Enhanced Touch Feedback States */
+.btn-touch:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-touch:active {
-  transform: scale(0.95);
+  transform: scale(0.96) translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.08s ease;
 }
 
-.btn-touch::after {
+/* Ripple Effect Enhancement */
+.btn-touch::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -60,14 +70,32 @@ export const MOBILE_ENHANCEMENTS = `
   width: 0;
   height: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
-  transition: width 0.4s, height 0.4s;
+  transition: width 0.6s, height 0.6s, opacity 0.6s;
+  pointer-events: none;
 }
 
-.btn-touch:active::after {
-  width: 200px;
-  height: 200px;
+.btn-touch.ripple::before {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+.btn-touch:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Haptic Feedback Simulation */
+.btn-touch.haptic-feedback:active {
+  animation: hapticPulse 0.15s ease-out;
+}
+
+@keyframes hapticPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(0.96); }
 }
 
 /* Touch-Optimized Input System */
@@ -113,7 +141,7 @@ export const MOBILE_ENHANCEMENTS = `
   }
 }
 
-/* Mobile Navigation Patterns */
+/* Enhanced Mobile Navigation Patterns */
 .nav-mobile {
   display: flex;
   flex-direction: column;
@@ -126,33 +154,87 @@ export const MOBILE_ENHANCEMENTS = `
 .nav-mobile-item {
   padding: 1rem;
   border-bottom: 1px solid #e5e7eb;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   text-decoration: none;
   color: #374151;
   font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  will-change: transform, background-color;
 }
 
 .nav-mobile-item:hover {
   background-color: #f9fafb;
+  transform: translateX(4px);
 }
 
 .nav-mobile-item:active {
   background-color: #f3f4f6;
+  transform: translateX(2px);
+  transition: all 0.1s ease;
 }
 
-/* Mobile Card System */
+/* Navigation Active State */
+.nav-mobile-item.active {
+  background-color: #eff6ff;
+  color: #3b82f6;
+  border-left: 3px solid #3b82f6;
+}
+
+.nav-mobile-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+/* Enhanced Mobile Card System */
 .card-mobile {
   background: white;
   border-radius: 0.75rem;
   padding: 1.25rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform, box-shadow;
+}
+
+.card-mobile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.15);
 }
 
 .card-mobile:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+  transform: scale(0.98) translateY(0);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  transition: all 0.1s ease;
+}
+
+/* Card Touch Ripple */
+.card-mobile::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.card-mobile:active::after {
+  opacity: 1;
 }
 
 /* Swipeable Containers */
@@ -417,7 +499,7 @@ export const MOBILE_ENHANCEMENTS = `
   -webkit-overflow-scrolling: touch;
 }
 
-/* Mobile Optimizations */
+/* Enhanced Mobile Optimizations */
 @media (max-width: 767px) {
   .mobile-padding {
     padding: 1rem;
@@ -438,6 +520,208 @@ export const MOBILE_ENHANCEMENTS = `
   .mobile-flex-col {
     flex-direction: column;
   }
+}
+
+/* Enhanced Touch Feedback System */
+.touch-feedback {
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.touch-feedback::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+  pointer-events: none;
+}
+
+.touch-feedback:active::before {
+  width: 200px;
+  height: 200px;
+}
+
+.touch-feedback:active {
+  transform: scale(0.95);
+}
+
+/* Touch-Optimized List Items */
+.touch-list-item {
+  min-height: 48px;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-list-item:hover {
+  background-color: #f9fafb;
+}
+
+.touch-list-item:active {
+  background-color: #f3f4f6;
+  transform: scale(0.98);
+}
+
+/* Enhanced Touch Targets */
+.touch-target-large {
+  min-height: 52px;
+  min-width: 52px;
+}
+
+.touch-target-comfortable {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.touch-target-minimum {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Touch Gesture Indicators */
+.swipe-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 4px;
+  background: #d1d5db;
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+.swipe-indicator-right {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px;
+  background: #d1d5db;
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+/* Touch-Optimized Switches */
+.touch-switch {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: #d1d5db;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-switch.active {
+  background: #3b82f6;
+}
+
+.touch-switch-handle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.touch-switch.active .touch-switch-handle {
+  transform: translateX(24px);
+}
+
+/* Touch-Optimized Sliders */
+.touch-slider {
+  width: 100%;
+  height: 40px;
+  position: relative;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-slider-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.touch-slider-fill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 4px;
+  background: #3b82f6;
+  border-radius: 2px;
+  transform: translateY(-50%);
+  transition: width 0.2s ease;
+}
+
+.touch-slider-thumb {
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border: 2px solid #3b82f6;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.touch-slider-thumb:active {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Touch-Optimized Dropdowns */
+.touch-dropdown {
+  position: relative;
+  min-height: 48px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.touch-dropdown:active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.touch-dropdown-arrow {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.2s ease;
+}
+
+.touch-dropdown.open .touch-dropdown-arrow {
+  transform: translateY(-50%) rotate(180deg);
 }
 `;
 
@@ -502,6 +786,14 @@ export const getMobileClasses = (type: string) => {
     form: 'form-mobile',
     tabs: 'tabs-mobile',
     tab: 'tab-mobile',
+    feedback: 'touch-feedback',
+    listItem: 'touch-list-item',
+    targetLarge: 'touch-target-large',
+    targetComfortable: 'touch-target-comfortable',
+    targetMinimum: 'touch-target-minimum',
+    switch: 'touch-switch',
+    slider: 'touch-slider',
+    dropdown: 'touch-dropdown',
   };
   
   return classes[type as keyof typeof classes] || '';
