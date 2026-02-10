@@ -3,7 +3,7 @@
 
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, USER_ROLES } from '../constants';
 import { gradesAPI } from './apiService';
 import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
@@ -88,7 +88,7 @@ class ParentGradeNotificationService {
   private async handleOCRValidationEvent(event: OCRValidationEvent): Promise<void> {
     try {
       // Only process events for students whose parents are the current user
-      if (event.userRole !== 'parent' && !this.isChildDocument(event.userId)) {
+      if (event.userRole !== USER_ROLES.PARENT && !this.isChildDocument(event.userId)) {
         logger.info('OCR validation event not relevant to current parent user');
         return;
       }
@@ -121,7 +121,7 @@ class ParentGradeNotificationService {
       );
       
       // Check if current user is a parent
-      if (currentUser.role !== 'parent') {
+      if (currentUser.role !== USER_ROLES.PARENT) {
         return false;
       }
 
@@ -202,7 +202,7 @@ class ParentGradeNotificationService {
             timestamp: new Date().toISOString(),
             read: false,
             priority: 'low' as const,
-            targetRoles: ['parent'],
+            targetRoles: [USER_ROLES.PARENT],
             data: { type: 'ocr_validation', skipped: true }
           };
         }
@@ -222,7 +222,7 @@ class ParentGradeNotificationService {
       timestamp: new Date().toISOString(),
       read: false,
       priority,
-      targetRoles: ['parent'],
+      targetRoles: [USER_ROLES.PARENT],
       data: {
         type: 'ocr_validation' as const,
         validationType: type,
@@ -601,7 +601,7 @@ class ParentGradeNotificationService {
       timestamp: new Date().toISOString(),
       read: false,
       priority: data.isBelowThreshold ? 'high' : 'normal',
-      targetRoles: ['parent'],
+      targetRoles: [USER_ROLES.PARENT],
       data: {
         type: 'grade_notification',
         studentName: data.studentName,
@@ -782,7 +782,7 @@ class ParentGradeNotificationService {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         data: {
           type: 'grade_digest',
           frequency,
@@ -958,7 +958,7 @@ class ParentGradeNotificationService {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'high',
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         data: {
           type: 'missing_grades',
           studentName: child.studentName,
