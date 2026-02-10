@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { AutoSaveIndicator, useAutoSave } from '../AutoSaveIndicator';
+import { AutoSaveIndicator } from '../AutoSaveIndicator';
+import { useAutoSave } from '../../../hooks/useAutoSaveIndicator';
 
 describe('AutoSaveIndicator', () => {
   it('renders null when status is idle', () => {
