@@ -9,6 +9,7 @@ import Modal from './ui/Modal';
 import SearchInput from './ui/SearchInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { UI_STRINGS } from '../constants';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -384,14 +385,14 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
             onClick={() => setShowShareModal(false)}
             variant="ghost"
           >
-            Batal
+            {UI_STRINGS.CANCEL}
           </Button>
           <Button
             onClick={handleShare}
             disabled={selectedTeachers.length === 0 || loading}
             isLoading={loading}
           >
-            {loading ? 'Membagikan...' : `Bagikan ke ${selectedTeachers.length} Guru`}
+            {loading ? UI_STRINGS.SHARING : `${UI_STRINGS.SHARE} ${UI_STRINGS.TO} ${selectedTeachers.length} Guru`}
           </Button>
         </div>
       </Modal>
@@ -401,8 +402,8 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
         title="Batasi Akses Guru"
         message={`Batasi akses ${teachersToRevoke.length} guru?`}
         type="warning"
-        confirmText="Batasi"
-        cancelText="Batal"
+        confirmText={UI_STRINGS.REVOKE_ACCESS}
+        cancelText={UI_STRINGS.CANCEL}
         onConfirm={confirmRevoke}
         onCancel={() => {
           setIsDeleteDialogOpen(false);

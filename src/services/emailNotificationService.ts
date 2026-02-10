@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, EMAIL_COLORS, TIME_MS, SCHEDULER_INTERVALS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, EMAIL_COLORS, TIME_MS, SCHEDULER_INTERVALS, TIME_FORMAT } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -213,7 +213,7 @@ class EmailNotificationService {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
-    const currentTime = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
+    const currentTime = `${currentHour.toString().padStart(TIME_FORMAT.HOURS_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}${TIME_FORMAT.SEPARATOR}${currentMinute.toString().padStart(TIME_FORMAT.MINUTES_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}`;
 
     const { start, end } = preferences.quietHours;
     
@@ -360,7 +360,7 @@ class EmailNotificationService {
     const now = new Date();
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
-    const currentTime = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
+    const currentTime = `${currentHour.toString().padStart(TIME_FORMAT.HOURS_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}${TIME_FORMAT.SEPARATOR}${currentMinute.toString().padStart(TIME_FORMAT.MINUTES_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}`;
     const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
 
     if (frequency === 'daily') {

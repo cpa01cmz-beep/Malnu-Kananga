@@ -5,7 +5,7 @@ import { CloseIcon } from '../icons/CloseIcon';
 import { ArrowDownTrayIcon } from '../icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../../services/apiService';
 import { logger } from '../../utils/logger';
-import { mbToBytes } from '../../constants';
+import { mbToBytes, COMPONENT_TIMEOUTS, CONVERSION } from '../../constants';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
 
@@ -68,7 +68,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
   const announceToScreenReader = useCallback((message: string) => {
     setAnnouncement(message);
-    setTimeout(() => setAnnouncement(''), 1000);
+    setTimeout(() => setAnnouncement(''), COMPONENT_TIMEOUTS.SCREEN_READER_ANNOUNCEMENT_CLEAR);
   }, []);  
 
   useEffect(() => {
@@ -81,10 +81,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
-    const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
+    return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const formatSpeed = (bytesPerSecond: number): string => {

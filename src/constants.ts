@@ -742,6 +742,14 @@ export function bytesToMb(bytes: number): number {
 }
 
 /**
+ * Convert bytes to kilobytes
+ * Flexy says: Use this instead of hardcoded `bytes / 1024`
+ */
+export function bytesToKb(bytes: number): number {
+    return bytes / CONVERSION.BYTES_PER_KB;
+}
+
+/**
  * Convert minutes to milliseconds
  * Flexy says: Use this instead of hardcoded `minutes * 60 * 1000`
  */
@@ -994,6 +1002,7 @@ export const COMPONENT_TIMEOUTS = {
     PASSWORD_REQUIREMENTS_HIDE: 3000,
     PAGE_RELOAD: 1500,
     ERROR_FLUSH: 2000, // Sentry flush timeout
+    SCREEN_READER_ANNOUNCEMENT_CLEAR: 1000, // Time to clear screen reader announcements
 } as const;
 
 // Animation constants
@@ -1068,6 +1077,11 @@ export const UI_STRINGS = {
     YES: 'Ya',
     NO: 'Tidak',
     OK: 'OK',
+    CONFIRM_ACTION: 'Ya, Lanjutkan',
+    REVOKE_ACCESS: 'Batasi',
+    SHARE: 'Bagikan',
+    SHARING: 'Membagikan...',
+    TO: 'ke',
     LOGOUT: 'Keluar',
     LOGIN: 'Login',
     REGISTER: 'Daftar',
@@ -2439,4 +2453,13 @@ export const DATATABLE_CONFIG = {
         SELECTION_UNCHECK: [10],
         TOUCH_LIGHT: 3,
     } as const,
+} as const;
+
+// Responsive Breakpoints (numeric values for JS comparisons) - Flexy: Never hardcode breakpoint values!
+export const BREAKPOINTS = {
+    SM: 640,    // Phone landscape
+    MD: 768,    // Tablet portrait  
+    LG: 1024,   // Tablet landscape/Desktop
+    XL: 1280,   // Desktop
+    XXL: 1536,  // Large desktop
 } as const;

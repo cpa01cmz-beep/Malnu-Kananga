@@ -10,7 +10,7 @@ import { CheckIcon } from './icons/CheckIcon';
 import { ChevronLeftIcon } from './icons/ChevronLeftIcon';
 import { ArrowRightIcon } from './icons/ArrowRightIcon';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, ID_FORMAT } from '../constants';
 
 interface StudentQuizProps {
   quiz: Quiz;
@@ -137,7 +137,7 @@ export function StudentQuiz({ quiz, onSubmit, onCancel }: StudentQuizProps) {
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}:${secs.toString().padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
   };
 
   const handleAnswerChange = (answer: string | string[]) => {
