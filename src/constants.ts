@@ -546,6 +546,7 @@ export const GRADE_LIMITS = {
     MIN: 0,
     MAX: 100,
     PASS_THRESHOLD: 40,
+    HISTORY_MAX_ENTRIES: 100,
     MIN_PASS: 60,
 } as const;
 
@@ -584,6 +585,7 @@ export const UI_DELAYS = {
     LOADING_INDICATOR: 1500,
     REDIRECT_DELAY: 3000,
     USER_IMPORT_DELAY: 100,
+    SYNC_BATCH_DELAY: 100, // Delay between processing batch operations
 } as const;
 
 // Cache and storage limits
