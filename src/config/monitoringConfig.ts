@@ -1,4 +1,5 @@
 // monitoringConfig.ts - Centralized monitoring configuration
+import { TIME_MS } from '../constants';
 
 // ============================================
 // ERROR MONITORING CONFIGURATION
@@ -90,7 +91,7 @@ export const getHealthMetricsConfig = (): HealthMetricsConfig => {
 
   return {
     refreshInterval: isProduction ? 5000 : 10000, // 5s in prod, 10s in dev
-    alertRetentionPeriod: 7 * 24 * 60 * 60 * 1000, // 7 days
+    alertRetentionPeriod: TIME_MS.ONE_WEEK, // 7 days
     maxAlerts: 100,
     memoryWarningThreshold: 75,
     memoryCriticalThreshold: 90,

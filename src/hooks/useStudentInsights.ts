@@ -244,7 +244,7 @@ export const useStudentInsights = ({
         }) => {
           if (analysis.operation === 'studentAnalysis') {
             const analysisTime = new Date(analysis.timestamp);
-            const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+            const thirtyMinutesAgo = new Date(Date.now() - TIME_MS.THIRTY_MINUTES);
             const isMatchingData = JSON.stringify(analysis.inputData) === dataKey;
             return analysisTime > thirtyMinutesAgo && isMatchingData;
           }
@@ -271,7 +271,7 @@ export const useStudentInsights = ({
         
         // Check if cached insights are fresh (less than 30 minutes old)
         const lastUpdated = new Date(cachedInsights.lastUpdated);
-        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+        const thirtyMinutesAgo = new Date(Date.now() - TIME_MS.THIRTY_MINUTES);
         
         if (lastUpdated > thirtyMinutesAgo) {
           setInsights(cachedInsights);
