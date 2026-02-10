@@ -1,4 +1,16 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useState, useCallback } from 'react'
+import { useReducedMotion } from '../../hooks/useReducedMotion'
+
+// Haptic feedback utility
+const triggerHapticFeedback = (type: 'light' | 'medium' = 'light') => {
+  if ('vibrate' in navigator && window.innerWidth <= 768) {
+    const pattern = {
+      light: [10],
+      medium: [25]
+    };
+    navigator.vibrate(pattern[type]);
+  }
+};
 
 export interface ToggleProps extends Omit<React.ComponentPropsWithoutRef<'input'>, 'type'> {
   label?: string
@@ -59,6 +71,31 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
     const hasLabel = label || description
     const labelClasses = sizeClasses[toggleSize]
     const colorClass = colorClasses[color]
+    const prefersReducedMotion = useReducedMotion()
+    const [isPressed, setIsPressed] = useState(false)
+
+    const handlePressStart = useCallback(() => {
+      if (!disabled) {
+        setIsPressed(true)
+        triggerHapticFeedback('light')
+      }
+    }, [disabled])
+
+    const handlePressEnd = useCallback(() => {
+      setIsPressed(false)
+    }, [])
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        triggerHapticFeedback('light')
+        // Trigger the toggle by simulating a click on the input
+        const input = document.getElementById(toggleId) as HTMLInputElement
+        if (input && !disabled) {
+          input.click()
+        }
+      }
+    }, [toggleId, disabled])
 
     const content = (
       <>
@@ -71,6 +108,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           onChange={onChange}
           onFocus={onFocus}
           onBlur={onBlur}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
           className="sr-only peer"
           aria-label={ariaLabel}
@@ -93,10 +131,17 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             peer-checked:after:border-white
             peer-checked:after:translate-x-full
             ${colorClass}
-            transition-colors duration-200 ease-in-out
+            transition-all duration-200 ease-in-out
             ${disabled ? 'opacity-50' : 'cursor-pointer'}
+            ${isPressed ? 'scale-95' : 'scale-100'}
+            ${prefersReducedMotion ? '' : 'active:scale-95'}
           `}
           aria-hidden="true"
+          onMouseDown={handlePressStart}
+          onMouseUp={handlePressEnd}
+          onMouseLeave={handlePressEnd}
+          onTouchStart={handlePressStart}
+          onTouchEnd={handlePressEnd}
         />
       </>
     )
