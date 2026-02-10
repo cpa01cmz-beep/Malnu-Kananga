@@ -312,6 +312,173 @@ export const DESIGN_TOKENS = {
         '0%': { opacity: '1' },
         '100%': { opacity: '0' },
       },
+      
+      // Enhanced slide animations with easing
+      slideInEnhanced: {
+        '0%': { 
+          transform: 'translateX(-100%) rotateY(-15deg)',
+          opacity: '0',
+          filter: 'blur(4px)'
+        },
+        '50%': {
+          transform: 'translateX(-50%) rotateY(-7deg)',
+          opacity: '0.5',
+          filter: 'blur(2px)'
+        },
+        '100%': { 
+          transform: 'translateX(0) rotateY(0deg)',
+          opacity: '1',
+          filter: 'blur(0px)'
+        },
+      },
+      
+      slideOutEnhanced: {
+        '0%': { 
+          transform: 'translateX(0) rotateY(0deg)',
+          opacity: '1',
+          filter: 'blur(0px)'
+        },
+        '50%': {
+          transform: 'translateX(50%) rotateY(7deg)',
+          opacity: '0.5',
+          filter: 'blur(2px)'
+        },
+        '100%': { 
+          transform: 'translateX(100%) rotateY(15deg)',
+          opacity: '0',
+          filter: 'blur(4px)'
+        },
+      },
+
+      // Enhanced scale animations
+      scaleInEnhanced: {
+        '0%': { 
+          transform: 'scale(0.8) rotateX(10deg)',
+          opacity: '0',
+          filter: 'blur(2px)'
+        },
+        '50%': {
+          transform: 'scale(1.05) rotateX(-2deg)',
+          opacity: '0.8',
+          filter: 'blur(0px)'
+        },
+        '100%': { 
+          transform: 'scale(1) rotateX(0deg)',
+          opacity: '1',
+          filter: 'blur(0px)'
+        },
+      },
+
+      // Enhanced bounce animations
+      bounceEnhanced: {
+        '0%, 20%, 53%, 80%, 100%': {
+          transform: 'translate3d(0, 0, 0) scaleY(1)',
+        },
+        '40%, 43%': {
+          transform: 'translate3d(0, -30px, 0) scaleY(1.1)',
+        },
+        '70%': {
+          transform: 'translate3d(0, -15px, 0) scaleY(1.05)',
+        },
+        '90%': {
+          transform: 'translate3d(0, -4px, 0) scaleY(1.02)',
+        },
+      },
+
+      // Enhanced pulse animations
+      pulseEnhanced: {
+        '0%': {
+          transform: 'scale(1)',
+          opacity: '1',
+        },
+        '50%': {
+          transform: 'scale(1.05)',
+          opacity: '0.8',
+        },
+        '100%': {
+          transform: 'scale(1)',
+          opacity: '1',
+        },
+      },
+
+      // Enhanced glow animations
+      glowEnhanced: {
+        '0%, 100%': {
+          boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)',
+        },
+        '50%': {
+          boxShadow: '0 0 40px rgba(34, 197, 94, 0.6), 0 0 60px rgba(34, 197, 94, 0.3)',
+        },
+      },
+
+      // Enhanced float animations
+      floatEnhanced: {
+        '0%, 100%': {
+          transform: 'translateY(0px) rotateX(0deg)',
+        },
+        '25%': {
+          transform: 'translateY(-8px) rotateX(2deg)',
+        },
+        '50%': {
+          transform: 'translateY(-12px) rotateX(0deg)',
+        },
+        '75%': {
+          transform: 'translateY(-8px) rotateX(-2deg)',
+        },
+      },
+
+      // Enhanced loading animations
+      loadingDotsEnhanced: {
+        '0%, 80%, 100%': {
+          transform: 'scale(0.8)',
+          opacity: '0.5',
+        },
+        '40%': {
+          transform: 'scale(1.2)',
+          opacity: '1',
+        },
+      },
+
+      // Enhanced shimmer animations
+      shimmerEnhanced: {
+        '0%': {
+          backgroundPosition: '-1000px 0',
+          transform: 'skewX(-15deg)',
+        },
+        '100%': {
+          backgroundPosition: '1000px 0',
+          transform: 'skewX(-15deg)',
+        },
+      },
+
+      // Enhanced rotate animations
+      rotateEnhanced: {
+        '0%': {
+          transform: 'rotate(0deg) scale(1)',
+        },
+        '50%': {
+          transform: 'rotate(180deg) scale(1.1)',
+        },
+        '100%': {
+          transform: 'rotate(360deg) scale(1)',
+        },
+      },
+
+      // Enhanced flip animations
+      flipEnhanced: {
+        '0%': {
+          transform: 'perspective(400px) rotateY(0)',
+        },
+        '40%': {
+          transform: 'perspective(400px) rotateY(-180deg)',
+        },
+        '60%': {
+          transform: 'perspective(400px) rotateY(-190deg)',
+        },
+        '100%': {
+          transform: 'perspective(400px) rotateY(-360deg)',
+        },
+      },
       slideUp: {
         '0%': { transform: 'translateY(20px)', opacity: '0' },
         '100%': { transform: 'translateY(0)', opacity: '1' },
@@ -439,14 +606,15 @@ export const DESIGN_TOKENS = {
     },
   },
 
-  // Breakpoint System
+  // Enhanced Breakpoint System with mobile-first approach
   breakpoints: {
-    xs: '475px',
-    sm: '640px',
-    md: '768px',
-    lg: '1024px',
-    xl: '1280px',
-    '2xl': '1536px',
+    xs: '375px',   // iPhone SE
+    sm: '640px',   // Small tablets
+    md: '768px',   // Tablets
+    lg: '1024px',  // Small desktops
+    xl: '1280px',  // Desktops
+    '2xl': '1536px', // Large desktops
+    '3xl': '1920px', // Extra large screens
   },
 
   // Z-Index System
@@ -471,41 +639,108 @@ export const DESIGN_TOKENS = {
   components: {
     button: {
       height: {
+        xs: '2.25rem',   // 36px - small mobile
         sm: '2.5rem',    // 40px
         md: '3rem',      // 48px
         lg: '3.5rem',    // 56px
+        xl: '4rem',      // 64px - large touch targets
       },
       padding: {
+        xs: '0.5rem 0.75rem',  // Compact mobile
         sm: '0.5rem 1rem',
         md: '0.75rem 1.5rem',
         lg: '1rem 2rem',
+        xl: '1.25rem 2.5rem', // Extra large
       },
       borderRadius: '0.5rem', // 8px
       fontSize: {
+        xs: '0.75rem',   // Small mobile
         sm: '0.875rem',
+        md: '1rem',
+        lg: '1.125rem',
+        xl: '1.25rem',
+      },
+      // Touch target sizes
+      touchTarget: {
+        min: '44px',     // iOS HIG minimum
+        comfortable: '48px', // Android recommended
+        large: '56px',   // Enhanced accessibility
+      },
+    },
+
+    input: {
+      height: {
+        xs: '2.5rem',   // Compact mobile
+        md: '3rem',      // Standard
+        lg: '3.5rem',   // Large touch
+      },
+      padding: {
+        xs: '0.5rem 0.75rem',
+        md: '0.75rem 1rem',
+        lg: '1rem 1.25rem',
+      },
+      borderRadius: '0.375rem', // 6px
+      fontSize: {
+        xs: '0.875rem',
         md: '1rem',
         lg: '1.125rem',
       },
     },
 
-    input: {
-      height: '3rem',    // 48px
-      padding: '0.75rem 1rem',
-      borderRadius: '0.375rem', // 6px
-      fontSize: '1rem',
-    },
-
     card: {
-      padding: '1.5rem',
-      borderRadius: '0.75rem', // 12px
+      padding: {
+        xs: '1rem',     // Compact mobile
+        md: '1.5rem',
+        lg: '2rem',     // Large desktop
+      },
+      borderRadius: {
+        xs: '0.5rem',  // Smaller on mobile
+        md: '0.75rem',
+        lg: '1rem',     // Larger on desktop
+      },
       shadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
     },
 
     modal: {
-      borderRadius: '1rem', // 16px
-      padding: '2rem',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
+      borderRadius: {
+        xs: '0.75rem', // Rounded but not too much on mobile
+        md: '1rem',
+        lg: '1.25rem', // More rounded on larger screens
+      },
+      padding: {
+        xs: '1.5rem',
+        md: '2rem',
+        lg: '2.5rem',
+      },
+      maxWidth: {
+        xs: '95vw',
+        md: '90vw',
+        lg: '80vw',
+      },
+      maxHeight: {
+        xs: '95vh',
+        md: '90vh',
+        lg: '85vh',
+      },
+    },
+
+    // Mobile-specific components
+    mobile: {
+      safeArea: {
+        top: 'env(safe-area-inset-top)',
+        right: 'env(safe-area-inset-right)',
+        bottom: 'env(safe-area-inset-bottom)',
+        left: 'env(safe-area-inset-left)',
+      },
+      notch: {
+        height: '44px', // Status bar height
+        padding: 'env(safe-area-inset-top, 0)',
+      },
+      gesture: {
+        minSwipeDistance: '50px',
+        maxTapDuration: '200ms',
+        maxTapDistance: '10px',
+      },
     },
   },
 } as const;
