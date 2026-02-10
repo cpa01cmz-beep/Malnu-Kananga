@@ -1235,6 +1235,7 @@ export const INPUT_MASKS = {
     NISN: '9999999999',
     PHONE: '999-9999-99999',
     DATE: '99-99-9999',
+    YEAR: '9999',
     NIS: '9999999999',
 } as const;
 
@@ -1986,4 +1987,96 @@ export const PLACEHOLDER_IMAGES = {
     CLASS: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
     EVENT: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=400&fit=crop',
     MATERIAL: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop',
+} as const;
+
+// Input Mask Placeholders - Flexy: Never hardcode mask placeholders!
+export const INPUT_MASK_PLACEHOLDERS = {
+    NISN: 'NISN 10 digit',
+    PHONE: '081-2345-67890',
+    DATE: 'DD-MM-YYYY',
+    YEAR: '2024',
+    GRADE: '0-100',
+    CLASS: 'XII RPL 1',
+} as const;
+
+// Date Validation Constants - Flexy: Never hardcode date ranges!
+export const DATE_VALIDATION = {
+    MIN_YEAR: 1900,
+    MAX_YEAR_OFFSET: 1, // current year + 1
+} as const;
+
+// Days in Month - Flexy: Use this for date validation!
+export const DAYS_IN_MONTH = [
+    31, // Jan
+    28, // Feb (non-leap year)
+    31, // Mar
+    30, // Apr
+    31, // May
+    30, // Jun
+    31, // Jul
+    31, // Aug
+    30, // Sep
+    31, // Oct
+    30, // Nov
+    31  // Dec
+] as const;
+
+// Gender Options - Flexy: Never hardcode gender values!
+export const GENDER_OPTIONS = {
+    MALE: 'L',
+    FEMALE: 'P',
+} as const;
+
+// Class Configuration - Flexy: Never hardcode class limits!
+export const CLASS_CONFIG = {
+    MAX_CAPACITY: 30,
+} as const;
+
+// Rate Limiting - Flexy: Never hardcode rate limits!
+export const RATE_LIMITING = {
+    MAX_REQUESTS_PER_MINUTE: 10,
+    MAX_PROGRAMS_ADDITION: 10,
+    MAX_NEWS_ADDITION: 20,
+} as const;
+
+// AI Editor Limits - Flexy: Never hardcode content limits!
+export const AI_EDITOR_LIMITS = {
+    MAX_PROGRAMS: 20,
+    MAX_NEWS: 50,
+    MAX_AUDIT_ENTRIES: 100,
+} as const;
+
+// OCR Configuration - Flexy: Never hardcode OCR settings!
+export const OCR_SERVICE_CONFIG_EXTRA = {
+    LANGUAGE: 'ind',
+    WORKER_COUNT: 1,
+    NAME_WORD_MIN: 2,
+    NAME_WORD_MAX: 4,
+    NISN_DIGIT_COUNT: 10,
+    SHORT_TEXT_PENALTY: 0.8,
+    SUSPICIOUS_NUMBERS_PENALTY: 0.9,
+} as const;
+
+// Voice Bounds - Flexy: Never hardcode voice validation ranges!
+export const VOICE_BOUNDS = {
+    MAX_ALTERNATIVES: { MIN: 1, MAX: 10 },
+    CONFIDENCE: { MIN: 0, MAX: 1 },
+} as const;
+
+// WebSocket Constants - Flexy: Never hardcode WebSocket values!
+export const WEBSOCKET_CONSTANTS = {
+    READY_STATE_OPEN: 1, // WebSocket.OPEN
+} as const;
+
+// Batch Configuration - Flexy: Never hardcode batch limits!
+export const BATCH_CONFIG = {
+    MAX_STUDENTS: 50,
+} as const;
+
+// Test Configuration - Flexy: Never hardcode test defaults!
+export const TEST_CONFIG = {
+    DEFAULT_ACADEMIC_YEAR: '2024-2025',
+    DEFAULT_STUDENT_NIS: '12345',
+    DEFAULT_USER_ID: 'user-1',
+    DEFAULT_CLASS_ID: 'class-1',
 } as const;

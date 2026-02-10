@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import type { AutoSaveStatus } from '../../hooks/useAutoSaveSimple';
 
-export type AutoSaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+export type { AutoSaveStatus };
 
 interface AutoSaveIndicatorProps {
   status: AutoSaveStatus;
@@ -176,3 +177,4 @@ export const AutoSaveIndicator: React.FC<AutoSaveIndicatorProps> = ({
 };
 
 export default AutoSaveIndicator;
+

@@ -1,6 +1,6 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS } from '../constants';
+import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS, OCR_SERVICE_CONFIG_EXTRA } from '../constants';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -52,7 +52,7 @@ class OCRService {
     }
 
     try {
-      this.worker = await createWorker('ind', 1, {
+      this.worker = await createWorker(OCR_SERVICE_CONFIG_EXTRA.LANGUAGE, OCR_SERVICE_CONFIG_EXTRA.WORKER_COUNT, {
         logger: (m) => {
           if (m.status === 'recognizing text' && progressCallback) {
             progressCallback({
@@ -210,16 +210,19 @@ class OCRService {
 
   private looksLikeName(text: string): boolean {
     const words = text.split(' ');
-    return words.length >= 2 && words.length <= 4 && words.every(word => /^[A-Z][a-z]+$/.test(word));
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MIN/MAX constants
+    return words.length >= OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MIN && words.length <= OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MAX && words.every(word => /^[A-Z][a-z]+$/.test(word));
   }
 
   private looksLikeNISN(text: string): boolean {
-    const nisnPattern = /(?:NISN\s*[:\s]*)?(\d{10})/;
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT constant
+    const nisnPattern = new RegExp(`(?:NISN\\s*[:\\s]*)?(\\d{${OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT}})`);
     return nisnPattern.test(text);
   }
 
   private extractNISN(text: string): string {
-    const match = text.match(/(?:NISN\s*[:\s]*)?(\d{10})/);
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT constant
+    const match = text.match(new RegExp(`(?:NISN\\s*[:\\s]*)?(\\d{${OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT}})`));
     return match ? match[1] : text;
   }
 
@@ -247,9 +250,10 @@ class OCRService {
     const characterCount = text.length;
     
     // Estimate accuracy based on confidence and text characteristics
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA constants for penalties
     let estimatedAccuracy = confidence;
-    if (wordCount < 10) estimatedAccuracy *= 0.8; // Penalize very short texts
-    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= 0.9; // Suspicious numbers
+    if (wordCount < 10) estimatedAccuracy *= OCR_SERVICE_CONFIG_EXTRA.SHORT_TEXT_PENALTY;
+    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= OCR_SERVICE_CONFIG_EXTRA.SUSPICIOUS_NUMBERS_PENALTY;
     
     estimatedAccuracy = Math.max(0, Math.min(100, estimatedAccuracy));
     
