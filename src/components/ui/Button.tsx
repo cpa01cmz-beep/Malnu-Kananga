@@ -200,13 +200,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
           )}
         </>
       )}
-      {/* Ripple effect overlay */}
+      {/* Enhanced ripple effect overlay */}
       <span className="absolute inset-0 rounded-xl overflow-hidden">
         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+        <span className="absolute inset-0 bg-white/10 scale-0 group-active:scale-100 transition-transform duration-150 ease-out rounded-xl"></span>
       </span>
       
-      {/* Focus ring enhancement */}
-      <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none"></span>
+      {/* Enhanced focus ring with subtle glow */}
+      <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none group-hover:shadow-lg group-active:shadow-sm"></span>
       
       {/* Loading shimmer for loading state */}
       {isLoading && (
