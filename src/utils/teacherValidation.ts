@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS, GENDER_OPTIONS, CONVERSION } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -158,8 +158,8 @@ export const validateClassData = (data: Partial<ClassFormData>): ValidationResul
     errors.push(`NIS harus antara ${ACADEMIC.NIS_LENGTH.MIN}-${ACADEMIC.NIS_LENGTH.MAX} digit`);
   }
 
-  // Validate gender
-  if (data.gender && !['L', 'P'].includes(data.gender)) {
+  // Validate gender - Flexy: Uses GENDER_OPTIONS constant
+  if (data.gender && ![GENDER_OPTIONS.MALE, GENDER_OPTIONS.FEMALE].includes(data.gender)) {
     errors.push('Jenis kelamin tidak valid');
   }
 
@@ -203,11 +203,11 @@ export const validateMaterialData = (data: Partial<MaterialFormData>): Validatio
     errors.push('Kategori materi tidak boleh kosong');
   }
 
-  // Validate file
+  // Validate file - Flexy: Uses FILE_SIZE_LIMITS constant
   if (data.fileUrl && data.fileSize) {
-    const maxSize = FILE_SIZE_LIMITS.MATERIAL_DEFAULT; // 50MB
+    const maxSize = FILE_SIZE_LIMITS.MATERIAL_DEFAULT;
     if (data.fileSize > maxSize) {
-      errors.push('Ukuran file maksimal 50MB');
+      errors.push(`Ukuran file maksimal ${Math.floor(maxSize / CONVERSION.BYTES_PER_MB)}MB`);
     }
 
     if (!data.fileType) {
