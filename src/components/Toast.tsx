@@ -19,6 +19,8 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   const [isPaused, setIsPaused] = useState(false);
   const [remainingTime, setRemainingTime] = useState(duration);
   const [progress, setProgress] = useState(100);
+  const [showShortcutTooltip, setShowShortcutTooltip] = useState(false);
+  const shortcutTooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const pausedProgressRef = useRef<number>(100);
@@ -36,11 +38,20 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     if (animationFrameRef.current) {
       window.cancelAnimationFrame(animationFrameRef.current);
     }
+    // Show shortcut tooltip after a brief delay to avoid flickering
+    shortcutTooltipTimeoutRef.current = setTimeout(() => {
+      setShowShortcutTooltip(true);
+    }, 400);
   }, [progress]);
 
   const handleMouseLeave = useCallback(() => {
     setIsPaused(false);
     startTimeRef.current = Date.now() - ((100 - pausedProgressRef.current) / 100) * duration;
+    // Hide shortcut tooltip and clear timeout
+    setShowShortcutTooltip(false);
+    if (shortcutTooltipTimeoutRef.current) {
+      clearTimeout(shortcutTooltipTimeoutRef.current);
+    }
   }, [duration]);
 
   useEffect(() => {
@@ -83,6 +94,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       setRemainingTime(duration);
       setIsPaused(false);
       setProgress(100);
+      setShowShortcutTooltip(false);
       pausedProgressRef.current = 100;
 
       previousActiveElementRef.current = document.activeElement as HTMLElement;
@@ -93,6 +105,15 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       }
     }
   }, [isVisible, duration]);
+
+  // Cleanup tooltip timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (shortcutTooltipTimeoutRef.current) {
+        clearTimeout(shortcutTooltipTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-xl flex items-center gap-3 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) transform max-w-md border backdrop-blur-xl hover:shadow-2xl glass-effect-elevated hover-lift-premium";
   const typeClasses = {
@@ -180,6 +201,30 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       <span className="sr-only" role="status" aria-live="polite">
         {isVisible && !isPaused && Math.round(progress) > 0 && Math.round(progress) < 100 && `${Math.round(progress)}% waktu tersisa`}
       </span>
+      
+      {/* Keyboard shortcut tooltip - Micro UX Delight */}
+      <div
+        className={`
+          absolute -top-10 left-1/2 -translate-x-1/2 
+          px-3 py-1.5 
+          bg-neutral-800 dark:bg-neutral-700 
+          text-white text-xs font-medium 
+          rounded-lg shadow-lg 
+          whitespace-nowrap
+          transition-all duration-200 ease-out
+          pointer-events-none
+          ${showShortcutTooltip ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
+        `}
+        role="tooltip"
+        aria-hidden={!showShortcutTooltip}
+      >
+        <span className="flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold border border-neutral-500">ESC</kbd>
+          <span>untuk menutup</span>
+        </span>
+        {/* Tooltip arrow */}
+        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+      </div>
     </div>
   );
 };
