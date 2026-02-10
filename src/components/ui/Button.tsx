@@ -26,14 +26,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-1 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-xl active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-xl hover:shadow-primary-500/30 btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-premium text-contrast-enhanced glass-effect-elevated",
-  secondary: "bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-lg backdrop-blur-sm hover-lift-premium text-contrast-enhanced glass-effect",
-  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:shadow-md backdrop-blur-sm hover-lift-premium text-contrast-enhanced focus-indicator-enhanced",
-  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-xl hover:shadow-red-500/30 gradient-hover border-red-600 hover:border-red-700 dark:border-red-500 dark:hover:border-red-600 backdrop-blur-sm hover-lift-premium text-contrast-enhanced glass-effect-elevated",
-  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50/80 dark:hover:bg-neutral-700/80 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-lg backdrop-blur-sm hover-lift-premium text-contrast-enhanced glass-effect focus-indicator-enhanced",
+  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:shadow-primary-500/20 btn-hover-primary focus-visible-enhanced hover-glow-enhanced border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect-elevated",
+  secondary: "bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect",
+  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:shadow-sm backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced focus-indicator-enhanced",
+  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:shadow-red-500/20 border-red-600 hover:border-red-700 dark:border-red-500 dark:hover:border-red-600 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect-elevated",
+  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50/80 dark:hover:bg-neutral-700/80 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced glass-effect focus-indicator-enhanced",
 };
 
 const intentClasses: Record<ButtonIntent, string> = {
@@ -188,6 +188,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
           )}
         </>
       )}
+      {/* Ripple effect overlay */}
+      <span className="absolute inset-0 rounded-xl overflow-hidden">
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+      </span>
+      
+      {/* Focus ring enhancement */}
+      <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/50 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-200 pointer-events-none"></span>
+      
+      {/* Loading shimmer for loading state */}
+      {isLoading && (
+        <span className="absolute inset-0 rounded-xl overflow-hidden">
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></span>
+        </span>
+      )}
+      
       {/* Tooltip for disabled state */}
       {isDisabled && disabledReason && (
         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium bg-neutral-800 dark:bg-neutral-700 text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
