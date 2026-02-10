@@ -79,7 +79,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) touch-manipulation relative overflow-hidden group focus-visible-enhanced card-polished depth-1 backdrop-blur-sm glass-effect-elevated hover-lift-enhanced border border-neutral-200/60 dark:border-neutral-700/60";
+const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) touch-manipulation relative overflow-hidden group focus-visible-enhanced card-polished depth-1 backdrop-blur-sm glass-effect-elevated hover-lift-enhanced border border-neutral-200/60 dark:border-neutral-700/60 card-accessible";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -119,6 +119,15 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       triggerHapticFeedback('medium');
       // Trigger ripple animation
       setRippleKey(prev => prev + 1);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (variant === 'interactive' && !disabled && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      triggerHapticFeedback('light');
+      setIsPressed(true);
+      setTimeout(() => setIsPressed(false), 150);
     }
   };
 
@@ -169,6 +178,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         onTouchEnd={handleInteractionEnd}
         onMouseUp={handleInteractionEnd}
         onMouseLeave={() => setIsPressed(false)}
+        onKeyDown={handleKeyDown}
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
