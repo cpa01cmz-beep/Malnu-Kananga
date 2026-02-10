@@ -713,7 +713,7 @@ export function validateELibrary(material: ELibrary): ValidationResult {
   } else if (material.fileSize <= 0) {
     errors.push('Material file size must be greater than 0');
   } else if (material.fileSize > FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX) {
-    errors.push(`Material file size cannot exceed ${FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX / (1024 * 1024)}MB`);
+    errors.push(`Material file size cannot exceed ${FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX / CONVERSION.BYTES_PER_MB}MB`);
   }
 
   if (!material.subjectId || material.subjectId.trim() === '') {

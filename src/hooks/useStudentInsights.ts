@@ -5,7 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
-import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS, ID_FORMAT } from '../constants';
 import { useRealtimeEvent } from './useWebSocket';
 import type { RealTimeEvent } from '../services/webSocketService';
 
@@ -177,7 +177,7 @@ export const useStudentInsights = ({
 
     grades.forEach(grade => {
       const date = new Date(grade.createdAt);
-      const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
       
       if (!monthlyData.has(monthKey)) {
         monthlyData.set(monthKey, { scores: [], attendanceCount: 0, totalDays: 0 });
@@ -191,7 +191,7 @@ export const useStudentInsights = ({
 
     attendance.forEach(att => {
       const date = new Date(att.date);
-      const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+      const monthKey = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
       
       if (!monthlyData.has(monthKey)) {
         monthlyData.set(monthKey, { scores: [], attendanceCount: 0, totalDays: 0 });
@@ -245,7 +245,7 @@ export const useStudentInsights = ({
         }) => {
           if (analysis.operation === 'studentAnalysis') {
             const analysisTime = new Date(analysis.timestamp);
-            const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+            const thirtyMinutesAgo = new Date(Date.now() - TIME_MS.THIRTY_MINUTES);
             const isMatchingData = JSON.stringify(analysis.inputData) === dataKey;
             return analysisTime > thirtyMinutesAgo && isMatchingData;
           }
@@ -272,7 +272,7 @@ export const useStudentInsights = ({
         
         // Check if cached insights are fresh (less than 30 minutes old)
         const lastUpdated = new Date(cachedInsights.lastUpdated);
-        const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+        const thirtyMinutesAgo = new Date(Date.now() - TIME_MS.THIRTY_MINUTES);
         
         if (lastUpdated > thirtyMinutesAgo) {
           setInsights(cachedInsights);

@@ -9,7 +9,8 @@ import type {
 import { 
     VOICE_NOTIFICATION_CONFIG, 
     STORAGE_KEYS,
-    NOTIFICATION_CONFIG 
+    NOTIFICATION_CONFIG,
+    TIME_FORMAT 
 } from '../constants';
 import { logger } from '../utils/logger';
 import SpeechSynthesisService from './speechSynthesisService';
@@ -172,7 +173,7 @@ class VoiceNotificationService {
         }
 
         const now = new Date();
-        const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        const currentTime = `${now.getHours().toString().padStart(TIME_FORMAT.HOURS_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}${TIME_FORMAT.SEPARATOR}${now.getMinutes().toString().padStart(TIME_FORMAT.MINUTES_PAD_LENGTH, TIME_FORMAT.PAD_STRING)}`;
         
         // Handle overnight quiet hours (e.g., 22:00 to 07:00)
         if (quietHours.start > quietHours.end) {

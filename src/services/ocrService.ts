@@ -1,6 +1,7 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS, OCR_SERVICE_CONFIG_EXTRA } from '../constants';
+import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS, OCR_SERVICE_CONFIG_EXTRA, HASH_CONFIG } from '../constants';
+import { generateValidationId } from '../utils/idGenerator';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -314,7 +315,7 @@ class OCRService {
   ): void {
     try {
       const event: OCRValidationEvent = {
-        id: `ocr-validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: generateValidationId(type, documentId || `doc-${Date.now()}`),
         type,
         documentId,
         documentType,
@@ -448,11 +449,11 @@ class OCRService {
       let hash = 0;
       for (let i = 0; i < uint8Array.length; i++) {
         const byte = uint8Array[i];
-        hash = ((hash << 5) - hash) + byte;
+        hash = ((hash << HASH_CONFIG.HASH_SHIFT_BITS) - hash) + byte;
         hash = hash & hash;
       }
       
-      return Math.abs(hash).toString(36) + `_${imageFile.size}_${imageFile.type}`;
+      return Math.abs(hash).toString(HASH_CONFIG.OUTPUT_BASE) + `_${imageFile.size}_${imageFile.type}`;
     } catch (error) {
       logger.error('Failed to hash file for OCR caching:', error);
       return `fallback_${imageFile.size}_${imageFile.type}_${Date.now()}`;

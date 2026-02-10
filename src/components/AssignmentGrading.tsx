@@ -22,7 +22,7 @@ import { CheckCircleIcon, AlertCircleIcon } from './icons/StatusIcons';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
-import { STORAGE_KEYS, UI_STRINGS } from '../constants';
+import { STORAGE_KEYS, UI_STRINGS, bytesToKb } from '../constants';
 
 interface AssignmentGradingProps {
   onBack: () => void;
@@ -745,7 +745,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                             {attachment.fileName}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {(attachment.fileSize / 1024).toFixed(1)} KB
+                            {bytesToKb(attachment.fileSize).toFixed(1)} KB
                           </p>
                         </div>
                       </div>

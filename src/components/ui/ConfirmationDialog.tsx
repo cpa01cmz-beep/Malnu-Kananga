@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from './Modal';
 import Button from './Button';
+import { UI_STRINGS } from '../../constants';
 
 export interface ConfirmationDialogProps {
   isOpen: boolean;
@@ -18,8 +19,8 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   isOpen,
   title,
   message,
-  confirmText = 'Ya, Lanjutkan',
-  cancelText = 'Batal',
+  confirmText = UI_STRINGS.CONFIRM_ACTION,
+  cancelText = UI_STRINGS.CANCEL,
   type = 'warning',
   onConfirm,
   onCancel,

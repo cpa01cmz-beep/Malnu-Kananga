@@ -6,6 +6,7 @@ import { XMarkIcon, InformationCircleIcon } from '../icons/MaterialIcons';
 import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
 import IconButton from './IconButton';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { generateComponentId } from '../../utils/idGenerator';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -128,7 +129,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     }
   };
 
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const inputId = id || generateComponentId('input');
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;

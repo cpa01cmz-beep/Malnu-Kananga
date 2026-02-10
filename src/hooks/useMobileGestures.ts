@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { BREAKPOINTS } from '../constants';
 
 export interface SwipeGestureOptions {
   threshold?: number;
@@ -348,10 +349,10 @@ export const useResponsive = () => {
   useEffect(() => {
     const updateBreakpoint = () => {
       const width = window.innerWidth;
-      if (width < 640) setBreakpoint('sm');
-      else if (width < 768) setBreakpoint('md');
-      else if (width < 1024) setBreakpoint('lg');
-      else if (width < 1280) setBreakpoint('xl');
+      if (width < BREAKPOINTS.SM) setBreakpoint('sm');
+      else if (width < BREAKPOINTS.MD) setBreakpoint('md');
+      else if (width < BREAKPOINTS.LG) setBreakpoint('lg');
+      else if (width < BREAKPOINTS.XL) setBreakpoint('xl');
       else setBreakpoint('2xl');
     };
 

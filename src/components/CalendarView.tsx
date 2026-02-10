@@ -5,6 +5,7 @@ import IconButton from './ui/IconButton';
 import Button from './ui/Button';
 import Card from './ui/Card';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { ID_FORMAT } from '../constants';
 
 interface CalendarViewProps {
   schedules: Schedule[];
@@ -268,7 +269,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
       {Array.from({ length: 14 }, (_, i) => i + 6).map(hour => (
         <div key={hour} className="grid grid-cols-8" role="row">
           <div className="p-2 border-r border-b text-sm text-neutral-600 text-right" role="gridcell">
-            {hour.toString().padStart(2, '0')}:00
+            {hour.toString().padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}:00
           </div>
           {weekDays.map(date => {
             const events = getEventsForDate(date).filter(event => {

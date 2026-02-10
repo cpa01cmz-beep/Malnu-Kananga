@@ -5,6 +5,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { DownloadIcon } from './icons/MaterialIcons';
 import { MaterialTemplate, Subject } from '../types';
 import { logger } from '../utils/logger';
+import { CONVERSION } from '../constants';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import FileInput from './ui/FileInput';
@@ -214,10 +215,9 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
   const categories = Array.from(new Set(templates.map(t => t.category)));
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
-    const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
+    return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const formatDate = (dateString: string) => {

@@ -1,6 +1,6 @@
 import { ocrService, OCRExtractionResult, OCRProgress } from './ocrService';
 import { logger } from '../utils/logger';
-import { OCR_CONFIG, DATE_LOCALE } from '../constants';
+import { OCR_CONFIG, DATE_LOCALE, ID_FORMAT } from '../constants';
 
 export interface AttendanceStudentInfo {
   id: string;
@@ -378,13 +378,13 @@ class AttendanceOCRService {
           const monthLower = part2.toLowerCase();
           if (indonesianMonths[monthLower]) {
             // Format: DD Month YYYY (e.g., "30 Januari 2026")
-            return `${part3}-${indonesianMonths[monthLower]}-${part1.padStart(2, '0')}`;
+            return `${part3}-${indonesianMonths[monthLower]}-${part1.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           } else if (part3.length === 4) {
             // Format: DD-MM-YYYY or DD/MM/YYYY
-            return `${part3}-${part2.padStart(2, '0')}-${part1.padStart(2, '0')}`;
+            return `${part3}-${part2.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}-${part1.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           } else {
             // Format: YYYY-MM-DD
-            return `${part1}-${part2.padStart(2, '0')}-${part3.padStart(2, '0')}`;
+            return `${part1}-${part2.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}-${part3.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           }
         }
       }
