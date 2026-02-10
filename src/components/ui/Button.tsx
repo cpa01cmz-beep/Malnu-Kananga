@@ -1,6 +1,7 @@
 import React from 'react';
 import { XML_NAMESPACES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 import { 
   buildButtonClasses, 
   BUTTON_SIZE_CLASSES, 
@@ -9,18 +10,6 @@ import {
   BUTTON_VARIANT_CLASSES, 
   BUTTON_INTENT_CLASSES 
 } from '../../utils/buttonUtils';
-
-// Haptic feedback utility
-const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
-  if ('vibrate' in navigator && window.innerWidth <= 768) {
-    const pattern = {
-      light: [10],
-      medium: [25],
-      heavy: [50]
-    };
-    navigator.vibrate(pattern[type]);
-  }
-};
 
 // New simplified variants
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive' | 'outline';
@@ -77,6 +66,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   ...props
 }, ref) => {
   const prefersReducedMotion = useReducedMotion();
+  const { onTap, onPress } = useHapticFeedback();
   // Map legacy variants to new ones
   const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
     // Map legacy solid colors to new intent system
@@ -159,7 +149,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const handlePressStart = () => {
     if (!isDisabled) {
-      triggerHapticFeedback(normalizedVariant === 'primary' ? 'medium' : 'light');
+      if (normalizedVariant === 'primary') {
+        onPress();
+      } else {
+        onTap();
+      }
     }
   };
 
@@ -167,7 +161,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     // Enhanced keyboard navigation
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      triggerHapticFeedback('light');
+      onTap();
     }
   };
 
