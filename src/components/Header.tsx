@@ -13,25 +13,19 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
-import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
+import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES, UI_SPACING } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { 
+  buildNavLinkClasses, 
+  HEADER_CONTAINER_CLASSES, 
+  HEADER_NAV_WRAPPER_CLASSES, 
+  HEADER_INNER_CLASSES,
+  HEADER_SCROLLED_CLASSES,
+  HEADER_UNSCROLLED_CLASSES
+} from '../utils/navigationUtils';
 
-const getNavLinkClasses = (prefersReducedMotion: boolean) => {
-  const motionClasses = prefersReducedMotion 
-    ? ""
-    : "hover:scale-[1.02] active:scale-[0.98] transition-all duration-300";
-    
-  return `text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation min-h-[48px] ${motionClasses}`;
-};
 
-const getMobileNavLinkClasses = (prefersReducedMotion: boolean) => {
-  const motionClasses = prefersReducedMotion 
-    ? ""
-    : "active:scale-[0.98] transition-all duration-300";
-    
-  return `block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 touch-manipulation border-b border-neutral-100/60 dark:border-neutral-800/60 min-h-[52px] ${motionClasses}`;
-};
 
 const NavLink = ({ href, children, isMobile = false, isActive = false, prefersReducedMotion = false }: { 
     href: string; 
@@ -40,13 +34,12 @@ const NavLink = ({ href, children, isMobile = false, isActive = false, prefersRe
     isActive?: boolean; 
     prefersReducedMotion?: boolean;
 }) => {
-    const linkClass = isMobile ? getMobileNavLinkClasses(prefersReducedMotion) : getNavLinkClasses(prefersReducedMotion);
-    const activeClasses = isActive ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-l-4 border-primary-500' : '';
+    const linkClass = buildNavLinkClasses({ isMobile, isActive, prefersReducedMotion });
     
     return (
         <a 
             href={href} 
-            className={`${linkClass} ${activeClasses}`}
+            className={linkClass}
             aria-current={isActive ? 'page' : undefined}
         >
             {children}
@@ -195,17 +188,17 @@ const Header: React.FC<HeaderProps> = ({
     }, []);
 
     const headerClasses = `
-        fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-out
-        ${isScrolled ? 'mt-0 rounded-none shadow-card' : 'mt-4 mx-2 sm:mx-4 rounded-full'}
+        ${HEADER_CONTAINER_CLASSES}
+        ${isScrolled ? HEADER_SCROLLED_CLASSES : HEADER_UNSCROLLED_CLASSES}
     `;
 
     const navContainerClasses = `
-        w-full max-w-7xl mx-auto px-4 sm:px-6
+        ${HEADER_NAV_WRAPPER_CLASSES}
         ${isScrolled ? '' : `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} rounded-full ring-1 ring-neutral-900/10% dark:ring-white/10% shadow-card`}
     `;
 
     const innerNavClasses = `
-        flex items-center justify-between h-16
+        ${HEADER_INNER_CLASSES}
         ${isScrolled ? `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL}` : ''}
     `;
 
@@ -213,7 +206,7 @@ const Header: React.FC<HeaderProps> = ({
         <header id="main-nav" className={headerClasses}>
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
-                         <div className="flex items-center gap-3">
+                         <div className={`flex items-center ${UI_SPACING.GAP_TIGHT}`}>
                         <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-lift-enhanced mobile-touch-target haptic-feedback focus-visible-enhanced`}>
                             {HEADER_NAV_STRINGS.LOGO_TEXT}
                         </div>
@@ -227,7 +220,7 @@ const Header: React.FC<HeaderProps> = ({
                         <NavLinks activePath={activePath} prefersReducedMotion={prefersReducedMotion} />
                     </nav>
 
-                    <div className="flex items-center gap-2">
+                    <div className={`flex items-center ${UI_SPACING.GAP_TIGHT}`}>
                         {isLoggedIn && userRole && (
                             <NotificationCenter
                                 userRole={userRole}

@@ -913,6 +913,41 @@ export const UI_ACCESSIBILITY = {
     SCREEN_READER_TIMEOUT: 1000,
 } as const;
 
+// UI Spacing constants - Flexy: Never hardcode spacing values!
+export const UI_SPACING = {
+    // Tailwind spacing values (in rem)
+    XS: '0.25',    // 4px
+    SM: '0.5',     // 8px  
+    MD: '1',       // 16px
+    LG: '1.5',     // 24px
+    XL: '2',       // 32px
+    XXL: '3',      // 48px
+    XXXL: '4',     // 64px
+    
+    // Common gap patterns
+    GAP_TIGHT: 'gap-2',      // 8px
+    GAP_NORMAL: 'gap-4',     // 16px
+    GAP_LOOSE: 'gap-6',      // 24px
+    GAP_XL: 'gap-8',         // 32px
+    
+    // Common padding patterns
+    PADDING_COMPACT: 'p-2',    // 8px
+    PADDING_NORMAL: 'p-4',     // 16px
+    PADDING_COMFORTABLE: 'p-6', // 24px
+    PADDING_SPACIOUS: 'p-8',    // 32px
+    
+    // Common margin patterns
+    MARGIN_TIGHT: 'm-2',      // 8px
+    MARGIN_NORMAL: 'm-4',     // 16px
+    MARGIN_LOOSE: 'm-6',      // 24px
+    MARGIN_XL: 'm-8',         // 32px
+    
+    // Mobile touch targets (minimum 44px for accessibility)
+    TOUCH_TARGET_MIN: 'min-w-[44px] min-h-[44px]',
+    TOUCH_TARGET_NORMAL: 'min-w-[48px] min-h-[48px]',
+    TOUCH_TARGET_LARGE: 'min-w-[52px] min-h-[52px]',
+} as const;
+
 // Cache TTL constants in milliseconds
 export const CACHE_TTL = {
     CATEGORY: 30 * 60 * 1000, // 30 minutes
