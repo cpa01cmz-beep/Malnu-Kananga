@@ -20,7 +20,7 @@ export interface CardProps {
   shadow?: CardShadow;
   border?: CardBorder;
   className?: string;
-  onClick?: () => void;
+  onClick?: (() => void) | undefined;
   disabled?: boolean;
   role?: string;
   'aria-label'?: string;
@@ -67,25 +67,26 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-250 cubic-bezier(0.25, 0.46, 0.45, 0.94) touch-manipulation relative overflow-hidden group focus-visible-enhanced card-polished depth-1 backdrop-blur-sm";
+const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) touch-manipulation relative overflow-hidden group focus-visible-enhanced card-polished depth-1 backdrop-blur-sm hover:backdrop-blur-md before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100 before:rounded-[inherit]";
 
-const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
-  children,
-  variant = 'default',
-  gradient,
-  padding = 'md',
-  rounded = 'xl',
-  shadow = 'card',
-  border = 'neutral-200',
-  className = '',
-  onClick,
-  disabled,
-  role,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedby,
-  'aria-live': ariaLive,
-  ...rest
-}, ref) => {
+const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>((props, ref) => {
+  const {
+    children,
+    variant = 'default',
+    gradient,
+    padding = 'md',
+    rounded = 'xl',
+    shadow = 'card',
+    border = 'neutral-200',
+    className = '',
+    onClick,
+    disabled,
+    role,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedby,
+    'aria-live': ariaLive,
+    ...rest
+  } = props;
   const paddingClass = paddingClasses[padding];
   const roundedClass = roundedClasses[rounded];
   const shadowClass = shadowClasses[shadow];
@@ -97,10 +98,10 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-xl hover:-translate-y-2 hover:scale-[1.03] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth elevate-on-hover depth-2 hover:shadow-primary-500/10';
+        classes += ' hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth elevate-on-hover depth-2 hover:shadow-primary-500/20 hover:rotate-[0.5deg] transition-all duration-300';
         break;
       case 'interactive':
-        classes += ' hover:shadow-xl hover:-translate-y-2 hover:scale-[1.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-[0.97] text-left group hover-depth elevate-on-hover depth-2 cursor-pointer btn-press hover:shadow-primary-500/10';
+        classes += ' hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-[0.98] active:translate-y-0 text-left group hover-depth elevate-on-hover depth-2 cursor-pointer btn-press hover:shadow-primary-500/20 hover:rotate-[0.5deg] transition-all duration-300';
         break;
       case 'gradient':
         if (gradient) {
@@ -109,18 +110,18 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth';
+          classes += ' hover:shadow-xl hover:-translate-y-1 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth hover:rotate-[0.25deg] transition-all duration-300';
         }
         break;
       default:
-        classes += ' hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 transition-smooth';
+        classes += ' hover:shadow-lg hover:-translate-y-0.5 hover:scale-[1.005] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 transition-all duration-300';
         break;
     }
 
     return `${classes} ${paddingClass} ${className}`;
   };
 
-  const isInteractive = variant === 'interactive' || !!onClick;
+  const isInteractive = variant === 'interactive' || typeof onClick === 'function';
 
   if (isInteractive) {
     return (
@@ -147,7 +148,9 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedby}
       aria-live={ariaLive}
+      tabIndex={onClick ? 0 : undefined}
       className={getCardClasses()}
+      onClick={onClick}
     >
       {children}
     </div>

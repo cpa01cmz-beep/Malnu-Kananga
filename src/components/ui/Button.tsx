@@ -44,10 +44,10 @@ const intentClasses: Record<ButtonIntent, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "px-4 py-2.5 text-sm min-h-[48px] sm:min-h-[52px] mobile-touch-target",
-  md: "px-5 py-3 text-sm sm:text-base min-h-[52px] sm:min-h-[56px] mobile-touch-target",
-  lg: "px-6 py-4 text-base sm:text-lg min-h-[56px] sm:min-h-[60px] mobile-touch-target",
+  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px] active:scale-95 touch-manipulation",
+  sm: "px-4 py-2.5 text-sm min-h-[48px] sm:min-h-[52px] mobile-touch-target active:scale-95 touch-manipulation transition-transform duration-150",
+  md: "px-5 py-3 text-sm sm:text-base min-h-[52px] sm:min-h-[56px] mobile-touch-target active:scale-95 touch-manipulation transition-transform duration-150",
+  lg: "px-6 py-4 text-base sm:text-lg min-h-[56px] sm:min-h-[60px] mobile-touch-target active:scale-95 touch-manipulation transition-transform duration-150",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
@@ -159,6 +159,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       disabled={isDisabled}
       aria-live={isLoading ? 'polite' : undefined}
       aria-disabled={isDisabled}
+      aria-busy={isLoading}
+      role={isLoading ? 'progressbar' : undefined}
+      aria-valuetext={isLoading ? 'Loading' : undefined}
       {...ariaProps}
       {...props}
     >

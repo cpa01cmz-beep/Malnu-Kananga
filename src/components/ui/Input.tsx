@@ -34,12 +34,12 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
   showClearButton?: boolean;
 }
 
-const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm";
+const baseClasses = "flex items-center border rounded-xl transition-all duration-300 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation focus-enhanced shadow-sm hover:shadow-md focus:shadow-lg backdrop-blur-sm relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-100%] before:transition-transform before:duration-700 focus:before:translate-x-[100%] before:z-10 before:pointer-events-none";
 
 const sizeClasses: Record<InputSize, string> = {
-  sm: "px-3 py-2 text-sm min-h-[2.75rem]",
-  md: "px-4 py-3 text-sm sm:text-base min-h-[3rem]",
-  lg: "px-5 py-4 text-base sm:text-lg min-h-[3.5rem]",
+  sm: "px-4 py-3 text-sm min-h-[3rem] touch-manipulation active:scale-[1.01] transition-transform duration-150",
+  md: "px-5 py-3.5 text-sm sm:text-base min-h-[3.25rem] touch-manipulation active:scale-[1.01] transition-transform duration-150",
+  lg: "px-6 py-4.5 text-base sm:text-lg min-h-[3.75rem] touch-manipulation active:scale-[1.01] transition-transform duration-150",
 };
 
 const sizeIconClasses: Record<InputSize, string> = {
@@ -49,9 +49,9 @@ const sizeIconClasses: Record<InputSize, string> = {
 };
 
 const stateClasses: Record<InputState, string> = {
-  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01]",
-  error: "border-red-300 dark:border-red-600 bg-red-50/95 dark:bg-red-900/30 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-400 dark:hover:border-red-500 focus:ring-red-500/30 focus:border-red-500 focus:scale-[1.01]",
-  success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01]",
+  default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/40 focus:border-primary-500 focus:scale-[1.01] focus:shadow-primary-500/10",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/30 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01] focus:shadow-red-500/10 animate-pulse-subtle",
+  success: "border-green-400 dark:border-green-500 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-500 dark:hover:border-green-400 focus:ring-green-500/40 focus:border-green-500 focus:scale-[1.01] focus:shadow-green-500/10",
 };
 
 const labelSizeClasses: Record<InputSize, string> = {

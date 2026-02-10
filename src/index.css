@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./styles/animations.css";
+@import "./styles/themes.css";
 
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);

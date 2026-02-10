@@ -16,21 +16,21 @@ interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'l
   children: React.ReactNode;
 }
 
-const baseClasses = 'text-neutral-900 dark:text-white';
+const baseClasses = 'text-neutral-900 dark:text-white antialiased leading-tight tracking-tight';
 
 const sizeClasses: Record<HeadingSize, string> = {
-  xs: 'text-xs',
-  sm: 'text-sm',
-  base: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl',
-  '2xl': 'text-2xl sm:text-xl',
-  '3xl': 'text-3xl sm:text-2xl',
-  '4xl': 'text-4xl sm:text-3xl md:text-2xl',
-  '5xl': 'text-5xl sm:text-4xl md:text-3xl lg:text-2xl',
-  '6xl': 'text-6xl sm:text-5xl md:text-4xl lg:text-3xl',
-  '7xl': 'text-7xl sm:text-6xl md:text-5xl lg:text-4xl xl:text-3xl',
-  '8xl': 'text-8xl sm:text-7xl md:text-6xl lg:text-5xl xl:text-4xl',
+  xs: 'text-xs leading-relaxed',
+  sm: 'text-sm leading-relaxed',
+  base: 'text-base leading-relaxed',
+  lg: 'text-lg leading-relaxed',
+  xl: 'text-xl leading-relaxed',
+  '2xl': 'text-2xl sm:text-xl leading-tight sm:leading-relaxed',
+  '3xl': 'text-3xl sm:text-2xl leading-tight sm:leading-relaxed',
+  '4xl': 'text-4xl sm:text-3xl md:text-2xl leading-tight md:leading-snug',
+  '5xl': 'text-5xl sm:text-4xl md:text-3xl lg:text-2xl leading-tight md:leading-snug tracking-tight',
+  '6xl': 'text-6xl sm:text-5xl md:text-4xl lg:text-3xl leading-tight md:leading-snug tracking-tight',
+  '7xl': 'text-7xl sm:text-6xl md:text-5xl lg:text-4xl xl:text-3xl leading-none md:leading-tight tracking-tight',
+  '8xl': 'text-8xl sm:text-7xl md:text-6xl lg:text-5xl xl:text-4xl leading-none md:leading-tight tracking-tight',
 };
 
 const weightClasses: Record<HeadingWeight, string> = {
