@@ -15,6 +15,7 @@ import ConfirmationDialog from './ui/ConfirmationDialog';
 import Card from './ui/Card';
 import Badge from './ui/Badge';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { TIME_MS } from '../constants';
 
 interface EnhancedMaterialSharingProps {
   material: ELibrary;
@@ -240,7 +241,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
 
   const getExpirationDays = (expiresAt?: string) => {
     if (!expiresAt) return null;
-    const days = Math.ceil((new Date(expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil((new Date(expiresAt).getTime() - new Date().getTime()) / TIME_MS.ONE_DAY);
     return days;
   };
 

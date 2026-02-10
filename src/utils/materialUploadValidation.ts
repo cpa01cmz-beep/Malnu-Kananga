@@ -10,7 +10,7 @@
  */
 
 import { logger } from './logger';
-import { FILE_SIZE_LIMITS, FILE_VALIDATION, XSS_CONFIG, CONVERSION } from '../constants';
+import { FILE_SIZE_LIMITS, FILE_VALIDATION, XSS_CONFIG, CONVERSION, mbToBytes, bytesToMb } from '../constants';
 
 // File type configurations
 export const MATERIAL_FILE_TYPES = {
@@ -283,7 +283,7 @@ export class PPDBDocumentValidator {
     // Validate file size for PPDB documents
     const maxPPDBSize = FILE_SIZE_LIMITS.PPDB_DOCUMENT;
     if (file.size > maxPPDBSize) {
-      warnings.push(`Ukuran dokumen PPDB idealnya tidak melebihi ${FILE_SIZE_LIMITS.PPDB_DOCUMENT / (1024 * 1024)}MB untuk pemrosesan OCR yang optimal`);
+      warnings.push(`Ukuran dokumen PPDB idealnya tidak melebihi ${bytesToMb(FILE_SIZE_LIMITS.PPDB_DOCUMENT)}MB untuk pemrosesan OCR yang optimal`);
     }
 
     // Validate document requirements
@@ -379,7 +379,7 @@ export class MaterialUploadValidator {
     // Default options
     const sanitizeName = options.sanitizeFileName !== false;
     const maxSize = options.maxSizeMB
-      ? options.maxSizeMB * 1024 * 1024
+      ? mbToBytes(options.maxSizeMB)
       : undefined;
 
     // Validate file name
@@ -417,12 +417,12 @@ export class MaterialUploadValidator {
 
     // Validate file size
     if (maxSize && file.size > maxSize) {
-      const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+      const maxSizeMB = Math.round(bytesToMb(maxSize));
       errors.push(`Ukuran file terlalu besar. Maksimal: ${maxSizeMB}MB`);
     } else if (fileType) {
       const maxTypeSize = MATERIAL_FILE_TYPES[fileType].maxSize;
       if (file.size > maxTypeSize) {
-        const maxSizeMB = Math.round(maxTypeSize / (1024 * 1024));
+        const maxSizeMB = Math.round(bytesToMb(maxTypeSize));
         errors.push(`Ukuran ${MATERIAL_FILE_TYPES[fileType].displayName} tidak boleh melebihi ${maxSizeMB}MB`);
       }
     }
@@ -520,7 +520,7 @@ export class MaterialUploadValidator {
 
     if (totalSize > maxBatchSize) {
       results.forEach(r => {
-        r.warnings.push(`Total ukuran file melebihi batas ${FILE_SIZE_LIMITS.BATCH_TOTAL / (1024 * 1024)}MB untuk batch upload`);
+        r.warnings.push(`Total ukuran file melebihi batas ${bytesToMb(FILE_SIZE_LIMITS.BATCH_TOTAL)}MB untuk batch upload`);
       });
     }
 
@@ -557,7 +557,7 @@ export const getAllowedFileExtensions = (
 
 export const getMaxFileSizeForType = (fileType: MaterialFileType): string => {
   const maxSize = MATERIAL_FILE_TYPES[fileType].maxSize;
-  const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+  const maxSizeMB = Math.round(bytesToMb(maxSize));
   return `${maxSizeMB}MB`;
 };
 

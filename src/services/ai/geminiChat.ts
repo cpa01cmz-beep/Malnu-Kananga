@@ -3,7 +3,7 @@ import { getAIInstance, DEFAULT_API_BASE_URL, AI_MODELS } from './geminiClient';
 import { chatCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { AI_CONFIG, APP_CONFIG } from '../../constants';
+import { AI_CONFIG, APP_CONFIG, HTTP } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -55,8 +55,8 @@ export async function* getAIResponseStream(
   // 1. Fetch RAG context from Worker
   try {
     const contextResponse = await fetch(WORKER_CHAT_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ message }),
     });
     if (contextResponse.ok) {

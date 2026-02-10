@@ -106,7 +106,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
   };
 
   const getDaysSinceLastAccess = (dateString: string) => {
-    const days = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / TIME_MS.ONE_DAY);
     return days;
   };
 

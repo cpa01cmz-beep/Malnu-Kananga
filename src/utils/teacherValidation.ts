@@ -1,6 +1,6 @@
 import type { Grade, Student, Subject, Class, Attendance, MaterialFolder, ELibrary, MaterialVersion } from '../types';
 import { VALIDATION_MESSAGES } from './errorMessages';
-import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS, GENDER_OPTIONS, CONVERSION } from '../constants';
+import { FILE_SIZE_LIMITS, VALIDATION_PATTERNS, ACADEMIC, FILE_VALIDATION, VALIDATION_LIMITS, GRADE_LIMITS, TIME_MS, GENDER_OPTIONS, CONVERSION, bytesToMb } from '../constants';
 
 export interface StudentGrade {
   id: string;
@@ -713,7 +713,7 @@ export function validateELibrary(material: ELibrary): ValidationResult {
   } else if (material.fileSize <= 0) {
     errors.push('Material file size must be greater than 0');
   } else if (material.fileSize > FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX) {
-    errors.push(`Material file size cannot exceed ${FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX / (1024 * 1024)}MB`);
+    errors.push(`Material file size cannot exceed ${bytesToMb(FILE_SIZE_LIMITS.TEACHER_MATERIAL_MAX)}MB`);
   }
 
   if (!material.subjectId || material.subjectId.trim() === '') {

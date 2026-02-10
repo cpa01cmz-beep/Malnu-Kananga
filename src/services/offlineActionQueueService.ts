@@ -9,7 +9,7 @@
 // initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, UI_DELAYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_DELAYS, HTTP } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
 import { generateId, ID_CONFIG } from '../utils/idGenerator';
@@ -391,7 +391,7 @@ class OfflineActionQueueService {
   private async executeAction(action: OfflineAction): Promise<boolean> {
     const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
     };
 
     if (token) {
@@ -406,7 +406,7 @@ class OfflineActionQueueService {
     const response = await fetch(action.endpoint, {
       method: action.method,
       headers,
-      body: action.method !== 'DELETE' ? JSON.stringify(action.data) : undefined,
+      body: action.method !== HTTP.METHODS.DELETE ? JSON.stringify(action.data) : undefined,
     });
 
     if (response.ok) {
@@ -810,10 +810,10 @@ export function createOfflineApiCall<T>(
       const response = await fetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
           ...(token && { 'Authorization': `Bearer ${token}` }),
         },
-        body: method !== 'DELETE' ? JSON.stringify(data) : undefined,
+        body: method !== HTTP.METHODS.DELETE ? JSON.stringify(data) : undefined,
       });
 
       if (!response.ok) {

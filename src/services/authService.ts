@@ -5,7 +5,7 @@ import {
   logError, 
   createValidationError
 } from '../utils/errorHandler';
-import { API_CONFIG } from '../constants';
+import { API_CONFIG, HTTP } from '../constants';
 
 export interface User {
   id?: string;
@@ -69,9 +69,9 @@ export class AuthService {
   async forgotPassword(email: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.FORGOT_PASSWORD}`, {
-        method: 'POST',
+        method: HTTP.METHODS.POST,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
         },
         body: JSON.stringify({ email }),
       });
@@ -91,9 +91,9 @@ export class AuthService {
   async verifyResetToken(token: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.VERIFY_RESET_TOKEN}`, {
-        method: 'POST',
+        method: HTTP.METHODS.POST,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
         },
         body: JSON.stringify({ token }),
       });
@@ -113,9 +113,9 @@ export class AuthService {
   async resetPassword(token: string, password: string): Promise<{ success: boolean; message?: string; data?: unknown; error?: string }> {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.RESET_PASSWORD}`, {
-        method: 'POST',
+        method: HTTP.METHODS.POST,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
         },
         body: JSON.stringify({ token, password }),
       });
@@ -136,9 +136,9 @@ export class AuthService {
     try {
       const token = authAPI.getAuthToken();
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${API_CONFIG.ENDPOINTS.USERS}/${userId}`, {
-        method: 'PUT',
+        method: HTTP.METHODS.PUT,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(profileData),
@@ -161,9 +161,9 @@ export class AuthService {
       const token = authAPI.getAuthToken();
       const endpoint = API_CONFIG.ENDPOINTS.USER_PASSWORD.replace(':userId', userId);
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}${endpoint}`, {
-        method: 'PUT',
+        method: HTTP.METHODS.PUT,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ currentPassword, newPassword }),

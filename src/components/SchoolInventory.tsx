@@ -40,6 +40,7 @@ import type {
   ConditionReport,
   DepreciationReport
 } from '../types';
+import { TIME_MS } from '../constants';
 
 interface SchoolInventoryProps {
   onBack: () => void;
@@ -117,7 +118,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     if (!item.purchasePrice || !item.purchaseDate) return 0;
     const purchaseDate = new Date(item.purchaseDate);
     const today = new Date();
-    const yearsDiff = (today.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    const yearsDiff = (today.getTime() - purchaseDate.getTime()) / TIME_MS.ONE_YEAR;
     const rate = (item.depreciationRate || 10) / 100;
     const currentValue = item.purchasePrice * Math.pow(1 - rate, yearsDiff);
     return Math.max(0, Math.round(currentValue * 100) / 100);

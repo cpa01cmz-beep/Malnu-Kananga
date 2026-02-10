@@ -2,6 +2,7 @@
 
 import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, ConversationCreateRequest, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
 import { request } from '../client';
+import { HTTP } from '../../../constants';
 
 // ============================================
 // PARENTS API
@@ -81,23 +82,23 @@ export const messagesAPI = {
 
   async createConversation(data: ConversationCreateRequest): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
     return request<Conversation>('/api/messages/conversations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(data),
     });
   },
 
   async updateConversation(conversationId: string, updates: Partial<Conversation>): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
     return request<Conversation>(`/api/messages/conversations/${conversationId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.PUT,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(updates),
     });
   },
 
   async deleteConversation(conversationId: string): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
     return request<{ success: boolean }>(`/api/messages/conversations/${conversationId}`, {
-      method: 'DELETE',
+      method: HTTP.METHODS.DELETE,
     });
   },
 
@@ -115,41 +116,41 @@ export const messagesAPI = {
       if (data.replyTo) formData.append('replyTo', data.replyTo);
 
       return request<DirectMessage>('/api/messages', {
-        method: 'POST',
+        method: HTTP.METHODS.POST,
         body: formData,
       });
     }
 
     return request<DirectMessage>('/api/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(data),
     });
   },
 
   async updateMessage(messageId: string, updates: Partial<DirectMessage>): Promise<{ success: boolean; message: string; data?: DirectMessage; error?: string }> {
     return request<DirectMessage>(`/api/messages/${messageId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.PUT,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify(updates),
     });
   },
 
   async deleteMessage(messageId: string): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
     return request<{ success: boolean }>(`/api/messages/${messageId}`, {
-      method: 'DELETE',
+      method: HTTP.METHODS.DELETE,
     });
   },
 
   async markMessageAsRead(messageId: string): Promise<{ success: boolean; message: string; data?: MessageReadReceipt; error?: string }> {
     return request<MessageReadReceipt>(`/api/messages/${messageId}/read`, {
-      method: 'POST',
+      method: HTTP.METHODS.POST,
     });
   },
 
   async markConversationAsRead(conversationId: string): Promise<{ success: boolean; message: string; data?: { success: boolean; unreadCount: number }; error?: string }> {
     return request<{ success: boolean; unreadCount: number }>(`/api/messages/conversations/${conversationId}/read`, {
-      method: 'POST',
+      method: HTTP.METHODS.POST,
     });
   },
 
@@ -159,8 +160,8 @@ export const messagesAPI = {
 
   async sendTypingIndicator(conversationId: string, isTyping: boolean): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
     return request<{ success: boolean }>(`/api/messages/conversations/${conversationId}/typing`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: HTTP.METHODS.POST,
+      headers: { 'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON },
       body: JSON.stringify({ isTyping }),
     });
   },
