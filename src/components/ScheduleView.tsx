@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
@@ -39,11 +39,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
   const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
 
-  useEffect(() => {
-    fetchSchedules();
-  }, []);
-
-  const fetchSchedules = async () => {
+  const fetchSchedules = useCallback(async () => {
     const isRetry = error !== null;
     if (isRetry) {
       setIsRetrying(true);
@@ -73,7 +69,11 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
         setLoading(false);
       }
     }
-  };
+  }, [error]);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, [fetchSchedules]);
 
   const getSubjectName = (subjectId: string): string => {
     const subject = subjects.find((s) => s.id === subjectId);
