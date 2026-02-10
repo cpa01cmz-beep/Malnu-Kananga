@@ -1,7 +1,7 @@
 // api/auth.ts - Authentication API and Token Management
 
 import type { User, UserExtraRole } from '../../types';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, TIME_SECONDS } from '../../constants';
 import { logger } from '../../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -95,8 +95,7 @@ export function isTokenExpiringSoon(token: string): boolean {
   if (!payload) return true;
 
   const now = Math.floor(Date.now() / 1000);
-  const fiveMinutes = 5 * 60;
-  return (payload.exp - now) < fiveMinutes;
+  return (payload.exp - now) < TIME_SECONDS.FIVE_MINUTES;
 }
 
 export let isRefreshing = false;
