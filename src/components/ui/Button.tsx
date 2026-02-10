@@ -26,7 +26,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-250 cubic-bezier(0.25, 0.46, 0.45, 0.94) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced mobile-touch-target haptic-feedback";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-250 cubic-bezier(0.25, 0.46, 0.45, 0.94) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced mobile-touch-target haptic-feedback";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-xl hover:shadow-primary-500/25 btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
@@ -45,16 +45,16 @@ const intentClasses: Record<ButtonIntent, string> = {
 
 const sizeClasses: Record<ButtonSize, string> = {
   icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "px-4 py-2.5 text-sm min-h-[44px] sm:min-h-[48px] mobile-touch-target",
-  md: "px-5 py-3 text-sm sm:text-base min-h-[48px] sm:min-h-[52px] mobile-touch-target",
-  lg: "px-6 py-4 text-base sm:text-lg min-h-[52px] sm:min-h-[56px] mobile-touch-target",
+  sm: "px-4 py-2.5 text-sm min-h-[48px] sm:min-h-[52px] mobile-touch-target",
+  md: "px-5 py-3 text-sm sm:text-base min-h-[52px] sm:min-h-[56px] mobile-touch-target",
+  lg: "px-6 py-4 text-base sm:text-lg min-h-[56px] sm:min-h-[60px] mobile-touch-target",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
   icon: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  sm: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
-  md: "p-3 min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px]",
-  lg: "p-4 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
+  sm: "p-3 min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px]",
+  md: "p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
+  lg: "p-4 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
