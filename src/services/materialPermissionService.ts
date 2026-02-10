@@ -1,5 +1,6 @@
 import { ELibrary, MaterialSharePermission, UserRole, UserExtraRole } from '../types';
 import { logger } from '../utils/logger';
+import { generateHyphenatedId, ID_CONFIG } from '../utils/idGenerator';
 
 export interface MaterialAccessCheck {
   canAccess: boolean;
@@ -188,7 +189,7 @@ export class MaterialPermissionService {
 
   async logShareAudit(audit: Omit<MaterialShareAudit, 'id' | 'timestamp'>): Promise<MaterialShareAudit> {
     const auditLog: MaterialShareAudit = {
-      id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateHyphenatedId(ID_CONFIG.PREFIXES.AUDIT),
       timestamp: new Date().toISOString(),
       ...audit,
     };

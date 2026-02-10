@@ -13,6 +13,7 @@ import { unifiedNotificationManager } from '../services/notifications/unifiedNot
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
 import { TIME_MS } from '../constants';
+import { idGenerators } from '../utils/idGenerator';
 
 interface PushSubscription {
   readonly endpoint: string;
@@ -108,7 +109,7 @@ export function useUnifiedNotifications() {
     targetExtraRoles?: PushNotification['targetExtraRoles']
   ): PushNotification => {
     return {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.notification(),
       type,
       title,
       body,

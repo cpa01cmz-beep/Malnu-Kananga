@@ -1,4 +1,5 @@
-import React, { forwardRef, ReactNode } from 'react';
+import React, { forwardRef, ReactNode, useMemo } from 'react';
+import { idGenerators } from '../../utils/idGenerator';
 
 export type TableSize = 'sm' | 'md' | 'lg';
 export type TableVariant = 'default' | 'striped' | 'bordered' | 'simple';
@@ -68,6 +69,7 @@ const Table = forwardRef<HTMLTableElement, TableProps>( // eslint-disable-line n
     },
     ref
   ) => {
+    const tableDescId = useMemo(() => idGenerators.input(), []);
     const classes = `
       w-full text-left ${sizeClasses[size]} text-neutral-600 dark:text-neutral-300
       ${variantClasses[variant]}
@@ -80,14 +82,14 @@ const Table = forwardRef<HTMLTableElement, TableProps>( // eslint-disable-line n
         className={classes}
         role="table"
         aria-label={ariaLabel || caption}
-        aria-describedby={description ? `table-desc-${Math.random().toString(36).substr(2, 9)}` : undefined}
+        aria-describedby={description ? tableDescId : undefined}
         {...props}
       >
         {caption && (
           <caption className="sr-only">
             {caption}
             {description && (
-              <span id={`table-desc-${Math.random().toString(36).substr(2, 9)}`} className="sr-only">
+              <span id={tableDescId} className="sr-only">
                 {description}
               </span>
             )}

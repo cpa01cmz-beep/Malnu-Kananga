@@ -17,6 +17,7 @@ import {
   USER_GUIDANCE,
 } from '../../utils/errorMessages';
 import { validateMaterialData } from '../../utils/teacherValidation';
+import { idGenerators } from '../../utils/idGenerator';
 
 interface UseMaterialDataOptions {
   onShowToast: (msg: string, type: 'success' | 'info' | 'error') => void;
@@ -249,7 +250,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
         const actionId = addAction({
           type: 'create',
           entity: 'material',
-          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          entityId: idGenerators.material(),
           data: newMaterial,
           endpoint: '/api/library',
           method: 'POST',
@@ -320,7 +321,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
         const actionId = addAction({
           type: 'create',
           entity: 'material',
-          entityId: `material_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          entityId: idGenerators.material(),
           data: queuedMaterial,
           endpoint: '/api/library',
           method: 'POST',

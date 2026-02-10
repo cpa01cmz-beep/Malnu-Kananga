@@ -9,6 +9,7 @@ import {
   AIOperationType,
   handleAIError
 } from '../../utils/aiErrorHandler';
+import { idGenerators } from '../../utils/idGenerator';
 
 /**
  * Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
@@ -90,7 +91,7 @@ export async function analyzeStudentPerformance(
     logger.info('Queueing AI analysis for offline execution');
 
     // Generate a unique ID for this analysis
-    const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const analysisId = idGenerators.analysis('student');
 
     // Queue analysis using dynamic import to avoid circular dependency
     const { offlineActionQueueService } = await import('../offlineActionQueueService');
@@ -295,7 +296,7 @@ export async function generateAssignmentFeedback(
     const jsonText = (response.text || '').trim();
     const feedbackData = JSON.parse(jsonText);
 
-    feedbackData.id = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    feedbackData.id = idGenerators.feedback();
     feedbackData.generatedAt = new Date().toISOString();
     feedbackData.aiModel = AI_MODELS.PRO_THINKING;
 
