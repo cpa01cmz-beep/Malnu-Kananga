@@ -8,6 +8,21 @@ import { useUnifiedNotifications } from './useUnifiedNotifications';
  */
 export function useEventNotifications() {
   const unified = useUnifiedNotifications();
+  
+  // Destructure to avoid exhaustive-deps warnings
+  const {
+    notifyGradeUpdate: unifiedNotifyGradeUpdate,
+    notifyPPDBStatus: unifiedNotifyPPDBStatus,
+    notifyLibraryUpdate: unifiedNotifyLibraryUpdate,
+    notifyAssignmentCreate: unifiedNotifyAssignmentCreate,
+    notifyAssignmentSubmit: unifiedNotifyAssignmentSubmit,
+    notifyMeetingRequest: unifiedNotifyMeetingRequest,
+    notifyScheduleChange: unifiedNotifyScheduleChange,
+    notifyAttendanceAlert: unifiedNotifyAttendanceAlert,
+    notifyOCRValidation: unifiedNotifyOCRValidation,
+    useMonitorLocalStorage: unifiedUseMonitorLocalStorage,
+    useOCRValidationMonitor: unifiedUseOCRValidationMonitor,
+  } = unified;
 
   const notifyGradeUpdate = useCallback(async (
     studentName: string, 
@@ -15,48 +30,48 @@ export function useEventNotifications() {
     previousGrade?: number, 
     newGrade?: number
   ) => {
-    await unified.notifyGradeUpdate(studentName, subject, previousGrade, newGrade);
-  }, [unified.notifyGradeUpdate]);
+    await unifiedNotifyGradeUpdate(studentName, subject, previousGrade, newGrade);
+  }, [unifiedNotifyGradeUpdate]);
 
   const notifyPPDBStatus = useCallback(async (count: number) => {
-    await unified.notifyPPDBStatus(count);
-  }, [unified.notifyPPDBStatus]);
+    await unifiedNotifyPPDBStatus(count);
+  }, [unifiedNotifyPPDBStatus]);
 
   const notifyLibraryUpdate = useCallback(async (materialTitle: string, materialType: string) => {
-    await unified.notifyLibraryUpdate(materialTitle, materialType);
-  }, [unified.notifyLibraryUpdate]);
+    await unifiedNotifyLibraryUpdate(materialTitle, materialType);
+  }, [unifiedNotifyLibraryUpdate]);
 
   const notifyAssignmentCreate = useCallback(async (assignmentId: string, title: string) => {
-    await unified.notifyAssignmentCreate(assignmentId, title);
-  }, [unified.notifyAssignmentCreate]);
+    await unifiedNotifyAssignmentCreate(assignmentId, title);
+  }, [unifiedNotifyAssignmentCreate]);
 
   const notifyAssignmentSubmit = useCallback(async (assignmentId: string, submissionId: string, title: string) => {
-    await unified.notifyAssignmentSubmit(assignmentId, submissionId, title);
-  }, [unified.notifyAssignmentSubmit]);
+    await unifiedNotifyAssignmentSubmit(assignmentId, submissionId, title);
+  }, [unifiedNotifyAssignmentSubmit]);
 
   const notifyMeetingRequest = useCallback(async (requesterName: string, meetingType: string) => {
-    await unified.notifyMeetingRequest(requesterName, meetingType);
-  }, [unified.notifyMeetingRequest]);
+    await unifiedNotifyMeetingRequest(requesterName, meetingType);
+  }, [unifiedNotifyMeetingRequest]);
 
   const notifyScheduleChange = useCallback(async (className: string, changeType: string) => {
-    await unified.notifyScheduleChange(className, changeType);
-  }, [unified.notifyScheduleChange]);
+    await unifiedNotifyScheduleChange(className, changeType);
+  }, [unifiedNotifyScheduleChange]);
 
   const notifyAttendanceAlert = useCallback(async (studentName: string, alertType: string) => {
-    await unified.notifyAttendanceAlert(studentName, alertType);
-  }, [unified.notifyAttendanceAlert]);
+    await unifiedNotifyAttendanceAlert(studentName, alertType);
+  }, [unifiedNotifyAttendanceAlert]);
 
   const notifyOCRValidation = useCallback(async (event: OCRValidationEvent) => {
-    await unified.notifyOCRValidation(event);
-  }, [unified.notifyOCRValidation]);
+    await unifiedNotifyOCRValidation(event);
+  }, [unifiedNotifyOCRValidation]);
 
   const useMonitorLocalStorage = useCallback((key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
-    unified.useMonitorLocalStorage(key, onChange);
-  }, [unified.useMonitorLocalStorage]);
+    unifiedUseMonitorLocalStorage(key, onChange);
+  }, [unifiedUseMonitorLocalStorage]);
 
   const useOCRValidationMonitor = useCallback(() => {
-    unified.useOCRValidationMonitor();
-  }, [unified.useOCRValidationMonitor]);
+    unifiedUseOCRValidationMonitor();
+  }, [unifiedUseOCRValidationMonitor]);
 
   return {
     notifyGradeUpdate,
