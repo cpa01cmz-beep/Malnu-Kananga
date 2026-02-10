@@ -219,7 +219,16 @@ export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLE
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
     SCHOOL_NPSN: '69881502',
-};
+    SCHOOL_ADDRESS: 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    SK_PENDIRIAN: {
+        NUMBER: 'D/Wi/MA./101/2000',
+        DATE: '20-09-2000',
+    },
+    SK_OPERASIONAL: {
+        NUMBER: 'D/Wi/MA./101/2000',
+        DATE: '20-09-2000',
+    },
+} as const;
 
 export const EXTERNAL_URLS = {
     MAKER_SUITE_API: 'https://makersuite.google.com/app/apikey',
@@ -257,6 +266,7 @@ export const VOICE_CONFIG = {
     RATE_BOUNDS: { MIN: 0.1, MAX: 10 },
     PITCH_BOUNDS: { MIN: 0, MAX: 2 },
     VOLUME_BOUNDS: { MIN: 0, MAX: 1 },
+    TRANSCRIPT_PREVIEW_LENGTH: 30,
 } as const;
 
 export const ERROR_MESSAGES = {
