@@ -8,7 +8,7 @@ import {
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
 import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';
-import { AI_MODELS, TEXT_TRUNCATION } from '../constants';
+import { AI_MODELS, TEXT_TRUNCATION, OCR_ENHANCEMENT_CONFIG } from '../constants';
 
 // Models - Flexy: Using centralized AI model names!
 const FLASH_MODEL = AI_MODELS.FLASH;
@@ -58,7 +58,7 @@ async function getAIInstance(): Promise<GoogleGenAIType> {
 // Generate summary for OCR text
 export async function generateTextSummary(
   text: string,
-  maxLength: number = 150
+  maxLength: number = OCR_ENHANCEMENT_CONFIG.MAX_SUMMARY_LENGTH
 ): Promise<string> {
   if (!text || text.trim().length === 0) {
     return 'Tidak ada teks untuk dianalisis.';
