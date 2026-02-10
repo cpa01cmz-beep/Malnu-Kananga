@@ -79,32 +79,20 @@ const SuspenseLoading: React.FC<SuspenseLoadingProps> = ({
   };
 
   return (
-    <>
-      <style>{`
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
-          }
-        }
-        .animate-shimmer {
-          animation: shimmer 1.5s ease-in-out infinite;
-        }
-      `}</style>
-      <div
-        className={`flex flex-col justify-center items-center ${containerClasses[size]} space-y-4 ${className}`}
-        role="status"
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <LoadingIcon />
-        <p className={`${textSizeClasses[size]} text-neutral-500 dark:text-neutral-400 font-medium animate-pulse`}>
-          {message}
-        </p>
+    <div
+      className={`flex flex-col justify-center items-center ${containerClasses[size]} space-y-4 ${className} animate-fade-in`}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <LoadingIcon />
+      <p className={`${textSizeClasses[size]} text-neutral-500 dark:text-neutral-400 font-medium animate-fade-in-up delay-200`}>
+        {message}
+      </p>
+      <div className="w-16 h-1 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+        <div className="h-full bg-primary-500 rounded-full animate-progress-fill" />
       </div>
-    </>
+    </div>
   );
 };
 
