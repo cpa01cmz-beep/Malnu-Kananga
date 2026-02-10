@@ -114,6 +114,7 @@ export const RouteTransitionProvider: React.FC<RouteTransitionProviderProps> = (
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRouteTransition = () => {
   const context = useContext(RouteTransitionContext);
   if (context === undefined) {
@@ -123,6 +124,7 @@ export const useRouteTransition = () => {
 };
 
   // Preset transitions for common navigation patterns
+  // eslint-disable-next-line react-refresh/only-export-components
   export const RouteTransitions = {
     // Page-level transitions
     forward: { type: 'slide-left' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 300 },
@@ -179,6 +181,7 @@ export const RouteTransitionWrapper: React.FC<RouteTransitionWrapperProps> = ({
 };
 
 // Hook for creating navigation functions with automatic transitions
+// eslint-disable-next-line react-refresh/only-export-components
 export const useNavigationWithTransitions = () => {
   const { navigateWithTransition } = useRouteTransition();
 
