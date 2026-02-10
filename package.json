@@ -76,6 +76,7 @@
     "lighthouse": "^12.8.2",
     "lint-staged": "^16.2.7",
     "playwright": "^1.58.2",
+    "playwright-lighthouse": "^4.0.0",
     "puppeteer": "^24.37.2",
     "rollup-plugin-visualizer": "^6.0.5",
     "tailwindcss": "^4.1.18",
