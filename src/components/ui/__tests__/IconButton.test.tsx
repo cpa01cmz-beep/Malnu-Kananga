@@ -341,4 +341,111 @@ describe('IconButton', () => {
       expect(button).toHaveClass('active:scale-95');
     });
   });
+
+  describe('Loading State', () => {
+    it('renders loading spinner when isLoading is true', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" isLoading />);
+      const button = screen.getByRole('button');
+      
+      // Check aria-busy attribute
+      expect(button).toHaveAttribute('aria-busy', 'true');
+      
+      // Check aria-label includes loading text
+      expect(button).toHaveAttribute('aria-label', 'Test - Memuat');
+      
+      // Check for spinner SVG (animate-spin class on parent)
+      const spinnerSvg = document.querySelector('.animate-spin');
+      expect(spinnerSvg).toBeInTheDocument();
+      
+      // Original icon should be hidden during loading
+      const hiddenIcon = document.querySelector('.opacity-0.scale-50');
+      expect(hiddenIcon).toBeInTheDocument();
+    });
+
+    it('applies loading cursor and opacity classes', () => {
+      const { container } = render(<IconButton icon={mockIcon} ariaLabel="Test" isLoading />);
+      const button = container.querySelector('button');
+      expect(button).toHaveClass('cursor-wait', 'opacity-80');
+    });
+
+    it('does not show tooltip when loading', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Help" isLoading />);
+      
+      // Tooltip should not be rendered when loading
+      const tooltip = screen.queryByRole('tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Success State', () => {
+    it('renders success checkmark when showSuccess is true', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" showSuccess />);
+      const button = screen.getByRole('button');
+      
+      // Check aria-label includes success text
+      expect(button).toHaveAttribute('aria-label', 'Test - Berhasil');
+      
+      // Check for success styling
+      expect(button).toHaveClass('text-green-600', 'dark:text-green-400');
+      expect(button).toHaveClass('bg-green-100', 'dark:bg-green-900/30');
+      
+      // Original icon should be hidden during success
+      const hiddenIcon = document.querySelector('.opacity-0.scale-50');
+      expect(hiddenIcon).toBeInTheDocument();
+    });
+
+    it('auto-hides success state after duration', async () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" showSuccess successDuration={100} />);
+      
+      // Initially shows success
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Test - Berhasil');
+      
+      // Wait for auto-reset
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      // Should revert to normal state
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label', 'Test');
+    });
+
+    it('prioritizes loading over success state', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" isLoading showSuccess />);
+      const button = screen.getByRole('button');
+      
+      // Loading state takes precedence
+      expect(button).toHaveAttribute('aria-label', 'Test - Memuat');
+      expect(button).toHaveAttribute('aria-busy', 'true');
+    });
+
+    it('does not show tooltip when in success state', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Help" showSuccess />);
+      
+      // Tooltip should not be rendered when showing success
+      const tooltip = screen.queryByRole('tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility with Loading and Success', () => {
+    it('has aria-live polite for screen reader announcements', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" />);
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-live', 'polite');
+    });
+
+    it('updates aria-label dynamically based on state', () => {
+      const { rerender } = render(<IconButton icon={mockIcon} ariaLabel="Save" />);
+      const button = screen.getByRole('button');
+      
+      // Normal state
+      expect(button).toHaveAttribute('aria-label', 'Save');
+      
+      // Loading state
+      rerender(<IconButton icon={mockIcon} ariaLabel="Save" isLoading />);
+      expect(button).toHaveAttribute('aria-label', 'Save - Memuat');
+      
+      // Success state
+      rerender(<IconButton icon={mockIcon} ariaLabel="Save" showSuccess />);
+      expect(button).toHaveAttribute('aria-label', 'Save - Berhasil');
+    });
+  });
 });
