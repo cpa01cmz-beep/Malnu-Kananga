@@ -2080,3 +2080,71 @@ export const TEST_CONFIG = {
     DEFAULT_USER_ID: 'user-1',
     DEFAULT_CLASS_ID: 'class-1',
 } as const;
+
+// AI Model Names - Flexy: Never hardcode AI model names!
+export const AI_MODELS = {
+    FLASH: 'gemini-2.5-flash',
+    PRO_THINKING: 'gemini-3-pro-preview',
+    PRO: 'gemini-3-pro',
+    DEFAULT: 'gemini-2.5-flash',
+} as const;
+
+// Time conversion factors - Flexy: Never hardcode time math!
+export const TIME_CONVERSION = {
+    MS_PER_SECOND: 1000,
+    SECONDS_PER_MINUTE: 60,
+    MINUTES_PER_HOUR: 60,
+    HOURS_PER_DAY: 24,
+    DAYS_PER_WEEK: 7,
+} as const;
+
+// HTTP Status Code Ranges - Flexy: Never hardcode status checks!
+export const HTTP_STATUS_RANGES = {
+    SUCCESS_MIN: 200,
+    SUCCESS_MAX: 300,
+    CLIENT_ERROR_MIN: 400,
+    CLIENT_ERROR_MAX: 500,
+    REDIRECT_MIN: 300,
+    REDIRECT_MAX: 400,
+} as const;
+
+// Color RGB Values - Flexy: Never hardcode RGB values!
+export const RGB_VALUES = {
+    WHITE: 255,
+    BLACK: 0,
+} as const;
+
+// Common delay values in milliseconds - Flexy: Never hardcode delays!
+export const DELAY_MS = {
+    TINY: 10,
+    SHORT: 50,
+    MEDIUM: 100,
+    STANDARD: 200,
+    LONG: 500,
+    VERY_LONG: 1000,
+    DEBOUNCE: 300,
+} as const;
+
+// Text truncation lengths - Flexy: Never hardcode truncation!
+export const TEXT_TRUNCATION = {
+    PREVIEW: 200,
+    SHORT_PREVIEW: 150,
+    MEDIUM_PREVIEW: 500,
+    LONG_PREVIEW: 1000,
+    COMPARISON_TEXT: 200,
+    SEARCH_RESULT: 200,
+} as const;
+
+// PDF Export Colors (RGB arrays) - Flexy: Never hardcode PDF colors!
+// Note: Not using 'as const' because jsPDF requires mutable arrays
+export const PDF_COLORS = {
+    HEADER_BG: [37, 99, 235] as [number, number, number], // Primary blue
+    HEADER_TEXT: 255, // White
+    ALTERNATE_ROW: [249, 250, 251] as [number, number, number], // Light gray
+};
+
+// Text processing limits - Flexy: Never hardcode text limits!
+export const TEXT_LIMITS = {
+    MIN_SEARCH_LENGTH: 2,
+    MIN_NAME_LENGTH: 2,
+} as const;

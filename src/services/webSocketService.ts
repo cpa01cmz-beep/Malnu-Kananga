@@ -4,6 +4,8 @@
     RETRY_CONFIG,
     TIME_MS,
     API_CONFIG,
+    TIME_CONVERSION,
+    WEBSOCKET_CONSTANTS,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -691,7 +693,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Check if JWT token is expired
    */
   private isTokenExpired(payload: AuthPayload): boolean {
-    const now = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / TIME_CONVERSION.MS_PER_SECOND);
     return payload.exp < now;
   }
 
@@ -741,7 +743,7 @@ private updateEventsData(event: RealTimeEvent): void {
       this.visibilityChangeHandler = null;
     }
 
-    if (this.ws?.readyState === 1) {
+    if (this.ws?.readyState === WEBSOCKET_CONSTANTS.READY_STATE_OPEN) {
       this.ws.send(JSON.stringify({
         type: 'disconnect',
         timestamp: new Date().toISOString(),
@@ -770,7 +772,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Check if WebSocket is connected
    */
   isConnected(): boolean {
-    return this.connectionState.connected && this.ws?.readyState === 1;
+    return this.connectionState.connected && this.ws?.readyState === WEBSOCKET_CONSTANTS.READY_STATE_OPEN;
   }
 
   /**

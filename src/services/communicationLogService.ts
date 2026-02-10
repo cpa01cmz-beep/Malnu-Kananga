@@ -4,7 +4,7 @@ import {
   CommunicationLogExportOptions,
   CommunicationLogStats,
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TEXT_TRUNCATION } from '../constants';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { pdfExportService } from '../services/pdfExportService';
@@ -35,8 +35,8 @@ class CommunicationLogService {
 
     let plainText = body.replace(/<[^>]+>/g, '');
 
-    if (plainText.length > 200) {
-      plainText = plainText.substring(0, 200) + '...';
+    if (plainText.length > TEXT_TRUNCATION.PREVIEW) {
+      plainText = plainText.substring(0, TEXT_TRUNCATION.PREVIEW) + '...';
     }
 
     return plainText;
