@@ -600,4 +600,138 @@ describe('Input Component', () => {
       expect(counter).not.toHaveClass('animate-pulse-subtle');
     });
   });
+
+  describe('Keyboard Shortcuts - Escape Hint', () => {
+    it('shows escape hint tooltip when input is focused with clearOnEscape and has value', async () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      // Focus the input using userEvent for better simulation
+      await userEvent.click(input);
+      
+      // Wait for the tooltip delay (400ms)
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip');
+        expect(tooltip).toBeInTheDocument();
+        expect(tooltip).toHaveTextContent('ESC');
+        expect(tooltip).toHaveTextContent('bersihkan');
+      }, { timeout: 500 });
+    });
+
+    it('does not show escape hint when clearOnEscape is false', async () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      await userEvent.click(input);
+      
+      // Wait a bit and verify tooltip doesn't appear
+      await new Promise(resolve => setTimeout(resolve, 450));
+      
+      // Tooltip should not exist
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('does not show escape hint when input has no value', async () => {
+      render(
+        <Input
+          label="Search"
+          value=""
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      await userEvent.click(input);
+      
+      // Wait a bit and verify tooltip doesn't appear
+      await new Promise(resolve => setTimeout(resolve, 450));
+      
+      // Tooltip should not exist
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('hides escape hint when input loses focus', async () => {
+      render(
+        <>
+          <Input
+            label="Search"
+            value="test query"
+            clearOnEscape
+            onChange={mockOnChange}
+          />
+          <button>Other button</button>
+        </>
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      // Focus and wait for tooltip
+      await userEvent.click(input);
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      }, { timeout: 500 });
+      
+      // Click elsewhere to blur
+      await userEvent.click(screen.getByRole('button', { name: 'Other button' }));
+      
+      // Tooltip should be removed
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
+    it('clears input value when escape is pressed and clearOnEscape is true', () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      fireEvent.keyDown(input, { key: 'Escape' });
+      
+      expect(mockOnChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('does not clear input when escape is pressed without clearOnEscape', () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      fireEvent.keyDown(input, { key: 'Escape' });
+      
+      expect(mockOnChange).not.toHaveBeenCalled();
+    });
+  });
 });
