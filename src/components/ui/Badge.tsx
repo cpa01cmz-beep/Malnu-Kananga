@@ -1,9 +1,11 @@
 import React from 'react';
 import { getColorClasses } from '../../config/colors';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type BadgeVariant = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'primary' | 'secondary' | 'outline' | 'default' | 'gray' | 'blue' | 'purple' | 'orange' | 'green' | 'red' | 'yellow';
 export type BadgeSize = 'sm' | 'md' | 'lg' | 'xl';
 export type BadgeStyle = 'solid' | 'outline';
+export type BadgePulseIntensity = 'subtle' | 'moderate' | 'strong';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
@@ -17,6 +19,12 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   role?: 'status' | 'generic' | 'img';
   /** Whether the badge is purely decorative and should be hidden from screen readers */
   decorative?: boolean;
+  /** Enable pulse animation to draw attention (e.g., for new notifications) */
+  pulse?: boolean;
+  /** Intensity of the pulse animation */
+  pulseIntensity?: BadgePulseIntensity;
+  /** Duration of one pulse cycle in seconds */
+  pulseDuration?: number;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-semibold transition-colors duration-200";
@@ -109,6 +117,12 @@ const fullRoundedClasses: Record<BadgeSize, string> = {
   xl: "rounded-full",
 };
 
+const pulseIntensityClasses: Record<BadgePulseIntensity, string> = {
+  subtle: 'animate-badge-pulse-subtle',
+  moderate: 'animate-badge-pulse-moderate',
+  strong: 'animate-badge-pulse-strong',
+};
+
 const Badge: React.FC<BadgeProps> = ({
   children,
   variant = 'neutral',
@@ -119,13 +133,20 @@ const Badge: React.FC<BadgeProps> = ({
   ariaLabel,
   role = 'status',
   decorative = false,
+  pulse = false,
+  pulseIntensity = 'subtle',
+  pulseDuration = 2,
   ...props
 }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const shouldPulse = pulse && !prefersReducedMotion;
+
   const classes = `
     ${baseClasses}
     ${variantClasses[variant][styleType]}
     ${sizeClasses[size]}
     ${rounded ? fullRoundedClasses[size] : roundedClasses[size]}
+    ${shouldPulse ? pulseIntensityClasses[pulseIntensity] : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -135,6 +156,7 @@ const Badge: React.FC<BadgeProps> = ({
       role={role}
       aria-label={decorative ? undefined : ariaLabel}
       aria-hidden={decorative}
+      {...(shouldPulse && { style: { animationDuration: `${pulseDuration}s` } })}
       {...props}
     >
       {children}

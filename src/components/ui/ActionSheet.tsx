@@ -120,7 +120,7 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
   };
 
   const getActionClasses = (variant: 'default' | 'destructive' | 'primary' = 'default') => {
-    const baseClasses = 'w-full px-4 py-4 text-left flex items-center gap-3 transition-colors duration-200 touch-manipulation';
+    const baseClasses = 'w-full px-5 py-4 text-left flex items-center gap-4 transition-colors duration-200 touch-manipulation min-h-[52px] mobile-touch-target';
     
     switch (variant) {
       case 'destructive':
@@ -188,6 +188,10 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
                 key={index}
                 onClick={() => {
                   if (!action.disabled) {
+                    // Haptic feedback for action selection
+                    if ('vibrate' in navigator) {
+                      navigator.vibrate([3, 2, 5]);
+                    }
                     action.onClick();
                     onClose();
                   }
@@ -212,8 +216,14 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
           {/* Cancel button */}
           <div className="border-t border-neutral-200 dark:border-neutral-700 mt-2">
             <button
-              onClick={onClose}
-              className="w-full px-4 py-4 text-left text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 touch-manipulation"
+              onClick={() => {
+                // Haptic feedback for cancel
+                if ('vibrate' in navigator) {
+                  navigator.vibrate(5);
+                }
+                onClose();
+              }}
+              className="w-full px-4 py-4 text-left text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 touch-manipulation min-h-[52px] mobile-touch-target"
             >
               Batal
             </button>

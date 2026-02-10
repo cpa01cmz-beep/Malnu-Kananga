@@ -1,5 +1,6 @@
 import React from 'react';
 import LoadingSpinner from './LoadingSpinner';
+import { UI_STRINGS } from '../../constants';
 
 export type LoadingOverlaySize = 'sm' | 'md' | 'lg' | 'full';
 export type LoadingOverlayVariant = 'default' | 'minimal' | 'centered';
@@ -19,7 +20,7 @@ interface LoadingOverlayProps {
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   isLoading,
-  message = 'Loading...',
+  message = UI_STRINGS.LOADING,
   size = 'md',
   variant = 'default',
   showBackdrop = true,

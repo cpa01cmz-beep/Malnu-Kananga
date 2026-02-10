@@ -79,7 +79,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) touch-manipulation relative overflow-hidden group focus-visible-enhanced card-polished depth-1 backdrop-blur-sm glass-effect-elevated hover-lift-enhanced border border-neutral-200/60 dark:border-neutral-700/60 card-accessible";
+const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm border border-neutral-200/60 dark:border-neutral-700/60";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -99,7 +99,6 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   ...rest
 }, ref) => {
   const [isPressed, setIsPressed] = useState(false);
-  const [rippleKey, setRippleKey] = useState(0);
 
   const paddingClass = paddingClasses[padding];
   const roundedClass = roundedClasses[rounded];
@@ -117,8 +116,6 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
     if (variant === 'interactive' && !disabled) {
       setIsPressed(false);
       triggerHapticFeedback('medium');
-      // Trigger ripple animation
-      setRippleKey(prev => prev + 1);
     }
   };
 
@@ -127,6 +124,8 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       e.preventDefault();
       triggerHapticFeedback('light');
       setIsPressed(true);
+      // Trigger the button's native click event
+      (e.target as HTMLButtonElement).click();
       setTimeout(() => setIsPressed(false), 150);
     }
   };
@@ -137,23 +136,25 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth elevate-on-hover depth-3 hover:shadow-primary-500/15 card-glow';
+        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
         break;
       case 'interactive':
-        classes += ` hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] focus:outline-none focus-visible:ring-3 focus-visible:ring-primary-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 ${isPressed ? 'active:scale-[0.96] active:shadow-sm active:translate-y-0' : 'active:scale-[0.96] active:translate-y-0'} text-left group hover-depth elevate-on-hover depth-3 cursor-pointer btn-press hover:shadow-primary-500/20 card-glow mobile-gesture-feedback haptic-feedback`;
+        classes += ` hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer ${
+          isPressed ? 'scale-[0.98] shadow-sm translate-y-0' : ''
+        }`;
         break;
       case 'gradient':
         if (gradient) {
           classes = classes.replace('bg-white/95 dark:bg-neutral-800/95', '');
-          classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to} gradient-overlay glass-effect-elevated`;
+          classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to}`;
           if (gradient.text === 'light') {
-            classes += ' text-white text-contrast-enhanced';
+            classes += ' text-white';
           }
-          classes += ' hover:shadow-xl hover:-translate-y-2 hover:scale-[1.02] focus:outline-none focus-visible:ring-3 focus-visible:ring-primary-500/60 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-depth card-glow';
+          classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
         }
         break;
       default:
-        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 transition-smooth hover-lift-enhanced';
+        classes += ' hover:shadow-md';
         break;
     }
 
@@ -182,22 +183,10 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
-         {/* Enhanced ripple effect overlay */}
-         <span key={rippleKey} className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
-           <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
-           <span className="absolute inset-0 bg-gradient-to-br from-transparent via-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-         </span>
-         
-         {/* Enhanced focus ring */}
-         <span className="absolute inset-0 rounded-xl ring-2 ring-transparent group-focus-within:ring-primary-500/60 group-focus-within:ring-offset-2 group-focus-within:ring-offset-white dark:group-focus-within:ring-offset-neutral-900 transition-all duration-300 pointer-events-none group-focus-within:shadow-lg group-focus-within:shadow-primary-500/20"></span>
-         
-         {/* Press state overlay */}
+         {/* Press state overlay - simplified */}
          {isPressed && (
-           <span className="absolute inset-0 rounded-xl bg-black/8 dark:bg-white/8 pointer-events-none transition-opacity duration-150"></span>
+           <span className="absolute inset-0 rounded-xl bg-black/4 dark:bg-white/4 pointer-events-none transition-opacity duration-150"></span>
          )}
-         
-         {/* Glow effect for interactive cards */}
-         <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-primary-500/0 via-primary-500/5 to-primary-500/0 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none"></span>
       </button>
     );
   }

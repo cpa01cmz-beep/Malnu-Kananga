@@ -51,7 +51,7 @@ const sizeIconClasses: Record<InputSize, string> = {
 
 const stateClasses: Record<InputState, string> = {
   default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01]",
-  error: "border-red-300 dark:border-red-600 bg-red-50/95 dark:bg-red-900/30 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-400 dark:hover:border-red-500 focus:ring-red-500/30 focus:border-red-500 focus:scale-[1.01]",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01]",
   success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01]",
 };
 
@@ -120,7 +120,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
     switch (inputState) {
       case 'error':
-        return 'animate-input-shake';
+        return 'animate-input-shake-subtle';
       case 'success':
         return showSuccessAnimation ? 'animate-success-pulse' : '';
       default:
@@ -188,12 +188,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     }
   };
 
-  // Trigger shake animation when validation errors occur
+  // Trigger subtle shake animation when validation errors occur
   useEffect(() => {
-    if (validation.state.errors.length > 0 && validation.state.isTouched) {
+    if (validation.state.errors.length > 0 && validation.state.isTouched && !prefersReducedMotion) {
       setShakeKey(prev => prev + 1);
     }
-  }, [validation.state.errors, validation.state.isTouched]);
+  }, [validation.state.errors, validation.state.isTouched, prefersReducedMotion]);
 
   // Trigger success animation when validation passes
   useEffect(() => {
@@ -206,12 +206,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     }
   }, [validation.state.isValid, validation.state.isTouched, state]);
 
-  // Auto-focus management for validation errors
+  // Auto-focus management for validation errors (only for new errors, not on every re-render)
   useEffect(() => {
-    if (validation.state.errors.length > 0 && validation.state.isTouched && inputRef.current) {
+    const hasNewError = validation.state.errors.length > 0 && validation.state.isTouched;
+    const hadPreviousError = validation.state.errors.length > 0;
+    
+    // Only auto-focus if this is a new error, not continuing an existing one
+    if (hasNewError && !hadPreviousError && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [validation.state.errors, validation.state.isTouched, inputRef]);
+  }, [validation.state.errors.length, validation.state.isTouched, inputRef]);
 
   // Determine final state based on validation
   const finalState = validation.state.errors.length > 0 && validation.state.isTouched ? 'error' :
@@ -361,7 +365,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 inputRef.current.focus();
               }
             }}
-            className={`absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 ${
+            className={`absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 min-w-[2.75rem] min-h-[2.75rem] flex items-center justify-center ${
               rightIcon ? 'right-10' : 'right-3'
             }`}
             aria-label="Bersihkan input"
@@ -385,7 +389,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       )}
 
       {finalErrorText && (
-        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-600 dark:text-red-400 flex items-center gap-1`} role="alert" aria-live="polite">
+        <p id={errorTextId} className={`${helperTextSizeClasses[size]} text-red-700 dark:text-red-300 flex items-center gap-1 font-medium`} role="alert" aria-live="polite">
           <AlertCircleIcon size="xs" color="danger" ariaHidden={true} />
           {finalErrorText}
         </p>

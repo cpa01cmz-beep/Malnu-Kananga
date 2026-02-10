@@ -4,6 +4,7 @@ import ProgramCard from '../ProgramCard';
 import { FeaturedProgram } from '../../types';
 import Section from '../ui/Section';
 import { getResponsiveGradient } from '../../config/gradients';
+import { SECTION_TITLES } from '../../constants';
 
 interface ProgramsSectionProps {
   programs: FeaturedProgram[];
@@ -13,7 +14,7 @@ const ProgramsSection: React.FC<ProgramsSectionProps> = ({ programs }) => {
   return (
     <Section
       id="program"
-      title="Program Unggulan"
+      title={SECTION_TITLES.PROGRAMS}
       subtitle="Kurikulum terpadu untuk membentuk pribadi paripurna."
       className={getResponsiveGradient('PROGRAMS')}
     >

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import Button from './Button';
 import { CardSkeleton, ListItemSkeleton, TableSkeleton } from './Skeleton';
 import { AlertCircleIcon } from '../icons/StatusIcons';
+import { UI_STRINGS } from '../../constants';
 
 export type LoadingStateSize = 'sm' | 'md' | 'lg';
 export type LoadingStateType = 'page' | 'section' | 'inline' | 'table' | 'list';
@@ -346,7 +347,7 @@ const InlineLoadingState: React.FC<{ size: LoadingStateSize }> = ({ size }) => {
   };
 
   const loadingMessages = [
-    'Memuat...',
+    UI_STRINGS.LOADING,
     'Sedang diproses...',
     'Mohon tunggu...',
     'Sedang mengambil data...'
