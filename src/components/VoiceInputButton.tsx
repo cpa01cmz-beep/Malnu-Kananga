@@ -3,7 +3,7 @@ import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { useVoiceCommands } from '../hooks/useVoiceCommands';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { MicrophoneOffIcon } from './icons/MicrophoneOffIcon';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, VOICE_CONFIG } from '../constants';
 import type { VoiceCommand } from '../types';
 import { logger } from '../utils/logger';
 import MicrophonePermissionHandler from './MicrophonePermissionHandler';
@@ -105,17 +105,17 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   useEffect(() => {
     if (continuous && isListening) {
       timeoutRef.current = setTimeout(() => {
-        if (Date.now() - lastActivityTime > 10000 && transcriptBuffer) {
+        if (Date.now() - lastActivityTime > VOICE_CONFIG.CONTINUOUS_MODE_TIMEOUT && transcriptBuffer) {
           const isCmd = isCommand(transcriptBuffer);
-          
+
           if (!isCmd) {
             onTranscript(transcriptBuffer);
           }
-          
+
           setTranscriptBuffer('');
           setLastActivityTime(Date.now());
         }
-      }, 10000);
+      }, VOICE_CONFIG.CONTINUOUS_MODE_TIMEOUT);
 
       return () => {
         if (timeoutRef.current) {
@@ -179,7 +179,7 @@ setTranscriptBuffer('');
     if (permissionState === 'denied') return 'Izin mikrofon ditolak, klik untuk mengatur ulang';
     
     if (continuous && isListening && transcriptBuffer) {
-      return `Mode berkelanjutan: "${transcriptBuffer.substring(0, 30)}${transcriptBuffer.length > 30 ? '...' : ''}"`;
+      return `Mode berkelanjutan: "${transcriptBuffer.substring(0, VOICE_CONFIG.TRANSCRIPT_PREVIEW_LENGTH)}${transcriptBuffer.length > VOICE_CONFIG.TRANSCRIPT_PREVIEW_LENGTH ? '...' : ''}"`;
     }
     
     switch (state) {

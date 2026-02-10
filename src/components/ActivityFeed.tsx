@@ -5,7 +5,7 @@ import Card from './ui/Card';
 import Badge from './ui/Badge';
 import Button from './ui/Button';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, ACTIVITY_NOTIFICATION_CONFIG } from '../constants';
+import { STORAGE_KEYS, ACTIVITY_NOTIFICATION_CONFIG, DEBOUNCE_DELAYS } from '../constants';
 import { SparklesIcon } from './icons/SparklesIcon';
 import BookOpenIcon from './icons/BookOpenIcon';
 import AcademicCapIcon from './icons/AcademicCapIcon';
@@ -191,7 +191,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
   showFilter = true,
   maxActivities = 50,
   onActivityClick,
-  debounceDelay = 500,
+  debounceDelay = DEBOUNCE_DELAYS.ACTIVITY_FEED,
   paused = false,
   onPausedChange,
 }) => {

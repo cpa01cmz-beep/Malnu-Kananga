@@ -2,7 +2,7 @@
 // Validates grades, schedules, materials, attendance, and offline data consistency
 
 import type { Grade, Schedule, Attendance, Student, Bookmark } from '../types';
-import { ACADEMIC, TIME_MS } from '../constants';
+import { ACADEMIC, TIME_MS, GRADE_LIMITS } from '../constants';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -41,8 +41,8 @@ const GRADE_WEIGHTS = {
   mid: ACADEMIC.GRADE_WEIGHTS.MID_EXAM, 
   final: ACADEMIC.GRADE_WEIGHTS.FINAL_EXAM 
 };
-const MIN_SCORE = 0;
-const MAX_SCORE = 100;
+const MIN_SCORE = GRADE_LIMITS.MIN;
+const MAX_SCORE = GRADE_LIMITS.MAX;
 
 export class StudentPortalValidator {
   static validateGradeDisplay(grade: Grade | { [key: string]: unknown }): ValidationResult {

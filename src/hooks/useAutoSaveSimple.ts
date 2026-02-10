@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { COMPONENT_DELAYS } from '../constants';
 
 export type AutoSaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -21,7 +22,7 @@ interface UseAutoSaveReturn {
  * Use this hook with AutoSaveIndicator component for visual feedback
  */
 export const useAutoSave = (options: UseAutoSaveOptions): UseAutoSaveReturn => {
-  const { onSave, debounceMs = 1000, enabled = true } = options;
+  const { onSave, debounceMs = COMPONENT_DELAYS.AUTO_SAVE_SIMPLE, enabled = true } = options;
   const [status, setStatus] = useState<AutoSaveStatus>('idle');
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
   const [errorMessage, setErrorMessage] = useState<string | undefined>();

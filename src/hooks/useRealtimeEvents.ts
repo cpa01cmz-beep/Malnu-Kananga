@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { webSocketService } from '../services/webSocketService';
 import type { RealTimeEvent, RealTimeEventType, RealTimeSubscription } from '../services/webSocketService';
 import { logger } from '../utils/logger';
+import { COMPONENT_DELAYS } from '../constants';
 
 interface UseRealtimeEventsOptions {
   eventTypes: RealTimeEventType[];
@@ -92,7 +93,7 @@ export const useRealtimeEvents = (options: UseRealtimeEventsOptions): UseRealtim
       if (mounted) {
         checkConnectionState();
       }
-    }, 1000);
+    }, COMPONENT_DELAYS.REALTIME_EVENTS_CHECK);
 
     return () => {
       mounted = false;

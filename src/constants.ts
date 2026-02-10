@@ -219,7 +219,16 @@ export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLE
 export const APP_CONFIG = {
     SCHOOL_NAME: 'MA Malnu Kananga',
     SCHOOL_NPSN: '69881502',
-};
+    SCHOOL_ADDRESS: 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    SK_PENDIRIAN: {
+        NUMBER: 'D/Wi/MA./101/2000',
+        DATE: '20-09-2000',
+    },
+    SK_OPERASIONAL: {
+        NUMBER: 'D/Wi/MA./101/2000',
+        DATE: '20-09-2000',
+    },
+} as const;
 
 export const EXTERNAL_URLS = {
     MAKER_SUITE_API: 'https://makersuite.google.com/app/apikey',
@@ -257,6 +266,7 @@ export const VOICE_CONFIG = {
     RATE_BOUNDS: { MIN: 0.1, MAX: 10 },
     PITCH_BOUNDS: { MIN: 0, MAX: 2 },
     VOLUME_BOUNDS: { MIN: 0, MAX: 1 },
+    TRANSCRIPT_PREVIEW_LENGTH: 30,
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -546,6 +556,7 @@ export const GRADE_LIMITS = {
     MIN: 0,
     MAX: 100,
     PASS_THRESHOLD: 40,
+    HISTORY_MAX_ENTRIES: 100,
     MIN_PASS: 60,
 } as const;
 
@@ -584,6 +595,7 @@ export const UI_DELAYS = {
     LOADING_INDICATOR: 1500,
     REDIRECT_DELAY: 3000,
     USER_IMPORT_DELAY: 100,
+    SYNC_BATCH_DELAY: 100, // Delay between processing batch operations
 } as const;
 
 // Cache and storage limits
@@ -2158,4 +2170,86 @@ export const PDF_COLORS = {
 export const TEXT_LIMITS = {
     MIN_SEARCH_LENGTH: 2,
     MIN_NAME_LENGTH: 2,
+} as const;
+
+// Password generation constants - Flexy: Never hardcode password generation!
+export const PASSWORD_GENERATION = {
+    CHARACTER_SET: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+    DEFAULT_LENGTH: 8,
+    MIN_LENGTH: 6,
+    MAX_LENGTH: 128,
+} as const;
+
+// Message sender types for messaging system - Flexy: Never hardcode sender types!
+export const MESSAGE_SENDER = {
+    PARENT: 'parent',
+    TEACHER: 'teacher',
+    STUDENT: 'student',
+    ADMIN: 'admin',
+    SYSTEM: 'system',
+} as const;
+
+export type MessageSenderType = typeof MESSAGE_SENDER[keyof typeof MESSAGE_SENDER];
+
+// Component-specific delays in milliseconds - Flexy: Never hardcode delays!
+export const COMPONENT_DELAYS = {
+    AUTO_SAVE_INDICATOR: 1000,
+    AUTO_SAVE_SIMPLE: 1000,
+    INSIGHTS_REFRESH: 2000,
+    REALTIME_EVENTS_CHECK: 1000,
+    WEBSOCKET_HEALTH_CHECK: 1000,
+    NOTIFICATION_SETTINGS_INDICATOR: 1500,
+    PPDB_REGISTRATION_INDICATOR: 2000,
+    PROGRESS_ANIMATION: 100,
+    FORM_FEEDBACK_ANIMATION: 50,
+} as const;
+
+// PPDB Legacy Status (for backward compatibility) - Flexy: Centralize status strings!
+export const PPDB_LEGACY_STATUS = {
+    PENDING: 'pending',
+    APPROVED: 'approved',
+    REJECTED: 'rejected',
+} as const;
+
+export type PPDBLegacyStatus = typeof PPDB_LEGACY_STATUS[keyof typeof PPDB_LEGACY_STATUS];
+
+// Student prefix for ID generation
+export const STUDENT_ID_PREFIX = 'student_';
+
+// Number formatting constants - Flexy: Never hardcode decimal places!
+export const NUMBER_FORMAT = {
+    DECIMAL_PLACES_GRADE: 1,
+    DECIMAL_PLACES_GPA: 2,
+    DECIMAL_PLACES_PERCENTAGE: 1,
+    DECIMAL_PLACES_FILE_SIZE: 2,
+    DECIMAL_PLACES_VOICE: 1,
+    DECIMAL_PLACES_STATS: 2,
+} as const;
+
+// Animation delays in milliseconds - Flexy: Never hardcode animation timing!
+export const ANIMATION_DELAYS = {
+    TYPING_INDICATOR: [0, 200, 400] as const, // in ms
+    STAGGER_DELAY: 100, // ms between staggered items
+    FADE_IN_DURATION: 300,
+    SLIDE_DURATION: 300,
+} as const;
+
+// Component-specific limits - Flexy: Never hardcode component limits!
+export const COMPONENT_LIMITS = {
+    SEARCH_MAX_SUGGESTIONS: 8,
+    IMPORT_ERROR_MAX_DISPLAY: 5,
+    MATERIAL_RECOMMENDATIONS_MAX: 6,
+    OCR_COMPARISON_MAX_MATERIALS: 5,
+    COMMUNICATION_LOG_MAX_PREVIEW: 5,
+    PERMISSIONS_MAX_DISPLAY: 3,
+    SITE_EDITOR_MAX_LOGS: 100,
+} as const;
+
+// AI Cache sizes - Flexy: Never hardcode cache sizes!
+export const AI_CACHE_SIZES = {
+    DEFAULT: 100,
+    CHAT: 50,
+    ANALYSIS: 30,
+    EDITOR: 20,
+    OCR: 40,
 } as const;
