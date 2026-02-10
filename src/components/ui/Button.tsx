@@ -44,7 +44,7 @@ const getBaseClasses = (prefersReducedMotion: boolean) => {
     ? "transition-none"
     : "transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0";
     
-  return `inline-flex items-center justify-center font-semibold rounded-xl ${motionClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated`;
+  return `inline-flex items-center justify-center font-semibold rounded-xl ${motionClasses} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect-elevated button-accessible`;
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -179,6 +179,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    // Enhanced keyboard navigation
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      triggerHapticFeedback('light');
+    }
+  };
+
   return (
     <button
       ref={ref}
@@ -188,6 +196,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       aria-disabled={isDisabled}
       onTouchStart={handlePressStart}
       onMouseDown={handlePressStart}
+      onKeyDown={handleKeyDown}
       {...ariaProps}
       {...props}
     >
