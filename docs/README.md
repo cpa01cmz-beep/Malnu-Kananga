@@ -1,7 +1,7 @@
 # Documentation Index
 
    **Created**: 2026-01-05
-        **Last Updated**: 2026-02-09
+        **Last Updated**: 2026-02-10
         **Version**: 3.10.6
        **Status**: Active
 
@@ -43,9 +43,9 @@ These files are operational instructions for AI agents and should not be conside
 - **[HOW_TO.md](./HOW_TO.md)** - How-to guides for common tasks
 
 ### 🏗️ Project Management
-- **[BLUEPRINT.md](./blueprint.md)** - System blueprint and architecture documentation
-- **[ROADMAP.md](./roadmap.md)** - Development roadmap, milestones, and features
-- **[TASK.md](./task.md)** - Active tasks, work in progress, and completed items
+- **[BLUEPRINT.md](../blueprint.md)** - System blueprint and architecture documentation (canonical location in root)
+- **[ROADMAP.md](../roadmap.md)** - Development roadmap, milestones, and features (canonical location in root)
+- **[TASK.md](../task.md)** - Active tasks, work in progress, and completed items (canonical location in root)
 - See archive/ directory for historical documentation
 
  ### 🚀 Deployment & Infrastructure
