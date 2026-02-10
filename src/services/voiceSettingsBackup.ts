@@ -1,4 +1,4 @@
-import { STORAGE_KEYS, RETRY_CONFIG } from '../constants';
+import { STORAGE_KEYS, RETRY_CONFIG, BACKOFF_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { ErrorRecoveryStrategy } from '../utils/errorRecovery';
 import { validateVoiceSettingsBackup, isVoiceSettings } from '../utils/voiceSettingsValidation';
@@ -22,13 +22,13 @@ export interface VoiceSettingsBackup {
 
 const errorRecoveryStrategy = new ErrorRecoveryStrategy(
   {
-    maxAttempts: 3,
+    maxAttempts: RETRY_CONFIG.DEFAULT_MAX_ATTEMPTS,
     initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
     maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
-    backoffFactor: 2,
+    backoffFactor: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
   },
   {
-    failureThreshold: 3,
+    failureThreshold: RETRY_CONFIG.CIRCUIT_BREAKER_FAILURE_THRESHOLD,
     resetTimeout: RETRY_CONFIG.DEFAULT_RESET_TIMEOUT,
   }
 );

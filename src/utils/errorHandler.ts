@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import { ADMIN_EMAIL, RETRY_CONFIG, HTTP } from '../constants';
+import { ADMIN_EMAIL, RETRY_CONFIG, HTTP, BACKOFF_CONFIG } from '../constants';
 import { ERROR_MESSAGES as CENTRALIZED_ERROR_MESSAGES } from './errorMessages';
 
 export enum ErrorType {
@@ -275,10 +275,10 @@ export interface RetryConfig {
 }
 
 export const DEFAULT_RETRY_CONFIG: RetryConfig = {
-  maxAttempts: 3,
+  maxAttempts: RETRY_CONFIG.DEFAULT_MAX_ATTEMPTS,
   baseDelayMs: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
   maxDelayMs: RETRY_CONFIG.DEFAULT_MAX_DELAY,
-  backoffMultiplier: 2
+  backoffMultiplier: BACKOFF_CONFIG.DEFAULT_MULTIPLIER
 };
 
 function calculateDelay(attempt: number, config: RetryConfig): number {

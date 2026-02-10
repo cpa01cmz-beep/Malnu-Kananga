@@ -537,6 +537,8 @@ export const PAGINATION_DEFAULTS = {
 
 // Retry and timeout configuration
 export const RETRY_CONFIG = {
+    DEFAULT_MAX_RETRIES: 3,
+    DEFAULT_MAX_ATTEMPTS: 3,
     DEFAULT_INITIAL_DELAY: 1000,
     DEFAULT_MAX_DELAY: 10000,
     DEFAULT_RESET_TIMEOUT: 60000,

@@ -1,4 +1,4 @@
-import { RETRY_CONFIG, HTTP } from "../constants";
+import { RETRY_CONFIG, HTTP, BACKOFF_CONFIG } from "../constants";
 export interface RetryOptions {
   maxAttempts: number;
   initialDelay: number;
@@ -26,10 +26,10 @@ export interface CircuitBreakerState {
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {
-    maxAttempts: 3,
+    maxAttempts: RETRY_CONFIG.DEFAULT_MAX_ATTEMPTS,
     initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
     maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
-    backoffFactor: 2,
+    backoffFactor: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
   }
 ): Promise<T> {
   let lastError: Error | null = null;

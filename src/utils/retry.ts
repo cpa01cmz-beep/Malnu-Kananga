@@ -1,5 +1,5 @@
 import { logger } from './logger';
-import { RETRY_CONFIG, HTTP } from '../constants';
+import { RETRY_CONFIG, HTTP, BACKOFF_CONFIG } from '../constants';
 
 export interface RetryOptions {
   maxRetries?: number;
@@ -17,10 +17,10 @@ export interface RetryResult<T> {
 }
 
 const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
-  maxRetries: 3,
+  maxRetries: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
   initialDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY,
   maxDelay: RETRY_CONFIG.DEFAULT_MAX_DELAY,
-  backoffMultiplier: 2,
+  backoffMultiplier: BACKOFF_CONFIG.DEFAULT_MULTIPLIER,
   shouldRetry: (error: Error) => {
     const isNetworkError = error.message.includes('Network Error') ||
                         error.message.includes('fetch failed') ||
