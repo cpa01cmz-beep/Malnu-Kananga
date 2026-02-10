@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useCallback } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
@@ -115,13 +115,13 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
-  // Enhanced change handler
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Enhanced change handler - wrapped in useCallback for stable reference
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (onChange) {
       onChange(e);
     }
     validation.changeHandler(e.target.value);
-  };
+  }, [onChange, validation]);
 
   // Enhanced blur handler
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -157,6 +157,29 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
     ...(validation.state.isValidating && { 'aria-busy': true })
   };
+
+  // State for clear button announcement
+  const [clearAnnouncement, setClearAnnouncement] = useState('');
+
+  // Enhanced clear handler with accessibility announcement
+  const handleClear = useCallback(() => {
+    const syntheticEvent = {
+      target: { value: '' }
+    } as React.ChangeEvent<HTMLInputElement>;
+    handleChange(syntheticEvent);
+    
+    // Announce clear action to screen readers
+    setClearAnnouncement('Pencarian telah dibersihkan');
+    setTimeout(() => setClearAnnouncement(''), 1000);
+    
+    // Focus back on input after clearing for better UX
+    if (ref && 'current' in ref && ref.current) {
+      ref.current.focus();
+    }
+  }, [handleChange, ref]);
+
+  // Check if clear button should be visible
+  const isClearVisible = value && String(value).length > 0 && !validation.state.isValidating;
 
   return (
     <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`} role="search">
@@ -208,31 +231,31 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
         {/* Clear button - appears when there's a value */}
         <button
           type="button"
-          onClick={() => {
-            const syntheticEvent = {
-              target: { value: '' }
-            } as React.ChangeEvent<HTMLInputElement>;
-            handleChange(syntheticEvent);
-            // Focus back on input after clearing for better UX
-            if (ref && 'current' in ref && ref.current) {
-              ref.current.focus();
-            }
-          }}
-          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all duration-200 ease-out ${
+          onClick={handleClear}
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-700 transition-all duration-200 ease-out will-change-transform hover:scale-110 active:scale-95 ${
             size === 'sm' ? 'p-1.5 min-w-[36px] min-h-[36px]' : 'p-2 min-w-[40px] min-h-[40px]'
           } ${
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
           } ${
-            value && String(value).length > 0 && !validation.state.isValidating
+            isClearVisible
               ? 'opacity-100 scale-100 pointer-events-auto'
               : 'opacity-0 scale-75 pointer-events-none'
           }`}
           aria-label="Bersihkan pencarian"
-          title="Bersihkan pencarian"
-          aria-hidden={!(value && String(value).length > 0 && !validation.state.isValidating)}
+          title="Bersihkan pencarian (Escape)"
+          aria-hidden={!isClearVisible}
         >
           <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
         </button>
+
+        {/* Screen reader announcement for clear action */}
+        <div
+          className="sr-only"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {clearAnnouncement}
+        </div>
 
         {validation.state.isValidating && (
           <div className={`absolute top-1/2 -translate-y-1/2 ${showIcon && iconPosition === 'right' ? 'right-12' : 'right-3'}`}>
