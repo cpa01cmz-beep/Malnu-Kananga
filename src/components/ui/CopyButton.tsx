@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useId } from 'react';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type CopyButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost';
 export type CopyButtonSize = 'sm' | 'md' | 'lg';
@@ -90,6 +91,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { onSuccess } = useHapticFeedback();
   const hasTooltip = showTooltip;
 
   const showCopiedFeedback = useCallback(() => {
@@ -112,8 +114,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     try {
       await navigator.clipboard.writeText(text);
       showCopiedFeedback();
+      onSuccess(); // Haptic feedback for mobile users
       onCopied?.(true);
-    } catch (_err) {
+    } catch {
       // Fallback for older browsers or if clipboard API fails
       try {
         const textArea = document.createElement('textarea');
@@ -123,21 +126,22 @@ const CopyButton: React.FC<CopyButtonProps> = ({
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        
+
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
-        
+
         if (successful) {
           showCopiedFeedback();
+          onSuccess(); // Haptic feedback for mobile users
           onCopied?.(true);
         } else {
           onCopied?.(false);
         }
-      } catch (_fallbackErr) {
+      } catch {
         onCopied?.(false);
       }
     }
-  }, [text, disabled, isCopied, showCopiedFeedback, onCopied]);
+  }, [text, disabled, isCopied, showCopiedFeedback, onCopied, onSuccess]);
 
   const showTooltipFn = useCallback(() => {
     if (!isCopied) {

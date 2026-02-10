@@ -3,7 +3,7 @@
  * Provides sophisticated gesture detection for mobile interactions
  */
 
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect, type ReactNode } from 'react';
 import { useHapticFeedback } from './hapticFeedback';
 
 export interface SwipeGestureOptions {
@@ -32,7 +32,7 @@ export interface SwipeToDeleteOptions {
   onDelete?: () => void;
   actionWidth?: number;
   actionLabel?: string;
-  actionIcon?: React.ReactNode;
+  actionIcon?: ReactNode;
 }
 
 // Hook for swipe gestures
