@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { idGenerators } from '../utils/idGenerator';
 
 interface DocumentationPageProps {
   isOpen: boolean;
@@ -15,8 +16,8 @@ interface AccordionItemProps {
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const buttonId = `accordion-button-${Math.random().toString(36).substr(2, 9)}`;
-    const contentId = `accordion-content-${Math.random().toString(36).substr(2, 9)}`;
+    const buttonId = idGenerators.input();
+    const contentId = idGenerators.input();
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();

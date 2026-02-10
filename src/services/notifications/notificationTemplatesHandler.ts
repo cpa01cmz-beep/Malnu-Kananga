@@ -5,6 +5,7 @@ import {
 } from '../../types';
 import { STORAGE_KEYS, USER_ROLES } from '../../constants';
 import { logger } from '../../utils/logger';
+import { generateTemplateId, idGenerators } from '../../utils/idGenerator';
 
 export interface UnifiedNotificationTemplate {
   id: string;
@@ -213,7 +214,7 @@ export class NotificationTemplatesHandler {
     targetExtraRoles?: UserExtraRole[]
   ): UnifiedNotificationTemplate {
     const template: UnifiedNotificationTemplate = {
-      id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateTemplateId(),
       name,
       type,
       title,
@@ -277,7 +278,7 @@ export class NotificationTemplatesHandler {
     }
 
     return {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.notification(),
       type: template.type,
       title,
       body,

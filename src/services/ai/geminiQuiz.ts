@@ -76,7 +76,7 @@ export async function generateQuiz(
   }
 
   const materialsText = materials.map(m =>
-    `Judul: ${m.title}\nKategori: ${m.category}\n${m.content ? `Konten: ${m.content.substring(0, 500)}` : ''}`
+    `Judul: ${m.title}\nKategori: ${m.category}\n${m.content ? `Konten: ${m.content.substring(0, AI_CONFIG.MATERIAL_CONTENT_MAX)}` : ''}`
   ).join('\n\n---\n\n');
 
   const prompt = `
@@ -88,7 +88,7 @@ export async function generateQuiz(
   3. Tingkat kesulitan: ${options.difficulty}
   4. Pastikan pertanyaan tidak terlalu mudah atau terlalu sulit
   5. Berikan penjelasan yang membantu siswa memahami jawaban benar
-  6. Distribusikan poin secara merata (total poin: ${options.totalPoints || options.questionCount * 10})
+    6. Distribusikan poin secara merata (total poin: ${options.totalPoints || options.questionCount * AI_CONFIG.DEFAULT_QUIZ_POINTS_PER_QUESTION})
   7. ${options.focusAreas?.length ? 'Fokus pada topik: ' + options.focusAreas.join(', ') : 'Cakup semua materi secara merata'}
 
   MATERI PEMBELAJARAN:
@@ -112,9 +112,9 @@ export async function generateQuiz(
         "tags": ["tag1", "tag2"]
       }
     ],
-    "totalPoints": 100,
-    "duration": 30,
-    "passingScore": 70
+    "totalPoints": ${AI_CONFIG.DEFAULT_QUIZ_TOTAL_POINTS},
+    "duration": ${AI_CONFIG.DEFAULT_QUIZ_DURATION_MINUTES},
+    "passingScore": ${AI_CONFIG.DEFAULT_QUIZ_PASSING_SCORE}
   }
 
   JENIS PERTANYAAN YANG DIDUKUNG:

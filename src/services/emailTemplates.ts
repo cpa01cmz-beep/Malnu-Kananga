@@ -1,6 +1,7 @@
 import type { EmailTemplate, EmailTemplateContext } from '../types/email.types';
 import { STORAGE_KEYS, EMAIL_COLORS, APP_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
+import { generateTemplateId } from '../utils/idGenerator';
 
 // Flexy: Email color aliases for template readability
 const EC = EMAIL_COLORS;
@@ -673,7 +674,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   createTemplate(template: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>): EmailTemplate {
     const newTemplate: EmailTemplate = {
       ...template,
-      id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateTemplateId(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

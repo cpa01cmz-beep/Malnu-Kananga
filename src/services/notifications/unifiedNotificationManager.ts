@@ -24,6 +24,7 @@ import { EmailNotificationHandler } from './emailNotificationHandler';
 import { NotificationHistoryHandler } from './notificationHistoryHandler';
 import { NotificationAnalyticsHandler } from './notificationAnalyticsHandler';
 import { NotificationTemplatesHandler, UnifiedNotificationTemplate } from './notificationTemplatesHandler';
+import { idGenerators } from '../../utils/idGenerator';
 
 export type { UnifiedNotificationTemplate } from './notificationTemplatesHandler';
 
@@ -491,7 +492,7 @@ class UnifiedNotificationManager {
 
   private emitEvent(type: string, data: Record<string, unknown>): void {
     const event: NotificationEvent = {
-      id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.event(),
       type,
       data,
       timestamp: new Date().toISOString(),
@@ -558,7 +559,7 @@ class UnifiedNotificationManager {
 
   createBatch(name: string, notifications: PushNotification[]): NotificationBatch {
     const batch: NotificationBatch = {
-      id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.batch(),
       name,
       notifications,
       scheduledFor: new Date().toISOString(),
