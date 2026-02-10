@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 
 export type ProgressBarSize = 'sm' | 'md' | 'lg' | 'xl';
 export type ProgressBarColor = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'purple' | 'indigo' | 'orange' | 'red' | 'blue' | 'green';
@@ -18,6 +18,10 @@ interface ProgressBarProps {
   'aria-valuenow'?: number;
   'aria-valuemin'?: number;
   'aria-valuemax'?: number;
+  /** Show tooltip with exact percentage on hover */
+  showTooltip?: boolean;
+  /** Custom tooltip text. If not provided, shows percentage */
+  tooltipText?: string;
 }
 
 const sizeClasses: Record<ProgressBarSize, string> = {
@@ -76,7 +80,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   'aria-valuenow': ariaValueNow,
   'aria-valuemin': ariaValueMin = 0,
   'aria-valuemax': ariaValueMax,
+  showTooltip = true,
+  tooltipText,
 }) => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
   const widthClass = fullWidth ? 'w-full' : sizeWidthClasses[size];
   const backgroundSize = '1rem 1rem';
@@ -89,15 +96,27 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 
   const ariaValueMaxFinal = ariaValueMax ?? max;
 
+  const handleMouseEnter = useCallback(() => setIsTooltipVisible(true), []);
+  const handleMouseLeave = useCallback(() => setIsTooltipVisible(false), []);
+  const handleFocus = useCallback(() => setIsTooltipVisible(true), []);
+  const handleBlur = useCallback(() => setIsTooltipVisible(false), []);
+
+  const displayText = tooltipText || `${Math.round(percentage)}%`;
+
   return (
-    <div className={className}>
+    <div className={`relative group ${className}`}>
       <div
-        className={`${widthClass} bg-neutral-200 dark:bg-neutral-700 rounded-full ${sizeClasses[size]} overflow-hidden`}
+        className={`${widthClass} bg-neutral-200 dark:bg-neutral-700 rounded-full ${sizeClasses[size]} overflow-hidden cursor-help`}
         role="progressbar"
         aria-label={ariaLabel || label}
         aria-valuenow={ariaValueNow ?? value}
         aria-valuemin={ariaValueMin}
         aria-valuemax={ariaValueMaxFinal}
+        onMouseEnter={showTooltip ? handleMouseEnter : undefined}
+        onMouseLeave={showTooltip ? handleMouseLeave : undefined}
+        onFocus={showTooltip ? handleFocus : undefined}
+        onBlur={showTooltip ? handleBlur : undefined}
+        tabIndex={showTooltip ? 0 : undefined}
       >
         <div
           className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ${
@@ -115,6 +134,37 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
           )}
         </div>
       </div>
+      
+      {/* Tooltip - Micro UX Delight: Shows exact percentage on hover/focus */}
+      {showTooltip && (
+        <span
+          className={`
+            absolute -top-9 left-1/2 -translate-x-1/2
+            px-2.5 py-1
+            bg-neutral-800 dark:bg-neutral-700
+            text-white text-xs font-medium
+            rounded-md shadow-lg
+            whitespace-nowrap
+            transition-all duration-200 ease-out
+            pointer-events-none
+            z-10
+            ${isTooltipVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+          `}
+          role="tooltip"
+          aria-hidden={!isTooltipVisible}
+        >
+          {displayText}
+          {/* Tooltip arrow */}
+          <span
+            className="
+              absolute top-full left-1/2 -translate-x-1/2
+              border-4 border-transparent
+              border-t-neutral-800 dark:border-t-neutral-700
+            "
+            aria-hidden="true"
+          />
+        </span>
+      )}
     </div>
   );
 };
