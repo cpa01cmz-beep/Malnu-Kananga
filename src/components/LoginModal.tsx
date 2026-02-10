@@ -7,7 +7,7 @@ import Alert from './ui/Alert';
 import IconButton from './ui/IconButton';
 import ForgotPassword from './ForgotPassword';
 import { api } from '../services/apiService';
-import { getGradientClass } from '../config/gradients';
+
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
 import {
@@ -53,6 +53,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     password: false
   });
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showDemoOptions, setShowDemoOptions] = useState(false);
 
   useEffect(() => {
     if (!isOpen) {
@@ -67,6 +68,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
             setShowPasswordRequirements(false);
             setTouchedFields({ email: false, password: false });
             setShowForgotPassword(false);
+            setShowDemoOptions(false);
         }, TIMEOUT_CONFIG.UI_ANIMATION_DURATION);
     }
   }, [isOpen]);
@@ -145,45 +147,77 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
       className={HEIGHT_CLASSES.MODAL.FULL}
     >
       <div className="overflow-y-auto">
-            <div className={`mb-8 p-6 ${getGradientClass('NEUTRAL')} dark:from-neutral-900/60 dark:to-neutral-800/60 rounded-2xl border border-neutral-200/60 dark:border-neutral-700/60 backdrop-blur-sm`}>
-                 <h3 className="text-base font-semibold text-neutral-700 dark:text-neutral-300 mb-3 flex items-center gap-2.5 tracking-tight">
-                     <svg className="w-5 h-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                     </svg>
-                     Login Cepat (Demo)
-                 </h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-5 leading-relaxed">
-                    Pilih peran untuk login instan:
-                </p>
-
-                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('student')} className="mobile-touch-target">
-                          Siswa
-                       </Button>
-                       <Button variant="secondary" size="md" onClick={() => handleSimulatedLogin('teacher')} className="mobile-touch-target">
-                          Guru
-                       </Button>
-                       <Button variant="primary" size="md" onClick={() => handleSimulatedLogin('admin')} className="mobile-touch-target">
-                          Admin
-                       </Button>
+            {/* Simplified Demo Login - Collapsible */}
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={() => setShowDemoOptions(!showDemoOptions)}
+                className="w-full p-4 bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 rounded-xl border border-primary-200/50 dark:border-primary-700/50 transition-all duration-200 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                aria-expanded={showDemoOptions}
+                aria-controls="demo-options"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 bg-primary-200 dark:bg-primary-700 rounded-lg">
+                      <svg className="w-5 h-5 text-primary-600 dark:text-primary-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-sm font-semibold text-primary-700 dark:text-primary-300">
+                        Login Demo Cepat
+                      </h3>
+                      <p className="text-xs text-primary-600 dark:text-primary-400">
+                        Akses instan untuk uji coba
+                      </p>
+                    </div>
                   </div>
-
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                       <Button variant="info" size="md" onClick={() => handleSimulatedLogin('teacher', 'staff')} className="mobile-touch-target">
-                          Guru (Staff)
-                       </Button>
-                       <Button variant="warning" size="md" onClick={() => handleSimulatedLogin('student', 'osis')} className="mobile-touch-target">
-                          Siswa (OSIS)
-                       </Button>
+                  <svg 
+                    className={`w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform duration-200 ${showDemoOptions ? 'rotate-180' : ''}`}
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+              
+              {/* Collapsible Demo Options */}
+              <div 
+                id="demo-options"
+                className={`overflow-hidden transition-all duration-300 ${showDemoOptions ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}
+              >
+                <div className="p-4 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <Button variant="secondary" size="sm" onClick={() => handleSimulatedLogin('student')} className="mobile-touch-target text-xs">
+                      Siswa
+                    </Button>
+                    <Button variant="secondary" size="sm" onClick={() => handleSimulatedLogin('teacher')} className="mobile-touch-target text-xs">
+                      Guru
+                    </Button>
+                    <Button variant="primary" size="sm" onClick={() => handleSimulatedLogin('admin')} className="mobile-touch-target text-xs">
+                      Admin
+                    </Button>
                   </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Button variant="info" size="sm" onClick={() => handleSimulatedLogin('teacher', 'staff')} className="mobile-touch-target text-xs">
+                      Guru (Staff)
+                    </Button>
+                    <Button variant="warning" size="sm" onClick={() => handleSimulatedLogin('student', 'osis')} className="mobile-touch-target text-xs">
+                      Siswa (OSIS)
+                    </Button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-              <div className="relative my-8">
+              <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center" aria-hidden="true">
                       <div className="w-full border-t border-neutral-200/60 dark:border-neutral-700/60"></div>
                   </div>
                   <div className="relative flex justify-center">
-                      <span className="px-6 py-2 bg-white dark:bg-neutral-800 text-sm text-neutral-500 font-semibold rounded-full border border-neutral-200/60 dark:border-neutral-700/60 shadow-sm">atau</span>
+                      <span className="px-4 py-1 bg-white dark:bg-neutral-800 text-xs text-neutral-500 font-medium rounded-full border border-neutral-200/60 dark:border-neutral-700/60">atau login dengan email</span>
                   </div>
               </div>
 

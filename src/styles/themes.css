@@ -245,6 +245,51 @@ body,
   /* Enhanced surface colors for better content separation */
   --theme-surface-elevated: 0 0% 98%;
   --theme-surface-elevated-dark: 220 30% 12%;
+
+  /* Enhanced semantic color definitions for better accessibility */
+  --theme-success-50: 142 76% 96%;
+  --theme-success-100: 142 71% 88%;
+  --theme-success-200: 142 70% 82%;
+  --theme-success-300: 142 68% 73%;
+  --theme-success-400: 142 70% 58%;
+  --theme-success-500: 142 72% 42%;
+  --theme-success-600: 142 72% 32%; /* Enhanced for better contrast */
+  --theme-success-700: 142 76% 27%;
+  --theme-success-800: 142 71% 25%;
+  --theme-success-900: 142 74% 20%;
+
+  --theme-error-50: 0 100% 97%;
+  --theme-error-100: 0 93% 94%;
+  --theme-error-200: 0 96% 89%;
+  --theme-error-300: 0 93% 82%;
+  --theme-error-400: 0 89% 74%;
+  --theme-error-500: 0 84% 60%;
+  --theme-error-600: 0 72% 42%; /* Enhanced for better contrast */
+  --theme-error-700: 0 74% 42%;
+  --theme-error-800: 0 70% 38%;
+  --theme-error-900: 0 70% 35%;
+
+  --theme-warning-50: 48 96% 96%;
+  --theme-warning-100: 48 96% 91%;
+  --theme-warning-200: 48 96% 82%;
+  --theme-warning-300: 48 96% 72%;
+  --theme-warning-400: 48 96% 61%;
+  --theme-warning-500: 48 96% 53%;
+  --theme-warning-600: 45 93% 42%; /* Enhanced for better contrast */
+  --theme-warning-700: 40 96% 42%;
+  --theme-warning-800: 35 96% 36%;
+  --theme-warning-900: 30 96% 30%;
+
+  --theme-info-50: 217 91% 97%;
+  --theme-info-100: 214 95% 94%;
+  --theme-info-200: 214 100% 87%;
+  --theme-info-300: 213 96% 78%;
+  --theme-info-400: 217 91% 67%;
+  --theme-info-500: 221 83% 53%;
+  --theme-info-600: 221 83% 45%; /* Enhanced for better contrast */
+  --theme-info-700: 219 77% 46%;
+  --theme-info-800: 217 79% 40%;
+  --theme-info-900: 216 79% 35%;
 }
 
 .dark {
@@ -263,6 +308,16 @@ body,
   /* Enhanced surface colors for dark mode */
   --theme-surface-elevated: var(--theme-neutral-800);
   --theme-surface-elevated-border: 220 25% 25%;
+
+  /* Dark mode semantic colors */
+  --theme-success-400: 142 75% 68%;
+  --theme-success-500: 142 72% 55%;
+  --theme-error-400: 0 92% 68%;
+  --theme-error-500: 0 84% 60%;
+  --theme-warning-400: 24 98% 68%;
+  --theme-warning-500: 48 96% 53%;
+  --theme-info-400: 217 94% 73%;
+  --theme-info-500: 221 83% 53%;
 }
 
 /* Note: All scrollbar styles use Tailwind v4 CSS variables (hsl(var(--color-*)))

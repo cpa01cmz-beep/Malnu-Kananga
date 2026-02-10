@@ -1,15 +1,82 @@
 import React from 'react';
 
-export const ShareIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-4.732-2.684m4.732 2.684a3 3 0 00-4.732-2.684M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
+// Enhanced Icon Component with better accessibility and interactions
+interface IconProps {
+  className?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'solid' | 'outline' | 'duotone';
+  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info';
+  animated?: boolean;
+  ariaLabel?: string;
+  ariaHidden?: boolean;
+}
+
+const IconWrapper: React.FC<IconProps & { children: React.ReactNode }> = ({
+  className = "",
+  size = 'md',
+  variant = 'outline',
+  color = 'secondary',
+  animated = false,
+  ariaLabel,
+  ariaHidden = true,
+  children
+}) => {
+  const sizeClasses = {
+    xs: 'w-4 h-4',
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+    xl: 'w-10 h-10'
+  };
+
+  const colorClasses = {
+    primary: 'text-primary-600 dark:text-primary-400',
+    secondary: 'text-neutral-600 dark:text-neutral-400',
+    success: 'text-success-600 dark:text-success-400',
+    warning: 'text-warning-600 dark:text-warning-400',
+    error: 'text-error-600 dark:text-error-400',
+    info: 'text-info-600 dark:text-info-400'
+  };
+
+  const variantClasses = {
+    solid: 'fill-current',
+    outline: 'stroke-2 fill-none',
+    duotone: 'fill-current opacity-80'
+  };
+
+  const finalClassName = [
+    'icon-base',
+    'transition-all duration-200',
+    sizeClasses[size],
+    colorClasses[color],
+    variantClasses[variant],
+    animated ? 'icon-hover' : '',
+    className
+  ].filter(Boolean).join(' ');
+
+  return (
+    <svg
+      className={finalClassName}
+      viewBox="0 0 24 24"
+      aria-label={ariaLabel}
+      aria-hidden={ariaHidden}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {children}
+    </svg>
+  );
+};
+
+export const ShareIcon: React.FC<IconProps> = (props) => (
+  <IconWrapper {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-4.732-2.684m4.732 2.684a3 3 0 00-4.732-2.684M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </IconWrapper>
 );
 
-export const FolderIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-  </svg>
+export const FolderIcon: React.FC<IconProps> = (props) => (
+  <IconWrapper {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+  </IconWrapper>
 );
 
 export const FolderOpenIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
