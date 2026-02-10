@@ -502,6 +502,9 @@ export const OPACITY_TOKENS = {
 // Time constants in milliseconds - use these instead of hardcoded calculations
 export const TIME_MS = {
     ONE_SECOND: 1000,
+    FIVE_SECONDS: 5 * 1000,
+    TEN_SECONDS: 10 * 1000,
+    THIRTY_SECONDS: 30 * 1000,
     ONE_MINUTE: 60 * 1000,
     FIVE_MINUTES: 5 * 60 * 1000,
     THIRTY_MINUTES: 30 * 60 * 1000,
@@ -2664,4 +2667,31 @@ export const TEST_CONSTANTS = {
         PHYS: 'PHYS',
         BIO: 'BIO',
     },
+} as const;
+
+// Gesture Configuration - Flexy: Never hardcode gesture values!
+export const GESTURE_CONFIG = {
+    SWIPE: {
+        THRESHOLD: 100,           // Minimum distance for swipe detection (pixels)
+        RESTRAINT: 100,           // Maximum perpendicular distance allowed
+        ALLOWED_TIME: 300,        // Maximum time for swipe gesture (milliseconds)
+    },
+    LONG_PRESS: {
+        DELAY: 500,               // Time before long press triggers (milliseconds)
+    },
+    PULL_TO_REFRESH: {
+        THRESHOLD: 80,            // Distance needed to trigger refresh (pixels)
+    },
+    SWIPE_TO_DELETE: {
+        THRESHOLD: 100,           // Distance needed to trigger delete (pixels)
+        ACTION_WIDTH: 80,         // Width of delete action area (pixels)
+    },
+} as const;
+
+// Progressive Loading Configuration - Flexy: Never hardcode loading values!
+export const PROGRESSIVE_LOADING_CONFIG = {
+    DEFAULT_DELAY: DELAY_MS.STANDARD,           // 200ms minimum loading time
+    DEFAULT_TIMEOUT: TIME_MS.TEN_SECONDS,       // 10 seconds maximum loading time
+    PROGRESS_INTERVAL: 100,                     // Progress update interval (milliseconds)
+    RESET_DELAY: 200,                           // Delay before resetting state (milliseconds)
 } as const;
