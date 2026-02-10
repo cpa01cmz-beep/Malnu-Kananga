@@ -6,6 +6,7 @@ import Modal from './ui/Modal';
 import Badge from './ui/Badge';
 import Alert from './ui/Alert';
 import ProgressBar from './ui/ProgressBar';
+import CopyButton from './ui/CopyButton';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
@@ -259,6 +260,18 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const validUserCount = parsedUsers.filter((user) => user.isValid).length;
   const invalidUserCount = parsedUsers.filter((user) => !user.isValid).length;
 
+  // Format import errors as CSV report for easy copying
+  const formatErrorReport = useCallback((): string => {
+    if (!importResult || importResult.errors.length === 0) return '';
+    
+    const headers = ['Row', 'Email', 'Error Message'];
+    const rows = importResult.errors.map(error => 
+      `${error.row},"${error.email}","${error.error.replace(/"/g, '""')}"`
+    );
+    
+    return [headers.join(','), ...rows].join('\n');
+  }, [importResult]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -506,9 +519,32 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
 
           {importResult.errors.length > 0 && (
             <div className="max-h-64 overflow-y-auto border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-neutral-900 dark:text-white mb-3">
-                Import Errors
-              </h4>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-neutral-900 dark:text-white">
+                  Import Errors ({importResult.errors.length})
+                </h4>
+                <CopyButton
+                  text={formatErrorReport()}
+                  variant="secondary"
+                  size="sm"
+                  tooltipPosition="left"
+                  successMessage="Error report copied!"
+                  ariaLabel="Copy error report to clipboard"
+                  onCopied={(success) => {
+                    if (success) {
+                      unifiedNotificationManager.showNotification({
+                        id: `error-report-copied-${Date.now()}`,
+                        type: 'system',
+                        title: 'Error Report Copied',
+                        body: 'Error details copied to clipboard as CSV format',
+                        priority: 'low',
+                        timestamp: new Date().toISOString(),
+                        read: false
+                      });
+                    }
+                  }}
+                />
+              </div>
               <div className="space-y-2">
                 {importResult.errors.map((error, index) => (
                   <div
@@ -527,6 +563,9 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
                   </div>
                 ))}
               </div>
+              <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 italic">
+                Copy the error report to fix these issues in your CSV file and re-import.
+              </p>
             </div>
           )}
 

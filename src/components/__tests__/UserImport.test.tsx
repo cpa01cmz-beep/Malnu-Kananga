@@ -454,7 +454,7 @@ describe('UserImport Component', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText('Import Errors')).toBeInTheDocument();
+        expect(screen.getByText(/Import Errors/)).toBeInTheDocument();
         expect(screen.getByText(/Network error/)).toBeInTheDocument();
       });
     });
