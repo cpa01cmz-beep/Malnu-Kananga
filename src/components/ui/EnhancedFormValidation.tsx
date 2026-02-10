@@ -3,12 +3,12 @@
  * Real-time validation with sophisticated feedback patterns
  */
 
-import React, { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
+import React, { useState, useCallback, useRef, createContext, useContext } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
 
 export interface ValidationRule {
-  validate: (value: any, formData?: Record<string, any>) => boolean | Promise<boolean>;
+  validate: (value: unknown, formData?: Record<string, unknown>) => boolean | Promise<boolean>;
   message: string;
   type?: FeedbackType;
   debounceMs?: number;
@@ -38,11 +38,11 @@ export interface FormValidationConfig {
 }
 
 interface FormValidationContextType {
-  formData: Record<string, any>;
+  formData: Record<string, unknown>;
   fieldValidations: Record<string, FieldValidation>;
   isFormValid: boolean;
   isFormSubmitting: boolean;
-  updateField: (name: string, value: any) => void;
+  updateField: (name: string, value: unknown) => void;
   validateField: (name: string, rules: ValidationRule[]) => Promise<boolean>;
   validateForm: () => Promise<boolean>;
   resetValidation: () => void;
@@ -58,7 +58,7 @@ const FormValidationContext = createContext<FormValidationContextType | undefine
 
 interface FormValidationProviderProps {
   children: React.ReactNode;
-  initialValues?: Record<string, any>;
+  initialValues?: Record<string, unknown>;
   config?: FormValidationConfig;
 }
 
@@ -67,7 +67,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
   initialValues = {},
   config = {},
 }) => {
-  const [formData, setFormData] = useState<Record<string, any>>(initialValues);
+  const [formData, setFormData] = useState<Record<string, unknown>>(initialValues);
   const [fieldValidations, setFieldValidations] = useState<Record<string, FieldValidation>>({});
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
@@ -83,7 +83,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
     ...config,
   };
 
-  const updateField = useCallback((name: string, value: any) => {
+  const updateField = useCallback((name: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     
     if (!touchedFields[name]) {
@@ -110,7 +110,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
           message: rule.message,
           type: rule.type || (isValid ? 'success' : 'error'),
         };
-      } catch (error) {
+      } catch (_err) {
         return {
           valid: false,
           message: rule.message,
@@ -241,18 +241,24 @@ export const ValidationRules = {
   }),
 
   minLength: (min: number, message?: string): ValidationRule => ({
-    validate: (value) => !value || value.length >= min,
+    validate: (value) => {
+      if (!value || typeof value !== 'string') return true;
+      return value.length >= min;
+    },
     message: message || `Must be at least ${min} characters`,
   }),
 
   maxLength: (max: number, message?: string): ValidationRule => ({
-    validate: (value) => !value || value.length <= max,
+    validate: (value) => {
+      if (!value || typeof value !== 'string') return true;
+      return value.length <= max;
+    },
     message: message || `Must be no more than ${max} characters`,
   }),
 
   email: (message = 'Please enter a valid email address'): ValidationRule => ({
     validate: (value) => {
-      if (!value) return true;
+      if (!value || typeof value !== 'string') return true;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(value);
     },
@@ -261,8 +267,8 @@ export const ValidationRules = {
 
   phone: (message = 'Please enter a valid phone number'): ValidationRule => ({
     validate: (value) => {
-      if (!value) return true;
-      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+      if (!value || typeof value !== 'string') return true;
+      const phoneRegex = /^[\d\s\-+()]+$/;
       return phoneRegex.test(value) && value.replace(/\D/g, '').length >= 10;
     },
     message,
@@ -270,7 +276,7 @@ export const ValidationRules = {
 
   password: (message = 'Password must be at least 8 characters with uppercase, lowercase, and numbers'): ValidationRule => ({
     validate: (value) => {
-      if (!value) return true;
+      if (!value || typeof value !== 'string') return true;
       const hasUpperCase = /[A-Z]/.test(value);
       const hasLowerCase = /[a-z]/.test(value);
       const hasNumbers = /\d/.test(value);
@@ -281,16 +287,19 @@ export const ValidationRules = {
   }),
 
   pattern: (regex: RegExp, message: string): ValidationRule => ({
-    validate: (value) => !value || regex.test(value),
+    validate: (value) => {
+      if (!value || typeof value !== 'string') return true;
+      return regex.test(value);
+    },
     message,
   }),
 
-  custom: (validator: (value: any, formData?: Record<string, any>) => boolean, message: string): ValidationRule => ({
+  custom: (validator: (value: unknown, formData?: Record<string, unknown>) => boolean, message: string): ValidationRule => ({
     validate: validator,
     message,
   }),
 
-  async: (validator: (value: any, formData?: Record<string, any>) => Promise<boolean>, message: string): ValidationRule => ({
+  async: (validator: (value: unknown, formData?: Record<string, unknown>) => Promise<boolean>, message: string): ValidationRule => ({
     validate: validator,
     message,
     async: true,
@@ -367,7 +376,7 @@ export const useFieldValidation = (
   const { updateField, validateField, isFieldValid, isFieldTouched, getFieldError } = useFormValidation();
   const { validateOnChange = true, validateOnBlur = true, debounceMs = 300 } = options;
   
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value;

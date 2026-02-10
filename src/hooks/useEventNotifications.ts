@@ -10,53 +10,53 @@ export function useEventNotifications() {
   const unified = useUnifiedNotifications();
 
   const notifyGradeUpdate = useCallback(async (
-    studentName: string, 
-    subject: string, 
-    previousGrade?: number, 
+    studentName: string,
+    subject: string,
+    previousGrade?: number,
     newGrade?: number
   ) => {
     await unified.notifyGradeUpdate(studentName, subject, previousGrade, newGrade);
-  }, [unified.notifyGradeUpdate]);
+  }, [unified]);
 
   const notifyPPDBStatus = useCallback(async (count: number) => {
     await unified.notifyPPDBStatus(count);
-  }, [unified.notifyPPDBStatus]);
+  }, [unified]);
 
   const notifyLibraryUpdate = useCallback(async (materialTitle: string, materialType: string) => {
     await unified.notifyLibraryUpdate(materialTitle, materialType);
-  }, [unified.notifyLibraryUpdate]);
+  }, [unified]);
 
   const notifyAssignmentCreate = useCallback(async (assignmentId: string, title: string) => {
     await unified.notifyAssignmentCreate(assignmentId, title);
-  }, [unified.notifyAssignmentCreate]);
+  }, [unified]);
 
   const notifyAssignmentSubmit = useCallback(async (assignmentId: string, submissionId: string, title: string) => {
     await unified.notifyAssignmentSubmit(assignmentId, submissionId, title);
-  }, [unified.notifyAssignmentSubmit]);
+  }, [unified]);
 
   const notifyMeetingRequest = useCallback(async (requesterName: string, meetingType: string) => {
     await unified.notifyMeetingRequest(requesterName, meetingType);
-  }, [unified.notifyMeetingRequest]);
+  }, [unified]);
 
   const notifyScheduleChange = useCallback(async (className: string, changeType: string) => {
     await unified.notifyScheduleChange(className, changeType);
-  }, [unified.notifyScheduleChange]);
+  }, [unified]);
 
   const notifyAttendanceAlert = useCallback(async (studentName: string, alertType: string) => {
     await unified.notifyAttendanceAlert(studentName, alertType);
-  }, [unified.notifyAttendanceAlert]);
+  }, [unified]);
 
   const notifyOCRValidation = useCallback(async (event: OCRValidationEvent) => {
     await unified.notifyOCRValidation(event);
-  }, [unified.notifyOCRValidation]);
+  }, [unified]);
 
   const useMonitorLocalStorage = useCallback((key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
     unified.useMonitorLocalStorage(key, onChange);
-  }, [unified.useMonitorLocalStorage]);
+  }, [unified]);
 
   const useOCRValidationMonitor = useCallback(() => {
     unified.useOCRValidationMonitor();
-  }, [unified.useOCRValidationMonitor]);
+  }, [unified]);
 
   return {
     notifyGradeUpdate,

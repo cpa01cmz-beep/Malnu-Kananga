@@ -3,7 +3,7 @@
  * Manages page transitions between routes with sophisticated animations
  */
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import PageTransition, { TransitionType, TransitionEasing } from './PageTransition';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -154,7 +154,7 @@ export const RouteTransitionWrapper: React.FC<RouteTransitionWrapperProps> = ({
   path,
   customTransition,
 }) => {
-  const { isTransitioning, transitionConfig } = useRouteTransition();
+  const { transitionConfig } = useRouteTransition();
 
   const isCurrentRoute = transitionConfig.to === path;
   const isPreviousRoute = transitionConfig.from === path;
