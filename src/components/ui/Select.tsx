@@ -1,5 +1,17 @@
 import React, { forwardRef, useRef, useCallback, useState, useId } from 'react';
 import { XMarkIcon } from '../icons/MaterialIcons';
+import { useReducedMotion } from '../../hooks/useAccessibility';
+
+// Haptic feedback utility for mobile devices
+const triggerHapticFeedback = (type: 'light' | 'medium' = 'light') => {
+  if ('vibrate' in navigator && window.innerWidth <= 768) {
+    const pattern = {
+      light: [10],
+      medium: [20]
+    };
+    navigator.vibrate(pattern[type]);
+  }
+};
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';
@@ -66,21 +78,33 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   const helperTextId = helperText ? `${selectId}-helper` : undefined;
   const errorTextId = errorText ? `${selectId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+  const prefersReducedMotion = useReducedMotion();
 
   // Check if there's a value to show clear button
   const hasValue = value !== undefined && value !== '';
   const shouldShowClearButton = showClearButton && hasValue && !props.disabled;
 
-  // Tooltip state for clear button
+  // Tooltip and animation state for clear button
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isClearPressed, setIsClearPressed] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const clearButtonTooltipId = useId();
   const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan pilihan';
 
   const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
-  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+  const hideTooltip = useCallback(() => {
+    setIsTooltipVisible(false);
+    setIsClearPressed(false);
+  }, []);
 
-  // Handle clear action
+  // Handle clear action with haptic feedback and animation
   const handleClear = useCallback(() => {
+    // Trigger haptic feedback for mobile
+    triggerHapticFeedback('light');
+    
+    // Set clearing state for animation
+    setIsClearing(true);
+    
     // Create synthetic event to clear value
     const syntheticEvent = {
       target: { value: '' }
@@ -99,6 +123,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
     if (selectRef.current) {
       selectRef.current.focus();
     }
+    
+    // Reset clearing state after animation
+    setTimeout(() => {
+      setIsClearing(false);
+    }, 300);
   }, [onChange, onClear, selectRef]);
 
   const selectClasses = `
@@ -159,23 +188,35 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
             onClick={handleClear}
             onMouseEnter={showTooltip}
             onMouseLeave={hideTooltip}
+            onMouseDown={() => setIsClearPressed(true)}
+            onMouseUp={() => setIsClearPressed(false)}
             onFocus={showTooltip}
             onBlur={hideTooltip}
-            className="absolute top-1/2 -translate-y-1/2 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10"
+            className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-900 active:bg-neutral-200 dark:active:bg-neutral-500 mobile-touch-target right-10 transition-all duration-200 cubic-bezier(0.175, 0.885, 0.32, 1.275) ${
+              size === 'sm' ? 'p-1.5 min-w-[32px] min-h-[32px]' : 'p-2 min-w-[36px] min-h-[36px]'
+            } ${
+              isClearPressed && !prefersReducedMotion ? 'scale-90' : 'hover:scale-110'
+            }`}
             aria-label={CLEAR_BUTTON_TOOLTIP_TEXT}
             aria-describedby={clearButtonTooltipId}
+            title={CLEAR_BUTTON_TOOLTIP_TEXT}
           >
-            <XMarkIcon className={iconSize} aria-hidden="true" />
-            {/* Tooltip */}
+            <XMarkIcon 
+              className={`${iconSize} transition-transform duration-300 ease-out ${
+                isClearing && !prefersReducedMotion ? 'rotate-180 scale-75' : 'rotate-0 scale-100'
+              }`} 
+              aria-hidden="true" 
+            />
+            {/* Enhanced Tooltip */}
             <span
               id={clearButtonTooltipId}
               role="tooltip"
               className={`
                 absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 
-                rounded-md shadow-lg whitespace-nowrap pointer-events-none
+                rounded-lg shadow-lg whitespace-nowrap pointer-events-none
                 transition-all duration-200 ease-out
                 top-full left-1/2 -translate-x-1/2 mt-2
-                ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+                ${isTooltipVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-1'}
               `.replace(/\s+/g, ' ').trim()}
             >
               {CLEAR_BUTTON_TOOLTIP_TEXT}
