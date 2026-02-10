@@ -9,6 +9,7 @@ import FunnelIcon from '../icons/FunnelIcon';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
+import { DATATABLE_CONFIG } from '../../constants';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -156,7 +157,7 @@ const DataTable = <T extends Record<string, unknown>>({
               onRowClick?.(record, index);
               // Haptic feedback for card interaction
               if ('vibrate' in navigator) {
-                navigator.vibrate([5, 2, 5]);
+                navigator.vibrate(DATATABLE_CONFIG.VIBRATION_PATTERNS.CARD_TAP);
               }
             }}
           >
@@ -171,7 +172,7 @@ const DataTable = <T extends Record<string, unknown>>({
                         e.stopPropagation();
                         // Enhanced haptic feedback for selection
                         if ('vibrate' in navigator) {
-                          navigator.vibrate(e.target.checked ? [15, 5, 15] : [10]);
+                          navigator.vibrate(e.target.checked ? DATATABLE_CONFIG.VIBRATION_PATTERNS.SELECTION_CHECK : DATATABLE_CONFIG.VIBRATION_PATTERNS.SELECTION_UNCHECK);
                         }
                         selection.onSelect(selection.getRowKey(record), e.target.checked);
                       }}
@@ -210,7 +211,7 @@ const DataTable = <T extends Record<string, unknown>>({
                       onTouchStart={() => {
                         // Light haptic feedback on touch
                         if ('vibrate' in navigator) {
-                          navigator.vibrate(3);
+                          navigator.vibrate(DATATABLE_CONFIG.VIBRATION_PATTERNS.TOUCH_LIGHT);
                         }
                       }}
                     >
@@ -316,7 +317,7 @@ const DataTable = <T extends Record<string, unknown>>({
   }
 
   // Determine if mobile view should be used
-  const isMobileView = mobileLayout === 'cards' || (typeof window !== 'undefined' && window.innerWidth < 640 && mobileLayout !== 'table');
+  const isMobileView = mobileLayout === 'cards' || (typeof window !== 'undefined' && window.innerWidth < DATATABLE_CONFIG.MOBILE_BREAKPOINT_PX && mobileLayout !== 'table');
 
   return (
     <div className="space-y-4">

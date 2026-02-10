@@ -5,7 +5,7 @@ import { editorCache } from '../aiCacheService';
 import { validateAIResponse } from '../../utils/aiEditorValidator';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, EXTERNAL_URLS } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -54,7 +54,7 @@ SAFETY CONSTRAINTS:
 
 CONTENT RULES:
 - **CRITICAL IMAGE RULE**:
-  - If user asks for a new item and does NOT provide an image URL, use this placeholder format: "https://placehold.co/600x400?text=Category+Name" (replace 'Category+Name' with relevant topic).
+  - If user asks for a new item and does NOT provide an image URL, use this placeholder format: "${EXTERNAL_URLS.PLACEHOLDER_IMAGE_BASE}Category+Name" (replace 'Category+Name' with relevant topic).
   - Do NOT invent or hallucinate 'unsplash.com' URLs.
   - If modifying text but not image, KEEP existing 'imageUrl' exactly as is.
 - Ensure your response is only modified JSON data.

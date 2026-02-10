@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef } from 'react';
+import { MICRO_INTERACTIONS_CONFIG } from '../constants';
 
 export interface MicroInteractionOptions {
   hapticFeedback?: boolean;
@@ -16,12 +17,7 @@ export const useMicroInteractions = (options: MicroInteractionOptions = {}) => {
 
     // Check if device supports haptic feedback
     if ('vibrate' in navigator) {
-      const patterns = {
-        light: [10],
-        medium: [20],
-        heavy: [30],
-      };
-      navigator.vibrate(patterns[type]);
+      navigator.vibrate(MICRO_INTERACTIONS_CONFIG.VIBRATION_PATTERNS[type]);
     }
   }, [options.hapticFeedback]);
 
@@ -34,21 +30,19 @@ export const useMicroInteractions = (options: MicroInteractionOptions = {}) => {
   const triggerVisualFeedback = useCallback((element: HTMLElement, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
     if (!options.visualFeedback || !element) return;
 
-    const animations = {
-      success: 'feedback-success-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-      error: 'feedback-error-shake 0.5s ease-in-out',
-      warning: 'pulse 0.5s ease-in-out',
-      info: 'pulse 0.3s ease-in-out',
-    };
-
+    const animationType = type;
+    const duration = MICRO_INTERACTIONS_CONFIG.ANIMATION_DURATIONS[animationType];
+    const easing = MICRO_INTERACTIONS_CONFIG.ANIMATION_EASING[animationType];
+    const animationName = animationType === 'success' ? 'feedback-success-bounce' :
+                         animationType === 'error' ? 'feedback-error-shake' : 'pulse';
+    
     // Add animation class
-    element.style.animation = animations[type];
+    element.style.animation = `${animationName} ${duration}s ${easing}`;
     
     // Remove animation after completion
-    const timeout = parseFloat(animations[type].split(' ')[1]) * 1000;
     setTimeout(() => {
       element.style.animation = '';
-    }, timeout);
+    }, duration * 1000);
   }, [options.visualFeedback]);
 
   // Combined interaction feedback
@@ -72,16 +66,16 @@ export const useMicroInteractions = (options: MicroInteractionOptions = {}) => {
     // Reset interaction state
     interactionTimeoutRef.current = window.setTimeout(() => {
       setIsInteracting(false);
-    }, 300);
+    }, MICRO_INTERACTIONS_CONFIG.INTERACTION_RESET_DELAY_MS);
   }, [triggerHaptic, playSound, triggerVisualFeedback]);
 
   // Hover effect with delayed feedback
-  const handleHoverStart = useCallback((element: HTMLElement, delay: number = 100) => {
+  const handleHoverStart = useCallback((element: HTMLElement, delay: number = MICRO_INTERACTIONS_CONFIG.HOVER_DELAY_MS) => {
     if (options.reducedMotion) return;
 
     const timeoutId = window.setTimeout(() => {
       if (element.matches(':hover')) {
-        element.style.transform = 'translateY(-2px) scale(1.02)';
+        element.style.transform = MICRO_INTERACTIONS_CONFIG.HOVER_TRANSFORM;
       }
     }, delay);
 
@@ -99,8 +93,8 @@ export const useMicroInteractions = (options: MicroInteractionOptions = {}) => {
   // Focus effects
   const handleFocus = useCallback((element: HTMLElement) => {
     if (!element) return;
-    element.style.outline = '2px solid hsl(var(--color-primary-500))';
-    element.style.outlineOffset = '2px';
+    element.style.outline = `${MICRO_INTERACTIONS_CONFIG.FOCUS_OUTLINE_WIDTH} solid ${MICRO_INTERACTIONS_CONFIG.FOCUS_OUTLINE_COLOR}`;
+    element.style.outlineOffset = MICRO_INTERACTIONS_CONFIG.FOCUS_OUTLINE_OFFSET;
     triggerHaptic('light');
   }, [triggerHaptic]);
 
