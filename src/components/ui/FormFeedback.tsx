@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon, XCircleIcon } from '../icons/MaterialIcons';
+import { UI_DELAYS } from '../../constants';
 
 export type FeedbackType = 'success' | 'error' | 'warning' | 'info';
 
@@ -69,7 +70,7 @@ const FormFeedback: React.FC<FormFeedbackProps> = ({
 
   useEffect(() => {
     if (animate) {
-      const timer = setTimeout(() => setIsVisible(true), 50);
+      const timer = setTimeout(() => setIsVisible(true), UI_DELAYS.ANIMATION_FADE_IN);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);

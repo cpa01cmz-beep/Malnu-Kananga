@@ -584,6 +584,8 @@ export const UI_DELAYS = {
     LOADING_INDICATOR: 1500,
     REDIRECT_DELAY: 3000,
     USER_IMPORT_DELAY: 100,
+    ANIMATION_START: 100, // Delay before starting UI animations
+    ANIMATION_FADE_IN: 50, // Short delay for fade-in animations
 } as const;
 
 // Cache and storage limits

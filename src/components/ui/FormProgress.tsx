@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { UI_DELAYS } from '../../constants';
 
 interface FormProgressProps {
   totalSteps: number;
@@ -20,7 +21,7 @@ const FormProgress: React.FC<FormProgressProps> = ({
   const [animateProgress, setAnimateProgress] = useState(false);
   
   useEffect(() => {
-    const timer = setTimeout(() => setAnimateProgress(true), 100);
+    const timer = setTimeout(() => setAnimateProgress(true), UI_DELAYS.ANIMATION_START);
     return () => clearTimeout(timer);
   }, []);
 
