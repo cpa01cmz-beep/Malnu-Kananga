@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { idGenerators } from '../../utils/idGenerator';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -86,7 +87,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
   const [showTooltip, setShowTooltip] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const { onTap, onSelection, onDelete } = useHapticFeedback();
-  const searchId = id || `search-${Math.random().toString(36).substr(2, 9)}`;
+  const searchId = id || idGenerators.input();
   const helperTextId = helperText ? `${searchId}-helper` : undefined;
   const errorTextId = errorText ? `${searchId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;

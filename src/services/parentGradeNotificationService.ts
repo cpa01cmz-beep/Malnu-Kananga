@@ -7,6 +7,7 @@ import { STORAGE_KEYS, TIME_MS, USER_ROLES } from '../constants';
 import { gradesAPI } from './apiService';
 import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
+import { idGenerators, generateHyphenatedId } from '../utils/idGenerator';
 
 export interface ParentGradeNotificationSettings {
   enabled: boolean;
@@ -594,7 +595,7 @@ class ParentGradeNotificationService {
     }
 
     return {
-      id: `grade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateHyphenatedId('grade'),
       type: 'grade',
       title,
       body,
@@ -621,7 +622,7 @@ class ParentGradeNotificationService {
     gradeData: GradeNotificationData,
     scheduledFor: number
   ): void {
-    const id = `deferred-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = idGenerators.deferred();
     const now = Date.now();
 
     const notification: QueuedNotification = {
@@ -645,7 +646,7 @@ class ParentGradeNotificationService {
     studentId: string,
     gradeData: GradeNotificationData
   ): void {
-    const id = `digest-${frequency}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const id = idGenerators.digest(frequency);
     const now = Date.now();
     
     const scheduledFor = frequency === 'daily'
@@ -775,7 +776,7 @@ class ParentGradeNotificationService {
       }
 
       const notification: PushNotification = {
-        id: `digest-${frequency}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: idGenerators.digest(frequency),
         type: 'grade',
         title,
         body,
@@ -951,7 +952,7 @@ class ParentGradeNotificationService {
       const maxDays = Math.max(...missingGrades.map(mg => mg.daysSinceLastGrade));
       
       const notification: PushNotification = {
-        id: `missing-grades-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: idGenerators.missingGrades(),
         type: 'missing_grades',
         title: '⚠️ Missing Grades Alert',
         body: `${child.studentName} has potentially missing grades in ${missingGrades.length} subject(s): ${subjectNames}. Some grades are up to ${maxDays} days overdue.`,

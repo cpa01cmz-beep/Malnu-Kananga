@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { XMarkIcon } from '../icons/MaterialIcons';
+import { idGenerators } from '../../utils/idGenerator';
 
 // Micro-UX: Character count indicator with progressive visual feedback
 interface CharacterCountIndicatorProps {
@@ -156,7 +157,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const internalRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
   
-  const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+  const textareaId = id || idGenerators.input();
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
   const errorTextId = errorText ? `${textareaId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;

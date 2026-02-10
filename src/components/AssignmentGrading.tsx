@@ -23,6 +23,7 @@ import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { STORAGE_KEYS, UI_STRINGS, bytesToKb } from '../constants';
+import { idGenerators } from '../utils/idGenerator';
 
 interface AssignmentGradingProps {
   onBack: () => void;
@@ -353,7 +354,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         typeof score === 'number' ? score : undefined
       );
 
-      const feedbackId = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const feedbackId = idGenerators.feedback();
 
       setAiFeedback({
         id: feedbackId,
