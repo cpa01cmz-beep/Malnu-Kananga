@@ -5,7 +5,9 @@ import LoadingOverlay from './LoadingOverlay';
 import { EmptyState } from './LoadingState';
 import Button from './Button';
 import SearchInput from './SearchInput';
+import Card from './Card';
 import FunnelIcon from '../icons/FunnelIcon';
+import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { HEIGHTS } from '../../config/heights';
 
 export interface Column<T = Record<string, unknown>> {
@@ -58,6 +60,8 @@ export interface DataTableProps<T = Record<string, unknown>> {
   stickyHeader?: boolean;
   scrollX?: boolean;
   scrollY?: number;
+  mobileLayout?: 'table' | 'cards';
+  cardTitleColumn?: string;
 }
 
 const DataTable = <T extends Record<string, unknown>>({
@@ -79,6 +83,8 @@ const DataTable = <T extends Record<string, unknown>>({
   stickyHeader = false,
   scrollX = false,
   scrollY,
+  mobileLayout = 'table',
+  cardTitleColumn,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
 
@@ -128,6 +134,83 @@ const DataTable = <T extends Record<string, unknown>>({
     }
   };
 
+  // Mobile Card View Component
+  const MobileCardView = () => (
+    <div className="space-y-4 sm:hidden">
+      {data.map((record, index) => {
+        const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
+        const titleColumn = cardTitleColumn || columns[0]?.key;
+        const titleColumnObj = columns.find(col => col.key === titleColumn);
+        const titleValue = titleColumnObj ? getCellValue(titleColumnObj, record, index) : '';
+        
+        return (
+          <Card
+            key={selection ? selection.getRowKey(record) : index}
+            variant={onRowClick ? 'interactive' : 'default'}
+            className={`
+              ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
+              ${rowClassName?.(record, index) || ''}
+            `}
+            onClick={() => onRowClick?.(record, index)}
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                {selection && (
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        selection.onSelect(selection.getRowKey(record), e.target.checked);
+                      }}
+                      className="w-5 h-5 rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50% shrink-0 cursor-pointer"
+                      aria-label={`Select ${titleValue}`}
+                    />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1 pr-2">
+                  <h3 className="font-semibold text-base text-neutral-900 dark:text-white truncate leading-tight">
+                    {titleValue}
+                  </h3>
+                </div>
+                {onRowClick && (
+                  <div className="flex-shrink-0 p-1 -mr-1">
+                    <ChevronLeftIcon className="w-5 h-5 text-neutral-400 rotate-180" />
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="pt-4 space-y-4">
+              {columns
+                .filter(col => col.key !== titleColumn)
+                .map((column) => {
+                  const value = getCellValue(column, record, index);
+                  const isEmpty = value === null || value === undefined || value === '';
+                  
+                  return (
+                    <div key={column.key} className="flex flex-col gap-1 p-2 -m-2 rounded-lg touch-manipulation">
+                      <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                        {column.title}
+                      </p>
+                      <p className="text-sm text-neutral-900 dark:text-white break-words leading-relaxed min-h-[20px]">
+                        {isEmpty ? (
+                          <span className="text-neutral-400 dark:text-neutral-500 italic">Tidak ada data</span>
+                        ) : (
+                          value
+                        )}
+                      </p>
+                    </div>
+                  );
+                })}
+            </div>
+          </Card>
+        );
+      })}
+    </div>
+  );
+
   const tableClasses = `
     ${scrollX ? 'overflow-x-auto' : ''}
     ${stickyHeader ? 'relative' : ''}
@@ -154,19 +237,23 @@ const DataTable = <T extends Record<string, unknown>>({
     );
   }
 
+  // Determine if mobile view should be used
+  const isMobileView = mobileLayout === 'cards' || (typeof window !== 'undefined' && window.innerWidth < 640 && mobileLayout !== 'table');
+
   return (
     <div className="space-y-4">
       {(filter?.searchable || selection) && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
             {filter?.searchable && (
               <SearchInput
                 value={localSearch}
                 onChange={(e) => handleSearch(e.target.value)}
                 placeholder={filter?.placeholder || 'Search...'}
                 size="sm"
-                fullWidth={false}
+                fullWidth={true}
                 showIcon={true}
+                className="sm:max-w-xs"
               />
             )}
             {sort && (
@@ -185,7 +272,7 @@ const DataTable = <T extends Record<string, unknown>>({
           </div>
           
           {selection && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
               <span className="text-sm text-neutral-600 dark:text-neutral-400">
                 {selection.selectedRowKeys.length} selected
               </span>
@@ -203,91 +290,96 @@ const DataTable = <T extends Record<string, unknown>>({
         </div>
       )}
 
-      <div className={tableClasses}>
-        <Table
-          size={size}
-          variant={variant}
-          className={scrollY ? 'w-full' : ''}
-          style={scrollY ? { maxHeight: scrollY, overflowY: 'auto' } : undefined}
-        >
-          <Thead className={stickyHeader ? 'sticky top-0 bg-white dark:bg-neutral-900 z-10' : ''}>
-            <Tr>
-              {selection && (
-                <Th className="w-12">
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected}
-                    ref={(input) => {
-                      if (input) {
-                        input.indeterminate = isIndeterminate || false;
-                      }
-                    }}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                    aria-label="Select all rows"
-                  />
-                </Th>
-              )}
-              {columns.map((column) => (
-                <Th
-                  key={column.key}
-                  sortable={column.sortable && !!sort}
-                  sortDirection={sort?.sortKey === column.key ? sort.sortDirection : undefined}
-                  onClick={() => column.sortable && handleSort(column)}
-                  className={`
-                    ${getAlignmentClass(column.align)}
-                    ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-900' : ''}
-                    ${column.sortable && sort ? 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700' : ''}
-                  `}
-                  style={column.width ? { width: column.width, minWidth: column.width } : undefined}
-                >
-                  {column.title}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {data.map((record, index) => {
-              const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
-              return (
-                <Tr
-                  key={selection ? selection.getRowKey(record) : index}
-                  hoverable
-                  selected={isSelected}
-                  onClick={() => onRowClick?.(record, index)}
-                  className={`
-                    ${rowClassName?.(record, index) || ''}
-                    ${onRowClick ? 'cursor-pointer' : ''}
-                  `}
-                >
-                  {selection && (
-                    <Td>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={(e) => handleSelect(selection.getRowKey(record), e.target.checked)}
-                        className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                        aria-label={`Select row ${index + 1}`}
-                      />
-                    </Td>
-                  )}
-                  {columns.map((column) => (
-                    <Td
-                      key={column.key}
-                      className={`
-                        ${getAlignmentClass(column.align)}
-                        ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-800' : ''}
-                      `}
-                    >
-                      {getCellValue(column, record, index)}
-                    </Td>
-                  ))}
-                </Tr>
-              );
-            })}
-          </Tbody>
-        </Table>
-      </div>
+      {/* Mobile Card View */}
+      {isMobileView ? (
+        <MobileCardView />
+      ) : (
+        <div className={tableClasses}>
+          <Table
+            size={size}
+            variant={variant}
+            className={scrollY ? 'w-full' : ''}
+            style={scrollY ? { maxHeight: scrollY, overflowY: 'auto' } : undefined}
+          >
+            <Thead className={stickyHeader ? 'sticky top-0 bg-white dark:bg-neutral-900 z-10' : ''}>
+              <Tr>
+                {selection && (
+                  <Th className="w-12">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      ref={(input) => {
+                        if (input) {
+                          input.indeterminate = isIndeterminate || false;
+                        }
+                      }}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
+                      aria-label="Select all rows"
+                    />
+                  </Th>
+                )}
+                {columns.map((column) => (
+                  <Th
+                    key={column.key}
+                    sortable={column.sortable && !!sort}
+                    sortDirection={sort?.sortKey === column.key ? sort.sortDirection : undefined}
+                    onClick={() => column.sortable && handleSort(column)}
+                    className={`
+                      ${getAlignmentClass(column.align)}
+                      ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-900' : ''}
+                      ${column.sortable && sort ? 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700' : ''}
+                    `}
+                    style={column.width ? { width: column.width, minWidth: column.width } : undefined}
+                  >
+                    {column.title}
+                  </Th>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {data.map((record, index) => {
+                const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
+                return (
+                  <Tr
+                    key={selection ? selection.getRowKey(record) : index}
+                    hoverable
+                    selected={isSelected}
+                    onClick={() => onRowClick?.(record, index)}
+                    className={`
+                      ${rowClassName?.(record, index) || ''}
+                      ${onRowClick ? 'cursor-pointer' : ''}
+                    `}
+                  >
+                    {selection && (
+                      <Td>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => handleSelect(selection.getRowKey(record), e.target.checked)}
+                          className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
+                          aria-label={`Select row ${index + 1}`}
+                        />
+                      </Td>
+                    )}
+                    {columns.map((column) => (
+                      <Td
+                        key={column.key}
+                        className={`
+                          ${getAlignmentClass(column.align)}
+                          ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-800' : ''}
+                        `}
+                      >
+                        {getCellValue(column, record, index)}
+                      </Td>
+                    ))}
+                  </Tr>
+                );
+              })}
+            </Tbody>
+          </Table>
+        </div>
+      )}
 
       {pagination && (
         <Pagination

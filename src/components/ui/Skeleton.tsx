@@ -8,6 +8,7 @@ export interface SkeletonProps {
   animation?: 'pulse' | 'wave' | 'shimmer';
   lines?: number;
   animated?: boolean;
+  style?: React.CSSProperties;
   /**
    * Respect user's reduced motion preference.
    * When true (default), animations will be disabled if user prefers reduced motion.
@@ -204,5 +205,136 @@ export const StatsCardSkeleton: React.FC<{ className?: string }> = ({ className 
     <Skeleton variant="text" height={16} className="w-32" />
   </div>
 );
+
+// Enhanced skeleton patterns for better UX
+export const ChartSkeleton: React.FC<{ type?: 'bar' | 'line' | 'pie'; className?: string }> = ({ 
+  type = 'bar', 
+  className = '' 
+}) => (
+  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-card border border-neutral-200 dark:border-neutral-700 p-6 ${className}`}>
+    <Skeleton variant="text" height={24} className="w-1/3 mb-6" />
+    {type === 'bar' && (
+      <div className="flex items-end justify-between gap-2 h-48">
+        {Array.from({ length: 6 }, (_, i) => (
+          <Skeleton 
+            key={i} 
+            variant="rectangular" 
+            className="flex-1" 
+            style={{ height: `${Math.random() * 60 + 20}%` }}
+          />
+        ))}
+      </div>
+    )}
+    {type === 'line' && (
+      <div className="h-48 relative">
+        <Skeleton variant="rectangular" height="100%" className="w-full" />
+      </div>
+    )}
+    {type === 'pie' && (
+      <div className="flex justify-center">
+        <Skeleton variant="circular" width={192} height={192} />
+      </div>
+    )}
+  </div>
+);
+
+export const SidebarSkeleton: React.FC<{ items?: number; className?: string }> = ({ 
+  items = 6, 
+  className = '' 
+}) => (
+  <div className={`space-y-2 ${className}`}>
+    {Array.from({ length: items }, (_, i) => (
+      <div key={i} className="flex items-center gap-3 p-3 rounded-lg">
+        <Skeleton variant="circular" width={20} height={20} />
+        <Skeleton variant="text" height={16} className="flex-1" />
+      </div>
+    ))}
+  </div>
+);
+
+export const TabSkeleton: React.FC<{ tabs?: number; className?: string }> = ({ 
+  tabs = 3, 
+  className = '' 
+}) => (
+  <div className={`space-y-4 ${className}`}>
+    <div className="flex gap-4 border-b border-neutral-200 dark:border-neutral-700 pb-2">
+      {Array.from({ length: tabs }, (_, i) => (
+        <Skeleton key={i} variant="text" height={32} className="w-20" />
+      ))}
+    </div>
+    <Skeleton variant="rectangular" height={200} className="w-full" />
+  </div>
+);
+
+export const ModalSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`bg-white dark:bg-neutral-800 rounded-xl shadow-xl border border-neutral-200 dark:border-neutral-700 p-6 max-w-md w-full ${className}`}>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Skeleton variant="text" height={24} className="w-2/3" />
+        <Skeleton variant="circular" width={24} height={24} />
+      </div>
+      <Skeleton variant="text" height={16} lines={3} />
+      <div className="flex gap-3 justify-end">
+        <Skeleton variant="rectangular" height={40} className="w-20" />
+        <Skeleton variant="rectangular" height={40} className="w-24" />
+      </div>
+    </div>
+  </div>
+);
+
+export const SearchSkeleton: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <div className={`space-y-3 ${className}`}>
+    <Skeleton variant="rectangular" height={48} className="w-full rounded-xl" />
+    <div className="space-y-2">
+      {Array.from({ length: 3 }, (_, i) => (
+        <div key={i} className="flex items-center gap-3 p-3 rounded-lg">
+          <Skeleton variant="circular" width={16} height={16} />
+          <Skeleton variant="text" height={16} className="flex-1" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+export const NotificationSkeleton: React.FC<{ items?: number; className?: string }> = ({ 
+  items = 4, 
+  className = '' 
+}) => (
+  <div className={`space-y-3 ${className}`}>
+    {Array.from({ length: items }, (_, i) => (
+      <div key={i} className="flex gap-3 p-3 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+        <Skeleton variant="circular" width={40} height={40} />
+        <div className="flex-1 space-y-2">
+          <Skeleton variant="text" height={16} className="w-3/4" />
+          <Skeleton variant="text" height={14} className="w-full" />
+        </div>
+        <Skeleton variant="text" height={14} className="w-16" />
+      </div>
+    ))}
+  </div>
+);
+
+// Hook for conditional skeleton loading with delay
+export const useSkeleton = (isLoading: boolean, delay = 200) => {
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (isLoading) {
+      timeout = setTimeout(() => {
+        setShowSkeleton(true);
+      }, delay);
+    } else {
+      setShowSkeleton(false);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [isLoading, delay]);
+
+  return showSkeleton;
+};
 
 export default Skeleton;

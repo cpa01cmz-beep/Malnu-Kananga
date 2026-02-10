@@ -443,7 +443,7 @@ const App: React.FC = () => {
       />
 
       <div
-        className={`fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-40 w-[calc(100vw-2.5rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${
           isChatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
         aria-hidden={!isChatOpen}

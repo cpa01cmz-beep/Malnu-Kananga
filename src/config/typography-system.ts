@@ -160,14 +160,14 @@ export const TYPOGRAPHY_SYSTEM = `
 /* Body Text Variants */
 .body-large {
   font-size: 1.125rem;
-  line-height: 1.75rem;
+  line-height: 1.82rem;
   font-weight: 400;
   color: #374151;
 }
 
 .body-base {
   font-size: 1rem;
-  line-height: 1.5rem;
+  line-height: 1.62rem;
   font-weight: 400;
   color: #374151;
 }
@@ -439,11 +439,11 @@ export const TYPOGRAPHY_SYSTEM = `
   
   .body-large { 
     font-size: clamp(1rem, 2.5vw, 1.125rem); 
-    line-height: 1.6;
+    line-height: 1.82;
   }
   .body-base { 
     font-size: clamp(0.875rem, 2vw, 1rem); 
-    line-height: 1.6;
+    line-height: 1.62;
   }
   .body-small { 
     font-size: clamp(0.75rem, 1.5vw, 0.875rem); 
@@ -663,8 +663,8 @@ export const TYPOGRAPHY_CONFIG = {
   fontSize: {
     xs: ['0.75rem', { lineHeight: '1rem', letterSpacing: '0.05em' }],
     sm: ['0.875rem', { lineHeight: '1.25rem', letterSpacing: '0.025em' }],
-    base: ['1rem', { lineHeight: '1.5rem', letterSpacing: '0em' }],
-    lg: ['1.125rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
+    base: ['1rem', { lineHeight: '1.62rem', letterSpacing: '0em' }],
+    lg: ['1.125rem', { lineHeight: '1.82rem', letterSpacing: '-0.025em' }],
     xl: ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.025em' }],
     '2xl': ['1.5rem', { lineHeight: '2rem', letterSpacing: '-0.025em' }],
     '3xl': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.025em' }],
