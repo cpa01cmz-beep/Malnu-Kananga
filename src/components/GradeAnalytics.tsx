@@ -389,6 +389,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           title="Error Loading Analytics"
           message={error}
           variant="card"
+          userFriendlyMessage={error}
         />
         <div className="text-center mt-4">
           <Button
