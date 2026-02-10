@@ -65,6 +65,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   const [isExportingConsolidated, setIsExportingConsolidated] = useState(false);
   const [_refreshingData, setRefreshingData] = useState<Record<string, boolean>>({});
   const [_offlineData, setOfflineData] = useState<CachedTeacherData | null>(null);
+  const [navigatingView, setNavigatingView] = useState<string | null>(null);
+  const [initializingNotifications, setInitializingNotifications] = useState(false);
 
   // Initialize push notifications
   const {
@@ -195,6 +197,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
   // Request notification permission on first load
   useEffect(() => {
     const initializeNotifications = async () => {
+      setInitializingNotifications(true);
       try {
         const granted = await requestPermission();
         if (granted) {
@@ -209,6 +212,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         }
       } catch (error) {
         logger.error('Failed to initialize teacher notifications:', error);
+      } finally {
+        setInitializingNotifications(false);
       }
     };
 
@@ -264,6 +269,15 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
       handleToast('Perintah tidak dikenali atau tidak tersedia', 'error');
     }
   }, [handleVoiceCommand, handleToast]);
+
+  const handleViewNavigation = useCallback((view: ViewState) => {
+    setNavigatingView(view);
+    // Simulate navigation delay to show loading state
+    setTimeout(() => {
+      setCurrentView(view);
+      setNavigatingView(null);
+    }, 300);
+  }, []);
 
   const refreshDashboardData = useCallback(async () => {
     if (!isOnline) return;
@@ -463,6 +477,18 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     </Card>
                 )}
 
+                 {/* Notification Initialization Loading */}
+                 {initializingNotifications && (
+                     <Card padding="md" className={`mb-8 animate-fade-in-up bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800`}>
+                         <div className="flex items-center gap-3">
+                             <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                             <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                                 Menginisialisasi notifikasi guru...
+                             </span>
+                         </div>
+                     </Card>
+                 )}
+
                 {/* Activity Feed */}
                 <Card padding="lg" className={`mb-8 animate-fade-in-up`}>
                   <ActivityFeed
@@ -506,7 +532,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Aktif"
                             offlineBadge="Offline"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('class')}
+                            disabled={navigatingView === 'class'}
+                            onClick={() => handleViewNavigation('class')}
                             ariaLabel="Buka manajemen Wali Kelas"
                         />
                     )}
@@ -520,7 +547,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Aktif"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('grading')}
+                            disabled={navigatingView === 'grading'}
+                            onClick={() => handleViewNavigation('grading')}
                             ariaLabel="Buka Input Nilai"
                         />
                     )}
@@ -534,7 +562,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Aktif"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('upload')}
+                            disabled={navigatingView === 'upload'}
+                            onClick={() => handleViewNavigation('upload')}
                             ariaLabel="Buka Upload Materi"
                         />
                     )}
@@ -548,7 +577,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Baru"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('assignments')}
+                            disabled={navigatingView === 'assignments'}
+                            onClick={() => handleViewNavigation('assignments')}
                             ariaLabel="Buka Pembuatan Tugas"
                         />
                     )}
@@ -562,7 +592,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Baru"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('assignment-grading')}
+                            disabled={navigatingView === 'assignment-grading'}
+                            onClick={() => handleViewNavigation('assignment-grading')}
                             ariaLabel="Buka Penilaian Tugas"
                         />
                     )}
@@ -576,7 +607,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Baru"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('analytics')}
+                            disabled={navigatingView === 'analytics'}
+                            onClick={() => handleViewNavigation('analytics')}
                             ariaLabel="Buka Analitik Nilai"
                         />
                     )}
@@ -590,7 +622,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="AI"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('quiz-generator')}
+                            disabled={navigatingView === 'quiz-generator'}
+                            onClick={() => handleViewNavigation('quiz-generator')}
                             ariaLabel="Buka Pembuat Kuis AI"
                         />
                     )}
@@ -604,7 +637,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Integrasi"
                             offlineBadge="Mode Tertunda"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('quiz-integration')}
+                            disabled={navigatingView === 'quiz-integration'}
+                            onClick={() => handleViewNavigation('quiz-integration')}
                             ariaLabel="Buka Dashboard Integrasi Kuis"
                         />
                     )}
@@ -618,7 +652,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Real-time"
                             offlineBadge="Offline"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('messages')}
+                            disabled={navigatingView === 'messages'}
+                            onClick={() => handleViewNavigation('messages')}
                             ariaLabel="Buka Pesan"
                         />
                     )}
@@ -632,7 +667,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Grup"
                             offlineBadge="Offline"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('groups')}
+                            disabled={navigatingView === 'groups'}
+                            onClick={() => handleViewNavigation('groups')}
                             ariaLabel="Buka Grup Diskusi"
                         />
                     )}
@@ -646,7 +682,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             statusBadge="Audit"
                             offlineBadge="Offline"
                             isOnline={isOnline}
-                            onClick={() => setCurrentView('communication-log')}
+                            disabled={navigatingView === 'communication-log'}
+                            onClick={() => handleViewNavigation('communication-log')}
                             ariaLabel="Buka Log Komunikasi"
                         />
                     )}
