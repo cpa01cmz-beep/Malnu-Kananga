@@ -5,6 +5,7 @@
 
 import { useCallback, useRef, useState, useEffect, type ReactNode } from 'react';
 import { useHapticFeedback } from './hapticFeedback';
+import { GESTURE_CONFIG } from '../constants';
 
 export interface SwipeGestureOptions {
   threshold?: number;
@@ -38,9 +39,9 @@ export interface SwipeToDeleteOptions {
 // Hook for swipe gestures
 export const useSwipeGestures = (options: SwipeGestureOptions = {}) => {
   const {
-    threshold = 100,
-    restraint = 100,
-    allowedTime = 300,
+    threshold = GESTURE_CONFIG.SWIPE.THRESHOLD,
+    restraint = GESTURE_CONFIG.SWIPE.RESTRAINT,
+    allowedTime = GESTURE_CONFIG.SWIPE.ALLOWED_TIME,
     onSwipeLeft,
     onSwipeRight,
     onSwipeUp,
@@ -122,7 +123,7 @@ export const useSwipeGestures = (options: SwipeGestureOptions = {}) => {
 // Hook for long press gestures
 export const useLongPress = (options: LongPressOptions = {}) => {
   const {
-    delay = 500,
+    delay = GESTURE_CONFIG.LONG_PRESS.DELAY,
     onLongPress,
     onLongPressEnd,
   } = options;
@@ -191,7 +192,7 @@ export const useLongPress = (options: LongPressOptions = {}) => {
 // Hook for pull-to-refresh
 export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
   const {
-    threshold = 80,
+    threshold = GESTURE_CONFIG.PULL_TO_REFRESH.THRESHOLD,
     onRefresh,
   } = options;
 
@@ -263,9 +264,9 @@ export const usePullToRefresh = (options: PullToRefreshOptions = {}) => {
 // Hook for swipe-to-delete
 export const useSwipeToDelete = (options: SwipeToDeleteOptions = {}) => {
   const {
-    threshold = 100,
+    threshold = GESTURE_CONFIG.SWIPE_TO_DELETE.THRESHOLD,
     onDelete,
-    actionWidth = 80,
+    actionWidth = GESTURE_CONFIG.SWIPE_TO_DELETE.ACTION_WIDTH,
     actionLabel = 'Delete',
     actionIcon,
   } = options;

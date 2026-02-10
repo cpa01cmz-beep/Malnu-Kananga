@@ -1,4 +1,11 @@
 // monitoringConfig.ts - Centralized monitoring configuration
+// Flexy: All values use constants from constants.ts - no hardcoded values!
+
+import { 
+  TIME_MS, 
+  RETRY_CONFIG, 
+  PERFORMANCE_THRESHOLDS 
+} from '../constants';
 
 // ============================================
 // ERROR MONITORING CONFIGURATION
@@ -54,17 +61,24 @@ export interface PerformanceMonitoringConfig {
 
 /**
  * Get performance monitoring configuration
+ * Flexy: Using constants instead of hardcoded values
  */
 export const getPerformanceMonitoringConfig = (): PerformanceMonitoringConfig => {
   const env = import.meta.env.MODE || 'development';
   const isProduction = env === 'production';
 
   return {
-    slowRequestThreshold: isProduction ? 5000 : 10000, // 5s in prod, 10s in dev
+    slowRequestThreshold: isProduction 
+      ? PERFORMANCE_THRESHOLDS.SLOW_REQUEST_MS 
+      : TIME_MS.TEN_SECONDS,
     enabled: isProduction,
-    errorRateThreshold: isProduction ? 10 : 20, // 10% error rate in prod, 20% in dev
-    averageResponseTimeThreshold: isProduction ? 3000 : 5000, // 3s in prod, 5s in dev
-    consecutiveFailuresThreshold: 5,
+    errorRateThreshold: isProduction 
+      ? PERFORMANCE_THRESHOLDS.ERROR_RATE_ALERT_PERCENT 
+      : 20, // 20% in dev
+    averageResponseTimeThreshold: isProduction 
+      ? PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS 
+      : TIME_MS.TEN_SECONDS,
+    consecutiveFailuresThreshold: PERFORMANCE_THRESHOLDS.CONSECUTIVE_FAILURES_ALERT,
     maxMetrics: 1000,
   };
 };
@@ -83,16 +97,19 @@ export interface HealthMetricsConfig {
 
 /**
  * Get health metrics configuration
+ * Flexy: Using constants instead of hardcoded values
  */
 export const getHealthMetricsConfig = (): HealthMetricsConfig => {
   const env = import.meta.env.MODE || 'development';
   const isProduction = env === 'production';
 
   return {
-    refreshInterval: isProduction ? 5000 : 10000, // 5s in prod, 10s in dev
-    alertRetentionPeriod: 7 * 24 * 60 * 60 * 1000, // 7 days
+    refreshInterval: isProduction 
+      ? RETRY_CONFIG.WEBSOCKET_PING_INTERVAL 
+      : TIME_MS.TEN_SECONDS,
+    alertRetentionPeriod: TIME_MS.ONE_WEEK,
     maxAlerts: 100,
-    memoryWarningThreshold: 75,
+    memoryWarningThreshold: PERFORMANCE_THRESHOLDS.MEMORY_WARNING_PERCENT,
     memoryCriticalThreshold: 90,
   };
 };
@@ -120,21 +137,22 @@ export interface AlertThresholds {
 
 /**
  * Get alert thresholds
+ * Flexy: Using constants instead of hardcoded values
  */
 export const getAlertThresholds = (): AlertThresholds => {
   return {
     websocket: {
       maxReconnectAttempts: 10,
-      connectionTimeout: 10000, // 10 seconds
-      pingTimeout: 5000, // 5 seconds
+      connectionTimeout: RETRY_CONFIG.WEBSOCKET_CONNECTION_TIMEOUT,
+      pingTimeout: TIME_MS.FIVE_SECONDS,
     },
     pwa: {
-      offlineTimeoutWarning: 60000, // 1 minute
-      cacheSizeWarning: 50, // 50 MB
+      offlineTimeoutWarning: TIME_MS.ONE_MINUTE,
+      cacheSizeWarning: 50, // 50 MB - specific to PWA config
     },
     performance: {
-      slowResponseWarning: 5000, // 5 seconds
-      errorRateCritical: 20, // 20%
+      slowResponseWarning: PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS,
+      errorRateCritical: 20, // 20% - specific to alert thresholds
       consecutiveFailuresCritical: 10,
     },
   };

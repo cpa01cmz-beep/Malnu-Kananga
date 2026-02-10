@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { PROGRESSIVE_LOADING_CONFIG } from '../constants';
 
 /**
  * Progressive Loading System
@@ -55,8 +56,8 @@ export const useProgressiveLoading = <T = unknown>(
 ): ProgressiveLoadingReturn<T> => {
   const {
     strategy = 'skeleton',
-    delay = 200,
-    timeout = 10000,
+    delay = PROGRESSIVE_LOADING_CONFIG.DEFAULT_DELAY,
+    timeout = PROGRESSIVE_LOADING_CONFIG.DEFAULT_TIMEOUT,
     optimisticData,
     rollbackOnError = true,
     onLoadStart,
@@ -137,7 +138,7 @@ export const useProgressiveLoading = <T = unknown>(
           const next = prev + Math.random() * 30;
           return Math.min(next, 90);
         });
-      }, 100);
+      }, PROGRESSIVE_LOADING_CONFIG.PROGRESS_INTERVAL);
       
       const result = await loader();
       

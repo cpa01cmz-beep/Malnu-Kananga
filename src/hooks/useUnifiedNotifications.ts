@@ -12,6 +12,7 @@ import {
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
+import { TIME_MS } from '../constants';
 
 interface PushSubscription {
   readonly endpoint: string;
@@ -320,7 +321,7 @@ export function useUnifiedNotifications() {
 
       window.addEventListener('storage', handleStorageChange);
       checkNow();
-      const interval = setInterval(checkNow, 30000); // Check every 30 seconds
+      const interval = setInterval(checkNow, TIME_MS.THIRTY_SECONDS); // Check every 30 seconds
 
       return () => {
         window.removeEventListener('storage', handleStorageChange);
