@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { UI_STRINGS } from '../../constants';
 
 interface SkipLinkProps {
   href: string;
@@ -101,7 +102,7 @@ export const A11yButton: React.FC<A11yButtonProps> = ({
   variant = 'primary',
   size = 'md',
   loading = false,
-  loadingText = 'Loading...',
+  loadingText = UI_STRINGS.LOADING,
   disabled,
   className = '',
   ...props

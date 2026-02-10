@@ -15,7 +15,7 @@ import FieldVoiceInput from '../FieldVoiceInput';
 import { VoiceLanguage } from '../../types';
 import { logger } from '../../utils/logger';
 import { createToastHandler } from '../../utils/teacherErrorHandler';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, UI_STRINGS } from '../../constants';
 import { validateGradeInput, validateClassCompletion } from '../../utils/teacherValidation';
 import { VALIDATION_MESSAGES } from '../../utils/errorMessages';
 import { useGradingData, type StudentGrade, type OCRReviewData } from './useGradingData';
@@ -332,7 +332,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             onClick={handleSave}
             disabled={loading || _isSaving}
           >
-            {loading || _isSaving ? "Menyimpan..." : "Simpan Semua Nilai"}
+            {loading || _isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_ALL}
           </Button>
         </div>
       )}

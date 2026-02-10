@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, UserRole, UserExtraRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, UI_STRINGS } from '../constants';
 import { authService } from '../services/authService';
 import { usersAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -418,7 +418,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               icon={<SaveIcon className="w-5 h-5" />}
               isLoading={isSaving}
             >
-              {isSaving ? 'Menyimpan...' : 'Simpan Profil'}
+              {isSaving ? UI_STRINGS.SAVING : 'Simpan Profil'}
             </Button>
           )}
         </div>

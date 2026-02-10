@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Button from './Button';
 import { ExclamationCircleIcon, InformationCircleIcon } from '../icons/MaterialIcons';
+import { UI_STRINGS } from '../../constants';
 
 export type LoadingStateType = 'spinner' | 'skeleton' | 'dots' | 'pulse' | 'progress';
 export type ErrorSeverity = 'info' | 'warning' | 'error' | 'critical';
@@ -18,7 +19,7 @@ export interface LoadingStateProps {
 export const LoadingState: React.FC<LoadingStateProps> = ({
   isLoading,
   type = 'spinner',
-  message = 'Loading...',
+  message = UI_STRINGS.LOADING,
   size = 'md',
   overlay = false,
   children,
@@ -59,7 +60,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
             <div className={`animate-spin rounded-full border-2 border-neutral-200 border-t-primary-600 ${
               size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-8 h-8' : 'w-6 h-6'
             }`} role="status" aria-label="Loading">
-              <span className="sr-only">Loading...</span>
+              <span className="sr-only">{UI_STRINGS.LOADING}</span>
             </div>
             {message && (
               <p className="text-sm text-neutral-600 dark:text-neutral-400 animate-pulse">
@@ -108,7 +109,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
             <div className={`rounded-full bg-primary-600 animate-pulse ${
               size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-8 h-8' : 'w-6 h-6'
             }`} role="status" aria-label="Loading">
-              <span className="sr-only">Loading...</span>
+              <span className="sr-only">{UI_STRINGS.LOADING}</span>
             </div>
             {message && (
               <p className="text-sm text-neutral-600 dark:text-neutral-400">

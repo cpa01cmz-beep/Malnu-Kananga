@@ -17,6 +17,7 @@ import { EmptyState } from './ui/LoadingState';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import Card from './ui/Card';
 import { GRADIENT_CLASSES, DARK_GRADIENT_CLASSES } from '../config/gradients';
+import { UI_STRINGS } from '../constants';
 
 interface OsisEventsProps {
   onBack: () => void;
@@ -672,7 +673,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 fullWidth
               />
               <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />} isLoading={isCreating}>
-                {isCreating ? 'Menyimpan...' : 'Simpan Kegiatan'}
+                {isCreating ? UI_STRINGS.SAVING : 'Simpan Kegiatan'}
               </Button>
             </form>
           </Card>
