@@ -72,7 +72,9 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
     };
 
     loadContinuousMode();
-  }, [setContinuous]);
+    // Only run on mount - setContinuous is stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setPulseAnimation(isListening);
