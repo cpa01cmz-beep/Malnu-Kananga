@@ -6,6 +6,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIcons';
 import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
+import { TIME_MS } from '../constants';
 import ProgressBar from './ui/ProgressBar';
 import FormGrid from './ui/FormGrid';
 
@@ -49,9 +50,9 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
         uniqueUsers: Math.floor(material.downloadCount * 0.7) + Math.floor(Math.random() * 20),
         averageRating: 4.2 + Math.random() * 0.8,
         totalReviews: Math.floor(Math.random() * 15) + 3,
-        lastAccessed: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+        lastAccessed: new Date(Date.now() - Math.random() * TIME_MS.ONE_WEEK).toISOString(),
         dailyStats: Array.from({ length: 7 }, (_, i) => ({
-          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          date: new Date(Date.now() - i * TIME_MS.ONE_DAY).toISOString().split('T')[0],
           downloads: Math.floor(Math.random() * 10) + 1,
           uniqueUsers: Math.floor(Math.random() * 8) + 1,
         })).reverse(),

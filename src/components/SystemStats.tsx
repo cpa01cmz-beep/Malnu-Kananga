@@ -4,7 +4,7 @@ import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import PermissionGuard from './PermissionGuard';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, CONVERSION } from '../constants';
 import { User, UserRole, UserExtraRole } from '../types';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -80,9 +80,9 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
             total += localStorage[key].length + key.length;
         }
     }
-    if (total < 1024) return `${total} B`;
-    if (total < 1024 * 1024) return `${(total / 1024).toFixed(1)} KB`;
-    return `${(total / (1024 * 1024)).toFixed(1)} MB`;
+    if (total < CONVERSION.BYTES_PER_KB) return `${total} B`;
+    if (total < CONVERSION.BYTES_PER_MB) return `${(total / CONVERSION.BYTES_PER_KB).toFixed(1)} KB`;
+    return `${(total / CONVERSION.BYTES_PER_MB).toFixed(1)} MB`;
   };
 
   const handleFactoryReset = async () => {
