@@ -17,6 +17,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
+import { ACADEMIC, ATTENDANCE_STATUS_LABELS } from '../constants';
 
 interface ClassStudent {
   id: string;
@@ -24,7 +25,7 @@ interface ClassStudent {
   name: string;
   gender: 'L' | 'P';
   address: string;
-  attendanceToday: 'hadir' | 'sakit' | 'izin' | 'alpa';
+  attendanceToday: typeof ACADEMIC.ATTENDANCE_STATUSES[keyof typeof ACADEMIC.ATTENDANCE_STATUSES];
 }
 
 interface ClassManagementProps {
@@ -63,7 +64,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
           name: student.className,
           gender: 'L' as const,
           address: student.address,
-          attendanceToday: 'hadir' as const,
+          attendanceToday: ACADEMIC.ATTENDANCE_STATUSES.PRESENT,
         }));
         setStudents(studentData);
         await fetchTodayAttendance(studentData);
@@ -94,7 +95,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
         setStudents((prev) =>
           prev.map((student) => ({
             ...student,
-            attendanceToday: attendanceMap.get(student.id) || 'hadir',
+            attendanceToday: attendanceMap.get(student.id) || ACADEMIC.ATTENDANCE_STATUSES.PRESENT,
           }))
         );
       }
@@ -124,7 +125,7 @@ const ClassManagement: React.FC<ClassManagementProps> = ({ onBack, onShowToast }
 const handleAttendanceChange = async (id: string, status: ClassStudent['attendanceToday']) => {
     const prevStudents = [...students];
     const today = new Date().toISOString().split('T')[0];
-    const apiStatus = status.toLowerCase() as 'hadir' | 'sakit' | 'izin' | 'alpa';
+    const apiStatus = status.toLowerCase() as typeof ACADEMIC.ATTENDANCE_STATUSES[keyof typeof ACADEMIC.ATTENDANCE_STATUSES];
 
     const attendanceData = {
       id: Date.now().toString(),
@@ -192,10 +193,10 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
         const student = students.find(s => s.id === id);
         if (student) {
           const statusMap: Record<string, string> = {
-            'hadir': 'Hadir',
-            'sakit': 'Sakit', 
-            'izin': 'Izin',
-            'alpa': 'Alpa'
+            [ACADEMIC.ATTENDANCE_STATUSES.PRESENT]: ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.PRESENT],
+            [ACADEMIC.ATTENDANCE_STATUSES.SICK]: ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.SICK],
+            [ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]: ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.PERMITTED],
+            [ACADEMIC.ATTENDANCE_STATUSES.ABSENT]: ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.ABSENT]
           };
           
           await unifiedNotificationManager.showNotification({
@@ -335,25 +336,25 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Hadir Hari Ini</p>
           <p className="text-xl font-bold text-green-600 dark:text-green-400">
-            {students.filter((s) => s.attendanceToday === 'hadir').length}
+            {students.filter((s) => s.attendanceToday === ACADEMIC.ATTENDANCE_STATUSES.PRESENT).length}
           </p>
         </div>
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Sakit</p>
           <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">
-            {students.filter((s) => s.attendanceToday === 'sakit').length}
+            {students.filter((s) => s.attendanceToday === ACADEMIC.ATTENDANCE_STATUSES.SICK).length}
           </p>
         </div>
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Izin</p>
           <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-            {students.filter((s) => s.attendanceToday === 'izin').length}
+            {students.filter((s) => s.attendanceToday === ACADEMIC.ATTENDANCE_STATUSES.PERMITTED).length}
           </p>
         </div>
         <div className="bg-white dark:bg-neutral-800 p-4 rounded-xl shadow-sm border border-neutral-100 dark:border-neutral-700">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">Alpa</p>
           <p className="text-xl font-bold text-red-600 dark:text-red-400">
-            {students.filter((s) => s.attendanceToday === 'alpa').length}
+            {students.filter((s) => s.attendanceToday === ACADEMIC.ATTENDANCE_STATUSES.ABSENT).length}
           </p>
         </div>
       </div>
@@ -402,15 +403,15 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
                           handleAttendanceChange(student.id, e.target.value as ClassStudent['attendanceToday'])
                         }
                         className={`text-xs font-medium rounded-full px-3 py-1.5 border-none focus:ring-2 focus:ring-green-500 cursor-pointer outline-none ${
-                          student.attendanceToday === 'hadir'
+                          student.attendanceToday === ACADEMIC.ATTENDANCE_STATUSES.PRESENT
                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                             : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
                         }`}
                       >
-                        <option value="hadir">Hadir</option>
-                        <option value="sakit">Sakit</option>
-                        <option value="izin">Izin</option>
-                        <option value="alpa">Alpa</option>
+                        <option value={ACADEMIC.ATTENDANCE_STATUSES.PRESENT}>{ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.PRESENT]}</option>
+                        <option value={ACADEMIC.ATTENDANCE_STATUSES.SICK}>{ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.SICK]}</option>
+                        <option value={ACADEMIC.ATTENDANCE_STATUSES.PERMITTED}>{ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]}</option>
+                        <option value={ACADEMIC.ATTENDANCE_STATUSES.ABSENT}>{ATTENDANCE_STATUS_LABELS[ACADEMIC.ATTENDANCE_STATUSES.ABSENT]}</option>
                       </select>
                     </td>
                   </tr>

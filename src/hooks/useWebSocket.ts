@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { webSocketService, type RealTimeEvent, type RealTimeEventType, type WebSocketConnectionState } from '../services/webSocketService';
 import { logger } from '../utils/logger';
 import { ChatMessage, NotificationType } from '../types';
+import { COMPONENT_DELAYS } from '../constants';
 
 // Missing types - add temporary definitions
 interface Grade {
@@ -83,7 +84,7 @@ export function useWebSocket() {
   useEffect(() => {
     const interval = setInterval(() => {
       setConnectionState(webSocketService.getConnectionState());
-    }, 1000);
+    }, COMPONENT_DELAYS.WEBSOCKET_HEALTH_CHECK);
 
     return () => clearInterval(interval);
   }, []);
