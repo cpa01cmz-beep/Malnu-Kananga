@@ -214,6 +214,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
     ${getAnimationClass(finalState)}
     ${fullWidth ? 'w-full' : ''}
     ${leftIconSpacing} ${rightIconSpacing}
+    mobile-touch-target focus-enhanced hover-lift-enhanced transition-smooth
     ${className}
   `.replace(/\s+/g, ' ').trim();
 

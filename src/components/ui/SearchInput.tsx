@@ -110,6 +110,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
     ${fullWidth ? 'w-full' : ''}
     ${showIcon && iconPosition === 'left' ? 'pl-11' : ''}
     ${showIcon && iconPosition === 'right' ? 'pr-11' : ''}
+    ${size === 'sm' ? 'min-h-[44px]' : size === 'lg' ? 'min-h-[56px]' : 'min-h-[48px]'}
+    mobile-touch-target focus-enhanced hover-lift-enhanced transition-smooth
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
