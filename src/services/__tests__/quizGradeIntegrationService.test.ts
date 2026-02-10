@@ -9,6 +9,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as quizGradeIntegrationService from '../quizGradeIntegrationService';
 import { gradesAPI } from '../apiService';
 import { logger } from '../../utils/logger';
+import { TEST_CONSTANTS } from '../../constants';
 import type { Grade, Quiz, QuizAttempt } from '../../types';
 
 // Mock API services
@@ -34,19 +35,34 @@ vi.mock('../../constants', () => ({
     QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
     QUIZZES: 'malnu_quizzes',
   },
+  TEST_CONSTANTS: {
+    IDS: {
+      QUIZ_001: 'quiz-001',
+      ATTEMPT_001: 'attempt-001',
+      STUDENT_001: 'student-001',
+      TEACHER_001: 'teacher-001',
+      GRADE_001: 'grade-001',
+      SUBJECT_001: 'subject-001',
+      CLASS_001: 'class-001',
+    },
+    NAMES: {
+      JOHN_DOE: 'John Doe',
+      MATHEMATICS: 'Mathematics',
+    },
+  },
 }));
 
 describe('quizGradeIntegrationService', () => {
   const mockQuiz: Quiz = {
-    id: 'quiz-001',
+    id: TEST_CONSTANTS.IDS.QUIZ_001,
     title: 'Math Quiz 1',
     description: 'Math quiz',
-    subjectId: 'subject-001',
-    classId: 'class-001',
-    teacherId: 'teacher-001',
+    subjectId: TEST_CONSTANTS.IDS.SUBJECT_001,
+    classId: TEST_CONSTANTS.IDS.CLASS_001,
+    teacherId: TEST_CONSTANTS.IDS.TEACHER_001,
     academicYear: '2026',
     semester: '1',
-    subjectName: 'Mathematics',
+    subjectName: TEST_CONSTANTS.NAMES.MATHEMATICS,
     questions: [],
     totalPoints: 100,
     duration: 30,
@@ -59,10 +75,10 @@ describe('quizGradeIntegrationService', () => {
   };
 
   const mockQuizAttempt: QuizAttempt = {
-    id: 'attempt-001',
-    quizId: 'quiz-001',
-    studentId: 'student-001',
-    studentName: 'John Doe',
+    id: TEST_CONSTANTS.IDS.ATTEMPT_001,
+    quizId: TEST_CONSTANTS.IDS.QUIZ_001,
+    studentId: TEST_CONSTANTS.IDS.STUDENT_001,
+    studentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
     attemptNumber: 1,
     answers: {},
     score: 85,
@@ -75,19 +91,19 @@ describe('quizGradeIntegrationService', () => {
   };
 
   const mockGrade: Grade = {
-    id: 'grade-001',
-    studentId: 'student-001',
-    subjectId: 'subject-001',
-    classId: 'class-001',
+    id: TEST_CONSTANTS.IDS.GRADE_001,
+    studentId: TEST_CONSTANTS.IDS.STUDENT_001,
+    subjectId: TEST_CONSTANTS.IDS.SUBJECT_001,
+    classId: TEST_CONSTANTS.IDS.CLASS_001,
     academicYear: '2026',
     semester: '1',
     assignmentType: 'quiz',
     assignmentName: 'Quiz-quiz-001-attempt-1',
     score: 85,
     maxScore: 100,
-    subjectName: 'Mathematics',
+    subjectName: TEST_CONSTANTS.NAMES.MATHEMATICS,
     createdAt: '2026-01-31T00:00:00.000Z',
-    createdBy: 'teacher-001',
+    createdBy: TEST_CONSTANTS.IDS.TEACHER_001,
   };
 
   beforeEach(() => {
