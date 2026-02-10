@@ -162,6 +162,7 @@ export default defineConfig(({ mode }) => {
       chunkSizeWarningLimit: BUILD_CONFIG.CHUNK_SIZE_WARNING_LIMIT,
       target: BUILD_CONFIG.TARGET,
       minify: BUILD_CONFIG.MINIFY,
+      sourcemap: BUILD_CONFIG.SOURCEMAP,
       terserOptions: {
         compress: {
           drop_console: BUILD_CONFIG.TERSER_DROP_CONSOLE,
