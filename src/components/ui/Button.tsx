@@ -26,14 +26,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   disabledReason?: string;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 hover:-translate-y-0.5 disabled:hover:translate-y-0 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-md active:shadow-sm border border-transparent";
+const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-250 cubic-bezier(0.25, 0.46, 0.45, 0.94) focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 disabled:opacity-60 disabled:bg-neutral-100 dark:disabled:bg-neutral-800 disabled:text-neutral-400 dark:disabled:text-neutral-500 disabled:border-neutral-200 dark:disabled:border-neutral-700 disabled:cursor-not-allowed active:scale-[0.97] hover:scale-[1.02] hover:-translate-y-0.5 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:active:scale-100 touch-manipulation relative overflow-hidden group ripple-effect focus-ring-enhanced btn-polished micro-hover btn-micro a11y-button shadow-sm hover:shadow-lg active:shadow-sm border border-transparent backdrop-blur-sm hover-lift-enhanced focus-visible-enhanced mobile-touch-target haptic-feedback";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover border-primary-600 hover:border-primary-700",
-  secondary: "bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth hover:shadow-sm",
-  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:scale-[1.05] transition-bounce hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80",
-  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-lg hover:scale-[1.02] gradient-hover border-red-600 hover:border-red-700 dark:border-red-500 dark:hover:border-red-600",
-  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:scale-[1.02] transition-smooth hover:bg-neutral-50/80 dark:hover:bg-neutral-700/80 hover:shadow-sm",
+  primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 shadow-md hover:shadow-xl hover:shadow-primary-500/25 btn-hover-primary focus-visible-enhanced hover-glow-enhanced gradient-hover border-primary-600 hover:border-primary-700 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
+  secondary: "bg-white/95 dark:bg-neutral-800/95 text-neutral-700 dark:text-neutral-200 border-2 border-neutral-200 dark:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
+  ghost: "bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100/80 dark:hover:bg-neutral-700/80 hover:text-neutral-900 dark:hover:text-neutral-200 focus:ring-neutral-500/50 hover:shadow-sm backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
+  destructive: "bg-red-600 text-white dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 focus:ring-red-500/50 shadow-md hover:shadow-xl hover:shadow-red-500/25 gradient-hover border-red-600 hover:border-red-700 dark:border-red-500 dark:hover:border-red-600 backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
+  outline: "bg-transparent text-neutral-600 dark:text-neutral-400 border-2 border-neutral-300 dark:border-neutral-600 hover:bg-neutral-50/80 dark:hover:bg-neutral-700/80 hover:border-primary-500 dark:hover:border-primary-500 focus:ring-primary-500/50 hover:shadow-md backdrop-blur-sm hover-lift-enhanced text-contrast-enhanced",
 };
 
 const intentClasses: Record<ButtonIntent, string> = {
@@ -44,17 +44,17 @@ const intentClasses: Record<ButtonIntent, string> = {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px]",
-  sm: "px-4 py-2.5 text-sm min-h-[44px]",
-  md: "px-5 py-3 text-sm sm:text-base min-h-[48px]",
-  lg: "px-6 py-4 text-base sm:text-lg min-h-[52px]",
+  icon: "px-3 py-3 text-sm min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
+  sm: "px-4 py-2.5 text-sm min-h-[48px] sm:min-h-[52px] mobile-touch-target",
+  md: "px-5 py-3 text-sm sm:text-base min-h-[52px] sm:min-h-[56px] mobile-touch-target",
+  lg: "px-6 py-4 text-base sm:text-lg min-h-[56px] sm:min-h-[60px] mobile-touch-target",
 };
 
 const iconOnlySizes: Record<ButtonSize, string> = {
-  icon: "p-3",
-  sm: "p-3",
-  md: "p-3",
-  lg: "p-4",
+  icon: "p-3 min-w-[44px] min-h-[44px] sm:min-w-[48px] sm:min-h-[48px]",
+  sm: "p-3 min-w-[48px] min-h-[48px] sm:min-w-[52px] sm:min-h-[52px]",
+  md: "p-3 min-w-[52px] min-h-[52px] sm:min-w-[56px] sm:min-h-[56px]",
+  lg: "p-4 min-w-[56px] min-h-[56px] sm:min-w-[60px] sm:min-h-[60px]",
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
