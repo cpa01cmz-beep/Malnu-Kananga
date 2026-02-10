@@ -228,6 +228,9 @@ export const EXTERNAL_URLS = {
     KEMENAG: 'https://kemenag.go.id',
     EMIS: 'https://emis.kemenag.go.id',
     SIMPATIKA: 'https://simpatika.kemenag.go.id',
+    // Google Fonts - Flexy: Never hardcode external URLs!
+    GOOGLE_FONTS_INTER: 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
+    GOOGLE_FONTS_JETBRAINS: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
 } as const;
 
 export const VOICE_CONFIG = {
@@ -593,6 +596,27 @@ export const CACHE_LIMITS = {
     VOICE_NOTIFICATION_HISTORY_SIZE: 50,
 } as const;
 
+// Cache versioning - Flexy: Never hardcode cache versions!
+export const CACHE_VERSIONS = {
+    OFFLINE_DATA: '1.0',
+    STORAGE_SCHEMA: '1.0',
+} as const;
+
+// ID Formatting Constants - Flexy: Never hardcode ID formatting rules!
+export const ID_FORMAT = {
+    PAD_LENGTH: 2,
+    PAD_LENGTH_NIS: 4,
+    PAD_STRING: '0',
+} as const;
+
+// Time Formatting Constants - Flexy: Never hardcode time formatting!
+export const TIME_FORMAT = {
+    HOURS_PAD_LENGTH: 2,
+    MINUTES_PAD_LENGTH: 2,
+    SEPARATOR: ':',
+    PAD_STRING: '0',
+} as const;
+
 // API Configuration - Centralized to avoid circular dependencies
 export const API_CONFIG = {
     DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
@@ -899,6 +923,7 @@ export const EMAIL_CONFIG = {
     MAX_RETRY_ATTEMPTS: 3,
     RETRY_DELAYS: [TIME_MS.ONE_MINUTE, 5 * TIME_MS.ONE_MINUTE, 15 * TIME_MS.ONE_MINUTE], // 1min, 5min, 15min
     ANALYTICS_DAYS: 30,
+    QUEUE_PROCESSING_DELAY_MS: 1000, // Delay between processing queue items
 } as const;
 
 // Byte conversion constants
@@ -919,6 +944,7 @@ export const COMPONENT_TIMEOUTS = {
     VOICE_MESSAGE: 30000,
     PASSWORD_REQUIREMENTS_HIDE: 3000,
     PAGE_RELOAD: 1500,
+    ERROR_FLUSH: 2000, // Sentry flush timeout
 } as const;
 
 // Animation constants
@@ -942,6 +968,7 @@ export const HTTP = {
         HEAD: 'HEAD',
     } as const,
     STATUS_CODES: {
+        OK: 200,
         BAD_REQUEST: 400,
         UNAUTHORIZED: 401,
         FORBIDDEN: 403,
@@ -1167,6 +1194,14 @@ export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
 } as const;
 
+// Email template styles - Flexy: Never hardcode styles in email templates!
+export const EMAIL_TEMPLATE_STYLES = {
+    CONTAINER: '.container { max-width: 600px; margin: 0 auto; padding: 20px; }',
+    CONTAINER_MAX_WIDTH: '600px',
+    CONTAINER_MARGIN: '0 auto',
+    CONTAINER_PADDING: '20px',
+} as const;
+
 // Email template colors - Flexy: Never hardcode colors in email templates!
 export const EMAIL_COLORS = {
     PRIMARY: '#2563eb',
@@ -1209,6 +1244,7 @@ export const INPUT_MASKS = {
     NISN: '9999999999',
     PHONE: '999-9999-99999',
     DATE: '99-99-9999',
+    YEAR: '9999',
     NIS: '9999999999',
 } as const;
 
@@ -1259,6 +1295,21 @@ export const DATE_LOCALE = {
     INDONESIAN_DAYS: [
         'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
     ] as const,
+    // Month name to number mapping (lowercase) - Flexy: Never hardcode month mappings!
+    INDONESIAN_MONTHS_MAP: {
+        'januari': '01',
+        'februari': '02',
+        'maret': '03',
+        'april': '04',
+        'mei': '05',
+        'juni': '06',
+        'juli': '07',
+        'agustus': '08',
+        'september': '09',
+        'oktober': '10',
+        'november': '11',
+        'desember': '12'
+    } as const,
 } as const;
 
 // Default class configuration for new students
@@ -1299,6 +1350,10 @@ export const PPDB_CONFIG = {
         APPROVED: EMAIL_COLORS.STATUS_SUCCESS,
         REJECTED: EMAIL_COLORS.STATUS_ERROR,
     },
+    // NIS Generation - Flexy: Never hardcode ID formatting rules!
+    NIS_PADDING_LENGTH: 4,
+    NIS_COUNTER_RADIX: 10,
+    NIS_INITIAL_COUNTER: 0,
 } as const;
 
 // Quiz configuration constants
@@ -1941,4 +1996,164 @@ export const PLACEHOLDER_IMAGES = {
     CLASS: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
     EVENT: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=400&fit=crop',
     MATERIAL: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop',
+} as const;
+
+// Input Mask Placeholders - Flexy: Never hardcode mask placeholders!
+export const INPUT_MASK_PLACEHOLDERS = {
+    NISN: 'NISN 10 digit',
+    PHONE: '081-2345-67890',
+    DATE: 'DD-MM-YYYY',
+    YEAR: '2024',
+    GRADE: '0-100',
+    CLASS: 'XII RPL 1',
+} as const;
+
+// Date Validation Constants - Flexy: Never hardcode date ranges!
+export const DATE_VALIDATION = {
+    MIN_YEAR: 1900,
+    MAX_YEAR_OFFSET: 1, // current year + 1
+} as const;
+
+// Days in Month - Flexy: Use this for date validation!
+export const DAYS_IN_MONTH = [
+    31, // Jan
+    28, // Feb (non-leap year)
+    31, // Mar
+    30, // Apr
+    31, // May
+    30, // Jun
+    31, // Jul
+    31, // Aug
+    30, // Sep
+    31, // Oct
+    30, // Nov
+    31  // Dec
+] as const;
+
+// Gender Options - Flexy: Never hardcode gender values!
+export const GENDER_OPTIONS = {
+    MALE: 'L',
+    FEMALE: 'P',
+} as const;
+
+// Class Configuration - Flexy: Never hardcode class limits!
+export const CLASS_CONFIG = {
+    MAX_CAPACITY: 30,
+} as const;
+
+// Rate Limiting - Flexy: Never hardcode rate limits!
+export const RATE_LIMITING = {
+    MAX_REQUESTS_PER_MINUTE: 10,
+    MAX_PROGRAMS_ADDITION: 10,
+    MAX_NEWS_ADDITION: 20,
+} as const;
+
+// AI Editor Limits - Flexy: Never hardcode content limits!
+export const AI_EDITOR_LIMITS = {
+    MAX_PROGRAMS: 20,
+    MAX_NEWS: 50,
+    MAX_AUDIT_ENTRIES: 100,
+} as const;
+
+// OCR Configuration - Flexy: Never hardcode OCR settings!
+export const OCR_SERVICE_CONFIG_EXTRA = {
+    LANGUAGE: 'ind',
+    WORKER_COUNT: 1,
+    NAME_WORD_MIN: 2,
+    NAME_WORD_MAX: 4,
+    NISN_DIGIT_COUNT: 10,
+    SHORT_TEXT_PENALTY: 0.8,
+    SUSPICIOUS_NUMBERS_PENALTY: 0.9,
+} as const;
+
+// Voice Bounds - Flexy: Never hardcode voice validation ranges!
+export const VOICE_BOUNDS = {
+    MAX_ALTERNATIVES: { MIN: 1, MAX: 10 },
+    CONFIDENCE: { MIN: 0, MAX: 1 },
+} as const;
+
+// WebSocket Constants - Flexy: Never hardcode WebSocket values!
+export const WEBSOCKET_CONSTANTS = {
+    READY_STATE_OPEN: 1, // WebSocket.OPEN
+} as const;
+
+// Batch Configuration - Flexy: Never hardcode batch limits!
+export const BATCH_CONFIG = {
+    MAX_STUDENTS: 50,
+} as const;
+
+// Test Configuration - Flexy: Never hardcode test defaults!
+export const TEST_CONFIG = {
+    DEFAULT_ACADEMIC_YEAR: '2024-2025',
+    DEFAULT_STUDENT_NIS: '12345',
+    DEFAULT_USER_ID: 'user-1',
+    DEFAULT_CLASS_ID: 'class-1',
+} as const;
+
+// AI Model Names - Flexy: Never hardcode AI model names!
+export const AI_MODELS = {
+    FLASH: 'gemini-2.5-flash',
+    PRO_THINKING: 'gemini-3-pro-preview',
+    PRO: 'gemini-3-pro',
+    DEFAULT: 'gemini-2.5-flash',
+} as const;
+
+// Time conversion factors - Flexy: Never hardcode time math!
+export const TIME_CONVERSION = {
+    MS_PER_SECOND: 1000,
+    SECONDS_PER_MINUTE: 60,
+    MINUTES_PER_HOUR: 60,
+    HOURS_PER_DAY: 24,
+    DAYS_PER_WEEK: 7,
+} as const;
+
+// HTTP Status Code Ranges - Flexy: Never hardcode status checks!
+export const HTTP_STATUS_RANGES = {
+    SUCCESS_MIN: 200,
+    SUCCESS_MAX: 300,
+    CLIENT_ERROR_MIN: 400,
+    CLIENT_ERROR_MAX: 500,
+    REDIRECT_MIN: 300,
+    REDIRECT_MAX: 400,
+} as const;
+
+// Color RGB Values - Flexy: Never hardcode RGB values!
+export const RGB_VALUES = {
+    WHITE: 255,
+    BLACK: 0,
+} as const;
+
+// Common delay values in milliseconds - Flexy: Never hardcode delays!
+export const DELAY_MS = {
+    TINY: 10,
+    SHORT: 50,
+    MEDIUM: 100,
+    STANDARD: 200,
+    LONG: 500,
+    VERY_LONG: 1000,
+    DEBOUNCE: 300,
+} as const;
+
+// Text truncation lengths - Flexy: Never hardcode truncation!
+export const TEXT_TRUNCATION = {
+    PREVIEW: 200,
+    SHORT_PREVIEW: 150,
+    MEDIUM_PREVIEW: 500,
+    LONG_PREVIEW: 1000,
+    COMPARISON_TEXT: 200,
+    SEARCH_RESULT: 200,
+} as const;
+
+// PDF Export Colors (RGB arrays) - Flexy: Never hardcode PDF colors!
+// Note: Not using 'as const' because jsPDF requires mutable arrays
+export const PDF_COLORS = {
+    HEADER_BG: [37, 99, 235] as [number, number, number], // Primary blue
+    HEADER_TEXT: 255, // White
+    ALTERNATE_ROW: [249, 250, 251] as [number, number, number], // Light gray
+};
+
+// Text processing limits - Flexy: Never hardcode text limits!
+export const TEXT_LIMITS = {
+    MIN_SEARCH_LENGTH: 2,
+    MIN_NAME_LENGTH: 2,
 } as const;

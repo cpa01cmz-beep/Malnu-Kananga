@@ -1,7 +1,7 @@
 // performanceMonitor.ts - API performance monitoring and metrics
 
 import { logger } from '../utils/logger';
-import { STORAGE_LIMITS, PERFORMANCE_THRESHOLDS } from '../constants';
+import { STORAGE_LIMITS, PERFORMANCE_THRESHOLDS, HTTP } from '../constants';
 
 // Type declarations for Web API
 declare global {
@@ -159,7 +159,7 @@ class PerformanceMonitor {
    * Record API response
    */
   recordResponse(endpoint: string, method: string, startTime: number, status: number): void {
-    const success = status >= 200 && status < 300;
+    const success = status >= HTTP.STATUS_CODES.OK && status < 300;
     this.endRequest(endpoint, method, startTime, status, success);
   }
 

@@ -519,7 +519,7 @@ class OfflineActionQueueService {
     // Listen for online events to trigger sync
     this.onlineListener = () => {
       if (this.getPendingCount() > 0 && !this.isSyncing) {
-        setTimeout(() => this.sync(), 1000);
+        setTimeout(() => this.sync(), TIME_MS.ONE_SECOND);
       }
     };
     window.addEventListener('online', this.onlineListener);

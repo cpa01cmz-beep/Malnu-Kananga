@@ -1,4 +1,5 @@
 import React from 'react';
+import { XML_NAMESPACES } from '../../constants';
 
 interface LoadingSpinnerProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -31,7 +32,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <svg
       className={`animate-spin ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
-      xmlns="http://www.w3.org/2000/svg"
+      xmlns={XML_NAMESPACES.SVG}
       fill="none"
       viewBox="0 0 24 24"
       aria-label={ariaLabel}

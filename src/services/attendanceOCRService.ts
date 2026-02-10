@@ -1,6 +1,6 @@
 import { ocrService, OCRExtractionResult, OCRProgress } from './ocrService';
 import { logger } from '../utils/logger';
-import { OCR_CONFIG } from '../constants';
+import { OCR_CONFIG, DATE_LOCALE } from '../constants';
 
 export interface AttendanceStudentInfo {
   id: string;
@@ -357,21 +357,8 @@ class AttendanceOCRService {
    * Extract date from OCR text
    */
   private extractDateFromText(text: string): string {
-    // Indonesian month names to numeric mapping
-    const indonesianMonths: Record<string, string> = {
-      'januari': '01',
-      'februari': '02',
-      'maret': '03',
-      'april': '04',
-      'mei': '05',
-      'juni': '06',
-      'juli': '07',
-      'agustus': '08',
-      'september': '09',
-      'oktober': '10',
-      'november': '11',
-      'desember': '12'
-    };
+    // Use centralized month mapping - Flexy: Never hardcode locale data!
+    const indonesianMonths: Record<string, string> = { ...DATE_LOCALE.INDONESIAN_MONTHS_MAP };
 
     // Try common date formats
     const datePatterns = [

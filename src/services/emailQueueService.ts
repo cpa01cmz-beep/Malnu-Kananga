@@ -212,7 +212,7 @@ class EmailQueueService {
         failed++;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, EMAIL_CONFIG.QUEUE_PROCESSING_DELAY_MS));
     }
 
     return { processed, failed };

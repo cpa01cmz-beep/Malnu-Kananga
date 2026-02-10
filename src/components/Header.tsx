@@ -16,20 +16,40 @@ import { getGradientClass } from '../config/gradients';
 import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 ease-out";
+const navLinkClass = "text-sm sm:text-base text-accessible-primary font-semibold px-4 py-3 rounded-lg hover:bg-neutral-100/80 dark:hover:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.02] active:scale-[0.98] active:bg-neutral-100/80 dark:active:bg-neutral-700/60 touch-manipulation hover-underline focus-visible-enhanced enhanced-mobile-spacing mobile-touch-target mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) backdrop-blur-sm hover-lift-premium text-contrast-enhanced mobile-gesture-feedback min-h-[48px] glass-effect focus-indicator-enhanced";
 
-const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 hover:scale-[1.01] active:scale-95 touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-300 ease-out border-b border-neutral-100 dark:border-neutral-800";
+const mobileNavLinkClass = "block w-full text-left text-lg text-accessible-primary font-semibold px-4 py-4 rounded-lg active:bg-neutral-100/80 dark:active:bg-neutral-700/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 active:scale-[0.98] touch-manipulation hover-underline focus-visible-enhanced mobile-nav-enhanced transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) border-b border-neutral-100/60 dark:border-neutral-800/60 backdrop-blur-sm min-h-[52px] text-contrast-enhanced mobile-gesture-feedback haptic-feedback glass-effect focus-indicator-enhanced";
 
-const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => {
+const NavLink = ({ href, children, isMobile = false, isActive = false }: { 
+    href: string; 
+    children: React.ReactNode; 
+    isMobile?: boolean; 
+    isActive?: boolean; 
+}) => {
     const linkClass = isMobile ? mobileNavLinkClass : navLinkClass;
+    const activeClasses = isActive ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-l-4 border-primary-500' : '';
+    
+    return (
+        <a 
+            href={href} 
+            className={`${linkClass} ${activeClasses}`}
+            aria-current={isActive ? 'page' : undefined}
+        >
+            {children}
+        </a>
+    );
+};
+
+const NavLinks = ({ isMobile = false, activePath }: { isMobile?: boolean; activePath?: string }) => {
+    const isActive = (href: string) => activePath === href;
     
     return (
         <>
-            <a href="#home" className={linkClass}>{HEADER_NAV_STRINGS.HOME}</a>
-            <a href="#profil" className={linkClass}>{HEADER_NAV_STRINGS.PROFILE}</a>
-            <a href="#berita" className={linkClass}>{HEADER_NAV_STRINGS.NEWS}</a>
-            <a href="#download" className={linkClass}>{HEADER_NAV_STRINGS.DOWNLOAD}</a>
-            <a href="#login-email" className={linkClass}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</a>
+            <NavLink href="#home" isActive={isActive('#home')} isMobile={isMobile}>{HEADER_NAV_STRINGS.HOME}</NavLink>
+            <NavLink href="#profil" isActive={isActive('#profil')} isMobile={isMobile}>{HEADER_NAV_STRINGS.PROFILE}</NavLink>
+            <NavLink href="#berita" isActive={isActive('#berita')} isMobile={isMobile}>{HEADER_NAV_STRINGS.NEWS}</NavLink>
+            <NavLink href="#download" isActive={isActive('#download')} isMobile={isMobile}>{HEADER_NAV_STRINGS.DOWNLOAD}</NavLink>
+            <NavLink href="#login-email" isActive={isActive('#login-email')} isMobile={isMobile}>{HEADER_NAV_STRINGS.LOGIN_EMAIL}</NavLink>
         </>
     );
 };
@@ -64,6 +84,7 @@ const Header: React.FC<HeaderProps> = ({
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [currentTheme, setCurrentTheme] = useState<import('../config/themes').Theme | null>(null);
+    const [activePath, setActivePath] = useState<string>('');
     const _mobileMenuRef = useRef<HTMLDivElement>(null);
     const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -118,6 +139,29 @@ const Header: React.FC<HeaderProps> = ({
         };
     }, [isMenuOpen]);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY;
+            setIsScrolled(scrollPosition > 10);
+            
+            // Update active path based on scroll position
+            const sections = ['#home', '#profil', '#berita', '#download'];
+            const currentSection = sections.find(section => {
+                const element = document.querySelector(section);
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    return rect.top <= 100 && rect.bottom >= 100;
+                }
+                return false;
+            });
+            
+            setActivePath(currentSection || '');
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     const headerClasses = `
         fixed top-0 left-0 right-0 z-40 transition-all duration-300 ease-out
         ${isScrolled ? 'mt-0 rounded-none shadow-card' : 'mt-4 mx-2 sm:mx-4 rounded-full'}
@@ -137,18 +181,18 @@ const Header: React.FC<HeaderProps> = ({
         <header id="main-nav" className={headerClasses}>
             <div className={navContainerClasses}>
                  <div className={`${innerNavClasses} ${isScrolled ? 'max-w-7xl mx-auto px-4' : ''}`}>
-                        <div className="flex items-center gap-3">
-                        <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-shadow duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900`}>
+                         <div className="flex items-center gap-3">
+                        <div className={`flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 ${getGradientClass('PRIMARY')} rounded-xl flex items-center justify-center text-white font-bold text-lg sm:text-xl shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 hover-lift-enhanced mobile-touch-target haptic-feedback focus-visible-enhanced`}>
                             {HEADER_NAV_STRINGS.LOGO_TEXT}
                         </div>
-                        <div>
-                            <span className="font-bold text-lg text-neutral-900 dark:text-white leading-tight">{HEADER_NAV_STRINGS.SCHOOL_NAME}</span>
-                            <span className="block text-xs text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide">{HEADER_NAV_STRINGS.NPSN_LABEL}</span>
+                        <div className="flex flex-col">
+                            <span className="text-xl font-bold text-neutral-900 dark:text-white leading-tight sm:text-2xl">{HEADER_NAV_STRINGS.SCHOOL_NAME}</span>
+                            <span className="text-sm text-neutral-500 dark:text-neutral-400 leading-tight tracking-wide sm:text-xs">{HEADER_NAV_STRINGS.NPSN_LABEL}</span>
                         </div>
                     </div>
 
                     <nav className="hidden md:flex items-center gap-1" aria-label="Menu navigasi desktop">
-                        <NavLinks />
+                        <NavLinks activePath={activePath} />
                     </nav>
 
                     <div className="flex items-center gap-2">
@@ -235,7 +279,7 @@ const Header: React.FC<HeaderProps> = ({
             {isMenuOpen && (
                 <div
                     ref={mobileMenuFocusRef}
-                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect nav-polished`}
+                    className={`md:hidden ${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} ${OPACITY_TOKENS.BACKDROP_BLUR_XL} shadow-card mx-2 sm:mx-4 rounded-2xl mt-3 p-4 sm:p-6 animate-fade-in border border-neutral-200/60 dark:border-neutral-700/60 safe-area-padding enhanced-mobile-spacing mobile-gesture-feedback glass-effect-elevated nav-polished modal-backdrop-enhanced`}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Menu navigasi mobile"
@@ -247,7 +291,7 @@ const Header: React.FC<HeaderProps> = ({
                         aria-label="Menu navigasi utama"
                     >
                         <div className="mobile-nav-enhanced">
-                            <NavLinks isMobile={true} />
+                            <NavLinks isMobile={true} activePath={activePath} />
                         </div>
                             <div className="pt-6 border-t border-neutral-200/60 dark:border-neutral-700/60 flex flex-col gap-4">
                                   {isLoggedIn ? (

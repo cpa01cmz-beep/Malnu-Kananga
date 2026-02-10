@@ -94,19 +94,19 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     }
   }, [isVisible, duration]);
 
-  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-float flex items-center gap-3 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] transform max-w-md border backdrop-blur-xl";
+  const baseClasses = "fixed top-20 right-4 sm:top-6 sm:right-6 z-50 px-5 py-4 rounded-xl shadow-xl flex items-center gap-3 transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) transform max-w-md border backdrop-blur-xl hover:shadow-2xl glass-effect-elevated hover-lift-premium";
   const typeClasses = {
-    success: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    info: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
-    warning: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white`,
+    success: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-primary-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white feedback-success glass-effect`,
+    info: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-blue-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white glass-effect`,
+    error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white feedback-error glass-effect`,
+    warning: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white glass-effect`,
   };
 
   const ariaRole = type === 'error' ? 'alert' : 'status';
   const ariaLive = type === 'error' ? 'assertive' : 'polite';
 
   const visibilityClasses = isVisible
-    ? "translate-x-0 opacity-100"
+    ? "translate-x-0 opacity-100 animate-slide-in-right"
     : "translate-x-full opacity-0 pointer-events-none";
 
   const icons = {

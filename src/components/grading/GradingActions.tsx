@@ -308,6 +308,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
                     size="md"
                     onClick={() => _ocrInputRef.current?.click()}
                     disabled={isOCRProcessing}
+                    aria-label="Pindai ujian menggunakan kamera atau upload file"
                 >
                     📷 Scan Exam
                 </Button>
@@ -319,6 +320,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           disabled={isExportingPDF || grades.length === 0}
           variant="green-solid"
           isLoading={isExportingPDF}
+          aria-label="Ekspor nilai siswa ke file PDF"
         >
           {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
         </Button>

@@ -1,15 +1,8 @@
 import React from 'react';
+import { XML_NAMESPACES } from '../../constants';
+import { IconProps } from './types';
 
-export interface IconProps {
-  className?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-  variant?: 'solid' | 'outline' | 'duotone';
-  color?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
-  ariaHidden?: boolean;
-  ariaLabel?: string;
-  animated?: boolean;
-  clickable?: boolean;
-}
+export type { IconProps };
 
 export const iconSizeClasses = {
   xs: 'w-3 h-3',
@@ -36,14 +29,7 @@ export const iconVariantClasses = {
   duotone: 'fill-current opacity-80'
 };
 
-/**
- * Factory function to create icon components
- * @param paths - SVG path elements or array of paths
- * @returns Icon component
- */
-export const createIcon = (
-  paths: React.ReactNode | React.ReactNode[]
-) => {
+export const createIcon = (paths: React.ReactNode | React.ReactNode[]) => {
   const IconComponent: React.FC<IconProps> = ({
     className = '',
     size = 'md',
@@ -76,7 +62,7 @@ export const createIcon = (
 
     return (
       <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns={XML_NAMESPACES.SVG}
         viewBox="0 0 24 24"
         className={classes.join(' ')}
         aria-hidden={ariaHidden}
