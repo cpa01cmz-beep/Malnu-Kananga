@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { studentTimelineService } from '../studentTimelineService';
+import { TEST_CONSTANTS } from '../../constants';
 import type {
   TimelineEvent,
   TimelineFilter,
@@ -17,7 +18,7 @@ describe('studentTimelineService', () => {
 
   describe('getTimeline', () => {
     it('should return empty array when no data exists', async () => {
-      const result = await studentTimelineService.getTimeline('student-1');
+      const result = await studentTimelineService.getTimeline(TEST_CONSTANTS.IDS.STUDENT_1);
 
       expect(result).toEqual([]);
     });
@@ -25,10 +26,10 @@ describe('studentTimelineService', () => {
     it('should return timeline events sorted by timestamp desc by default', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -38,10 +39,10 @@ describe('studentTimelineService', () => {
           createdAt: '2024-01-02T10:00:00Z',
         },
         {
-          id: 'grade-2',
-          studentId: 'student-1',
-          subjectId: 'subject-2',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_2,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_2,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 2',
@@ -52,7 +53,7 @@ describe('studentTimelineService', () => {
         },
       ]));
 
-      const result = await studentTimelineService.getTimeline('student-1', {
+      const result = await studentTimelineService.getTimeline(TEST_CONSTANTS.IDS.STUDENT_1, {
         sortBy: 'timestamp',
         sortOrder: 'desc',
       });
@@ -67,10 +68,10 @@ describe('studentTimelineService', () => {
     it('should filter events by type', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -85,7 +86,7 @@ describe('studentTimelineService', () => {
         eventTypes: ['grade'],
       };
 
-      const result = await studentTimelineService.getFilteredTimeline('student-1', filter);
+      const result = await studentTimelineService.getFilteredTimeline(TEST_CONSTANTS.IDS.STUDENT_1, filter);
 
       expect(result).toHaveLength(1);
       expect(result[0].type).toBe('grade');
@@ -94,10 +95,10 @@ describe('studentTimelineService', () => {
     it('should filter events by date range', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -107,10 +108,10 @@ describe('studentTimelineService', () => {
           createdAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 'grade-2',
-          studentId: 'student-1',
-          subjectId: 'subject-2',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_2,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_2,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 2',
@@ -128,7 +129,7 @@ describe('studentTimelineService', () => {
         },
       };
 
-      const result = await studentTimelineService.getFilteredTimeline('student-1', filter);
+      const result = await studentTimelineService.getFilteredTimeline(TEST_CONSTANTS.IDS.STUDENT_1, filter);
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('grade-grade-2');
@@ -137,10 +138,10 @@ describe('studentTimelineService', () => {
     it('should filter events by minimum score', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -150,10 +151,10 @@ describe('studentTimelineService', () => {
           createdAt: '2024-01-01T10:00:00Z',
         },
         {
-          id: 'grade-2',
-          studentId: 'student-1',
-          subjectId: 'subject-2',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_2,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_2,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 2',
@@ -168,7 +169,7 @@ describe('studentTimelineService', () => {
         minScore: 80,
       };
 
-      const result = await studentTimelineService.getFilteredTimeline('student-1', filter);
+      const result = await studentTimelineService.getFilteredTimeline(TEST_CONSTANTS.IDS.STUDENT_1, filter);
 
       expect(result).toHaveLength(1);
       expect(result[0].type).toBe('grade');
@@ -179,10 +180,10 @@ describe('studentTimelineService', () => {
     it('should return stats for timeline events', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -193,14 +194,14 @@ describe('studentTimelineService', () => {
         },
       ]));
 
-      const stats = await studentTimelineService.getTimelineStats('student-1');
+      const stats = await studentTimelineService.getTimelineStats(TEST_CONSTANTS.IDS.STUDENT_1);
 
       expect(stats.totalEvents).toBe(1);
       expect(stats.averageScore).toBe(85);
     });
 
     it('should return undefined average score when no grades exist', async () => {
-      const stats = await studentTimelineService.getTimelineStats('student-1');
+      const stats = await studentTimelineService.getTimelineStats(TEST_CONSTANTS.IDS.STUDENT_1);
 
       expect(stats.totalEvents).toBe(0);
       expect(stats.averageScore).toBeUndefined();
@@ -211,10 +212,10 @@ describe('studentTimelineService', () => {
     it('should update cache with new event', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -225,12 +226,12 @@ describe('studentTimelineService', () => {
         },
       ]));
 
-      await studentTimelineService.getTimeline('student-1');
+      await studentTimelineService.getTimeline(TEST_CONSTANTS.IDS.STUDENT_1);
 
       const mockEvent: TimelineEvent = {
         id: 'test-event-1',
         type: 'grade',
-        studentId: 'student-1',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
         title: 'Test Event',
         description: 'Test Description',
         icon: '📊',
@@ -238,7 +239,7 @@ describe('studentTimelineService', () => {
         timestamp: '2024-01-01T11:00:00Z',
         data: {
           gradeId: 'grade-1',
-          subjectId: 'subject-1',
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
           score: 85,
           maxScore: 100,
         },
@@ -260,10 +261,10 @@ describe('studentTimelineService', () => {
     it('should clear cache for specific student', async () => {
       localStorage.setItem('malnu_grades', JSON.stringify([
         {
-          id: 'grade-1',
-          studentId: 'student-1',
-          subjectId: 'subject-1',
-          classId: 'class-1',
+          id: TEST_CONSTANTS.IDS.GRADE_1,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          subjectId: TEST_CONSTANTS.IDS.SUBJECT_1,
+          classId: TEST_CONSTANTS.IDS.CLASS_1,
           academicYear: '2024',
           semester: '1',
           assignmentName: 'Assignment 1',
@@ -274,11 +275,11 @@ describe('studentTimelineService', () => {
         },
       ]));
 
-      await studentTimelineService.getTimeline('student-1');
+      await studentTimelineService.getTimeline(TEST_CONSTANTS.IDS.STUDENT_1);
 
-      studentTimelineService.clearCache('student-1');
+      studentTimelineService.clearCache(TEST_CONSTANTS.IDS.STUDENT_1);
 
-      const result = await studentTimelineService.getTimeline('student-1');
+      const result = await studentTimelineService.getTimeline(TEST_CONSTANTS.IDS.STUDENT_1);
 
       expect(result).toHaveLength(1);
     });

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { communicationLogService } from '../communicationLogService';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, TEST_CONSTANTS } from '../../constants';
 import { logger } from '../../utils/logger';
 
 vi.mock('../../utils/logger');
@@ -45,18 +45,18 @@ describe('communicationLogService', () => {
   describe('logMessage', () => {
     it('should create and save message log entry', () => {
       const data = {
-        messageId: 'msg_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        messageId: TEST_CONSTANTS.IDS.MSG_1,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Can we discuss Alice\'s progress?',
         messageType: 'text' as const,
         sender: 'parent' as const,
-        timestamp: '2026-01-31T10:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
       };
 
       const result = communicationLogService.logMessage(data);
@@ -89,18 +89,18 @@ describe('communicationLogService', () => {
 
     it('should create message log with teacher as sender', () => {
       const data = {
-        messageId: 'msg_2',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        messageId: TEST_CONSTANTS.IDS.MSG_2,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Alice did well on test.',
         messageType: 'text' as const,
         sender: 'teacher' as const,
-        timestamp: '2026-01-31T11:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_11AM,
       };
 
       const result = communicationLogService.logMessage(data);
@@ -111,18 +111,18 @@ describe('communicationLogService', () => {
 
     it('should create message log with optional fields', () => {
       const data = {
-        messageId: 'msg_3',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        messageId: TEST_CONSTANTS.IDS.MSG_3,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Meeting scheduled.',
         messageType: 'text' as const,
         sender: 'parent' as const,
-        timestamp: '2026-01-31T12:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_12PM,
         readAt: '2026-01-31T12:01:00Z',
         deliveredAt: '2026-01-31T12:00:30Z',
       };
@@ -135,22 +135,22 @@ describe('communicationLogService', () => {
 
     it('should generate unique IDs for each log entry', () => {
       const data = {
-        messageId: 'msg_4',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        messageId: TEST_CONSTANTS.IDS.MSG_4,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test message 1',
         messageType: 'text' as const,
         sender: 'parent' as const,
-        timestamp: '2026-01-31T13:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_1PM,
       };
 
       const result1 = communicationLogService.logMessage(data);
-      const result2 = communicationLogService.logMessage({ ...data, messageId: 'msg_5', message: 'Test message 2' });
+      const result2 = communicationLogService.logMessage({ ...data, messageId: TEST_CONSTANTS.IDS.MSG_5, message: 'Test message 2' });
 
       expect(result1.id).not.toBe(result2.id);
     });
@@ -159,14 +159,14 @@ describe('communicationLogService', () => {
   describe('logMeeting', () => {
     it('should create and save meeting log entry', () => {
       const data = {
-        meetingId: 'meeting_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        meetingDate: '2026-02-01',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_1,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        meetingDate: TEST_CONSTANTS.DATES.FEB_1_2026,
         meetingStartTime: '14:00',
         meetingEndTime: '15:00',
         meetingAgenda: 'Discuss Alice\'s progress',
@@ -199,13 +199,13 @@ describe('communicationLogService', () => {
 
     it('should create meeting log with optional outcome and notes', () => {
       const data = {
-        meetingId: 'meeting_2',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_2,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         meetingDate: '2026-02-02',
         meetingStartTime: '10:00',
         meetingEndTime: '11:00',
@@ -224,13 +224,13 @@ describe('communicationLogService', () => {
 
     it('should create meeting log with scheduled status', () => {
       const data = {
-        meetingId: 'meeting_3',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_3,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         meetingDate: '2026-02-03',
         meetingStartTime: '09:00',
         meetingEndTime: '10:00',
@@ -248,12 +248,12 @@ describe('communicationLogService', () => {
   describe('logCall', () => {
     it('should create and save call log entry', () => {
       const data = {
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         callDate: '2026-02-04',
         callStartTime: '15:00',
         callEndTime: '15:15',
@@ -280,12 +280,12 @@ describe('communicationLogService', () => {
 
     it('should create call log with optional notes', () => {
       const data = {
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         callDate: '2026-02-05',
         callStartTime: '16:00',
         callEndTime: '16:20',
@@ -301,14 +301,14 @@ describe('communicationLogService', () => {
   describe('logNote', () => {
     it('should create and save note log entry', () => {
       const data = {
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         note: 'Follow up on meeting',
-        createdBy: 'teacher_1',
+        createdBy: TEST_CONSTANTS.IDS.TEACHER_1,
         createdByName: 'Jane Smith',
       };
 
@@ -331,20 +331,20 @@ describe('communicationLogService', () => {
 
     it('should create note log with parent as creator', () => {
       const data = {
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         note: 'Thank you for the meeting',
-        createdBy: 'parent_1',
+        createdBy: TEST_CONSTANTS.IDS.PARENT_1,
         createdByName: 'John Doe',
       };
 
       const result = communicationLogService.logNote(data);
 
-      expect(result.createdBy).toBe('parent_1');
+      expect(result.createdBy).toBe(TEST_CONSTANTS.IDS.PARENT_1);
       expect(result.createdByName).toBe('John Doe');
     });
   });
@@ -353,28 +353,28 @@ describe('communicationLogService', () => {
     beforeEach(() => {
       communicationLogService.logMessage({
         messageId: 'msg_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test message 1',
         messageType: 'text',
         sender: 'parent',
-        timestamp: '2026-01-31T10:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
       });
 
       communicationLogService.logMeeting({
-        meetingId: 'meeting_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        meetingDate: '2026-02-01',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_1,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        meetingDate: TEST_CONSTANTS.DATES.FEB_1_2026,
         meetingStartTime: '14:00',
         meetingEndTime: '15:00',
         meetingAgenda: 'Discuss progress',
@@ -383,11 +383,11 @@ describe('communicationLogService', () => {
       });
 
       communicationLogService.logCall({
-        parentId: 'parent_2',
+        parentId: TEST_CONSTANTS.IDS.PARENT_2,
         parentName: 'Jane Roe',
-        teacherId: 'teacher_2',
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_2,
         teacherName: 'Bob Johnson',
-        studentId: 'student_2',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_2,
         studentName: 'Bob Roe',
         callDate: '2026-02-02',
         callStartTime: '15:00',
@@ -424,21 +424,21 @@ describe('communicationLogService', () => {
     });
 
     it('should filter by parentId', () => {
-      const result = communicationLogService.getCommunicationHistory({ parentId: 'parent_1' });
+      const result = communicationLogService.getCommunicationHistory({ parentId: TEST_CONSTANTS.IDS.PARENT_1 });
 
       expect(result).toHaveLength(2);
       expect(result.every(log => log.parentId === 'parent_1')).toBe(true);
     });
 
     it('should filter by teacherId', () => {
-      const result = communicationLogService.getCommunicationHistory({ teacherId: 'teacher_1' });
+      const result = communicationLogService.getCommunicationHistory({ teacherId: TEST_CONSTANTS.IDS.TEACHER_1 });
 
       expect(result).toHaveLength(2);
       expect(result.every(log => log.teacherId === 'teacher_1')).toBe(true);
     });
 
     it('should filter by studentId', () => {
-      const result = communicationLogService.getCommunicationHistory({ studentId: 'student_1' });
+      const result = communicationLogService.getCommunicationHistory({ studentId: TEST_CONSTANTS.IDS.STUDENT_1 });
 
       expect(result).toHaveLength(2);
       expect(result.every(log => log.studentId === 'student_1')).toBe(true);
@@ -477,7 +477,7 @@ describe('communicationLogService', () => {
     });
 
     it('should filter by subject', () => {
-      const result = communicationLogService.getCommunicationHistory({ subject: 'Mathematics' });
+      const result = communicationLogService.getCommunicationHistory({ subject: TEST_CONSTANTS.NAMES.MATHEMATICS });
 
       expect(result).toHaveLength(1);
       expect(result[0].subject).toBe('Mathematics');
@@ -525,14 +525,14 @@ describe('communicationLogService', () => {
     it('should handle complex filter combinations', () => {
       const result = communicationLogService.getCommunicationHistory({
         type: ['message'],
-        parentId: 'parent_1',
-        teacherId: 'teacher_1',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
       });
 
       expect(result).toHaveLength(1);
       expect(result[0].type).toBe('message');
-      expect(result[0].parentId).toBe('parent_1');
-      expect(result[0].teacherId).toBe('teacher_1');
+      expect(result[0].parentId).toBe(TEST_CONSTANTS.IDS.PARENT_1);
+      expect(result[0].teacherId).toBe(TEST_CONSTANTS.IDS.TEACHER_1);
     });
 
     it('should return empty array when no matches', () => {
@@ -546,43 +546,43 @@ describe('communicationLogService', () => {
     beforeEach(() => {
       communicationLogService.logMessage({
         messageId: 'msg_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test 1',
         messageType: 'text',
         sender: 'parent',
-        timestamp: '2026-01-31T10:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
       });
 
       communicationLogService.logMessage({
-        messageId: 'msg_2',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        messageId: TEST_CONSTANTS.IDS.MSG_2,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test 2',
         messageType: 'text',
         sender: 'parent',
-        timestamp: '2026-01-31T11:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_11AM,
       });
 
       communicationLogService.logMeeting({
-        meetingId: 'meeting_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        meetingDate: '2026-02-01',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_1,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        meetingDate: TEST_CONSTANTS.DATES.FEB_1_2026,
         meetingStartTime: '14:00',
         meetingEndTime: '15:00',
         meetingAgenda: 'Progress',
@@ -591,13 +591,13 @@ describe('communicationLogService', () => {
       });
 
       communicationLogService.logMeeting({
-        meetingId: 'meeting_2',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_2',
+        meetingId: TEST_CONSTANTS.IDS.MEETING_2,
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_2,
         teacherName: 'Bob Johnson',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         meetingDate: '2026-02-02',
         meetingStartTime: '10:00',
         meetingEndTime: '11:00',
@@ -607,26 +607,26 @@ describe('communicationLogService', () => {
       });
 
       communicationLogService.logCall({
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         callDate: '2026-02-03',
         callStartTime: '15:00',
         callEndTime: '15:15',
       });
 
       communicationLogService.logNote({
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
         note: 'Follow up note',
-        createdBy: 'teacher_1',
+        createdBy: TEST_CONSTANTS.IDS.TEACHER_1,
         createdByName: 'Jane Smith',
       });
     });
@@ -672,7 +672,7 @@ describe('communicationLogService', () => {
     });
 
     it('should calculate statistics with filter', () => {
-      const result = communicationLogService.getStatistics({ parentId: 'parent_1' });
+      const result = communicationLogService.getStatistics({ parentId: TEST_CONSTANTS.IDS.PARENT_1 });
 
       expect(result.totalMessages).toBe(2);
       expect(result.totalMeetings).toBe(2);
@@ -700,13 +700,13 @@ describe('communicationLogService', () => {
 
       communicationLogService.logMessage({
         messageId: 'msg_old',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Old message',
         messageType: 'text',
         sender: 'parent',
@@ -718,13 +718,13 @@ describe('communicationLogService', () => {
 
       communicationLogService.logMessage({
         messageId: 'msg_new',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'New message',
         messageType: 'text',
         sender: 'parent',
@@ -758,13 +758,13 @@ describe('communicationLogService', () => {
 
       communicationLogService.logMessage({
         messageId: 'msg_default',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Default test',
         messageType: 'text',
         sender: 'parent',
@@ -790,13 +790,13 @@ describe('communicationLogService', () => {
 
       communicationLogService.logMessage({
         messageId: 'msg_old',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Old message',
         messageType: 'text',
         sender: 'parent',
@@ -807,13 +807,13 @@ describe('communicationLogService', () => {
 
       communicationLogService.logMessage({
         messageId: 'msg_new',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'New message',
         messageType: 'text',
         sender: 'parent',
@@ -843,17 +843,17 @@ describe('communicationLogService', () => {
     beforeEach(() => {
       communicationLogService.logMessage({
         messageId: 'msg_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test message',
         messageType: 'text',
         sender: 'parent',
-        timestamp: '2026-01-31T10:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
       });
     });
 
@@ -884,17 +884,17 @@ describe('communicationLogService', () => {
     beforeEach(() => {
       communicationLogService.logMessage({
         messageId: 'msg_1',
-        parentId: 'parent_1',
-        parentName: 'John Doe',
-        teacherId: 'teacher_1',
-        teacherName: 'Jane Smith',
-        studentId: 'student_1',
-        studentName: 'Alice Doe',
-        subject: 'Mathematics',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
+        parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+        teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+        studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+        subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
         message: 'Test message',
         messageType: 'text',
         sender: 'parent',
-        timestamp: '2026-01-31T10:00:00Z',
+        timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
       });
     });
 
@@ -951,17 +951,17 @@ describe('communicationLogService', () => {
       expect(() => {
         communicationLogService.logMessage({
           messageId: 'msg_1',
-          parentId: 'parent_1',
-          parentName: 'John Doe',
-          teacherId: 'teacher_1',
-          teacherName: 'Jane Smith',
-          studentId: 'student_1',
-          studentName: 'Alice Doe',
-          subject: 'Mathematics',
+          parentId: TEST_CONSTANTS.IDS.PARENT_1,
+          parentName: TEST_CONSTANTS.NAMES.JOHN_DOE,
+          teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
+          teacherName: TEST_CONSTANTS.NAMES.JANE_SMITH,
+          studentId: TEST_CONSTANTS.IDS.STUDENT_1,
+          studentName: TEST_CONSTANTS.NAMES.ALICE_DOE,
+          subject: TEST_CONSTANTS.NAMES.MATHEMATICS,
           message: 'Test',
           messageType: 'text',
           sender: 'parent',
-          timestamp: '2026-01-31T10:00:00Z',
+          timestamp: TEST_CONSTANTS.TIMESTAMPS.JAN_31_10AM,
         });
       }).not.toThrow();
 
@@ -1039,11 +1039,11 @@ describe('communicationLogService', () => {
     it('should log email with student and parent info', () => {
       const result = communicationLogService.logEmail({
         messageId: 'email_456',
-        parentId: 'parent_1',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
         parentName: 'Budi Santoso',
-        teacherId: 'teacher_1',
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
         teacherName: 'Ibu Guru',
-        studentId: 'student_1',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
         studentName: 'Ahmad Dahlan',
         recipientEmail: 'parent@example.com',
         subject: 'Meeting Reminder',
@@ -1122,11 +1122,11 @@ describe('communicationLogService', () => {
 
       communicationLogService.logEmail({
         messageId: 'email_1',
-        parentId: 'parent_1',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
         parentName: 'Budi Santoso',
-        teacherId: 'teacher_1',
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
         teacherName: 'Ibu Guru',
-        studentId: 'student_1',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
         studentName: 'Ahmad',
         recipientEmail: 'parent@example.com',
         subject: 'Test',
@@ -1135,11 +1135,11 @@ describe('communicationLogService', () => {
 
       communicationLogService.logEmail({
         messageId: 'email_2',
-        parentId: 'parent_1',
+        parentId: TEST_CONSTANTS.IDS.PARENT_1,
         parentName: 'Budi Santoso',
-        teacherId: 'teacher_1',
+        teacherId: TEST_CONSTANTS.IDS.TEACHER_1,
         teacherName: 'Ibu Guru',
-        studentId: 'student_1',
+        studentId: TEST_CONSTANTS.IDS.STUDENT_1,
         studentName: 'Ahmad',
         recipientEmail: 'parent@example.com',
         subject: 'Test 2',
