@@ -147,6 +147,8 @@ const Badge: React.FC<BadgeProps> = ({
     ${sizeClasses[size]}
     ${rounded ? fullRoundedClasses[size] : roundedClasses[size]}
     ${shouldPulse ? pulseIntensityClasses[pulseIntensity] : ''}
+    ${shouldPulse ? 'animate-in fade-in zoom-in duration-300' : ''}
+    ${!shouldPulse ? 'transition-all duration-200 hover:scale-105 active:scale-95' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -160,6 +162,10 @@ const Badge: React.FC<BadgeProps> = ({
       {...props}
     >
       {children}
+      {/* Enhanced visual feedback for interactive badges */}
+      {!decorative && role === 'status' && (
+        <span className="absolute inset-0 rounded-inherit bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      )}
     </span>
   );
 };

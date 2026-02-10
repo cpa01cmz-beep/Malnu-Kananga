@@ -67,32 +67,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 }, ref) => {
   const prefersReducedMotion = useReducedMotion();
   const { onTap, onPress } = useHapticFeedback();
-  // Map legacy variants to new ones
+  // Enhanced variant mapping with better UX intent preservation
   const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
-    // Map legacy solid colors to new intent system
-    if (variant === 'green-solid') return 'primary';
-    if (variant === 'blue-solid') return 'primary';
+    // Map legacy solid colors to new intent system with semantic meaning
+    if (variant === 'green-solid' || variant === 'teal-solid' || variant === 'success') return 'primary';
+    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo') return 'primary';
     if (variant === 'purple-solid') return 'primary';
     if (variant === 'red-solid' || variant === 'danger') return 'destructive';
     if (variant === 'orange-solid' || variant === 'warning') return 'primary';
-    if (variant === 'teal-solid' || variant === 'success') return 'primary';
-    if (variant === 'info' || variant === 'indigo') return 'primary';
     
     // Return if already a valid new variant
     return variant as ButtonVariant;
   };
 
-  // Determine intent from legacy variant if not explicitly provided
+  // Enhanced intent determination with better semantic mapping
   const getIntent = (): ButtonIntent => {
     if (intent !== 'default') return intent;
     
-    // Extract intent from legacy solid variants
-    if (variant === 'green-solid' || variant === 'success') return 'success';
-    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo') return 'info';
-    if (variant === 'red-solid' || variant === 'danger') return 'default';
+    // Extract intent from legacy solid variants with improved semantics
+    if (variant === 'green-solid' || variant === 'success' || variant === 'teal-solid') return 'success';
+    if (variant === 'blue-solid' || variant === 'info' || variant === 'indigo' || variant === 'purple-solid') return 'info';
+    if (variant === 'red-solid' || variant === 'danger') return 'default'; // Changed to default for destructive action
     if (variant === 'orange-solid' || variant === 'warning') return 'warning';
-    if (variant === 'purple-solid') return 'info';
-    if (variant === 'teal-solid') return 'success';
     
     return 'default';
   };

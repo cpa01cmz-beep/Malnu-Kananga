@@ -187,15 +187,16 @@ const DataTable = <T extends Record<string, unknown>>({
         return (
           <Card
             key={selection ? selection.getRowKey(record) : index}
-            variant={onRowClick ? 'interactive' : 'default'}
+            variant={onRowClick ? 'interactive' : 'hover'}
             className={`
               ${isSelected ? 'ring-2 ring-primary-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900' : ''}
               ${rowClassName?.(record, index) || ''}
               transform transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] card-hover-enhanced mobile-gesture-feedback glass-effect-elevated
+              hover:border-primary-200 dark:hover:border-primary-700 group
             `}
             onClick={() => {
               onRowClick?.(record, index);
-              // Haptic feedback for card interaction
+              // Enhanced haptic feedback
               if ('vibrate' in navigator) {
                 navigator.vibrate(DATATABLE_CONFIG.VIBRATION_PATTERNS.CARD_TAP);
               }
