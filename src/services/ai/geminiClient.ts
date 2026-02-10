@@ -1,17 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 import { createError, ErrorType, classifyError, logError } from "../../utils/errorHandler";
 import { logger } from "../../utils/logger";
-import { API_CONFIG } from "../../constants";
+import { API_CONFIG, AI_MODELS } from "../../constants";
 
 // NOTE: Using API_CONFIG to avoid hardcoded URLs
 // See Issue #1323 for circular dependency fix
 const DEFAULT_API_BASE_URL = API_CONFIG.DEFAULT_BASE_URL;
 
-// Model Constants
-export const AI_MODELS = {
-  FLASH: 'gemini-2.5-flash' as const,
-  PRO_THINKING: 'gemini-3-pro-preview' as const
-} as const;
+// Re-export AI_MODELS from centralized constants for backward compatibility
+export { AI_MODELS };
 
 // Lazy initialization of AI client with error handling
 let aiInstance: GoogleGenAI | null = null;

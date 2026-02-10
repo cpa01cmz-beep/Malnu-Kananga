@@ -12,7 +12,7 @@ import { emailQueueService } from './emailQueueService';
 import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS, DELAY_MS, TEXT_TRUNCATION } from '../constants';
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
@@ -302,7 +302,7 @@ class EmailService {
         failed++;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, DELAY_MS.STANDARD));
     }
 
     return {
@@ -380,12 +380,12 @@ class EmailService {
 
   private createBodyPreview(html: string, text: string): string {
     if (text) {
-      return text.length > 200 ? text.substring(0, 200) + '...' : text;
+      return text.length > TEXT_TRUNCATION.PREVIEW ? text.substring(0, TEXT_TRUNCATION.PREVIEW) + '...' : text;
     }
 
     if (html) {
       const plainText = html.replace(/<[^>]+>/g, '');
-      return plainText.length > 200 ? plainText.substring(0, 200) + '...' : plainText;
+      return plainText.length > TEXT_TRUNCATION.PREVIEW ? plainText.substring(0, TEXT_TRUNCATION.PREVIEW) + '...' : plainText;
     }
 
     return '';

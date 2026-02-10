@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { UserOptions } from 'jspdf-autotable';
-import { APP_CONFIG } from '../constants';
+import { APP_CONFIG, PDF_COLORS } from '../constants';
 
 export interface PDFReportData {
   title: string;
@@ -65,8 +65,8 @@ class PDFExportService {
         data: reportData.data,
         startY: yPosition + 10,
         theme: 'grid',
-        headStyles: { fillColor: [37, 99, 235], textColor: 255 },
-        alternateRowStyles: { fillColor: [249, 250, 251] },
+        headStyles: { fillColor: PDF_COLORS.HEADER_BG, textColor: PDF_COLORS.HEADER_TEXT },
+        alternateRowStyles: { fillColor: PDF_COLORS.ALTERNATE_ROW },
         margin: { left: 20, right: 20 }
       });
     }
