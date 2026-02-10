@@ -4,6 +4,7 @@ export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 export type HeadingSize = 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | '8xl';
 export type HeadingWeight = 'normal' | 'medium' | 'semibold' | 'bold';
 export type HeadingTracking = 'tight' | 'normal' | 'wide';
+export type HeadingVariant = 'default' | 'display' | 'section' | 'card' | 'modal';
 
 interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'level'> {
   level?: HeadingLevel;
@@ -11,6 +12,9 @@ interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'l
   weight?: HeadingWeight;
   tracking?: HeadingTracking;
   leading?: string;
+  variant?: HeadingVariant;
+  gradient?: boolean;
+  maxWidth?: string;
   id?: string;
   className?: string;
   children: React.ReactNode;
@@ -18,19 +22,20 @@ interface HeadingProps extends Omit<React.HTMLAttributes<HTMLHeadingElement>, 'l
 
 const baseClasses = 'text-neutral-900 dark:text-white';
 
+// Enhanced fluid typography with clamp() for better responsive behavior
 const sizeClasses: Record<HeadingSize, string> = {
   xs: 'text-xs',
   sm: 'text-sm',
   base: 'text-base',
   lg: 'text-lg',
   xl: 'text-xl',
-  '2xl': 'text-2xl sm:text-xl',
-  '3xl': 'text-3xl sm:text-2xl',
-  '4xl': 'text-4xl sm:text-3xl md:text-2xl',
-  '5xl': 'text-5xl sm:text-4xl md:text-3xl lg:text-2xl',
-  '6xl': 'text-6xl sm:text-5xl md:text-4xl lg:text-3xl',
-  '7xl': 'text-7xl sm:text-6xl md:text-5xl lg:text-4xl xl:text-3xl',
-  '8xl': 'text-8xl sm:text-7xl md:text-6xl lg:text-5xl xl:text-4xl',
+  '2xl': 'clamp(1.5rem, 4vw, 1.875rem)', // 24px - 30px
+  '3xl': 'clamp(1.875rem, 5vw, 2.25rem)', // 30px - 36px
+  '4xl': 'clamp(2.25rem, 6vw, 3rem)', // 36px - 48px
+  '5xl': 'clamp(2.5rem, 7vw, 3.75rem)', // 40px - 60px
+  '6xl': 'clamp(3rem, 8vw, 4.5rem)', // 48px - 72px
+  '7xl': 'clamp(3.5rem, 9vw, 5.25rem)', // 56px - 84px
+  '8xl': 'clamp(4rem, 10vw, 6rem)', // 64px - 96px
 };
 
 const weightClasses: Record<HeadingWeight, string> = {
@@ -52,17 +57,68 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
   weight = 'bold',
   tracking = 'normal',
   leading,
+  variant = 'default',
+  gradient = false,
+  maxWidth,
   id,
   className = '',
   children,
   ...props
 }, ref) => {
+  // Enhanced variant-specific classes
+  const getVariantClasses = () => {
+    switch (variant) {
+      case 'display':
+        return 'font-bold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-800 dark:from-primary-400 dark:to-primary-600';
+      case 'section':
+        return 'font-semibold leading-snug scroll-mt-20 focus:scroll-mt-24';
+      case 'card':
+        return 'font-medium leading-relaxed';
+      case 'modal':
+        return 'font-semibold leading-tight';
+      default:
+        return '';
+    }
+  };
+
+  // Enhanced line height based on size
+  const getOptimalLeading = () => {
+    if (leading) return leading;
+    
+    const leadingMap: Record<HeadingSize, string> = {
+      xs: 'leading-none',
+      sm: 'leading-none',
+      base: 'leading-none',
+      lg: 'leading-none',
+      xl: 'leading-none',
+      '2xl': 'leading-tight',
+      '3xl': 'leading-tight',
+      '4xl': 'leading-tight',
+      '5xl': 'leading-tight',
+      '6xl': 'leading-tight',
+      '7xl': 'leading-none',
+      '8xl': 'leading-none',
+    };
+    
+    return leadingMap[size] || 'leading-tight';
+  };
+
+  // Enhanced gradient classes
+  const getGradientClasses = () => {
+    if (!gradient) return '';
+    
+    return 'text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-500 to-primary-600 dark:from-primary-400 dark:via-primary-500 dark:to-primary-400 animate-gradient bg-[length:200%_auto]';
+  };
+
   const classes = `
     ${baseClasses}
     ${sizeClasses[size]}
     ${weightClasses[weight]}
     ${trackingClasses[tracking]}
-    ${leading ? leading : ''}
+    ${getOptimalLeading()}
+    ${getVariantClasses()}
+    ${getGradientClasses()}
+    ${maxWidth ? `max-w-[${maxWidth}]` : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -83,6 +139,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
       ref,
       id,
       className: classes,
+      style: maxWidth ? { maxWidth } : undefined,
       ...props
     },
     children
