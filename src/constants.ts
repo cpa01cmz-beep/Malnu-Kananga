@@ -2458,8 +2458,161 @@ export const DATATABLE_CONFIG = {
 // Responsive Breakpoints (numeric values for JS comparisons) - Flexy: Never hardcode breakpoint values!
 export const BREAKPOINTS = {
     SM: 640,    // Phone landscape
-    MD: 768,    // Tablet portrait  
+    MD: 768,    // Tablet portrait
     LG: 1024,   // Tablet landscape/Desktop
     XL: 1280,   // Desktop
     XXL: 1536,  // Large desktop
+} as const;
+
+// Test Constants - Flexy: Never hardcode test data!
+export const TEST_CONSTANTS = {
+    IDS: {
+        // User IDs
+        USER_1: 'user_1',
+        USER_2: 'user_2',
+        USER_001: 'user-001',
+
+        // Student IDs
+        STUDENT_1: 'student_1',
+        STUDENT_2: 'student_2',
+        STUDENT_001: 'student-001',
+        STUDENT_002: 'student-002',
+        STU_001: 'STU-001',
+
+        // Teacher IDs
+        TEACHER_1: 'teacher_1',
+        TEACHER_2: 'teacher_2',
+
+        // Parent IDs
+        PARENT_1: 'parent_1',
+        PARENT_2: 'parent_2',
+
+        // Message IDs
+        MSG_1: 'msg_1',
+        MSG_2: 'msg_2',
+        MSG_3: 'msg_3',
+        MSG_4: 'msg_4',
+        MSG_5: 'msg_5',
+
+        // Meeting IDs
+        MEETING_1: 'meeting_1',
+        MEETING_2: 'meeting_2',
+        MEETING_3: 'meeting_3',
+
+        // Grade IDs
+        GRADE_1: 'grade-1',
+        GRADE_2: 'grade-2',
+        GRADE_001: 'grade-001',
+        GRADE_002: 'grade-002',
+        GRADE_123: 'grade-123',
+
+        // Quiz IDs
+        QUIZ_001: 'quiz-001',
+        QUIZ_002: 'quiz-002',
+
+        // Attempt IDs
+        ATTEMPT_001: 'attempt-001',
+        ATTEMPT_002: 'attempt-002',
+
+        // Subject IDs
+        SUBJECT_001: 'subject-001',
+        SUBJECT_1: 'subject-1',
+
+        // Class IDs
+        CLASS_001: 'class-001',
+
+        // Teacher IDs (hyphenated format)
+        TEACHER_001: 'teacher-001',
+
+        // Registration IDs
+        REG_001: 'reg-001',
+        REG_002: 'reg-002',
+        REG_003: 'reg-003',
+        REG_123: 'reg-123',
+
+        // Generic IDs
+        TEST_123: 'test-123',
+        TEST_SESSION: 'test-session',
+        TEST_USER: 'test-user',
+        BATCH_1: 'batch-1',
+        BATCH_2: 'batch-2',
+        VOICE_1: 'voice-1',
+        OCR_EVENT_1: 'ocr-event-1',
+        ACTION_1: 'action-1',
+        ANN_1: 'ann-1',
+
+        // Material IDs
+        MAT_1: 'mat-1',
+        MAT_2: 'mat-2',
+        M1: 'm1',
+        M2: 'm2',
+        M3: 'm3',
+
+        // Subject IDs
+        SUB1: 'sub1',
+        SUB2: 'sub2',
+        SUB3: 'sub3',
+
+        // Plan IDs
+        PLAN_123: 'plan123',
+
+        // Event IDs
+        TEST_EVENT_1: 'test-event-1',
+    },
+
+    NAMES: {
+        // Student names
+        ALICE_DOE: 'Alice Doe',
+        BOB_SMITH: 'Bob Smith',
+        BUDI_SANTOSO: 'Budi Santoso',
+        JANE_DOE: 'Jane Doe',
+
+        // Parent names
+        JOHN_DOE: 'John Doe',
+
+        // Teacher names
+        JANE_SMITH: 'Jane Smith',
+        SITI_AMINAH: 'Siti Aminah, S.Pd.',
+
+        // Admin names
+        AHMAD_DAHLAN: 'Ahmad Dahlan',
+
+        // Subject names
+        MATHEMATICS: 'Mathematics',
+    },
+
+    TIMESTAMPS: {
+        JAN_31_10AM: '2026-01-31T10:00:00Z',
+        JAN_31_11AM: '2026-01-31T11:00:00Z',
+        JAN_31_12PM: '2026-01-31T12:00:00Z',
+        JAN_31_1PM: '2026-01-31T13:00:00Z',
+    },
+
+    DATES: {
+        FEB_1_2026: '2026-02-01',
+        JAN_30_2026: '2026-01-30',
+        JAN_15_2024: '2024-01-15',
+        JAN_16_2024: '2024-01-16',
+    },
+
+    NUMBERS: {
+        ZERO: 0,
+        ONE: 1,
+        TWO: 2,
+        FIVE: 5,
+        TEN: 10,
+        SIXTY: 60,
+        SEVENTY: 70,
+        EIGHTY: 80,
+        EIGHTY_FIVE: 85,
+        NINETY: 90,
+        NINETY_FIVE: 95,
+        ONE_HUNDRED: 100,
+    },
+
+    SUBJECT_CODES: {
+        MATH: 'MATH',
+        PHYS: 'PHYS',
+        BIO: 'BIO',
+    },
 } as const;
