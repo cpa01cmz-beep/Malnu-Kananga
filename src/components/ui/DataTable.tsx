@@ -63,6 +63,12 @@ export interface DataTableProps<T = Record<string, unknown>> {
   scrollY?: number;
   mobileLayout?: 'table' | 'cards';
   cardTitleColumn?: string;
+  /** Custom error recovery actions */
+  errorRecovery?: {
+    onRetry?: () => void;
+    onRefresh?: () => void;
+    onClearFilter?: () => void;
+  };
 }
 
 const DataTable = <T extends Record<string, unknown>>({
@@ -86,6 +92,7 @@ const DataTable = <T extends Record<string, unknown>>({
   scrollY,
   mobileLayout = 'table',
   cardTitleColumn,
+  errorRecovery,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
 
@@ -136,9 +143,42 @@ const DataTable = <T extends Record<string, unknown>>({
   };
 
   // Enhanced Mobile Card View Component
-  const MobileCardView = () => (
-    <div className="space-y-4 sm:hidden mobile-card-stack">
-      {data.map((record, index) => {
+  const MobileCardView = () => {
+    if (loading) {
+      return (
+        <div className="space-y-4 sm:hidden mobile-card-stack" aria-live="polite" aria-busy="true">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={`skeleton-${index}`} className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-700 p-6">
+              <div className="animate-pulse">
+                <div className="flex items-center justify-between pb-4 border-b border-neutral-100 dark:border-neutral-700/60">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <div className="w-6 h-6 bg-neutral-200 dark:bg-neutral-700 rounded-lg"></div>
+                    <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4"></div>
+                    <div className="w-5 h-5 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
+                  </div>
+                </div>
+                <div className="pt-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+                      <div className="h-5 bg-neutral-300 dark:bg-neutral-600 rounded w-full"></div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+                      <div className="h-5 bg-neutral-300 dark:bg-neutral-600 rounded w-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4 sm:hidden mobile-card-stack">
+        {data.map((record, index) => {
         const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
         const titleColumn = cardTitleColumn || columns[0]?.key;
         const titleColumnObj = columns.find(col => col.key === titleColumn);
@@ -235,7 +275,8 @@ const DataTable = <T extends Record<string, unknown>>({
         );
       })}
     </div>
-  );
+    );
+  };
 
   const tableClasses = `
     ${scrollX ? 'overflow-x-auto' : ''}
@@ -251,7 +292,7 @@ const DataTable = <T extends Record<string, unknown>>({
         className={HEIGHTS.CONTENT.TABLE}
       >
         {error && (
-          <div className="text-center py-16 px-6 max-w-md mx-auto">
+          <div className="text-center py-16 px-6 max-w-md mx-auto" role="alert" aria-live="polite">
             <div className="mb-6 flex justify-center">
               <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
                 <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -262,27 +303,46 @@ const DataTable = <T extends Record<string, unknown>>({
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Terjadi Kesalahan</h3>
             <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">{error}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => window.location.reload()}
-                className="touch-manipulation haptic-feedback"
-              >
-                Muat Ulang Halaman
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  // Retry mechanism could be passed as prop
-                  if (onRowClick) {
-                    onRowClick({} as T, 0);
-                  }
-                }}
-                className="touch-manipulation haptic-feedback"
-              >
-                Coba Lagi
-              </Button>
+              {errorRecovery?.onRetry && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={errorRecovery.onRetry}
+                  className="touch-manipulation haptic-feedback"
+                >
+                  Coba Lagi
+                </Button>
+              )}
+              {errorRecovery?.onRefresh && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={errorRecovery.onRefresh}
+                  className="touch-manipulation haptic-feedback"
+                >
+                  Muat Ulang Data
+                </Button>
+              )}
+              {errorRecovery?.onClearFilter && filter?.searchable && localSearch && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={errorRecovery.onClearFilter}
+                  className="touch-manipulation haptic-feedback"
+                >
+                  Hapus Filter
+                </Button>
+              )}
+              {!errorRecovery && (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => window.location.reload()}
+                  className="touch-manipulation haptic-feedback"
+                >
+                  Muat Ulang Halaman
+                </Button>
+              )}
             </div>
           </div>
         )}
@@ -356,7 +416,7 @@ const DataTable = <T extends Record<string, unknown>>({
                 icon={<FunnelIcon />}
                 onClick={() => {
                   // Reset sort
-                  sort.onSortChange('', 'asc');
+                  sort?.onSortChange('', 'asc');
                 }}
                 className="touch-manipulation haptic-feedback mobile-touch-target"
               >
@@ -417,11 +477,13 @@ const DataTable = <T extends Record<string, unknown>>({
             variant={variant}
             className={scrollY ? 'w-full' : ''}
             style={scrollY ? { maxHeight: scrollY, overflowY: 'auto' } : undefined}
+            aria-label={columns.map(col => col.title).join(', ')}
+            aria-rowcount={data.length + 1} // +1 for header row
           >
             <Thead className={stickyHeader ? 'sticky top-0 bg-white dark:bg-neutral-900 z-10' : ''}>
               <Tr>
                 {selection && (
-                  <Th className="w-12">
+                  <Th className="w-12" scope="col" aria-label="Pilih baris">
                     <input
                       type="checkbox"
                       checked={isAllSelected}
@@ -432,16 +494,22 @@ const DataTable = <T extends Record<string, unknown>>({
                       }}
                       onChange={(e) => handleSelectAll(e.target.checked)}
                       className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                      aria-label="Select all rows"
+                      aria-label="Pilih semua baris"
                     />
                   </Th>
                 )}
                 {columns.map((column) => (
                   <Th
                     key={column.key}
+                    scope="col"
                     sortable={column.sortable && !!sort}
                     sortDirection={sort?.sortKey === column.key ? sort.sortDirection : undefined}
                     onClick={() => column.sortable && handleSort(column)}
+                    aria-sort={
+                      column.sortable && sort?.sortKey === column.key 
+                        ? sort.sortDirection === 'asc' ? 'ascending' : 'descending'
+                        : undefined
+                    }
                     className={`
                       ${getAlignmentClass(column.align)}
                       ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-900' : ''}
@@ -463,6 +531,7 @@ const DataTable = <T extends Record<string, unknown>>({
                     hoverable
                     selected={isSelected}
                     onClick={() => onRowClick?.(record, index)}
+                    aria-rowindex={index + 2} // +2 for header row and 0-based indexing
                     className={`
                       ${rowClassName?.(record, index) || ''}
                       ${onRowClick ? 'cursor-pointer' : ''}
@@ -475,7 +544,7 @@ const DataTable = <T extends Record<string, unknown>>({
                           checked={isSelected}
                           onChange={(e) => handleSelect(selection.getRowKey(record), e.target.checked)}
                           className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                          aria-label={`Select row ${index + 1}`}
+                          aria-label={`Pilih baris ${index + 1}`}
                         />
                       </Td>
                     )}
@@ -486,6 +555,7 @@ const DataTable = <T extends Record<string, unknown>>({
                           ${getAlignmentClass(column.align)}
                           ${column.fixed === 'left' ? 'sticky left-0 bg-white dark:bg-neutral-800' : ''}
                         `}
+                        data-label={column.title}
                       >
                         {getCellValue(column, record, index)}
                       </Td>

@@ -43,7 +43,7 @@ const sizeIconClasses: Record<SearchInputSize, string> = {
 
 const stateClasses: Record<SearchInputState, string> = {
   default: "border-neutral-300 dark:border-neutral-600 bg-white/95 dark:bg-neutral-800/95 text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-500 hover:border-primary-400 dark:hover:border-primary-500 focus:ring-primary-500/30 focus:border-primary-500 focus:scale-[1.01] glass-effect",
-  error: "border-red-300 dark:border-red-600 bg-red-50/95 dark:bg-red-900/30 text-neutral-900 dark:text-white placeholder-red-400 dark:placeholder-red-500 hover:border-red-400 dark:hover:border-red-500 focus:ring-red-500/30 focus:border-red-500 focus:scale-[1.01] animate-input-shake",
+  error: "border-red-400 dark:border-red-500 bg-red-50/95 dark:bg-red-900/40 text-neutral-900 dark:text-white placeholder-red-500 dark:placeholder-red-400 hover:border-red-500 dark:hover:border-red-400 focus:ring-red-500/40 focus:border-red-500 focus:scale-[1.01] animate-input-shake-subtle",
   success: "border-green-300 dark:border-green-600 bg-green-50/95 dark:bg-green-900/30 text-neutral-900 dark:text-white placeholder-green-400 dark:placeholder-green-500 hover:border-green-400 dark:hover:border-green-500 focus:ring-green-500/30 focus:border-green-500 focus:scale-[1.01] animate-success-pulse",
 };
 
@@ -236,9 +236,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           onMouseUp={() => setIsClearPressed(false)}
           onFocus={() => setShowTooltip(true)}
           onBlur={() => setShowTooltip(false)}
-          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback ${
-            size === 'sm' ? 'p-1.5 min-w-[36px] min-h-[36px]' : 'p-2 min-w-[40px] min-h-[40px]'
-          } ${
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center ${
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
           } ${
             value && String(value).length > 0 && !validation.state.isValidating

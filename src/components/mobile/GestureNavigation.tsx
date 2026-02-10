@@ -272,9 +272,9 @@ export const GestureNavItem: React.FC<GestureNavItemProps> = ({
 
   const handlePressStart = useCallback(() => {
     setIsPressed(true);
-    // Haptic feedback
+    // Light haptic feedback for press start
     if ('vibrate' in navigator) {
-      navigator.vibrate(5);
+      navigator.vibrate(3);
     }
   }, []);
 
@@ -284,14 +284,14 @@ export const GestureNavItem: React.FC<GestureNavItemProps> = ({
 
   const handleClick = useCallback(() => {
     onClick?.();
-    // Haptic feedback for click
+    // Enhanced haptic feedback for successful click
     if ('vibrate' in navigator) {
-      navigator.vibrate(10);
+      navigator.vibrate([5, 2, 5]);
     }
   }, [onClick]);
 
   const baseClasses = `
-    relative flex items-center gap-3 w-full px-4 py-3 text-left
+    relative flex items-center gap-4 w-full px-5 py-4 text-left
     transition-all duration-200 ease-out
     border-b border-neutral-100 dark:border-neutral-800
     ${isActive 
@@ -300,7 +300,7 @@ export const GestureNavItem: React.FC<GestureNavItemProps> = ({
     }
     ${isPressed ? 'scale-[0.98]' : 'scale-100'}
     touch-manipulation
-    min-h-[52px]
+    min-h-[56px]
     ${className}
   `.trim();
 

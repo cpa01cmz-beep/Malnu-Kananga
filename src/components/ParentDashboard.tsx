@@ -20,7 +20,7 @@ import { validateParentChildDataAccess, validateChildDataIsolation, validateGrad
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { parentGradeNotificationService } from '../services/parentGradeNotificationService';
-import BackButton from './ui/BackButton';
+import Breadcrumb from './ui/Breadcrumb';
 import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
@@ -41,6 +41,23 @@ interface ParentDashboardProps {
 }
 
 type PortalView = 'home' | 'profile' | 'schedule' | 'library' | 'grades' | 'attendance' | 'events' | 'messaging' | 'payments' | 'meetings' | 'reports';
+
+const getViewTitle = (view: PortalView): string => {
+  const titles: Record<PortalView, string> = {
+    home: 'Beranda',
+    profile: 'Profil',
+    schedule: 'Jadwal',
+    library: 'Perpustakaan',
+    grades: 'Nilai',
+    attendance: 'Kehadiran',
+    events: 'Acara',
+    messaging: 'Pesan',
+    payments: 'Pembayaran',
+    meetings: 'Pertemuan',
+    reports: 'Laporan'
+  };
+  return titles[view] || view;
+};
 
 const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
   const [currentView, setCurrentView] = useState<PortalView>('home');
@@ -480,18 +497,29 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb 
+          items={[
+            { label: 'Beranda', href: '#', isActive: currentView === 'home' },
+            ...(currentView !== 'home' ? [{ label: getViewTitle(currentView), isActive: true }] : [])
+          ]}
+          showHome={true}
+          className="mb-4"
+          size="sm"
+        />
+
         {currentView === 'home' && (
           <>
-            {/* Welcome Banner */}
-            <Card className="p-6 sm:p-8 mb-8 animate-fade-in-up relative overflow-hidden">
-                  <div className={`absolute top-0 right-0 w-64 sm:w-48 h-64 sm:h-48 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE_SOFT} rounded-full -translate-y-1/2 translate-x-1/2 opacity-50`}></div>
+            {/* Welcome Banner - Reduced mobile footprint */}
+            <Card className="p-4 sm:p-6 lg:p-8 mb-6 lg:mb-8 animate-fade-in-up relative overflow-hidden">
+                  <div className={`absolute top-0 right-0 w-32 sm:w-48 h-32 sm:h-48 ${GRADIENT_CLASSES.PRIMARY_DECORATIVE_SOFT} rounded-full -translate-y-1/2 translate-x-1/2 opacity-30`}></div>
               <div className="relative z-10">
-                <h1 className="text-3xl sm:text-2xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
-                <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
+                <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">Portal Wali Murid</h1>
+                <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-sm sm:text-base">
                   Selamat datang, <strong>Orang Tua</strong>!
                 </p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+                <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 hidden sm:block">
                   Pantau perkembangan pendidikan anak Anda dengan mudah.
                 </p>
               </div>
@@ -752,81 +780,180 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
         )}
         {currentView === 'schedule' && selectedChild && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('schedule'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'grades' && selectedChild && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('grades'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'attendance' && selectedChild && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('attendance'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
           </div>
         )}
 
         {currentView === 'library' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('library'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ELibrary onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
           </div>
         )}
 
         {currentView === 'events' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('events'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <OsisEvents onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} />
           </div>
         )}
 
         {currentView === 'reports' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('reports'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'messaging' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('messaging'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentMessagingView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'payments' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('payments'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentPaymentsView onShowToast={onShowToast} children={children} />
           </div>
         )}
 
         {currentView === 'meetings' && (
           <div className="animate-fade-in-up">
-            <div className="mb-6">
-              <BackButton label="Kembali ke Beranda" onClick={() => handleViewNavigation('home')} variant="green" />
-            </div>
+            <Breadcrumb 
+              items={[
+                { label: 'Beranda', href: '#' },
+                { label: getViewTitle('meetings'), isActive: true }
+              ]}
+              showHome={false}
+              className="mb-6"
+              size="sm"
+              onItemClick={(item, _index) => {
+                if (item.label === 'Beranda') {
+                  handleViewNavigation('home');
+                }
+              }}
+            />
             <ParentMeetingsView onShowToast={onShowToast} children={children} />
           </div>
         )}
