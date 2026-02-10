@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+/* global NodeJS, AbortController */
+import { useState, useCallback, useRef } from 'react';
 
 /**
  * Progressive Loading System
@@ -19,13 +20,13 @@ interface ProgressiveLoadingOptions {
   loadThreshold?: number; // Intersection observer threshold
   
   // Optimistic UI
-  optimisticData?: any;
+  optimisticData?: unknown;
   rollbackOnError?: boolean;
   
   // Callbacks
   onLoadStart?: () => void;
   onLoadProgress?: (progress: number) => void;
-  onLoadComplete?: (data: any) => void;
+  onLoadComplete?: (data: unknown) => void;
   onLoadError?: (error: Error) => void;
 }
 
@@ -49,7 +50,7 @@ interface ProgressiveLoadingReturn<T> {
   shouldShowError: boolean;
 }
 
-export const useProgressiveLoading = <T = any>(
+export const useProgressiveLoading = <T = unknown>(
   loader: () => Promise<T>,
   options: ProgressiveLoadingOptions = {}
 ): ProgressiveLoadingReturn<T> => {
@@ -57,6 +58,7 @@ export const useProgressiveLoading = <T = any>(
     strategy = 'skeleton',
     delay = 200,
     timeout = 10000,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     priority = 'medium',
     optimisticData,
     rollbackOnError = true,
@@ -70,7 +72,7 @@ export const useProgressiveLoading = <T = any>(
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<T | null>(optimisticData || null);
+  const [data, setData] = useState<T | null>((optimisticData as T) || null);
   const [progress, setProgress] = useState(0);
   
   const loadingStartTime = useRef<number>(0);
@@ -183,7 +185,7 @@ export const useProgressiveLoading = <T = any>(
       
       // Rollback to optimistic data if available
       if (rollbackOnError && optimisticData) {
-        setData(optimisticData);
+        setData(optimisticData as T);
       }
       
       onLoadError?.(error);
@@ -215,7 +217,7 @@ export const useProgressiveLoading = <T = any>(
 
   const reset = useCallback(() => {
     resetState();
-    setData(optimisticData || null);
+    setData((optimisticData as T) || null);
   }, [resetState, optimisticData]);
 
   // UI helpers
@@ -240,7 +242,7 @@ export const useProgressiveLoading = <T = any>(
 };
 
 // Optimistic UI hook
-export const useOptimisticUI = <T = any>(
+export const useOptimisticUI = <T = unknown>(
   initialValue: T,
   onCommit: (value: T) => Promise<void>,
   onRollback?: (value: T) => void

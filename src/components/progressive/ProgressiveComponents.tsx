@@ -1,3 +1,4 @@
+/* global Image, IntersectionObserver */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useProgressiveLoading } from '../../hooks/useProgressiveLoading';
 
@@ -130,6 +131,22 @@ export const ProgressiveList = <T,>({
     setLoadedCount(initialCount);
   }, [items]);
 
+  const loadMoreItems = useCallback(() => {
+    if (isLoading || loadedCount >= items.length) return;
+
+    setIsLoading(true);
+
+    // Simulate network delay
+    setTimeout(() => {
+      const nextCount = Math.min(loadedCount + 20, items.length);
+      const newItems = items.slice(loadedCount, nextCount);
+
+      setVisibleItems(prev => [...prev, ...newItems]);
+      setLoadedCount(nextCount);
+      setIsLoading(false);
+    }, 300);
+  }, [isLoading, loadedCount, items]);
+
   // Set up intersection observer for progressive loading
   useEffect(() => {
     if (!containerRef.current || loadedCount >= items.length) return;
@@ -154,23 +171,7 @@ export const ProgressiveList = <T,>({
         observerRef.current.disconnect();
       }
     };
-  }, [loadedCount, items.length, isLoading, threshold]);
-
-  const loadMoreItems = useCallback(() => {
-    if (isLoading || loadedCount >= items.length) return;
-
-    setIsLoading(true);
-    
-    // Simulate network delay
-    setTimeout(() => {
-      const nextCount = Math.min(loadedCount + 20, items.length);
-      const newItems = items.slice(loadedCount, nextCount);
-      
-      setVisibleItems(prev => [...prev, ...newItems]);
-      setLoadedCount(nextCount);
-      setIsLoading(false);
-    }, 300);
-  }, [isLoading, loadedCount, items]);
+  }, [loadedCount, items.length, isLoading, threshold, loadMoreItems]);
 
   if (items.length === 0) {
     return <>{emptyComponent || <div className="text-center p-8">No items found</div>}</>;
@@ -239,7 +240,6 @@ export const ProgressiveContent = <T,>({
     shouldShowContent,
     shouldShowError,
     data,
-    error,
     load,
     retry,
   } = useProgressiveLoading(loader, options);

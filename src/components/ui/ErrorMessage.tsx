@@ -394,7 +394,7 @@ export const useErrorRecovery = (error: Error | null, retryAction?: () => void) 
     try {
       await retryAction();
       setRetryCount(0);
-    } catch (err) {
+    } catch (_err) {
       setRetryCount(prev => prev + 1);
     } finally {
       setIsRetrying(false);

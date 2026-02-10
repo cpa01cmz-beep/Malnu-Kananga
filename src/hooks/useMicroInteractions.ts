@@ -1,3 +1,4 @@
+/* global MediaQueryListEvent */
 import React, { useCallback, useRef, useEffect } from 'react';
 
 /**

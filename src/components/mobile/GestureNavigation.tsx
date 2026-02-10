@@ -1,3 +1,4 @@
+/* global TouchEvent */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
 
@@ -189,37 +190,37 @@ const useSwipeGestureInternal = ({
     const element = elementRef.current;
     if (!element) return;
 
-    const handleStart = (e: any) => {
-      const clientPos = direction === 'horizontal' 
-        ? 'touches' in e ? e.touches[0].clientX : e.clientX
-        : 'touches' in e ? e.touches[0].clientY : e.clientY;
-      
+    const handleStart = (e: TouchEvent | MouseEvent) => {
+      const clientPos = direction === 'horizontal'
+        ? 'touches' in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX
+        : 'touches' in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+
       startPos.current = clientPos;
       isDragging.current = true;
       onSwipeStart?.(clientPos);
     };
 
-    const handleMove = (e: any) => {
+    const handleMove = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
-      
+
       e.preventDefault();
-      
+
       const clientPos = direction === 'horizontal'
-        ? 'touches' in e ? e.touches[0].clientX : e.clientX
-        : 'touches' in e ? e.touches[0].clientY : e.clientY;
-      
+        ? 'touches' in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX
+        : 'touches' in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+
       onSwipeMove?.(clientPos, startPos.current);
     };
 
-    const handleEnd = (e: any) => {
+    const handleEnd = (e: TouchEvent | MouseEvent) => {
       if (!isDragging.current) return;
-      
+
       isDragging.current = false;
-      
+
       const clientPos = direction === 'horizontal'
-        ? 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX
-        : 'changedTouches' in e ? e.changedTouches[0].clientY : e.clientY;
-      
+        ? 'changedTouches' in e ? (e as TouchEvent).changedTouches[0].clientX : (e as MouseEvent).clientX
+        : 'changedTouches' in e ? (e as TouchEvent).changedTouches[0].clientY : (e as MouseEvent).clientY;
+
       onSwipeEnd?.(clientPos, startPos.current);
     };
 
