@@ -16,6 +16,8 @@ interface BaseSocialLinkProps {
   disabled?: boolean;
   /** Show tooltip on hover for better accessibility */
   showTooltip?: boolean;
+  /** Reason shown in tooltip when link is disabled */
+  disabledReason?: string;
 }
 
 const baseClasses = "inline-flex items-center justify-center transition-all duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded-xl shadow-sm hover:shadow-md hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed relative group";
@@ -67,6 +69,7 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
   rel = 'noopener noreferrer',
   disabled = false,
   showTooltip = true,
+  disabledReason,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const variantStyle = variantClasses[variant];
@@ -96,12 +99,23 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
       </span>
       
       {/* Tooltip for better accessibility */}
-      {showTooltip && (
-        <span 
+      {showTooltip && !disabled && (
+        <span
           className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 ease-out z-50"
           role="tooltip"
         >
           {label}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+        </span>
+      )}
+
+      {/* Tooltip for disabled state */}
+      {disabled && disabledReason && (
+        <span
+          className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 ease-out z-50"
+          role="tooltip"
+        >
+          {disabledReason}
           <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
         </span>
       )}
