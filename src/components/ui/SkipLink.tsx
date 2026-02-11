@@ -12,7 +12,7 @@ interface SkipLinkProps {
   targets?: SkipTarget[];
 }
 
-const baseClasses = "z-[100] px-4 py-3 text-base font-semibold rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transform -translate-y-[200%] focus:translate-y-0 shadow-md hover:shadow-lg hover-lift-premium glass-effect focus-visible-enhanced";
+const baseClasses = "z-[100] px-4 py-3.5 text-base font-semibold rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 transform -translate-y-[200%] focus:translate-y-0 shadow-md hover:shadow-lg hover-lift-premium glass-effect focus-visible-enhanced min-h-[48px] touch-target";
 
 const linkClasses = "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50 focus-visible:ring-4 focus-visible:ring-primary-500/30 button-enhanced glass-effect-elevated";
 
