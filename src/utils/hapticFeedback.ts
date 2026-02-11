@@ -103,8 +103,8 @@ class HapticFeedbackManager {
 
     try {
       navigator.vibrate(adaptedPattern);
-    } catch (error) {
-      console.warn('Haptic feedback failed:', error);
+    } catch (_error) {
+      // Silently ignore - vibration API not critical
     }
   }
 

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { logger } from '../../utils/logger';
 
 export type BackButtonVariant = 'primary' | 'green' | 'custom';
 export type BackButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -104,7 +105,9 @@ const BackButton: React.FC<BackButtonProps> = ({
     try {
       await onClick();
     } catch (error) {
-      console.error('BackButton click error:', error);
+      logger.error('BackButton click handler error', error);
+      // Re-throw to allow parent error boundaries to handle
+      throw error;
     }
   }, [onClick, disabled, isLoading, onTap]);
 
