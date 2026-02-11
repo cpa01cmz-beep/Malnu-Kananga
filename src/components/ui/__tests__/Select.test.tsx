@@ -237,4 +237,54 @@ describe('Select Component', () => {
       expect(clearButton).toHaveAttribute('title', 'Bersihkan pilihan');
     });
   });
+
+  describe('Loading State', () => {
+    it('should show loading spinner when isLoading is true', () => {
+      render(<Select options={mockOptions} isLoading />);
+      const spinner = screen.getByRole('combobox').parentElement?.querySelector('.animate-spin');
+      expect(spinner).toBeInTheDocument();
+    });
+
+    it('should disable select when isLoading is true', () => {
+      render(<Select options={mockOptions} isLoading />);
+      const select = screen.getByRole('combobox');
+      expect(select).toBeDisabled();
+    });
+
+    it('should set aria-busy when isLoading is true', () => {
+      render(<Select options={mockOptions} isLoading />);
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveAttribute('aria-busy', 'true');
+    });
+
+    it('should set aria-label with loading text when isLoading is true', () => {
+      render(<Select options={mockOptions} isLoading loadingText="Loading options..." />);
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveAttribute('aria-label', 'Loading options...');
+    });
+
+    it('should not show clear button when isLoading is true', () => {
+      render(<Select options={mockOptions} value="option1" showClearButton isLoading />);
+      const clearButton = screen.queryByLabelText('Bersihkan pilihan');
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should use default loading text "Memuat..." when loadingText is not provided', () => {
+      render(<Select options={mockOptions} isLoading />);
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveAttribute('aria-label', 'Memuat...');
+    });
+
+    it('should not have aria-busy when isLoading is false', () => {
+      render(<Select options={mockOptions} isLoading={false} />);
+      const select = screen.getByRole('combobox');
+      expect(select).toHaveAttribute('aria-busy', 'false');
+    });
+
+    it('should show dropdown arrow when isLoading is false', () => {
+      render(<Select options={mockOptions} />);
+      const spinner = screen.getByRole('combobox').parentElement?.querySelector('.animate-spin');
+      expect(spinner).not.toBeInTheDocument();
+    });
+  });
 });
