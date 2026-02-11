@@ -9,7 +9,7 @@
 // initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, UI_DELAYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_DELAYS, HTTP } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
 import { generateId, ID_CONFIG } from '../utils/idGenerator';
@@ -414,7 +414,7 @@ class OfflineActionQueueService {
     }
 
     // Handle different error types
-    if (response.status === 409) {
+    if (response.status === HTTP.STATUS_CODES.CONFLICT) {
       // Conflict - server version changed
       const serverData = await response.json().catch(() => ({}));
       action.serverVersion = serverData.version;
