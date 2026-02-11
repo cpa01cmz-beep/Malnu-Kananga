@@ -126,15 +126,21 @@ export default defineConfig(({ mode }) => {
               return VENDOR_CHUNKS.JSPDF;
             }
 
-            // React core, React Router, and Charts together (avoid circular dependency)
+            // Split React ecosystem into parallel chunks for better loading performance
+            // React core (most critical - load first)
             if (id.includes('/node_modules/react/') ||
                 id.includes('/node_modules/react-dom/') ||
-                id.includes('/node_modules/scheduler/') ||
-                id.includes('/node_modules/react-router/') ||
-                id.includes('/node_modules/@remix-run/') ||
-                id.includes('recharts') ||
-                id.includes('d3')) {
-              return VENDOR_CHUNKS.CORE;
+                id.includes('/node_modules/scheduler/')) {
+              return VENDOR_CHUNKS.REACT;
+            }
+            // React Router (depends on React, can load in parallel)
+            if (id.includes('/node_modules/react-router/') ||
+                id.includes('/node_modules/@remix-run/')) {
+              return VENDOR_CHUNKS.ROUTER;
+            }
+            // Charts library (heavy, lazy-load if possible)
+            if (id.includes('recharts') || id.includes('d3')) {
+              return VENDOR_CHUNKS.CHARTS;
             }
 
             // Test libraries (only in test mode)
