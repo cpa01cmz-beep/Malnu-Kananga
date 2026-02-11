@@ -4,6 +4,7 @@ import { QuizDifficulty, QuizQuestionType } from '../types';
 import { generateQuiz } from '../services/ai';
 import { eLibraryAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { QUESTION_TYPES, QUIZ_CONFIG, QUESTION_DIFFICULTY_LABELS } from '../config/quiz-config';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
@@ -38,10 +39,10 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'select' | 'options' | 'preview'>('select');
   const [options, setOptions] = useState<GenerationOptions>({
-    questionCount: 10,
+    questionCount: QUIZ_CONFIG.DEFAULT_QUESTION_COUNT,
     questionTypes: [QuizQuestionType.MULTIPLE_CHOICE, QuizQuestionType.TRUE_FALSE, QuizQuestionType.SHORT_ANSWER],
     difficulty: QuizDifficulty.MEDIUM,
-    totalPoints: 100,
+    totalPoints: QUIZ_CONFIG.DEFAULT_TOTAL_POINTS,
     focusAreas: [],
   });
   const [generatedQuiz, setGeneratedQuiz] = useState<Quiz | null>(null);
@@ -116,7 +117,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         academicYear: '2025-2026',
         semester: '1',
         duration: quizData.duration || 60,
-        passingScore: quizData.passingScore || 70,
+        passingScore: quizData.passingScore || QUIZ_CONFIG.DEFAULT_PASSING_SCORE,
         status: 'draft',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -259,12 +260,12 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         <Input
           id="question-count"
           type="number"
-          min="5"
-          max="50"
+          min={QUIZ_CONFIG.MIN_QUESTIONS}
+          max={QUIZ_CONFIG.MAX_QUESTIONS}
           value={options.questionCount}
           onChange={(e) => {
             const value = e.target.value;
-            setOptions(prev => ({ ...prev, questionCount: value === '' ? 0 : parseInt(value) || 10 }));
+            setOptions(prev => ({ ...prev, questionCount: value === '' ? 0 : parseInt(value) || QUIZ_CONFIG.DEFAULT_QUESTION_COUNT }));
           }}
           className="w-full"
         />
@@ -280,9 +281,9 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
           onChange={(e) => setOptions(prev => ({ ...prev, difficulty: e.target.value as QuizDifficulty }))}
           className="w-full"
         >
-          <option value="easy">Mudah</option>
-          <option value="medium">Sedang</option>
-          <option value="hard">Sulit</option>
+          {Object.entries(QUESTION_DIFFICULTY_LABELS).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
         </Select>
       </div>
 
@@ -291,27 +292,21 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
           Jenis Pertanyaan
         </label>
         <div className="space-y-2">
-          {[
-            { value: 'multiple_choice', label: 'Pilihan Ganda' },
-            { value: 'true_false', label: 'Benar/Salah' },
-            { value: 'short_answer', label: 'Jawaban Singkat' },
-            { value: 'essay', label: 'Esai' },
-            { value: 'fill_blank', label: 'Isi Bagian Kosong' },
-          ].map((type) => (
-            <label key={type.value} className="flex items-center gap-2">
+          {QUESTION_TYPES.map((type) => (
+            <label key={type.id} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={options.questionTypes.includes(type.value as QuizQuestionType)}
+                checked={options.questionTypes.includes(type.id as QuizQuestionType)}
                 onChange={(e) => {
                   if (e.target.checked) {
                     setOptions(prev => ({
                       ...prev,
-                      questionTypes: [...prev.questionTypes, type.value as QuizQuestionType],
+                      questionTypes: [...prev.questionTypes, type.id as QuizQuestionType],
                     }));
                   } else {
                     setOptions(prev => ({
                       ...prev,
-                      questionTypes: prev.questionTypes.filter(t => t !== type.value),
+                      questionTypes: prev.questionTypes.filter(t => t !== type.id),
                     }));
                   }
                 }}
@@ -330,13 +325,13 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         <Input
           id="total-points"
           type="number"
-          min="10"
-          max="500"
-          step="10"
+          min={QUIZ_CONFIG.MIN_TOTAL_POINTS}
+          max={QUIZ_CONFIG.MAX_TOTAL_POINTS}
+          step={QUIZ_CONFIG.POINTS_STEP}
           value={options.totalPoints}
           onChange={(e) => {
             const value = e.target.value;
-            setOptions(prev => ({ ...prev, totalPoints: value === '' ? 0 : parseInt(value) || 100 }));
+            setOptions(prev => ({ ...prev, totalPoints: value === '' ? 0 : parseInt(value) || QUIZ_CONFIG.DEFAULT_TOTAL_POINTS }));
           }}
           className="w-full"
         />
