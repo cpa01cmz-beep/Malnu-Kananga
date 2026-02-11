@@ -104,6 +104,7 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: (id: string) => {
             // Optimize chunking to reduce bundle size and improve load times
+            // BroCula: Code splitting strategy to minimize unused JavaScript
 
             // Google GenAI library (very large, keep separate)
             if (id.includes('@google/genai')) {
@@ -158,7 +159,35 @@ export default defineConfig(({ mode }) => {
               return VENDOR_CHUNKS.API;
             }
 
-            // Don't split application code
+            // BroCula: Split large application components into separate chunks
+            // Dashboard components (heavy, only needed after login)
+            if (id.includes('/components/AdminDashboard')) {
+              return 'dashboard-admin';
+            }
+            if (id.includes('/components/TeacherDashboard')) {
+              return 'dashboard-teacher';
+            }
+            if (id.includes('/components/ParentDashboard')) {
+              return 'dashboard-parent';
+            }
+            if (id.includes('/components/StudentPortal')) {
+              return 'dashboard-student';
+            }
+
+            // Modals and dialogs (only needed when opened)
+            if (id.includes('/components/LoginModal') ||
+                id.includes('/components/ThemeSelector') ||
+                id.includes('/components/ui/ConfirmationDialog') ||
+                id.includes('/components/ui/CommandPalette')) {
+              return 'ui-modals';
+            }
+
+            // Content sections (can be loaded after initial render)
+            if (id.includes('/components/sections/')) {
+              return 'public-sections';
+            }
+
+            // Don't split other application code - let Rollup handle it
             return undefined;
           },
         },
@@ -175,6 +204,8 @@ export default defineConfig(({ mode }) => {
           drop_debugger: BUILD_CONFIG.TERSER_DROP_DEBUGGER,
         },
       },
+      // BroCula: Enable CSS code splitting to reduce render-blocking CSS
+      cssCodeSplit: true,
     },
   }
 
