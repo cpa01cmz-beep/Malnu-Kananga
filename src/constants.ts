@@ -583,6 +583,10 @@ export const RETRY_CONFIG = {
     NETWORK_SLOW_CONNECTION_THRESHOLD: 3000,
     CIRCUIT_BREAKER_FAILURE_THRESHOLD: 5,
     CIRCUIT_BREAKER_TIMEOUT: 60000,
+    MAX_ATTEMPTS: 3,
+    BASE_DELAY_MS: 1000,
+    MAX_DELAY_MS: 5000,
+    BACKOFF_MULTIPLIER: 2,
 } as const;
 
 // Grade validation limits
@@ -3273,3 +3277,17 @@ export const VOICE_UI_STRINGS = {
 // ============================================================================
 // End of UI String Constants
 // ============================================================================
+
+// Error Message Auto-Dismiss Configuration
+export const ERROR_MESSAGE_CONFIG = {
+    DEFAULT_DELAY_MS: 5000,
+    EXTENDED_DELAY_MS: 8000,
+    MIN_DELAY_MS: 3000,
+} as const;
+
+// Site Editor Limits
+export const SITE_EDITOR_LIMITS = {
+    MAX_INPUT_LENGTH: 1000,
+    MIN_INPUT_LENGTH: 3,
+    MAX_SITE_NAME_LENGTH: 100,
+} as const;

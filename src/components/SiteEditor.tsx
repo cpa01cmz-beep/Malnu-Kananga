@@ -17,7 +17,7 @@ import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
 import { SendIcon } from './icons/SendIcon';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, SITE_EDITOR_LIMITS } from '../constants';
 import { HEIGHTS } from '../config/heights';
 
 interface SiteEditorProps {
@@ -95,9 +95,9 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
     setCharacterCount(input.length);
     
     // Basic input validation
-    if (input.length > 1000) {
-      setInputError('Maksimal 1000 karakter');
-    } else if (input.trim().length > 0 && input.trim().length < 3) {
+    if (input.length > SITE_EDITOR_LIMITS.MAX_INPUT_LENGTH) {
+      setInputError(`Maksimal ${SITE_EDITOR_LIMITS.MAX_INPUT_LENGTH} karakter`);
+    } else if (input.trim().length > 0 && input.trim().length < SITE_EDITOR_LIMITS.MIN_INPUT_LENGTH) {
       setInputError('Minimal 3 karakter untuk permintaan yang bermakna');
     } else if (/[<>]/.test(input)) {
       setInputError('Mohon hindari penggunaan tag HTML');

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ERROR_MESSAGE_CONFIG, RETRY_CONFIG } from '../../constants';
 
 interface ErrorMessageProps {
   title?: string;
@@ -63,15 +64,15 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
       const timer = setTimeout(() => {
         setIsVisible(false);
         onDismiss?.();
-      }, 8000);
+      }, ERROR_MESSAGE_CONFIG.EXTENDED_DELAY_MS);
       return () => clearTimeout(timer);
     }
   }, [variant, isVisible, onDismiss]);
 
   // Auto-retry functionality
   React.useEffect(() => {
-    if (autoRetry?.enabled && retryAction && retryCount < (autoRetry.maxAttempts || 3)) {
-      const delay = autoRetry.delay || 5000;
+    if (autoRetry?.enabled && retryAction && retryCount < (autoRetry.maxAttempts || RETRY_CONFIG.MAX_ATTEMPTS)) {
+      const delay = autoRetry.delay || ERROR_MESSAGE_CONFIG.DEFAULT_DELAY_MS;
       setTimeToNextRetry(delay / 1000);
       
       const countdown = setInterval(() => {
