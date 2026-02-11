@@ -310,7 +310,7 @@ export function useUnifiedNotifications() {
           try {
             const newValue = JSON.parse(stored);
             const lastChecked = lastCheckedRef.current[key] || 0;
-            if (Date.now() - lastChecked > 5000) { // Avoid too frequent checks
+            if (Date.now() - lastChecked > TIME_MS.FIVE_SECONDS) { // Avoid too frequent checks
               onChangeRef.current(newValue, {});
               lastCheckedRef.current[key] = Date.now();
             }

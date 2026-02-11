@@ -1,5 +1,7 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 
+import { TIME_MS } from '../constants';
+
 /**
  * Enhanced Micro-interactions Hook
  * Provides easy-to-use animations and interactions for React components
@@ -170,20 +172,20 @@ export const useMicroInteractions = (
     setIsSuccess(true);
     setIsError(false);
     
-    // Reset success state after animation
+    // Reset success state after animation (2 seconds)
     setTimeout(() => {
       setIsSuccess(false);
-    }, 2000);
+    }, 2 * TIME_MS.ONE_SECOND);
   }, []);
 
   const triggerError = useCallback(() => {
     setIsError(true);
     setIsSuccess(false);
     
-    // Reset error state after animation
+    // Reset error state after animation (2 seconds)
     setTimeout(() => {
       setIsError(false);
-    }, 2000);
+    }, 2 * TIME_MS.ONE_SECOND);
   }, []);
 
   const reset = useCallback(() => {
