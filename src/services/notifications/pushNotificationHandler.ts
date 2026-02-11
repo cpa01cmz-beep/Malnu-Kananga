@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, PUSH_NOTIFICATION_LOG_MESSAGES } from '../../constants';
 import { logger } from '../../utils/logger';
 
 /* eslint-disable no-undef */
@@ -22,7 +22,7 @@ export class PushNotificationHandler {
   private subscription: PushSubscription | null = null;
 
   constructor() {
-    this.loadSubscription().catch(err => logger.error('Failed to initialize push subscription', err));
+    this.loadSubscription().catch(err => logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.INIT_FAILED, err));
   }
 
   private saveSubscription(subscription: PushSubscription): void {
@@ -32,28 +32,28 @@ export class PushNotificationHandler {
         subscription.endpoint
       );
     } catch (error) {
-      logger.error('Failed to save push subscription:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.SAVE_SUBSCRIPTION_FAILED, error);
     }
   }
 
   private async loadSubscription(): Promise<void> {
     try {
       if (!('serviceWorker' in navigator)) {
-        logger.warn('Service Worker not supported, cannot load push subscription.');
+        logger.warn(PUSH_NOTIFICATION_LOG_MESSAGES.SERVICE_WORKER_NOT_SUPPORTED);
         return;
       }
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
       if (subscription) {
         this.subscription = subscription;
-        logger.info('Loaded existing push subscription from browser.');
+        logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.SUBSCRIPTION_LOADED);
         this.saveSubscription(subscription);
       } else {
-        logger.info('No active push subscription found.');
+        logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.NO_SUBSCRIPTION_FOUND);
         this.clearSubscription();
       }
     } catch (error) {
-      logger.error('Failed to load push subscription:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.LOAD_SUBSCRIPTION_FAILED, error);
     }
   }
 
@@ -61,7 +61,7 @@ export class PushNotificationHandler {
     try {
       localStorage.removeItem(STORAGE_KEYS.PUSH_SUBSCRIPTION_KEY);
     } catch (error) {
-      logger.error('Failed to clear push subscription:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.CLEAR_SUBSCRIPTION_FAILED, error);
     }
   }
 
@@ -82,11 +82,11 @@ export class PushNotificationHandler {
   async requestPermission(): Promise<boolean> {
     try {
       if (!('Notification' in window)) {
-        throw new Error('Notifications not supported');
+        throw new Error(PUSH_NOTIFICATION_LOG_MESSAGES.NOTIFICATIONS_NOT_SUPPORTED);
       }
 
       if (Notification.permission === 'granted') {
-        logger.info('Notification permission already granted');
+        logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.PERMISSION_ALREADY_GRANTED);
         return true;
       }
 
@@ -94,14 +94,14 @@ export class PushNotificationHandler {
       const granted = permission === 'granted';
 
       if (granted) {
-        logger.info('Notification permission granted');
+        logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.PERMISSION_GRANTED);
       } else {
-        logger.warn('Notification permission denied');
+        logger.warn(PUSH_NOTIFICATION_LOG_MESSAGES.PERMISSION_DENIED);
       }
 
       return granted;
     } catch (error) {
-      logger.error('Failed to request notification permission:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.REQUEST_PERMISSION_FAILED, error);
       return false;
     }
   }
@@ -111,13 +111,13 @@ export class PushNotificationHandler {
       await this.requestPermission();
 
       if (!('serviceWorker' in navigator)) {
-        throw new Error('Service worker not available');
+        throw new Error(PUSH_NOTIFICATION_LOG_MESSAGES.SERVICE_WORKER_NOT_AVAILABLE);
       }
 
       this.swRegistration = await navigator.serviceWorker.ready;
 
       if (!this.swRegistration.pushManager) {
-        throw new Error('PushManager not available');
+        throw new Error(PUSH_NOTIFICATION_LOG_MESSAGES.PUSH_MANAGER_NOT_AVAILABLE);
       }
 
       this.subscription = await this.swRegistration.pushManager.subscribe({
@@ -126,11 +126,11 @@ export class PushNotificationHandler {
       });
 
       this.saveSubscription(this.subscription);
-      logger.info('Successfully subscribed to push notifications');
+      logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.SUBSCRIBE_SUCCESS);
 
       return this.subscription;
     } catch (error) {
-      logger.error('Failed to subscribe to push notifications:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.SUBSCRIBE_FAILED, error);
       return null;
     }
   }
@@ -138,18 +138,18 @@ export class PushNotificationHandler {
   async unsubscribeFromPush(): Promise<boolean> {
     try {
       if (!this.subscription) {
-        logger.info('No active subscription to unsubscribe');
+        logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.NO_SUBSCRIPTION_TO_UNSUBSCRIBE);
         return true;
       }
 
       const unsubscribed = await this.subscription.unsubscribe();
       this.subscription = null;
       this.clearSubscription();
-      logger.info('Successfully unsubscribed from push notifications');
+      logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.UNSUBSCRIBE_SUCCESS);
 
       return unsubscribed;
     } catch (error) {
-      logger.error('Failed to unsubscribe from push notifications:', error);
+      logger.error(PUSH_NOTIFICATION_LOG_MESSAGES.UNSUBSCRIBE_FAILED, error);
       return false;
     }
   }
@@ -162,7 +162,7 @@ export class PushNotificationHandler {
     this.subscription = null;
     this.swRegistration = null;
     this.clearSubscription();
-    logger.info('Push notification handler cleaned up');
+    logger.info(PUSH_NOTIFICATION_LOG_MESSAGES.CLEANUP_COMPLETE);
   }
 
   isPermissionGranted(): boolean {
