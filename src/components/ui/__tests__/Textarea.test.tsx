@@ -1,6 +1,6 @@
  
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Textarea from '../Textarea';
 
 describe('Textarea Component', () => {
@@ -287,6 +287,54 @@ describe('Textarea Component', () => {
       fireEvent.keyDown(textarea, { key: 'Escape' });
 
       expect(document.activeElement).toBe(textarea);
+    });
+
+    it('should show escape hint tooltip when focused with value and clearOnEscape is true', async () => {
+      render(<Textarea value="Some text" clearOnEscape />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+
+      await waitFor(() => {
+        const hint = screen.getByRole('tooltip');
+        expect(hint).toBeInTheDocument();
+        expect(hint).toHaveTextContent('ESC');
+        expect(hint).toHaveTextContent('bersihkan');
+      }, { timeout: 500 });
+    });
+
+    it('should not show escape hint when clearOnEscape is false', async () => {
+      render(<Textarea value="Some text" clearOnEscape={false} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const hint = screen.queryByRole('tooltip');
+      expect(hint).not.toBeInTheDocument();
+    });
+
+    it('should not show escape hint when textarea is empty', async () => {
+      render(<Textarea value="" clearOnEscape />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const hint = screen.queryByRole('tooltip');
+      expect(hint).not.toBeInTheDocument();
+    });
+
+    it('should hide escape hint when textarea loses focus', async () => {
+      render(<Textarea value="Some text" clearOnEscape />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      }, { timeout: 500 });
+
+      fireEvent.blur(textarea);
+      const hint = screen.queryByRole('tooltip');
+      expect(hint).not.toBeInTheDocument();
     });
   });
 });
