@@ -2,22 +2,23 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import LoginModal from './components/LoginModal';
 import Toast, { ToastType } from './components/Toast';
-
-// Lazy load ChatWindow to reduce initial bundle size
-const ChatWindow = lazy(() => import('./components/ChatWindow'));
-import ThemeSelector from './components/ThemeSelector';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
 import ErrorBoundary from './components/ui/ErrorBoundary';
-import ConfirmationDialog from './components/ui/ConfirmationDialog';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
 import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { CommandPalette, Command } from './components/ui/CommandPalette';
+import type { Command } from './components/ui/CommandPalette';
+
+// Lazy load non-critical components to reduce initial bundle size
+const ChatWindow = lazy(() => import('./components/ChatWindow'));
+const LoginModal = lazy(() => import('./components/LoginModal'));
+const ThemeSelector = lazy(() => import('./components/ThemeSelector'));
+const ConfirmationDialog = lazy(() => import('./components/ui/ConfirmationDialog'));
+const CommandPalette = lazy(() => import('./components/ui/CommandPalette').then(m => ({ default: m.CommandPalette })));
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -458,11 +459,13 @@ const App: React.FC = () => {
         </Suspense>
       </div>
 
-      <LoginModal 
-        isOpen={isLoginOpen} 
-        onClose={() => setIsLoginOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
-      />
+      <Suspense fallback={null}>
+        <LoginModal 
+          isOpen={isLoginOpen} 
+          onClose={() => setIsLoginOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      </Suspense>
       
       <Suspense fallback={<SuspenseLoading message="Memuat formulir pendaftaran..." />}>
         <PPDBRegistration
@@ -496,39 +499,47 @@ const App: React.FC = () => {
         onClose={hideToast}
       />
       
-      <ThemeSelector
-        isOpen={isThemeSelectorOpen}
-        onClose={() => setIsThemeSelectorOpen(false)}
+      <Suspense fallback={null}>
+        <ThemeSelector
+          isOpen={isThemeSelectorOpen}
+          onClose={() => setIsThemeSelectorOpen(false)}
         />
+      </Suspense>
 
-      <ConfirmationDialog
-        isOpen={isResetConfirmOpen}
-        title="Reset Konten Website"
-        message="Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus secara permanen."
-        confirmText="Ya, Reset"
-        cancelText="Batal"
-        type="danger"
-        onConfirm={confirmResetContent}
-        onCancel={() => setIsResetConfirmOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <ConfirmationDialog
+          isOpen={isResetConfirmOpen}
+          title="Reset Konten Website"
+          message="Apakah Anda yakin ingin mengembalikan konten website ke pengaturan awal? Semua perubahan akan dihapus secara permanen."
+          confirmText="Ya, Reset"
+          cancelText="Batal"
+          type="danger"
+          onConfirm={confirmResetContent}
+          onCancel={() => setIsResetConfirmOpen(false)}
+        />
+      </Suspense>
 
-      <ConfirmationDialog
-        isOpen={isSWUpdateConfirmOpen}
-        title="Update Tersedia"
-        message="Konten baru tersedia untuk aplikasi. Apakah Anda ingin memperbarui sekarang?"
-        confirmText="Ya, Update"
-        cancelText="Nanti Saja"
-        type="info"
-        onConfirm={handleSWUpdate}
-        onCancel={() => setIsSWUpdateConfirmOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <ConfirmationDialog
+          isOpen={isSWUpdateConfirmOpen}
+          title="Update Tersedia"
+          message="Konten baru tersedia untuk aplikasi. Apakah Anda ingin memperbarui sekarang?"
+          confirmText="Ya, Update"
+          cancelText="Nanti Saja"
+          type="info"
+          onConfirm={handleSWUpdate}
+          onCancel={() => setIsSWUpdateConfirmOpen(false)}
+        />
+      </Suspense>
 
-      <CommandPalette
-        isOpen={isCommandPaletteOpen}
-        onClose={() => setIsCommandPaletteOpen(false)}
-        commands={commands}
-        placeholder="Cari perintah atau navigasi... (ketik ? untuk bantuan)"
-      />
+      <Suspense fallback={null}>
+        <CommandPalette
+          isOpen={isCommandPaletteOpen}
+          onClose={() => setIsCommandPaletteOpen(false)}
+          commands={commands}
+          placeholder="Cari perintah atau navigasi... (ketik ? untuk bantuan)"
+        />
+      </Suspense>
       </div>
       )}
       </ErrorBoundary>
