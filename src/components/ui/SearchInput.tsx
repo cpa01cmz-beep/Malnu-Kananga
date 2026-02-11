@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { MagnifyingGlassIcon } from '../icons/NotificationIcons';
 import { XMarkIcon } from '../icons/MaterialIcons';
@@ -85,6 +85,8 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
 }, ref) => {
   const [isClearPressed, setIsClearPressed] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { onTap, onSelection, onDelete } = useHapticFeedback();
   const searchId = id || idGenerators.input();
@@ -132,11 +134,38 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
 
   // Enhanced blur handler
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    // Hide escape hint when input loses focus
+    setShowEscapeHint(false);
+    if (escapeHintTimeoutRef.current) {
+      clearTimeout(escapeHintTimeoutRef.current);
+    }
     validation.blurHandler();
     if (onBlur) {
       onBlur(e);
     }
   };
+
+  // Show escape hint when input is focused and has value
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (value && String(value).length > 0) {
+      // Delay showing hint to avoid flickering on quick interactions
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, 400);
+    }
+    if (props.onFocus) {
+      props.onFocus(e);
+    }
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Enhanced key down handler
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -200,12 +229,36 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           aria-invalid={finalState === 'error' ? 'true' : 'false'}
           onChange={handleChange}
           onBlur={handleBlur}
-          onFocus={props.onFocus}
+          onFocus={handleFocus}
           onKeyDown={handleKeyDown}
           value={value}
           {...accessibilityProps}
           {...props}
         />
+
+        {showEscapeHint && value && String(value).length > 0 && (
+          <div
+            className={`
+              absolute -top-9 left-1/2 -translate-x-1/2 
+              px-2.5 py-1 
+              bg-neutral-800 dark:bg-neutral-700 
+              text-white text-[10px] font-medium 
+              rounded-md shadow-md 
+              whitespace-nowrap
+              transition-all duration-200 ease-out
+              pointer-events-none
+              z-10
+            `.replace(/\s+/g, ' ').trim()}
+            role="tooltip"
+            aria-hidden={!showEscapeHint}
+          >
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">ESC</kbd>
+              <span>bersihkan</span>
+            </span>
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </div>
+        )}
 
         {showIcon && iconPosition === 'right' && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 dark:text-neutral-500 pointer-events-none" aria-hidden="true">
