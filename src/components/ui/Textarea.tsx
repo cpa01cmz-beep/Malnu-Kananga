@@ -1,6 +1,7 @@
-import React, { forwardRef, useEffect, useRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { XMarkIcon } from '../icons/MaterialIcons';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 // Micro-UX: Character count indicator with progressive visual feedback
 interface CharacterCountIndicatorProps {
@@ -155,6 +156,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
 }, ref) => {
   const internalRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
+  const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
@@ -162,7 +164,26 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const accessibilityDescribedBy = accessibility?.describedBy;
   const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
 
-  // Enhanced validation state management
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan textarea';
+  const clearButtonTooltipId = `${textareaId}-clear-tooltip`;
+
+  const showTooltip = useCallback(() => {
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setIsTooltipVisible(true);
+    }, 400);
+  }, []);
+
+  const hideTooltip = useCallback(() => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+      tooltipTimeoutRef.current = null;
+    }
+    setIsTooltipVisible(false);
+  }, []);
+
+  const { onSelection } = useHapticFeedback();
+
   const validation = useFieldValidation({
     value: String(value || ''),
     rules: validationRules,
@@ -194,7 +215,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     validation.changeHandler(e.target.value);
   };
 
-  // Enhanced blur handler
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     validation.blurHandler();
     if (onBlur) {
@@ -202,16 +222,16 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     }
   };
 
-  // Clear button handler
   const handleClear = () => {
+    onSelection();
     const syntheticEvent = {
       target: { value: '' }
     } as React.ChangeEvent<HTMLTextAreaElement>;
     handleChange(syntheticEvent);
-    // Focus back on textarea after clearing for better UX
     if (textareaRef.current) {
       textareaRef.current.focus();
     }
+    setIsTooltipVisible(false);
   };
 
   // Escape key handler to clear input value
@@ -293,17 +313,39 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         {...props}
       />
 
-        {/* Clear button - appears when there's a value and showClearButton is true */}
         {hasClearButton && !validation.state.isValidating && (
-          <button
-            type="button"
-            onClick={handleClear}
-            className="absolute right-3 top-3 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50"
-            aria-label="Bersihkan textarea"
-            title="Bersihkan textarea"
-          >
-            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={handleClear}
+              onMouseEnter={showTooltip}
+              onMouseLeave={hideTooltip}
+              onFocus={() => setIsTooltipVisible(true)}
+              onBlur={hideTooltip}
+              className="absolute right-3 top-3 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 active:scale-95 touch-manipulation"
+              aria-label="Bersihkan textarea"
+              aria-describedby={isTooltipVisible ? clearButtonTooltipId : undefined}
+              style={{ touchAction: 'manipulation' }}
+            >
+              <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+            </button>
+            {isTooltipVisible && (
+              <div
+                id={clearButtonTooltipId}
+                role="tooltip"
+                className="absolute right-3 top-10 z-20 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded shadow-lg animate-in fade-in duration-150"
+              >
+                <div className="flex items-center gap-1.5">
+                  <span>{CLEAR_BUTTON_TOOLTIP_TEXT}</span>
+                  {clearOnEscape && (
+                    <kbd className="px-1 py-0.5 bg-neutral-600 dark:bg-neutral-500 rounded text-[10px] font-mono">
+                      Esc
+                    </kbd>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {validation.state.isValidating && (
