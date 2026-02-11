@@ -500,7 +500,14 @@ export const OPACITY_TOKENS = {
 } as const;
 
 // Time constants in milliseconds - use these instead of hardcoded calculations
+// Flexy Principle: NEVER use magic numbers for timeouts!
 export const TIME_MS = {
+    // Very short delays for immediate UI updates
+    VERY_SHORT: 10,
+    SHORT: 50,
+    ANIMATION: 150,
+    DEBOUNCE: 300,
+    // Standard time units
     ONE_SECOND: 1000,
     FIVE_SECONDS: 5 * 1000,
     TEN_SECONDS: 10 * 1000,
@@ -599,6 +606,15 @@ export const UI_DELAYS = {
     REDIRECT_DELAY: 3000,
     USER_IMPORT_DELAY: 100,
     SYNC_BATCH_DELAY: 100, // Delay between processing batch operations
+    // Flexy Principle: Accessibility timing must be configurable!
+    ACCESSIBILITY_ANNOUNCE: 100, // Delay for screen reader announcements to ensure proper DOM update
+} as const;
+
+// UI gesture thresholds - Flexy: Never hardcode gesture values!
+export const UI_GESTURES = {
+    MIN_SWIPE_DISTANCE: 50, // Minimum swipe distance in pixels to trigger actions
+    SWIPE_VELOCITY_THRESHOLD: 0.5, // Minimum velocity for swipe detection
+    TOUCH_ACTION_DELAY: 50, // Delay before processing touch actions
 } as const;
 
 // Cache and storage limits

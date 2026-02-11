@@ -13,7 +13,7 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
-import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES, UI_SPACING } from '../constants';
+import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES, UI_SPACING, UI_GESTURES } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { 
@@ -99,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({
     const prefersReducedMotion = useReducedMotion();
 
     // Touch gesture handling for swipe-to-close
-    const minSwipeDistance = 50;
+    const minSwipeDistance = UI_GESTURES.MIN_SWIPE_DISTANCE;
     
     const onTouchStart = (e: React.TouchEvent) => {
         setTouchEnd(null);
