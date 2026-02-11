@@ -30,6 +30,8 @@ interface DashboardActionCardProps {
   isExtraRole?: boolean;
   extraRoleBadge?: string;
   disabled?: boolean;
+  /** Reason shown in tooltip when card is disabled */
+  disabledReason?: string;
   layout?: 'vertical' | 'horizontal';
   onClick?: () => void;
   ariaLabel?: string;
@@ -118,6 +120,7 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
   isExtraRole = false,
   extraRoleBadge,
   disabled = false,
+  disabledReason,
   layout = 'vertical',
   onClick,
   ariaLabel,
@@ -138,18 +141,30 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
         className={`${isDisabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
         style={style}
       >
-        <div className="flex items-start gap-4">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${theme.icon}`}>
-            {icon}
+        <div className="relative group">
+          <div className="flex items-start gap-4">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${theme.icon}`}>
+              {icon}
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                {title}
+              </h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                {description}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 text-left">
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-              {title}
-            </h3>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
-              {description}
-            </p>
-          </div>
+
+          {disabled && disabledReason && (
+            <span
+              className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 ease-out z-50"
+              role="tooltip"
+            >
+              {disabledReason}
+              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+            </span>
+          )}
         </div>
       </Card>
     );
@@ -165,35 +180,47 @@ const DashboardActionCard: React.FC<DashboardActionCardProps> = ({
       className={`${isDisabled ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       style={style}
     >
-      <div className={`p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300 ${theme.icon}`}>
-        {icon}
-      </div>
-      
-      <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-        {title}
-      </h3>
-      
-      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">
-        {description}
-      </p>
-      
-      <div className="flex flex-wrap gap-2 mb-2">
-        {isExtraRole && extraRoleBadge && (
-          <Badge variant="warning" size="sm">
-            {extraRoleBadge}
+      <div className="relative group">
+        <div className={`p-3 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300 ${theme.icon}`}>
+          {icon}
+        </div>
+        
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
+          {title}
+        </h3>
+        
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-2">
+          {description}
+        </p>
+        
+        <div className="flex flex-wrap gap-2 mb-2">
+          {isExtraRole && extraRoleBadge && (
+            <Badge variant="warning" size="sm">
+              {extraRoleBadge}
+            </Badge>
+          )}
+
+          <Badge variant="neutral" size="md" className={isOnline ? theme.badge : theme.badgeOffline}>
+            {!isOnline ? (offlineBadge || 'Offline') : (statusBadge || 'Aktif')}
           </Badge>
+        </div>
+        
+        {!isOnline && (
+          <p className="text-xs text-amber-600 dark:text-amber-400">
+            Memerlukan koneksi internet
+          </p>
         )}
 
-        <Badge variant="neutral" size="md" className={isOnline ? theme.badge : theme.badgeOffline}>
-          {!isOnline ? (offlineBadge || 'Offline') : (statusBadge || 'Aktif')}
-        </Badge>
+        {disabled && disabledReason && (
+          <span
+            className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-neutral-800 dark:bg-neutral-700 rounded-lg shadow-lg whitespace-nowrap pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-visible:opacity-100 group-focus-visible:visible transition-all duration-200 ease-out z-50"
+            role="tooltip"
+          >
+            {disabledReason}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </span>
+        )}
       </div>
-      
-      {!isOnline && (
-        <p className="text-xs text-amber-600 dark:text-amber-400">
-          Memerlukan koneksi internet
-        </p>
-      )}
     </Card>
   );
 };
