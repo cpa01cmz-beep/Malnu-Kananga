@@ -10,6 +10,8 @@ interface DisabledLinkButtonProps {
   ariaLabel?: string;
   /** Additional CSS classes */
   className?: string;
+  /** Show "Coming Soon" badge - makes it clear feature is planned, not broken */
+  showComingSoonBadge?: boolean;
 }
 
 /**
@@ -27,6 +29,7 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
   disabledReason,
   ariaLabel,
   className = '',
+  showComingSoonBadge = true,
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const prefersReducedMotion = useReducedMotion();
@@ -46,13 +49,14 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
     rounded
     px-1
     py-0.5
-    transition-colors
+    transition-all
     duration-200
     focus:outline-none
     focus-visible:ring-2
     focus-visible:ring-primary-500/50
     focus-visible:ring-offset-1
     dark:focus-visible:ring-offset-neutral-800
+    hover:opacity-80
   `;
 
   const tooltipClasses = `
@@ -94,14 +98,42 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
       disabled
       className={`${baseClasses} ${className}`.trim()}
       title={disabledReason}
-      aria-label={ariaLabel || `${children}`}
+      aria-label={ariaLabel || `${children} (Segera hadir)`}
       aria-disabled="true"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
       onBlur={handleBlur}
     >
-      {children}
+      <span className="flex items-center gap-2">
+        {children}
+        {showComingSoonBadge && (
+          <span
+            className={`
+              inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-semibold
+              bg-neutral-200 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400
+              rounded-full border border-neutral-300 dark:border-neutral-600
+              ${prefersReducedMotion ? '' : 'transition-all duration-200 group-hover:bg-primary-100 group-hover:text-primary-600 dark:group-hover:bg-primary-900/30 dark:group-hover:text-primary-400'}
+            `.trim()}
+            aria-hidden="true"
+          >
+            <svg
+              className="w-3 h-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Segera
+          </span>
+        )}
+      </span>
       <span className={tooltipClasses} role="tooltip">
         {disabledReason}
         <span className={tooltipArrowClasses} aria-hidden="true" />
