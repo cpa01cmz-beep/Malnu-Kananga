@@ -4,6 +4,7 @@ import { useHapticFeedback } from '../../utils/hapticFeedback';
 export type CopyButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost';
 export type CopyButtonSize = 'sm' | 'md' | 'lg';
 export type CopyButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
+export type CopyButtonState = 'idle' | 'copied' | 'error';
 
 interface CopyButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick'> {
   text: string;
@@ -12,6 +13,7 @@ interface CopyButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElem
   tooltipPosition?: CopyButtonTooltipPosition;
   showTooltip?: boolean;
   successMessage?: string;
+  errorMessage?: string;
   resetDelay?: number;
   ariaLabel?: string;
   onCopied?: (success: boolean) => void;
@@ -72,6 +74,23 @@ const CheckIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
+const ErrorIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg
+    className={className}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2.5}
+    aria-hidden="true"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6 18L18 6M6 6l12 12"
+    />
+  </svg>
+);
+
 const CopyButton: React.FC<CopyButtonProps> = ({
   text,
   variant = 'default',
@@ -79,6 +98,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   tooltipPosition = 'bottom',
   showTooltip = true,
   successMessage = 'Copied!',
+  errorMessage = 'Failed to copy',
   resetDelay = 2000,
   ariaLabel = 'Copy to clipboard',
   className = '',
@@ -86,38 +106,56 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   onCopied,
   ...props
 }) => {
-  const [isCopied, setIsCopied] = useState(false);
+  const [buttonState, setButtonState] = useState<CopyButtonState>('idle');
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { onSuccess } = useHapticFeedback();
+  const { onSuccess, onError } = useHapticFeedback();
   const hasTooltip = showTooltip;
 
-  const showCopiedFeedback = useCallback(() => {
-    setIsCopied(true);
+  const isCopied = buttonState === 'copied';
+  const isError = buttonState === 'error';
+
+  const showSuccessFeedback = useCallback(() => {
+    setButtonState('copied');
     
-    // Clear any existing timeout
     if (resetTimeoutRef.current) {
       clearTimeout(resetTimeoutRef.current);
     }
     
-    // Reset after delay
     resetTimeoutRef.current = setTimeout(() => {
-      setIsCopied(false);
+      setButtonState('idle');
+    }, resetDelay);
+  }, [resetDelay]);
+
+  const showErrorFeedback = useCallback(() => {
+    setButtonState('error');
+    setIsShaking(true);
+    
+    if (resetTimeoutRef.current) {
+      clearTimeout(resetTimeoutRef.current);
+    }
+    
+    setTimeout(() => {
+      setIsShaking(false);
+    }, 500);
+    
+    resetTimeoutRef.current = setTimeout(() => {
+      setButtonState('idle');
     }, resetDelay);
   }, [resetDelay]);
 
   const handleCopy = useCallback(async () => {
-    if (disabled || isCopied) return;
+    if (disabled || buttonState !== 'idle') return;
 
     try {
       await navigator.clipboard.writeText(text);
-      showCopiedFeedback();
-      onSuccess(); // Haptic feedback for mobile users
+      showSuccessFeedback();
+      onSuccess();
       onCopied?.(true);
     } catch {
-      // Fallback for older browsers or if clipboard API fails
       try {
         const textArea = document.createElement('textarea');
         textArea.value = text;
@@ -131,29 +169,32 @@ const CopyButton: React.FC<CopyButtonProps> = ({
         document.body.removeChild(textArea);
 
         if (successful) {
-          showCopiedFeedback();
-          onSuccess(); // Haptic feedback for mobile users
+          showSuccessFeedback();
+          onSuccess();
           onCopied?.(true);
         } else {
+          showErrorFeedback();
+          onError();
           onCopied?.(false);
         }
       } catch {
+        showErrorFeedback();
+        onError();
         onCopied?.(false);
       }
     }
-  }, [text, disabled, isCopied, showCopiedFeedback, onCopied, onSuccess]);
+  }, [text, disabled, buttonState, showSuccessFeedback, showErrorFeedback, onCopied, onSuccess, onError]);
 
   const showTooltipFn = useCallback(() => {
-    if (!isCopied) {
+    if (buttonState === 'idle') {
       setIsTooltipVisible(true);
     }
-  }, [isCopied]);
+  }, [buttonState]);
 
   const hideTooltip = useCallback(() => {
     setIsTooltipVisible(false);
   }, []);
 
-  // Cleanup on unmount
   React.useEffect(() => {
     return () => {
       if (resetTimeoutRef.current) {
@@ -167,6 +208,8 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     ${variantClasses[variant]}
     ${sizeClasses[size]}
     ${isCopied ? 'text-green-600 dark:text-green-400' : ''}
+    ${isError ? 'text-red-600 dark:text-red-400' : ''}
+    ${isShaking ? 'error-animation' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -184,14 +227,25 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-t-transparent border-b-transparent border-l-transparent',
   };
 
-  const tooltipText = isCopied ? successMessage : 'Copy';
+  const tooltipText = isCopied ? successMessage : isError ? errorMessage : 'Copy';
+  const tooltipBgClass = isCopied 
+    ? 'bg-green-600 dark:bg-green-500' 
+    : isError 
+      ? 'bg-red-600 dark:bg-red-500' 
+      : 'bg-neutral-800 dark:bg-neutral-700';
+
+  const getAriaLabel = () => {
+    if (isCopied) return `${ariaLabel} - ${successMessage}`;
+    if (isError) return `${ariaLabel} - ${errorMessage}`;
+    return ariaLabel;
+  };
 
   return (
     <button
       ref={buttonRef}
       type="button"
       className={classes}
-      aria-label={isCopied ? `${ariaLabel} - ${successMessage}` : ariaLabel}
+      aria-label={getAriaLabel()}
       aria-describedby={hasTooltip ? tooltipId : undefined}
       aria-live="polite"
       onClick={handleCopy}
@@ -203,10 +257,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       {...props}
     >
       <span className={`relative flex items-center justify-center ${iconSizeClasses[size]}`} aria-hidden="true">
-        {/* Copy Icon */}
         <span
           className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
-            isCopied 
+            isCopied || isError
               ? 'opacity-0 scale-50 rotate-[-45deg]' 
               : 'opacity-100 scale-100 rotate-0'
           }`}
@@ -214,7 +267,6 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           <CopyIcon className="w-full h-full" />
         </span>
         
-        {/* Check Icon */}
         <span
           className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
             isCopied 
@@ -223,6 +275,16 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           }`}
         >
           <CheckIcon className="w-full h-full" />
+        </span>
+
+        <span
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ease-out ${
+            isError 
+              ? 'opacity-100 scale-100 rotate-0' 
+              : 'opacity-0 scale-50 rotate-[-45deg]'
+          }`}
+        >
+          <ErrorIcon className="w-full h-full" />
         </span>
       </span>
       
@@ -233,17 +295,17 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           className={`
             absolute z-50 px-2.5 py-1.5 text-xs font-medium rounded-md shadow-lg whitespace-nowrap pointer-events-none
             transition-all duration-200 ease-out
-            ${isCopied ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
+            ${tooltipBgClass}
             text-white
             ${tooltipPositionClasses[tooltipPosition]}
-            ${isTooltipVisible || isCopied ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+            ${isTooltipVisible || isCopied || isError ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
           {tooltipText}
           <span
             className={`
               absolute w-2 h-2 rotate-45
-              ${isCopied ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
+              ${tooltipBgClass}
               ${tooltipArrowClasses[tooltipPosition]}
             `.replace(/\s+/g, ' ').trim()}
             aria-hidden="true"

@@ -19,6 +19,10 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   showSuccess?: boolean;
   /** Duration to show success state in milliseconds */
   successDuration?: number;
+  /** Show error state with X mark */
+  showError?: boolean;
+  /** Duration to show error state in milliseconds */
+  errorDuration?: number;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
@@ -57,28 +61,33 @@ const IconButton: React.FC<IconButtonProps> = ({
   isLoading = false,
   showSuccess = false,
   successDuration = 2000,
+  showError = false,
+  errorDuration = 2000,
   className = '',
   disabled,
   ...props
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+  const [isErrorVisible, setIsErrorVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible;
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !isErrorVisible;
   const hasDisabledReason = Boolean(disabledReason) && disabled;
 
   // Handle success state with auto-reset
   useEffect(() => {
     if (showSuccess) {
       setIsSuccessVisible(true);
-      
+      setIsErrorVisible(false);
+
       // Clear any existing timeout
       if (successTimeoutRef.current) {
         clearTimeout(successTimeoutRef.current);
       }
-      
+
       // Auto-reset success state after duration
       successTimeoutRef.current = setTimeout(() => {
         setIsSuccessVisible(false);
@@ -92,6 +101,30 @@ const IconButton: React.FC<IconButtonProps> = ({
     };
   }, [showSuccess, successDuration]);
 
+  // Handle error state with auto-reset
+  useEffect(() => {
+    if (showError) {
+      setIsErrorVisible(true);
+      setIsSuccessVisible(false);
+
+      // Clear any existing timeout
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+
+      // Auto-reset error state after duration
+      errorTimeoutRef.current = setTimeout(() => {
+        setIsErrorVisible(false);
+      }, errorDuration);
+    }
+
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, [showError, errorDuration]);
+
   const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
   const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
 
@@ -101,6 +134,7 @@ const IconButton: React.FC<IconButtonProps> = ({
     ${sizeClasses[size]}
     ${isLoading ? 'cursor-wait opacity-80' : ''}
     ${isSuccessVisible ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-700' : ''}
+    ${isErrorVisible ? 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-700' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -126,7 +160,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       aria-describedby={hasTooltip ? tooltipId : undefined}
       aria-busy={isLoading}
       aria-live="polite"
-      aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : ariaLabel}
+      aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : isErrorVisible ? `${ariaLabel} - Gagal` : ariaLabel}
       onMouseEnter={hasTooltip ? showTooltip : undefined}
       onMouseLeave={hasTooltip ? hideTooltip : undefined}
       onFocus={hasTooltip ? showTooltip : undefined}
@@ -176,10 +210,27 @@ const IconButton: React.FC<IconButtonProps> = ({
           </span>
         )}
 
+        {/* Error X Mark */}
+        {isErrorVisible && !isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center animate-in fade-in zoom-in duration-200">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </span>
+        )}
+
         {/* Original Icon */}
         <span
           className={`transition-all duration-200 ${
-            isLoading || isSuccessVisible ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+            isLoading || isSuccessVisible || isErrorVisible ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
           }`}
         >
           {icon}
