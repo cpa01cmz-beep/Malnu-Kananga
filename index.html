@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
+    <!-- DNS Prefetch for external resources (lower priority than preconnect) -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://malnu-kananga.pages.dev/" />
@@ -39,20 +43,10 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
-    <!-- Preconnect to Google Fonts for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preconnect to API endpoint for faster API calls (crossorigin needed for CORS) -->
+    <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
     
-    <!-- Preconnect to API endpoint for faster API calls -->
-    <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" />
-
-    <!-- Prefetch likely next pages -->
-    <link rel="prefetch" href="/documentation" />
-    <link rel="prefetch" href="/login" />
-    
-    <!-- DNS Prefetch for external resources -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <!-- DNS Prefetch for API endpoint (lower priority) -->
     <link rel="dns-prefetch" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" />
     
     <!-- Note: Vite automatically generates modulepreload links for critical chunks -->
@@ -131,9 +125,7 @@
         min-height: 100vh;
       }
     </style>
-    <!-- Preload critical CSS -->
-    <link rel="preload" href="/src/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/src/index.css"></noscript>
+    <!-- Note: Vite handles CSS injection automatically during build -->
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
