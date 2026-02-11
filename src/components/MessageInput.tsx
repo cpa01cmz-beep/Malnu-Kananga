@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
-import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, UI_DIMENSIONS } from '../constants';
 import type { User } from '../types';
 import { logger } from '../utils/logger';
 
@@ -162,7 +162,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
             aria-disabled={disabled || isSending}
             rows={1}
             className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400 dark:disabled:bg-gray-700"
-            style={{ minHeight: '40px', maxHeight: '120px' }}
+            style={{ minHeight: UI_DIMENSIONS.TEXTAREA.MIN_HEIGHT, maxHeight: UI_DIMENSIONS.TEXTAREA.MAX_HEIGHT }}
           />
         </div>
 

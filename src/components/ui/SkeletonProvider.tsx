@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import EnhancedSkeleton, { SkeletonVariant } from './EnhancedSkeleton';
+import { UI_DIMENSIONS } from '../../constants';
 
 interface SkeletonConfig {
   variant: SkeletonVariant;
@@ -175,9 +176,9 @@ export const SkeletonPresets = {
   calendar: { variant: 'calendar' as SkeletonVariant },
   
   // Simple skeletons
-  avatar: { variant: 'avatar' as SkeletonVariant, height: '40px', width: '40px' },
-  button: { variant: 'rectangular' as SkeletonVariant, height: '40px', width: '120px' },
-  input: { variant: 'rectangular' as SkeletonVariant, height: '48px' },
+  avatar: { variant: 'avatar' as SkeletonVariant, height: UI_DIMENSIONS.SKELETON.AVATAR_SMALL.height, width: UI_DIMENSIONS.SKELETON.AVATAR_SMALL.width },
+  button: { variant: 'rectangular' as SkeletonVariant, height: UI_DIMENSIONS.SKELETON.BUTTON_MEDIUM.height, width: UI_DIMENSIONS.SKELETON.BUTTON_MEDIUM.width },
+  input: { variant: 'rectangular' as SkeletonVariant, height: UI_DIMENSIONS.SKELETON.INPUT_HEIGHT },
 };
 
 export default SkeletonContext;
