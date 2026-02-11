@@ -3,6 +3,8 @@
  * with fallback for older browsers
  */
 
+import { logger } from './logger';
+
 export interface CopyResult {
   success: boolean;
   message: string;
@@ -23,7 +25,7 @@ export async function copyToClipboard(text: string): Promise<CopyResult> {
         message: 'Berhasil disalin ke clipboard'
       };
     } catch (error) {
-      console.warn('Clipboard API failed, trying fallback:', error);
+      logger.warn('Clipboard API failed, trying fallback', error);
     }
   }
 
@@ -67,7 +69,7 @@ function fallbackCopyToClipboard(text: string): CopyResult {
     }
   } catch (error) {
     document.body.removeChild(textArea);
-    console.error('Fallback copy failed:', error);
+    logger.error('Fallback copy failed', error);
     return {
       success: false,
       message: 'Gagal menyalin ke clipboard'
