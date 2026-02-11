@@ -13,7 +13,7 @@ import AICacheManager from './AICacheManager';
 import AnnouncementManager from './AnnouncementManager';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import { ToastType } from './Toast';
-import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants';
+import { STORAGE_KEYS, OPACITY_TOKENS, RETRY_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedAdminData } from '../services/offlineDataService';
@@ -189,7 +189,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
             });
           },
           'loadDashboardData',
-          { maxAttempts: 3, baseDelayMs: 1000, maxDelayMs: 5000, backoffMultiplier: 2 }
+          {
+            maxAttempts: RETRY_CONFIG.MAX_ATTEMPTS,
+            baseDelayMs: RETRY_CONFIG.BASE_DELAY_MS,
+            maxDelayMs: RETRY_CONFIG.MAX_DELAY_MS,
+            backoffMultiplier: RETRY_CONFIG.BACKOFF_MULTIPLIER,
+          }
         );
         setSyncStatus('synced');
       } catch (err) {
