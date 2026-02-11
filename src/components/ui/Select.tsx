@@ -18,6 +18,8 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   onClear?: () => void;
   /** Enable Escape key to clear selection when dropdown is not open */
   clearOnEscape?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer min-h-[44px] mobile-touch-target focus-visible-enhanced";
@@ -59,6 +61,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   showClearButton = false,
   onClear,
   clearOnEscape = false,
+  isLoading = false,
+  loadingText = 'Memuat...',
   className = '',
   value,
   onChange,
@@ -76,7 +80,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
 
   // Check if there's a value to show clear button
   const hasValue = value !== undefined && value !== '';
-  const shouldShowClearButton = showClearButton && hasValue && !props.disabled;
+  const shouldShowClearButton = showClearButton && hasValue && !props.disabled && !isLoading;
 
   // Tooltip state for clear button with delayed appearance
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -211,6 +215,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
           className={selectClasses}
           aria-describedby={describedBy}
           aria-invalid={state === 'error'}
+          aria-busy={isLoading}
+          aria-label={isLoading ? loadingText : undefined}
+          disabled={props.disabled || isLoading}
           value={value}
           onChange={onChange}
           onFocus={handleFocus}
@@ -273,6 +280,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
             className="absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 right-10 min-w-[44px] min-h-[44px] mobile-touch-target"
             aria-label={CLEAR_BUTTON_TOOLTIP_TEXT}
             aria-describedby={clearButtonTooltipId}
+            title={CLEAR_BUTTON_TOOLTIP_TEXT}
           >
             <XMarkIcon className={iconSize} aria-hidden="true" />
             {/* Tooltip */}
@@ -300,9 +308,32 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
         )}
 
         <div className={`absolute top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400 dark:text-neutral-500 ${shouldShowClearButton ? 'right-10' : 'right-3'}`} aria-hidden="true">
-          <svg className={iconSize} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          {isLoading ? (
+            <svg
+              className={`${iconSize} animate-spin`}
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          ) : (
+            <svg className={iconSize} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          )}
         </div>
       </div>
 
