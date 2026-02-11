@@ -29,28 +29,28 @@ vi.mock('../../utils/logger', () => ({
   },
 }));
 
-// Mock STORAGE_KEYS
-vi.mock('../../constants', () => ({
-  STORAGE_KEYS: {
-    QUIZ_ATTEMPTS: (quizId: string) => `malnu_quiz_attempts_${quizId}`,
-    QUIZZES: 'malnu_quizzes',
-  },
-  TEST_CONSTANTS: {
-    IDS: {
-      QUIZ_001: 'quiz-001',
-      ATTEMPT_001: 'attempt-001',
-      STUDENT_001: 'student-001',
-      TEACHER_001: 'teacher-001',
-      GRADE_001: 'grade-001',
-      SUBJECT_001: 'subject-001',
-      CLASS_001: 'class-001',
+// Mock constants to preserve all real exports while only overriding test constants
+vi.mock('../../constants', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    TEST_CONSTANTS: {
+      IDS: {
+        QUIZ_001: 'quiz-001',
+        ATTEMPT_001: 'attempt-001',
+        STUDENT_001: 'student-001',
+        TEACHER_001: 'teacher-001',
+        GRADE_001: 'grade-001',
+        SUBJECT_001: 'subject-001',
+        CLASS_001: 'class-001',
+      },
+      NAMES: {
+        JOHN_DOE: 'John Doe',
+        MATHEMATICS: 'Mathematics',
+      },
     },
-    NAMES: {
-      JOHN_DOE: 'John Doe',
-      MATHEMATICS: 'Mathematics',
-    },
-  },
-}));
+  };
+});
 
 describe('quizGradeIntegrationService', () => {
   const mockQuiz: Quiz = {
