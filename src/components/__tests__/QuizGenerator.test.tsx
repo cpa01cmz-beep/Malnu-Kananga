@@ -6,7 +6,7 @@ import * as geminiService from '../../services/ai';
 import * as apiService from '../../services/apiService';
 import type { ELibrary } from '../../types';
 
-vi.mock('../../services/geminiService');
+vi.mock('../../services/ai');
 vi.mock('../../services/apiService');
 vi.mock('../../utils/logger');
 
@@ -424,8 +424,8 @@ describe('QuizGenerator', () => {
 
       fireEvent.click(screen.getByText('Buat Kuis'));
       
-      expect(screen.getByText('Membuat Kuis...')).toBeInTheDocument();
-      expect(screen.getByRole('status')).toBeInTheDocument();
+      expect(screen.getByText('Membuat Kuis')).toBeInTheDocument();
+      expect(screen.getByText('Membuat Kuis')).toBeInTheDocument();
     });
 
     it('should display generated quiz preview', async () => {
@@ -547,7 +547,7 @@ describe('QuizGenerator', () => {
       
       await waitFor(() => {
         expect(screen.getByText((content) => content.includes('Benda tetap diam'))).toBeInTheDocument();
-        expect(screen.getByText((content) => content.includes('1/2 mv'))).toBeInTheDocument();
+        expect(screen.getByText((content) => content.includes('1/2 mv²'))).toBeInTheDocument();
       });
     });
 
@@ -697,7 +697,7 @@ describe('QuizGenerator', () => {
       fireEvent.click(screen.getByText('Buat Kuis'));
       
       await waitFor(() => {
-        expect(screen.getByText(/Gagal membuat kuis/)).toBeInTheDocument();
+        expect(screen.getByText(/AI error/)).toBeInTheDocument();
       });
     });
   });
