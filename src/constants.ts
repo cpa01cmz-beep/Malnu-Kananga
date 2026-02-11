@@ -2519,6 +2519,70 @@ export const BREAKPOINTS = {
     XXL: 1536,  // Large desktop
 } as const;
 
+// ============================================================================
+// UI Dimensions - Flexy: Never hardcode pixel values!
+// Centralized dimension constants for consistent sizing across components
+// ============================================================================
+export const UI_DIMENSIONS = {
+    // Skeleton dimensions
+    SKELETON: {
+        AVATAR: { width: '48px', height: '48px' },
+        AVATAR_SMALL: { width: '40px', height: '40px' },
+        BUTTON_SMALL: { width: '80px', height: '32px' },
+        BUTTON_MEDIUM: { width: '120px', height: '40px' },
+        INPUT_HEIGHT: '48px',
+        CHART_HEIGHT: '300px',
+        LINE_HEIGHT_SMALL: '12px',
+        LINE_HEIGHT_MEDIUM: '16px',
+        LINE_HEIGHT_LARGE: '24px',
+        HEADER_LINE_WIDTH: '60%',
+        SUBHEADER_LINE_WIDTH: '40%',
+    },
+
+    // Textarea dimensions
+    TEXTAREA: {
+        MIN_HEIGHT: '40px',
+        MAX_HEIGHT: '120px',
+    },
+
+    // Common component dimensions
+    COMPONENTS: {
+        ICON_SIZE_SMALL: '16px',
+        ICON_SIZE_MEDIUM: '20px',
+        ICON_SIZE_LARGE: '24px',
+        TOUCH_TARGET_MIN: '44px',
+        TOUCH_TARGET_COMFORTABLE: '48px',
+        CARD_BORDER_RADIUS: '8px',
+        BUTTON_BORDER_RADIUS: '6px',
+        AVATAR_BORDER_RADIUS: '9999px',
+    },
+
+    // Loading and progress
+    LOADING: {
+        SPINNER_SIZE_SMALL: '16px',
+        SPINNER_SIZE_MEDIUM: '24px',
+        SPINNER_SIZE_LARGE: '32px',
+        PROGRESS_HEIGHT: '4px',
+        SKELETON_SHIMMER_WIDTH: '200%',
+    },
+
+    // Modal and overlay
+    MODAL: {
+        MAX_WIDTH_SMALL: '400px',
+        MAX_WIDTH_MEDIUM: '600px',
+        MAX_WIDTH_LARGE: '800px',
+        BACKDROP_BLUR: '8px',
+    },
+
+    // Accessibility
+    ACCESSIBILITY: {
+        OFFSCREEN_POSITION: '-9999px',
+        SCREEN_READER_ANNOUNCEMENT_CLEAR_DELAY: 1000,
+        FOCUS_RING_WIDTH: '2px',
+        FOCUS_RING_OFFSET: '2px',
+    },
+} as const;
+
 // Test Constants - Flexy: Never hardcode test data!
 export const TEST_CONSTANTS = {
     IDS: {
