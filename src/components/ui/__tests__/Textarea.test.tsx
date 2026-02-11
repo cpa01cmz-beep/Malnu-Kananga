@@ -175,8 +175,8 @@ describe('Textarea Component', () => {
     const id2 = textarea2.id;
 
     expect(id1).not.toBe(id2);
-    expect(id1).toMatch(/^textarea-/);
-    expect(id2).toMatch(/^textarea-/);
+    expect(id1).toMatch(/^textarea_/);
+    expect(id2).toMatch(/^textarea_/);
   });
 
   it('respects provided id prop', () => {
