@@ -275,10 +275,18 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
               icon={<DocumentTextIcon />}
               title="Tidak ada tugas"
               message="Anda belum memiliki tugas yang perlu diselesaikan"
-              action={{
-                label: "Coba Lagi",
-                onClick: fetchAssignments
-              }}
+              suggestedActions={[
+                {
+                  label: "Refresh",
+                  onClick: fetchAssignments,
+                  variant: "primary"
+                },
+                {
+                  label: "Kembali",
+                  onClick: onBack,
+                  variant: "secondary"
+                }
+              ]}
             />
           ) : (
             <div className="grid gap-4">

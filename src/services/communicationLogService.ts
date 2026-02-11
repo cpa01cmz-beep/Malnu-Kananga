@@ -4,17 +4,18 @@ import {
   CommunicationLogExportOptions,
   CommunicationLogStats,
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TEXT_TRUNCATION, SERVICE_ERROR_MESSAGES } from '../constants';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { pdfExportService } from '../services/pdfExportService';
+import { generateId } from '../utils/idGenerator';
 import Papa from 'papaparse';
 
 class CommunicationLogService {
   private storageKey: string = STORAGE_KEYS.COMMUNICATION_LOG;
 
   private generateId(): string {
-    return `comm_log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return generateId({ prefix: 'comm_log' });
   }
 
   private getLogsFromStorage(): CommunicationLogEntry[] {
@@ -34,8 +35,8 @@ class CommunicationLogService {
 
     let plainText = body.replace(/<[^>]+>/g, '');
 
-    if (plainText.length > 200) {
-      plainText = plainText.substring(0, 200) + '...';
+    if (plainText.length > TEXT_TRUNCATION.PREVIEW) {
+      plainText = plainText.substring(0, TEXT_TRUNCATION.PREVIEW) + '...';
     }
 
     return plainText;
@@ -497,7 +498,7 @@ class CommunicationLogService {
       });
       logError(classifiedError);
       logger.error('Failed to export communication log to PDF:', error);
-      throw new Error('Gagal membuat ekspor PDF. Silakan coba lagi.');
+      throw new Error(SERVICE_ERROR_MESSAGES.PDF_EXPORT_FAILED);
     }
   }
 
@@ -537,12 +538,12 @@ class CommunicationLogService {
       });
       logError(classifiedError);
       logger.error('Failed to export communication log to CSV:', error);
-      throw new Error('Gagal membuat ekspor CSV. Silakan coba lagi.');
+      throw new Error(SERVICE_ERROR_MESSAGES.CSV_EXPORT_FAILED);
     }
   }
 
   private formatLogForExport(log: CommunicationLogEntry): Record<string, string> {
-    const formatDate = (date: string) => {
+    const formatDate = (date: string): string => {
       return new Date(date).toLocaleString('id-ID', {
         day: '2-digit',
         month: '2-digit',

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import IconButton from './IconButton';
 import InformationCircleIcon from '../icons/InformationCircleIcon';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'neutral';
 export type AlertSize = 'sm' | 'md' | 'lg';
 export type AlertBorder = 'left' | 'full' | 'none';
+export type AlertAnimation = 'none' | 'fade-in' | 'scale-in' | 'slide-in';
 
 interface AlertProps {
   children: React.ReactNode;
@@ -18,6 +20,10 @@ interface AlertProps {
   fullWidth?: boolean;
   centered?: boolean;
   className?: string;
+  /** Enable entrance animation when alert appears */
+  animate?: AlertAnimation;
+  /** Auto-dismiss duration in milliseconds (optional) */
+  autoDismiss?: number;
 }
 
 const baseClasses = "transition-all duration-200 ease-out";
@@ -141,10 +147,92 @@ const Alert: React.FC<AlertProps> = ({
   fullWidth = true,
   centered = false,
   className = '',
+  animate = 'none',
+  autoDismiss,
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  // Trigger entrance animation on mount
+  useEffect(() => {
+    if (animate !== 'none' && !prefersReducedMotion) {
+      // Small delay to ensure animation plays after render
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(true);
+    }
+  }, [animate, prefersReducedMotion]);
+
+  // Auto-dismiss functionality
+  useEffect(() => {
+    if (autoDismiss && autoDismiss > 0) {
+      const timer = setTimeout(() => {
+        if (prefersReducedMotion) {
+          onClose?.();
+        } else {
+          setIsExiting(true);
+          setTimeout(() => {
+            onClose?.();
+          }, 200);
+        }
+      }, autoDismiss);
+      return () => clearTimeout(timer);
+    }
+  }, [autoDismiss, prefersReducedMotion, onClose]);
+
+  const handleClose = () => {
+    if (prefersReducedMotion) {
+      onClose?.();
+    } else {
+      setIsExiting(true);
+      // Wait for exit animation to complete before calling onClose
+      setTimeout(() => {
+        onClose?.();
+      }, 200);
+    }
+  };
+
   const variantStyle = variantClasses[variant];
   const sizeStyle = sizeClasses[size];
   const borderStyle = borderClasses[border][variant];
+
+  // Animation classes based on animate prop and visibility state
+  const getAnimationClasses = () => {
+    if (animate === 'none' || prefersReducedMotion) return '';
+
+    if (isExiting) {
+      return 'opacity-0 scale-95 transition-all duration-200 ease-out';
+    }
+
+    if (!isVisible) {
+      switch (animate) {
+        case 'fade-in':
+          return 'opacity-0';
+        case 'scale-in':
+          return 'opacity-0 scale-95';
+        case 'slide-in':
+          return 'opacity-0 -translate-y-2';
+        default:
+          return '';
+      }
+    }
+
+    // Visible state with animation
+    switch (animate) {
+      case 'fade-in':
+        return 'opacity-100 transition-opacity duration-300 ease-out';
+      case 'scale-in':
+        return 'opacity-100 scale-100 transition-all duration-300 ease-out animate-scale-in';
+      case 'slide-in':
+        return 'opacity-100 translate-y-0 transition-all duration-300 ease-out';
+      default:
+        return '';
+    }
+  };
 
   const alertClasses = `
     ${baseClasses}
@@ -153,6 +241,7 @@ const Alert: React.FC<AlertProps> = ({
     ${fullWidth ? 'w-full' : ''}
     ${sizeStyle.padding}
     rounded-xl
+    ${getAnimationClasses()}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -174,8 +263,9 @@ const Alert: React.FC<AlertProps> = ({
       <div className={`flex ${centered ? 'justify-center' : 'items-start gap-3'}`}>
         {iconToRender && (
           <div
-            className={`${variantStyle.iconBg} ${sizeStyle.iconSize} rounded-lg flex items-center justify-center flex-shrink-0`}
+            className={`${variantStyle.iconBg} ${sizeStyle.iconSize} rounded-lg flex items-center justify-center flex-shrink-0 ${animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-scale-in' : ''}`}
             aria-hidden="true"
+            style={{ animationDelay: '50ms' }}
           >
             {iconToRender}
           </div>
@@ -184,12 +274,13 @@ const Alert: React.FC<AlertProps> = ({
           {title && (
             <h3
               id="alert-title"
-              className={`${sizeStyle.titleSize} ${variantStyle.title} font-semibold mb-1.5`}
+              className={`${sizeStyle.titleSize} ${variantStyle.title} font-semibold mb-1.5 ${animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
+              style={{ animationDelay: '100ms' }}
             >
               {title}
             </h3>
           )}
-          <div className={contentClasses}>
+          <div className={`${contentClasses} ${animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-fade-in' : ''}`} style={{ animationDelay: '150ms' }}>
             {typeof children === 'string' ? <p>{children}</p> : children}
           </div>
         </div>
@@ -202,7 +293,9 @@ const Alert: React.FC<AlertProps> = ({
             }
             ariaLabel="Close alert"
             size="sm"
-            onClick={onClose}
+            onClick={handleClose}
+            className={animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-fade-in' : ''}
+            style={{ animationDelay: '200ms' }}
           />
         )}
       </div>

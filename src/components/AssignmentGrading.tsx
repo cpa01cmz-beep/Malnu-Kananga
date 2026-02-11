@@ -4,6 +4,7 @@ import { generateAssignmentFeedback } from '../services/ai';
 import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { useCanAccess } from '../hooks/useCanAccess';
+import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { logger } from '../utils/logger';
 import { OfflineIndicator } from './OfflineIndicator';
 import Button from './ui/Button';
@@ -20,7 +21,9 @@ import { ClockIcon } from './icons/ClockIcon';
 import { CheckCircleIcon, AlertCircleIcon } from './icons/StatusIcons';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
-import { STORAGE_KEYS } from '../constants';
+import { MicrophoneIcon } from './icons/MicrophoneIcon';
+import { STORAGE_KEYS, UI_STRINGS, bytesToKb } from '../constants';
+import { idGenerators } from '../utils/idGenerator';
 
 interface AssignmentGradingProps {
   onBack: () => void;
@@ -57,7 +60,126 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   const [generatingFeedback, setGeneratingFeedback] = useState(false);
   const [showAiFeedback, setShowAiFeedback] = useState(false);
 
+  // Voice recognition states
+  const [isVoiceRecording, setIsVoiceRecording] = useState(false);
+  const [voiceTarget, setVoiceTarget] = useState<'feedback' | null>(null);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
+
   const canGradeAssignments = canAccess('academic.grades');
+
+  // Voice recognition hook
+  const voiceRecognition = useVoiceRecognition({
+    onTranscript: (transcript, isFinal) => {
+      if (isFinal && transcript.trim()) {
+        // Check if it's a voice command first
+        const commandPattern = /^(selanjutnya|berikutnya|next|sebelumnya|kembali|previous|simpan|save|batal|cancel)$/i;
+        if (commandPattern.test(transcript.trim())) {
+          handleVoiceCommand(transcript);
+        } else if (voiceTarget === 'feedback') {
+          handleVoiceTranscript(transcript);
+        }
+      }
+    },
+    onError: (error) => {
+      logger.error('Voice recognition error:', error);
+      setVoiceError(`Error: ${error.message}`);
+      setIsVoiceRecording(false);
+      setVoiceTarget(null);
+      onShowToast('Rekaman suara gagal', 'error');
+    }
+  });
+
+  const handleVoiceTranscript = (transcript: string) => {
+    if (voiceTarget === 'feedback') {
+      setFeedback(prev => prev ? `${prev} ${transcript}` : transcript);
+      onShowToast('Feedback ditambahkan dari rekaman suara', 'success');
+    }
+    
+    setIsVoiceRecording(false);
+    setVoiceTarget(null);
+  };
+
+  const startVoiceRecording = async (target: 'feedback') => {
+    if (!voiceRecognition.isSupported) {
+      onShowToast('Browser tidak mendukung pengenalan suara', 'error');
+      return;
+    }
+
+    if (voiceRecognition.permissionState === 'denied') {
+      onShowToast('Izin mikrofon ditolak. Silakan izinkan akses mikrofon di pengaturan browser.', 'error');
+      return;
+    }
+
+    try {
+      setVoiceError(null);
+      setVoiceTarget(target);
+      setIsVoiceRecording(true);
+      
+      await voiceRecognition.startRecording();
+      onShowToast('Mulai merekan suara...', 'info');
+    } catch (error) {
+      logger.error('Failed to start voice recording:', error);
+      setVoiceError('Gagal memulai rekaman suara');
+      setIsVoiceRecording(false);
+      setVoiceTarget(null);
+      onShowToast('Gagal memulai rekaman suara', 'error');
+    }
+  };
+
+  const _stopVoiceRecording = () => {
+    voiceRecognition.stopRecording();
+    setIsVoiceRecording(false);
+    setVoiceTarget(null);
+  };
+
+  const handleVoiceCommand = (command: string) => {
+    const normalizedCommand = command.toLowerCase().trim();
+    
+    switch (normalizedCommand) {
+      case 'selanjutnya':
+      case 'berikutnya':
+      case 'next':
+        if (currentView === 'submission-detail') {
+          const currentIndex = submissions.findIndex(s => s.id === selectedSubmission?.id);
+          if (currentIndex < submissions.length - 1) {
+            handleSelectSubmission(submissions[currentIndex + 1]);
+          }
+        }
+        break;
+        
+      case 'sebelumnya':
+      case 'kembali':
+      case 'previous':
+        if (currentView === 'submission-detail') {
+          const currentIndex = submissions.findIndex(s => s.id === selectedSubmission?.id);
+          if (currentIndex > 0) {
+            handleSelectSubmission(submissions[currentIndex - 1]);
+          }
+        }
+        break;
+        
+      case 'simpan':
+      case 'save':
+        if (currentView === 'submission-detail') {
+          handleSubmitGrade();
+        }
+        break;
+        
+      case 'batal':
+      case 'cancel':
+        if (currentView === 'submission-detail') {
+          handleBackToSubmissions();
+        }
+        break;
+        
+      default:
+        // If it's not a command, treat it as feedback
+        if (voiceTarget === 'feedback') {
+          handleVoiceTranscript(command);
+        }
+        break;
+    }
+  };
 
   const getCurrentUser = (): User | null => {
     const userJson = localStorage.getItem(STORAGE_KEYS.USER);
@@ -232,7 +354,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         typeof score === 'number' ? score : undefined
       );
 
-      const feedbackId = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const feedbackId = idGenerators.feedback();
 
       setAiFeedback({
         id: feedbackId,
@@ -355,6 +477,18 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
             <EmptyState
               icon={<DocumentTextIcon className="w-12 h-12 text-gray-400" />}
               message="Anda belum memiliki tugas untuk dinilai"
+              suggestedActions={[
+                {
+                  label: 'Refresh',
+                  onClick: fetchAssignments,
+                  variant: 'primary'
+                },
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
             />
           ) : (
             assignments.map((assignment) => (
@@ -612,7 +746,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                             {attachment.fileName}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {(attachment.fileSize / 1024).toFixed(1)} KB
+                            {bytesToKb(attachment.fileSize).toFixed(1)} KB
                           </p>
                         </div>
                       </div>
@@ -696,14 +830,26 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                     <label className="block text-sm font-medium text-gray-700">
                       Feedback (Opsional)
                     </label>
-                    <Button
-                      onClick={handleGenerateAIFeedback}
-                      disabled={generatingFeedback || !selectedSubmission.submissionText && (!selectedSubmission.attachments || selectedSubmission.attachments.length === 0)}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      {generatingFeedback ? 'Membuat...' : 'Buat Feedback AI'}
-                    </Button>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={() => startVoiceRecording('feedback')}
+                        disabled={isVoiceRecording || !voiceRecognition.isSupported}
+                        variant={isVoiceRecording && voiceTarget === 'feedback' ? 'primary' : 'secondary'}
+                        size="sm"
+                        className="flex items-center"
+                      >
+                        <MicrophoneIcon className={`w-4 h-4 mr-1 ${isVoiceRecording && voiceTarget === 'feedback' ? 'animate-pulse' : ''}`} />
+                        {isVoiceRecording && voiceTarget === 'feedback' ? 'Merekam...' : 'Rekaman Suara'}
+                      </Button>
+                      <Button
+                        onClick={handleGenerateAIFeedback}
+                        disabled={generatingFeedback || !selectedSubmission.submissionText && (!selectedSubmission.attachments || selectedSubmission.attachments.length === 0)}
+                        variant="secondary"
+                        size="sm"
+                      >
+                        {generatingFeedback ? 'Membuat...' : 'Buat Feedback AI'}
+                      </Button>
+                    </div>
                   </div>
                   <Textarea
                     value={feedback}
@@ -711,6 +857,17 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                     placeholder="Berikan feedback untuk siswa..."
                     rows={6}
                   />
+                  {voiceError && (
+                    <div className="mt-2 text-sm text-red-600">
+                      {voiceError}
+                    </div>
+                  )}
+                  {isVoiceRecording && voiceTarget === 'feedback' && (
+                    <div className="mt-2 text-sm text-blue-600 flex items-center">
+                      <MicrophoneIcon className="w-4 h-4 mr-1 animate-pulse" />
+                      Mendengarkan... Ucapkan feedback untuk siswa
+                    </div>
+                  )}
                 </div>
               </FormGrid>
 
@@ -720,7 +877,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   disabled={submitting}
                   className="flex-1"
                 >
-                  {submitting ? 'Menyimpan...' : 'Simpan Nilai'}
+                  {submitting ? UI_STRINGS.SAVING : 'Simpan Nilai'}
                 </Button>
                 <Button
                   onClick={handleBackToSubmissions}
@@ -746,6 +903,41 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   </div>
                 </div>
               </div>
+
+              {voiceRecognition.isSupported ? (
+                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <div className="flex items-start">
+                    <MicrophoneIcon className="w-5 h-5 text-green-500 mt-0.5 mr-2" />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-green-800 mb-2">
+                        Perintah Suara
+                      </h4>
+                      <div className="text-sm text-green-700 space-y-1">
+                        <p><strong>Feedback:</strong> Klik tombol mikrofon dan ucapkan feedback</p>
+                        <p><strong>Navigasi:</strong> "selanjutnya", "sebelumnya", "simpan", "batal"</p>
+                        <p className="text-xs text-green-600 mt-2">
+                          Status izin: {voiceRecognition.permissionState === 'granted' ? 'Diizinkan' : 
+                                       voiceRecognition.permissionState === 'denied' ? 'Ditolak' : 'Perlu izin'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-start">
+                    <AlertCircleIcon className="w-5 h-5 text-yellow-500 mt-0.5 mr-2" />
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-yellow-800 mb-1">
+                        Fitur Suara Tidak Tersedia
+                      </h4>
+                      <p className="text-sm text-yellow-700">
+                        Browser Anda tidak mendukung pengenalan suara. Gunakan Chrome, Edge, atau Safari untuk fitur ini.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

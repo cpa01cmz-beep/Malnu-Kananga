@@ -15,6 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useOfflineActionQueue, type SyncResult } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
+import { OFFLINE_INDICATOR_CONFIG, ID_FORMAT } from '../constants';
 import Alert from './ui/Alert';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
@@ -64,10 +65,10 @@ export function OfflineIndicator({
         setShowSyncStatus(true);
         logger.info('Sync completed', result);
 
-        // Auto-hide sync status after 3 seconds
+        // Auto-hide sync status after configured delay
         setTimeout(() => {
           setShowSyncStatus(false);
-        }, 3000);
+        }, OFFLINE_INDICATOR_CONFIG.SYNC_STATUS_AUTO_HIDE_MS);
       });
     }
   }, [onSyncComplete]);
@@ -225,8 +226,8 @@ export function OfflineQueueDetails({ isOpen, onClose }: QueueDetailsProps) {
 
   const formatTimestamp = (timestamp: number) => {
     const date = new Date(timestamp);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING);
+    const month = String(date.getMonth() + 1).padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING);
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };

@@ -143,4 +143,98 @@ describe('Select Component', () => {
     const select = screen.getByRole('combobox');
     expect(select).toHaveClass('w-full');
   });
+
+  describe('Clear Button', () => {
+    it('should not show clear button by default', () => {
+      render(<Select options={mockOptions} value="option1" />);
+      const clearButton = screen.queryByLabelText('Bersihkan pilihan');
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should show clear button when showClearButton is true and there is a value', () => {
+      render(<Select options={mockOptions} value="option1" showClearButton />);
+      const clearButton = screen.getByLabelText('Bersihkan pilihan');
+      expect(clearButton).toBeInTheDocument();
+    });
+
+    it('should not show clear button when value is empty', () => {
+      render(<Select options={mockOptions} value="" showClearButton />);
+      const clearButton = screen.queryByLabelText('Bersihkan pilihan');
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should not show clear button when select is disabled', () => {
+      render(<Select options={mockOptions} value="option1" showClearButton disabled />);
+      const clearButton = screen.queryByLabelText('Bersihkan pilihan');
+      expect(clearButton).not.toBeInTheDocument();
+    });
+
+    it('should call onChange with empty value when clear button is clicked', () => {
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          showClearButton 
+          onChange={handleChange} 
+        />
+      );
+      
+      const clearButton = screen.getByLabelText('Bersihkan pilihan');
+      fireEvent.click(clearButton);
+      
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('should call onClear callback when clear button is clicked', () => {
+      const handleClear = vi.fn();
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          showClearButton 
+          onChange={handleChange}
+          onClear={handleClear}
+        />
+      );
+      
+      const clearButton = screen.getByLabelText('Bersihkan pilihan');
+      fireEvent.click(clearButton);
+      
+      expect(handleClear).toHaveBeenCalledTimes(1);
+    });
+
+    it('should focus select after clearing', () => {
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          showClearButton 
+          onChange={handleChange}
+        />
+      );
+      
+      const clearButton = screen.getByLabelText('Bersihkan pilihan');
+      const select = screen.getByRole('combobox');
+      
+      fireEvent.click(clearButton);
+      
+      expect(select).toHaveFocus();
+    });
+
+    it('should have proper accessibility attributes', () => {
+      render(<Select options={mockOptions} value="option1" showClearButton />);
+      const clearButton = screen.getByLabelText('Bersihkan pilihan');
+      
+      expect(clearButton).toHaveAttribute('type', 'button');
+      expect(clearButton).toHaveAttribute('title', 'Bersihkan pilihan');
+    });
+  });
 });

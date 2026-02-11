@@ -4,6 +4,8 @@ import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import { AI_CONFIG } from '../../constants';
+import { idGenerators } from '../../utils/idGenerator';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -170,7 +172,7 @@ export async function generateStudyPlan(
         config: {
           responseMimeType: "application/json",
           responseSchema: schema,
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         },
       });
     });
@@ -178,7 +180,7 @@ export async function generateStudyPlan(
     const jsonText = (response.text || '').trim();
     const planData = JSON.parse(jsonText);
 
-    const planId = `study_plan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const planId = idGenerators.studyPlan();
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + (durationWeeks * 7));
 

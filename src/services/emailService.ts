@@ -12,14 +12,14 @@ import { emailQueueService } from './emailQueueService';
 import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS, DELAY_MS, TEXT_TRUNCATION } from '../constants';
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
-  private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS || 'malnu_email_notification_settings';
-  private analyticsKey = STORAGE_KEYS.EMAIL_ANALYTICS || 'malnu_email_analytics';
-  private deliveryHistoryKey = STORAGE_KEYS.EMAIL_DELIVERY_HISTORY || 'malnu_email_delivery_history';
-  private apiEndpoint = '/api/email/send';
+  private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS;
+  private analyticsKey = STORAGE_KEYS.EMAIL_ANALYTICS;
+  private deliveryHistoryKey = STORAGE_KEYS.EMAIL_DELIVERY_HISTORY;
+  private apiEndpoint = API_ENDPOINTS.EMAIL.SEND;
 
   constructor() {
     logger.info('EmailService initialized');
@@ -60,9 +60,8 @@ class EmailService {
       const history = this.loadDeliveryHistory();
       history.push(status);
 
-      const maxHistorySize = 1000;
-      if (history.length > maxHistorySize) {
-        history.splice(0, history.length - maxHistorySize);
+      if (history.length > STORAGE_LIMITS.EMAIL_HISTORY_MAX) {
+        history.splice(0, history.length - STORAGE_LIMITS.EMAIL_HISTORY_MAX);
       }
 
       localStorage.setItem(this.deliveryHistoryKey, JSON.stringify(history));
@@ -86,10 +85,10 @@ class EmailService {
     try {
       const history = this.loadDeliveryHistory();
       const now = new Date();
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const analyticsStartDate = new Date(now.getTime() - EMAIL_CONFIG.ANALYTICS_DAYS * TIME_MS.ONE_DAY);
 
       const recentDeliveries = history.filter(
-        d => new Date(d.timestamp) >= thirtyDaysAgo
+        d => new Date(d.timestamp) >= analyticsStartDate
       );
 
       const totalSent = recentDeliveries.length;
@@ -108,7 +107,7 @@ class EmailService {
         openRate: totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : 0,
         clickRate: totalOpened > 0 ? (totalClicked / totalOpened) * 100 : 0,
         dateRange: {
-          from: thirtyDaysAgo.toISOString(),
+          from: analyticsStartDate.toISOString(),
           to: now.toISOString()
         }
       };
@@ -303,7 +302,7 @@ class EmailService {
         failed++;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, DELAY_MS.STANDARD));
     }
 
     return {
@@ -381,12 +380,12 @@ class EmailService {
 
   private createBodyPreview(html: string, text: string): string {
     if (text) {
-      return text.length > 200 ? text.substring(0, 200) + '...' : text;
+      return text.length > TEXT_TRUNCATION.PREVIEW ? text.substring(0, TEXT_TRUNCATION.PREVIEW) + '...' : text;
     }
 
     if (html) {
       const plainText = html.replace(/<[^>]+>/g, '');
-      return plainText.length > 200 ? plainText.substring(0, 200) + '...' : plainText;
+      return plainText.length > TEXT_TRUNCATION.PREVIEW ? plainText.substring(0, TEXT_TRUNCATION.PREVIEW) + '...' : plainText;
     }
 
     return '';

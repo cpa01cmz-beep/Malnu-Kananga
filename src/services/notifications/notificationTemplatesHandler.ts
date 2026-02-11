@@ -3,8 +3,9 @@ import {
   UserRole,
   UserExtraRole,
 } from '../../types';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, USER_ROLES } from '../../constants';
 import { logger } from '../../utils/logger';
+import { generateTemplateId, idGenerators } from '../../utils/idGenerator';
 
 export interface UnifiedNotificationTemplate {
   id: string;
@@ -42,7 +43,7 @@ export class NotificationTemplatesHandler {
         variables: ['title', 'content'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['admin', 'teacher', 'student', 'parent'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -56,7 +57,7 @@ export class NotificationTemplatesHandler {
         variables: ['subject', 'assignment', 'studentName', 'score', 'maxScore'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['student', 'parent', 'teacher'],
+        targetRoles: [USER_ROLES.STUDENT, USER_ROLES.PARENT, USER_ROLES.TEACHER],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -70,7 +71,7 @@ export class NotificationTemplatesHandler {
         variables: ['status', 'studentName'],
         priority: 'high',
         isActive: true,
-        targetRoles: ['admin', 'student', 'parent'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.STUDENT, USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -84,7 +85,7 @@ export class NotificationTemplatesHandler {
         variables: ['title', 'description', 'date', 'location'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['admin', 'teacher', 'student', 'parent'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -98,7 +99,7 @@ export class NotificationTemplatesHandler {
         variables: ['title', 'description', 'category'],
         priority: 'low',
         isActive: true,
-        targetRoles: ['teacher', 'student'],
+        targetRoles: [USER_ROLES.TEACHER, USER_ROLES.STUDENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -112,7 +113,7 @@ export class NotificationTemplatesHandler {
         variables: ['title', 'message'],
         priority: 'high',
         isActive: true,
-        targetRoles: ['admin', 'teacher', 'student', 'parent'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT, USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -126,7 +127,7 @@ export class NotificationTemplatesHandler {
         variables: ['severity', 'documentType', 'result', 'confidence', 'issues'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['admin', 'teacher'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -140,7 +141,7 @@ export class NotificationTemplatesHandler {
         variables: ['documentType', 'status', 'message'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['parent', 'admin', 'teacher'],
+        targetRoles: [USER_ROLES.PARENT, USER_ROLES.ADMIN, USER_ROLES.TEACHER],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -154,7 +155,7 @@ export class NotificationTemplatesHandler {
         variables: ['studentName', 'missingCount', 'subjects'],
         priority: 'high',
         isActive: true,
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -168,7 +169,7 @@ export class NotificationTemplatesHandler {
         variables: ['studentName', 'averageScore', 'attendancePercentage'],
         priority: 'normal',
         isActive: true,
-        targetRoles: ['parent'],
+        targetRoles: [USER_ROLES.PARENT],
         createdBy: 'system',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -213,7 +214,7 @@ export class NotificationTemplatesHandler {
     targetExtraRoles?: UserExtraRole[]
   ): UnifiedNotificationTemplate {
     const template: UnifiedNotificationTemplate = {
-      id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateTemplateId(),
       name,
       type,
       title,
@@ -277,7 +278,7 @@ export class NotificationTemplatesHandler {
     }
 
     return {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.notification(),
       type: template.type,
       title,
       body,

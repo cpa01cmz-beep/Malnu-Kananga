@@ -6,6 +6,7 @@ import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
+import LoadingSpinner from './ui/LoadingSpinner';
 import type { Conversation, Participant, User } from '../types';
 
 interface DirectMessageProps {
@@ -62,7 +63,6 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
       }
     } catch (err) {
       logger.error('Failed to create conversation:', err);
-      window.alert('Gagal membuat percakapan baru');
     } finally {
       setCreatingConversation(false);
     }
@@ -137,7 +137,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
               </label>
               {loadingUsers ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="h-6 w-6 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+                  <LoadingSpinner size="sm" color="primary" variant="ring" />
                 </div>
               ) : (
                 <select
@@ -169,7 +169,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
               >
                 {creatingConversation ? (
                   <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <LoadingSpinner size="sm" color="neutral" variant="ring" />
                     Membuat...
                   </>
                 ) : (

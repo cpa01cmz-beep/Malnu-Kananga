@@ -14,6 +14,7 @@ import {
   NOTIFICATION_CONFIG,
   NOTIFICATION_ICONS,
   STORAGE_KEYS,
+  USER_ROLES,
 } from '../../constants';
 import { logger } from '../../utils/logger';
 import { handleNotificationError } from '../../utils/serviceErrorHandlers';
@@ -23,6 +24,7 @@ import { EmailNotificationHandler } from './emailNotificationHandler';
 import { NotificationHistoryHandler } from './notificationHistoryHandler';
 import { NotificationAnalyticsHandler } from './notificationAnalyticsHandler';
 import { NotificationTemplatesHandler, UnifiedNotificationTemplate } from './notificationTemplatesHandler';
+import { idGenerators } from '../../utils/idGenerator';
 
 export type { UnifiedNotificationTemplate } from './notificationTemplatesHandler';
 
@@ -289,7 +291,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['student', 'parent', 'teacher'],
+        targetRoles: [USER_ROLES.STUDENT, USER_ROLES.PARENT, USER_ROLES.TEACHER],
         data: {
           type: 'grade_update' as const,
           studentName,
@@ -318,7 +320,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'high',
-        targetRoles: ['admin'],
+        targetRoles: [USER_ROLES.ADMIN],
         data: {
           type: 'ppdb_update' as const,
           count,
@@ -342,7 +344,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'low',
-        targetRoles: ['teacher', 'student'],
+        targetRoles: [USER_ROLES.TEACHER, USER_ROLES.STUDENT],
         data: {
           type: 'library_update' as const,
           materialTitle,
@@ -367,7 +369,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['admin', 'teacher'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER],
         data: {
           type: 'meeting_request' as const,
           requesterName,
@@ -392,7 +394,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['admin', 'teacher', 'student'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER, USER_ROLES.STUDENT],
         data: {
           type: 'schedule_change' as const,
           className,
@@ -417,7 +419,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'high',
-        targetRoles: ['admin', 'teacher'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER],
         data: {
           type: 'attendance_alert' as const,
           studentName,
@@ -445,7 +447,7 @@ class UnifiedNotificationManager {
         timestamp: new Date().toISOString(),
         read: false,
         priority: 'normal',
-        targetRoles: ['admin', 'teacher'],
+        targetRoles: [USER_ROLES.ADMIN, USER_ROLES.TEACHER],
         data: {
           type: 'ocr_validation' as const,
           documentId: event.documentId,
@@ -490,7 +492,7 @@ class UnifiedNotificationManager {
 
   private emitEvent(type: string, data: Record<string, unknown>): void {
     const event: NotificationEvent = {
-      id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.event(),
       type,
       data,
       timestamp: new Date().toISOString(),
@@ -557,7 +559,7 @@ class UnifiedNotificationManager {
 
   createBatch(name: string, notifications: PushNotification[]): NotificationBatch {
     const batch: NotificationBatch = {
-      id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.batch(),
       name,
       notifications,
       scheduledFor: new Date().toISOString(),

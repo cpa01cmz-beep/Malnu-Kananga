@@ -1,17 +1,27 @@
-import React from 'react';
+import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
+import { XML_NAMESPACES } from '../../constants';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type SmallActionButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'neutral';
+export type SmallActionButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
 interface SmallActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: SmallActionButtonVariant;
   isLoading?: boolean;
+  loadingText?: string;
   fullWidth?: boolean;
   icon?: React.ReactNode;
   iconPosition?: 'left' | 'right';
   children: React.ReactNode;
+  tooltip?: string;
+  tooltipPosition?: SmallActionButtonTooltipPosition;
+  /** Show success checkmark briefly after action */
+  showSuccess?: boolean;
+  /** Duration to show success state in milliseconds */
+  successDuration?: number;
 }
 
-const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-1.5";
+const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-1.5 min-h-[44px] mobile-touch-target focus-visible-enhanced";
 
 const variantClasses: Record<SmallActionButtonVariant, string> = {
   primary: "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500/50",
@@ -26,40 +36,130 @@ const variantClasses: Record<SmallActionButtonVariant, string> = {
 const SmallActionButton: React.FC<SmallActionButtonProps> = ({
   variant = 'info',
   isLoading = false,
+  loadingText,
   fullWidth = false,
   icon,
   iconPosition = 'left',
   children,
+  tooltip,
+  tooltipPosition = 'bottom',
+  showSuccess = false,
+  successDuration = 2000,
   className = '',
   disabled,
   ...props
 }) => {
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const tooltipId = useId();
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible;
+
+  // Handle success state with auto-reset
+  useEffect(() => {
+    if (showSuccess) {
+      setIsSuccessVisible(true);
+
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+
+      successTimeoutRef.current = setTimeout(() => {
+        setIsSuccessVisible(false);
+      }, successDuration);
+    }
+
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, [showSuccess, successDuration]);
+
+  const showTooltip = useCallback(() => {
+    if (!isSuccessVisible && !isLoading) {
+      setIsTooltipVisible(true);
+    }
+  }, [isSuccessVisible, isLoading]);
+
+  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+
   const classes = `
     ${baseClasses}
     ${variantClasses[variant]}
     ${fullWidth ? 'flex-1' : ''}
     ${isLoading ? 'cursor-wait' : ''}
+    ${isSuccessVisible ? 'cursor-default' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
   const ariaProps: Record<string, string | boolean | undefined> = {};
-  
+
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';
   }
 
+  if (isSuccessVisible) {
+    ariaProps['aria-label'] = 'Berhasil';
+  }
+
+  const tooltipPositionClasses: Record<SmallActionButtonTooltipPosition, string> = {
+    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
+    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
+  };
+
+  const tooltipArrowClasses: Record<SmallActionButtonTooltipPosition, string> = {
+    top: 'top-full left-1/2 -translate-x-1/2 -mt-1 border-l-transparent border-r-transparent border-b-transparent',
+    bottom: 'bottom-full left-1/2 -translate-x-1/2 -mb-1 border-l-transparent border-r-transparent border-t-transparent',
+    left: 'left-full top-1/2 -translate-y-1/2 -ml-1 border-t-transparent border-b-transparent border-r-transparent',
+    right: 'right-full top-1/2 -translate-y-1/2 -mr-1 border-t-transparent border-b-transparent border-l-transparent',
+  };
+
+  const tooltipText = isSuccessVisible ? 'Berhasil!' : tooltip;
+
   return (
     <button
-      className={classes}
+      ref={buttonRef}
+      className={`${classes} relative`}
       disabled={disabled || isLoading}
+      aria-describedby={hasTooltip ? tooltipId : undefined}
+      onMouseEnter={hasTooltip ? showTooltip : undefined}
+      onMouseLeave={hasTooltip ? hideTooltip : undefined}
+      onFocus={hasTooltip ? showTooltip : undefined}
+      onBlur={hasTooltip ? hideTooltip : undefined}
       {...ariaProps}
       {...props}
     >
       {isLoading ? (
-        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="status" aria-hidden="true">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
+        <>
+          <svg className="animate-spin h-4 w-4 mr-1.5" xmlns={XML_NAMESPACES.SVG} fill="none" viewBox="0 0 24 24" role="status" aria-hidden="true">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>{loadingText || children}</span>
+        </>
+      ) : isSuccessVisible ? (
+        <>
+          <span className={`mr-1.5 flex items-center ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}>
+            <svg
+              className="h-4 w-4 text-green-600 dark:text-green-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+          <span className="text-green-700 dark:text-green-300">{children}</span>
+        </>
       ) : (
         <>
           {icon && iconPosition === 'left' && (
@@ -70,6 +170,30 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
             <span className="ml-1.5 flex items-center">{icon}</span>
           )}
         </>
+      )}
+      
+      {(hasTooltip || isSuccessVisible) && (
+        <span
+          id={tooltipId}
+          role="tooltip"
+          className={`
+            absolute z-50 px-2.5 py-1.5 text-xs font-medium rounded-md shadow-lg whitespace-nowrap pointer-events-none
+            transition-all duration-200 ease-out
+            ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500 text-white' : 'bg-neutral-800 dark:bg-neutral-700 text-white'}
+            ${tooltipPositionClasses[tooltipPosition]}
+            ${isTooltipVisible || isSuccessVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+          `.replace(/\s+/g, ' ').trim()}
+        >
+          {tooltipText}
+          <span
+            className={`
+              absolute w-2 h-2 rotate-45
+              ${isSuccessVisible ? 'bg-green-600 dark:bg-green-500' : 'bg-neutral-800 dark:bg-neutral-700'}
+              ${tooltipArrowClasses[tooltipPosition]}
+            `.replace(/\s+/g, ' ').trim()}
+            aria-hidden="true"
+          />
+        </span>
       )}
     </button>
   );

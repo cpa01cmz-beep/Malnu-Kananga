@@ -126,6 +126,34 @@ describe('Input Component', () => {
       expect(input).toHaveAttribute('aria-invalid', 'false');
     });
 
+    it('renders tooltip icon when tooltip prop is provided', () => {
+      render(
+        <Input
+          label="Password"
+          tooltip="Minimal 8 karakter dengan huruf dan angka"
+        />
+      );
+      
+      // Tooltip button should be present with the tooltip text as aria-label
+      const tooltipButton = screen.getByLabelText('Minimal 8 karakter dengan huruf dan angka');
+      expect(tooltipButton).toBeInTheDocument();
+      expect(tooltipButton.tagName.toLowerCase()).toBe('button');
+    });
+
+    it('does not render tooltip icon when tooltip prop is not provided', () => {
+      render(<Input label="Name" />);
+      
+      // Should only have the label text, no tooltip buttons
+      const label = screen.getByText('Name');
+      expect(label).toBeInTheDocument();
+      
+      // Query all buttons (tooltip icon is a button)
+      const buttons = screen.queryAllByRole('button');
+      // Filter out any clear buttons that might be present
+      const iconButtons = buttons.filter(btn => btn.getAttribute('aria-label') !== 'Bersihkan input');
+      expect(iconButtons.length).toBe(0);
+    });
+
     it('supports fullWidth prop', () => {
       render(<Input fullWidth />);
       const input = screen.getByRole('textbox');
@@ -382,6 +410,328 @@ describe('Input Component', () => {
       const alerts = screen.getAllByRole('alert');
       const visibleAlert = alerts.find(alert => !alert.style.position || alert.style.position !== 'absolute');
       expect(visibleAlert).toHaveTextContent('Manual error message');
+    });
+  });
+
+  describe('Character Counter Feature', () => {
+    it('does not show character counter by default', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value=""
+          onChange={mockOnChange}
+        />
+      );
+
+      expect(screen.queryByText(/0/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/100/)).not.toBeInTheDocument();
+    });
+
+    it('shows character counter when showCharacterCount is true and maxLength is provided', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value="Hello"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      // The counter displays as "5/100" - check the aria-label for verification
+      expect(screen.getByLabelText('5 dari 100 karakter digunakan')).toBeInTheDocument();
+    });
+
+    it('shows character counter with correct format', () => {
+      render(
+        <Input
+          label="Bio"
+          maxLength={50}
+          value="Test input"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      const counter = screen.getByLabelText('10 dari 50 karakter digunakan');
+      expect(counter).toBeInTheDocument();
+    });
+
+    it('updates character count when value changes', () => {
+      const { rerender } = render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value="Hello"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      expect(screen.getByLabelText('5 dari 100 karakter digunakan')).toBeInTheDocument();
+
+      rerender(
+        <Input
+          label="Description"
+          maxLength={100}
+          value="Hello World"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      expect(screen.getByLabelText('11 dari 100 karakter digunakan')).toBeInTheDocument();
+    });
+
+    it('shows neutral color for usage below 80%', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value="Short"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      const counter = screen.getByLabelText('5 dari 100 karakter digunakan');
+      expect(counter).toHaveClass('text-neutral-400');
+    });
+
+    it('shows warning color when usage reaches 80% or more', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value={"x".repeat(85)}
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      const counter = screen.getByLabelText('85 dari 100 karakter digunakan');
+      expect(counter).toHaveClass('text-amber-600');
+    });
+
+    it('shows error color when usage reaches 100%', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={50}
+          value={"x".repeat(50)}
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      const counter = screen.getByLabelText('50 dari 50 karakter digunakan');
+      expect(counter).toHaveClass('text-red-600');
+    });
+
+    it('announces when character limit is reached', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={10}
+          value={"x".repeat(10)}
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      const liveRegion = screen.getByText('Batas karakter tercapai');
+      expect(liveRegion).toHaveClass('sr-only');
+      expect(liveRegion).toHaveAttribute('role', 'alert');
+    });
+
+    it('does not announce when character limit is not reached', () => {
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value="Not full"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      expect(screen.queryByText('Batas karakter tercapai')).not.toBeInTheDocument();
+    });
+
+    it('does not show counter when maxLength is not provided', () => {
+      render(
+        <Input
+          label="Description"
+          value="Some text"
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      expect(screen.queryByText(/Some/)).not.toBeInTheDocument();
+    });
+
+    it('respects reduced motion preference', () => {
+      // Mock prefers-reduced-motion
+      window.matchMedia = vi.fn().mockImplementation(query => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      render(
+        <Input
+          label="Description"
+          maxLength={100}
+          value={"x".repeat(85)}
+          showCharacterCount
+          onChange={mockOnChange}
+        />
+      );
+
+      // Counter should not have pulse animation when reduced motion is preferred
+      const counter = screen.getByLabelText('85 dari 100 karakter digunakan');
+      expect(counter).not.toHaveClass('animate-pulse-subtle');
+    });
+  });
+
+  describe('Keyboard Shortcuts - Escape Hint', () => {
+    it('shows escape hint tooltip when input is focused with clearOnEscape and has value', async () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      // Focus the input using userEvent for better simulation
+      await userEvent.click(input);
+      
+      // Wait for the tooltip delay (400ms)
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip');
+        expect(tooltip).toBeInTheDocument();
+        expect(tooltip).toHaveTextContent('ESC');
+        expect(tooltip).toHaveTextContent('bersihkan');
+      }, { timeout: 500 });
+    });
+
+    it('does not show escape hint when clearOnEscape is false', async () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      await userEvent.click(input);
+      
+      // Wait a bit and verify tooltip doesn't appear
+      await new Promise(resolve => setTimeout(resolve, 450));
+      
+      // Tooltip should not exist
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('does not show escape hint when input has no value', async () => {
+      render(
+        <Input
+          label="Search"
+          value=""
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      await userEvent.click(input);
+      
+      // Wait a bit and verify tooltip doesn't appear
+      await new Promise(resolve => setTimeout(resolve, 450));
+      
+      // Tooltip should not exist
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('hides escape hint when input loses focus', async () => {
+      render(
+        <>
+          <Input
+            label="Search"
+            value="test query"
+            clearOnEscape
+            onChange={mockOnChange}
+          />
+          <button>Other button</button>
+        </>
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      // Focus and wait for tooltip
+      await userEvent.click(input);
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      }, { timeout: 500 });
+      
+      // Click elsewhere to blur
+      await userEvent.click(screen.getByRole('button', { name: 'Other button' }));
+      
+      // Tooltip should be removed
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
+    it('clears input value when escape is pressed and clearOnEscape is true', () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          clearOnEscape
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      fireEvent.keyDown(input, { key: 'Escape' });
+      
+      expect(mockOnChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('does not clear input when escape is pressed without clearOnEscape', () => {
+      render(
+        <Input
+          label="Search"
+          value="test query"
+          onChange={mockOnChange}
+        />
+      );
+
+      const input = screen.getByLabelText('Search');
+      
+      fireEvent.keyDown(input, { key: 'Escape' });
+      
+      expect(mockOnChange).not.toHaveBeenCalled();
     });
   });
 });

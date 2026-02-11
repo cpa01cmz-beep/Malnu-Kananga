@@ -1,20 +1,23 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { logger } from '../utils/logger';
 
 function useLocalStorage<T>(key: string, initialValue: T) {
+  // Use a ref to store the initial value to avoid dependency changes on every render
+  const initialValueRef = useRef(initialValue);
+
   // Get from local storage then parse stored json or return initialValue
   const readValue = useCallback((): T => {
     if (typeof window === 'undefined') {
-      return initialValue;
+      return initialValueRef.current;
     }
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      return item ? JSON.parse(item) : initialValueRef.current;
     } catch (error) {
       logger.warn(`Error reading localStorage key "${key}":`, error);
-      return initialValue;
+      return initialValueRef.current;
     }
-  }, [key, initialValue]);
+  }, [key]);
 
   const [storedValue, setStoredValue] = useState<T>(readValue);
 

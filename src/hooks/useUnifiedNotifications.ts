@@ -12,6 +12,8 @@ import {
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
 import { OCRValidationEvent } from '../types';
+import { TIME_MS } from '../constants';
+import { idGenerators } from '../utils/idGenerator';
 
 interface PushSubscription {
   readonly endpoint: string;
@@ -107,7 +109,7 @@ export function useUnifiedNotifications() {
     targetExtraRoles?: PushNotification['targetExtraRoles']
   ): PushNotification => {
     return {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: idGenerators.notification(),
       type,
       title,
       body,
@@ -278,7 +280,16 @@ export function useUnifiedNotifications() {
   }, []);
 
   // Local Storage Monitoring (from useEventNotifications)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const useMonitorLocalStorage = (key: string, onChange: (newValue: unknown, oldValue: unknown) => void) => {
+    // Use a ref to store the callback to avoid re-triggering the effect when callback reference changes
+    const onChangeRef = useRef(onChange);
+    
+    // Update the ref when onChange changes
+    useEffect(() => {
+      onChangeRef.current = onChange;
+    }, [onChange]);
+    
     useEffect(() => {
       const handleStorageChange = (e: Event) => {
         const storageEvent = e as StorageEvent;
@@ -286,7 +297,7 @@ export function useUnifiedNotifications() {
           try {
             const newValue = JSON.parse(storageEvent.newValue);
             const oldValue = JSON.parse(storageEvent.oldValue || '{}');
-            onChange(newValue, oldValue);
+            onChangeRef.current(newValue, oldValue);
           } catch (error) {
             logger.error(`Error parsing localStorage change for ${key}:`, error);
           }
@@ -300,7 +311,7 @@ export function useUnifiedNotifications() {
             const newValue = JSON.parse(stored);
             const lastChecked = lastCheckedRef.current[key] || 0;
             if (Date.now() - lastChecked > 5000) { // Avoid too frequent checks
-              onChange(newValue, {});
+              onChangeRef.current(newValue, {});
               lastCheckedRef.current[key] = Date.now();
             }
           } catch (error) {
@@ -311,16 +322,17 @@ export function useUnifiedNotifications() {
 
       window.addEventListener('storage', handleStorageChange);
       checkNow();
-      const interval = setInterval(checkNow, 30000); // Check every 30 seconds
+      const interval = setInterval(checkNow, TIME_MS.THIRTY_SECONDS); // Check every 30 seconds
 
       return () => {
         window.removeEventListener('storage', handleStorageChange);
         clearInterval(interval);
       };
-    }, [key, onChange]);
+    }, [key]); // Only depend on key, not onChange
   };
 
   // OCR Validation Monitor (from useEventNotifications)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const useOCRValidationMonitor = () => {
     useEffect(() => {
       const handleOCRValidation = (event: Event) => {
@@ -358,7 +370,7 @@ export function useUnifiedNotifications() {
     return unifiedNotificationManager.getCurrentSubscription();
   }, []);
 
-  return {
+  return useMemo(() => ({
     // State
     isInitialized,
     permissionGranted,
@@ -426,7 +438,54 @@ export function useUnifiedNotifications() {
     // Monitoring utilities
     useMonitorLocalStorage,
     useOCRValidationMonitor,
-  };
+  }), [
+    isInitialized,
+    permissionGranted,
+    permissionDenied,
+    settings,
+    history,
+    batches,
+    templates,
+    analytics,
+    showNotification,
+    createNotification,
+    requestPermission,
+    subscribeToPush,
+    unsubscribeFromPush,
+    isPermissionGranted,
+    isPermissionDenied,
+    getCurrentSubscription,
+    createTemplate,
+    createNotificationFromTemplate,
+    getTemplates,
+    notifyGradeUpdate,
+    notifyPPDBStatus,
+    notifyLibraryUpdate,
+    notifyAssignmentCreate,
+    notifyAssignmentSubmit,
+    notifyMeetingRequest,
+    notifyScheduleChange,
+    notifyAttendanceAlert,
+    notifyOCRValidation,
+    createBatch,
+    sendBatch,
+    getBatches,
+    getHistory,
+    clearHistory,
+    markAsRead,
+    deleteFromHistory,
+    getSettings,
+    saveSettings,
+    resetSettings,
+    updateSettings,
+    getAnalytics,
+    clearAnalytics,
+    deleteNotification,
+    addEventListener,
+    removeEventListener,
+    useMonitorLocalStorage,
+    useOCRValidationMonitor,
+  ]);
 }
 
 interface NotificationEvent {

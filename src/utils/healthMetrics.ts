@@ -2,6 +2,7 @@
 
 import { logger } from './logger';
 import { performanceMonitor } from '../services/performanceMonitor';
+import { CONVERSION, PERFORMANCE_THRESHOLDS, STORAGE_LIMITS } from '../constants';
 
 // Type declarations for Web API
 declare global {
@@ -270,8 +271,8 @@ class HealthMetricsService {
       const mem = (window.performance as { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
       if (mem) {
         return {
-          used: Math.round(mem.usedJSHeapSize / 1024 / 1024), // MB
-          total: Math.round(mem.totalJSHeapSize / 1024 / 1024), // MB
+          used: Math.round(mem.usedJSHeapSize / CONVERSION.BYTES_PER_MB), // MB
+          total: Math.round(mem.totalJSHeapSize / CONVERSION.BYTES_PER_MB), // MB
           percentage: Math.round((mem.usedJSHeapSize / mem.jsHeapSizeLimit) * 100),
         };
       }
@@ -354,8 +355,8 @@ class HealthMetricsService {
 
     this.alerts.push(alert);
 
-    // Keep only last 100 alerts
-    if (this.alerts.length > 100) {
+    // Keep only last N alerts
+    if (this.alerts.length > STORAGE_LIMITS.LOG_ENTRIES_MAX) {
       this.alerts.shift();
     }
 
@@ -409,12 +410,12 @@ class HealthMetricsService {
     }
 
     // Check memory
-    if (metrics.memory.percentage > 90) {
+    if (metrics.memory.percentage > PERFORMANCE_THRESHOLDS.MEMORY_WARNING_PERCENT) {
       issues.push(`Memory usage critical: ${metrics.memory.percentage}%`);
     }
 
     // Check performance
-    if (metrics.performance.errorRate > 10) {
+    if (metrics.performance.errorRate > PERFORMANCE_THRESHOLDS.ERROR_RATE_ALERT_PERCENT) {
       issues.push(`High error rate: ${metrics.performance.errorRate.toFixed(2)}%`);
     }
 

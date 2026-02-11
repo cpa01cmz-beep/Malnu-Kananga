@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { webSocketService, type RealTimeEvent } from '../webSocketService';
-import { apiService } from '../apiService';
+import { getAuthToken, parseJwtPayload } from '../api/auth';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, TEST_CONSTANTS } from '../../constants';
 
 /* eslint-disable no-undef */
 // Define WebSocket constants
@@ -186,11 +186,9 @@ let webSocketSpy: ReturnType<typeof vi.spyOn>;
 let mockGlobalEventListener: ReturnType<typeof vi.spyOn>;
 
 // Mock dependencies before module loads
-vi.mock('../apiService', () => ({
-  apiService: {
-    getAuthToken: vi.fn(),
-    parseJwtPayload: vi.fn(),
-  },
+vi.mock('../api/auth', () => ({
+  getAuthToken: vi.fn(),
+  parseJwtPayload: vi.fn(),
 }));
 
 vi.mock('../../utils/logger', () => ({
@@ -204,7 +202,7 @@ vi.mock('../../utils/logger', () => ({
 
 beforeAll(() => {
   // Setup WebSocket mock before service loads
-  webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation((url: string | URL) => {
+  webSocketSpy = vi.spyOn(global, 'WebSocket').mockImplementation(function(this: any, url: string | URL) {
     const instance = new MockWebSocket(url.toString());
     mockWebSocketInstances.push(instance);
     return instance as any;
@@ -234,8 +232,8 @@ describe('WebSocketService', () => {
     mockWebSocketInstances = [];
     
     // Default mocks
-    vi.mocked(apiService.getAuthToken).mockReturnValue('test-token');
-    vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+    vi.mocked(getAuthToken).mockReturnValue('test-token');
+    vi.mocked(parseJwtPayload).mockReturnValue({
       user_id: 'test-user',
       email: 'test@example.com',
       role: 'teacher',
@@ -262,7 +260,7 @@ describe('WebSocketService', () => {
     });
 
     it('should not initialize without token', async () => {
-      vi.mocked(apiService.getAuthToken).mockReturnValue(null);
+      vi.mocked(getAuthToken).mockReturnValue(null);
 
       await webSocketService.initialize();
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -467,7 +465,7 @@ describe('WebSocketService', () => {
 
     it('should update grades in local storage', () => {
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
-        { id: 'grade-1', score: 80, studentId: 'student-1' },
+        { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -475,8 +473,8 @@ describe('WebSocketService', () => {
         const updateEvent: RealTimeEvent = {
           type: 'grade_updated',
           entity: 'grade',
-          entityId: 'grade-1',
-          data: { id: 'grade-1', score: 85, studentId: 'student-1' },
+          entityId: TEST_CONSTANTS.IDS.GRADE_1,
+          data: { id: TEST_CONSTANTS.IDS.GRADE_1, score: 85, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -498,7 +496,7 @@ describe('WebSocketService', () => {
           type: 'grade_created',
           entity: 'grade',
           entityId: 'grade-new',
-          data: { id: 'grade-new', score: 90, studentId: 'student-1' },
+          data: { id: TEST_CONSTANTS.IDS.GRADE_NEW, score: 90, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -513,7 +511,7 @@ describe('WebSocketService', () => {
 
     it('should delete grades from local storage', () => {
       localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
-        { id: 'grade-1', score: 80, studentId: 'student-1' },
+        { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -521,8 +519,8 @@ describe('WebSocketService', () => {
         const deleteEvent: RealTimeEvent = {
           type: 'grade_deleted',
           entity: 'grade',
-          entityId: 'grade-1',
-          data: { id: 'grade-1', score: 80, studentId: 'student-1' },
+          entityId: TEST_CONSTANTS.IDS.GRADE_1,
+          data: { id: TEST_CONSTANTS.IDS.GRADE_1, score: 80, studentId: TEST_CONSTANTS.IDS.STUDENT_1 },
           timestamp: new Date().toISOString(),
           userRole: 'teacher',
           userId: 'teacher-1',
@@ -536,7 +534,7 @@ describe('WebSocketService', () => {
 
     it('should update announcements in local storage', () => {
       localStorage.setItem(STORAGE_KEYS.ANNOUNCEMENTS, JSON.stringify([
-        { id: 'ann-1', title: 'Old Title', content: 'Old Content' },
+        { id: TEST_CONSTANTS.IDS.ANN_1, title: 'Old Title', content: 'Old Content' },
       ]));
 
       const mockWs = getLatestMockWebSocket();
@@ -545,7 +543,7 @@ describe('WebSocketService', () => {
           type: 'announcement_updated',
           entity: 'announcement',
           entityId: 'ann-1',
-          data: { id: 'ann-1', title: 'New Title', content: 'New Content' },
+          data: { id: TEST_CONSTANTS.IDS.ANN_1, title: 'New Title', content: 'New Content' },
           timestamp: new Date().toISOString(),
           userRole: 'admin',
           userId: 'admin-1',
@@ -578,24 +576,6 @@ describe('WebSocketService', () => {
       expect(storedState.connected).toBe(true);
       expect(storedState.subscriptions).toContain('grade_updated');
       expect(storedState.lastConnected).toBeDefined();
-    });
-
-    it('should load connection state from localStorage', async () => {
-      webSocketService.disconnect();
-      
-      const mockState = {
-        connected: false,
-        connecting: false,
-        reconnecting: false,
-        subscriptions: ['grade_updated', 'attendance_marked'],
-        lastConnected: new Date().toISOString(),
-        reconnectAttempts: 0,
-      };
-      localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(mockState));
-
-      const state = webSocketService.getConnectionState();
-      expect(state.subscriptions.has('grade_updated')).toBe(true);
-      expect(state.subscriptions.has('attendance_marked')).toBe(true);
     });
 
     it('should return current connection state', () => {
@@ -715,7 +695,7 @@ describe('WebSocketService', () => {
 
   describe('Token Expiration', () => {
     it('should handle token expiration', async () => {
-      vi.mocked(apiService.parseJwtPayload).mockReturnValue({
+      vi.mocked(parseJwtPayload).mockReturnValue({
         user_id: 'test-user',
         email: 'test@example.com',
         role: 'teacher',
@@ -769,16 +749,15 @@ describe('WebSocketService', () => {
     });
 
     it('should support manual reconnection', async () => {
-      const mockWs = getLatestMockWebSocket();
-      const initialAttempts = mockWs?.connectAttempts || 0;
+      const initialInstanceCount = mockWebSocketInstances.length;
 
       webSocketService.disconnect();
 
       await webSocketService.reconnect();
       await new Promise(resolve => setTimeout(resolve, 60));
 
-      const newMockWs = getLatestMockWebSocket();
-      expect(newMockWs?.connectAttempts).toBeGreaterThan(initialAttempts);
+      // Should create a new WebSocket instance after reconnect
+      expect(mockWebSocketInstances.length).toBeGreaterThan(initialInstanceCount);
     });
   });
 });

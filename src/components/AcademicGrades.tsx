@@ -11,8 +11,7 @@ import { Legend } from 'recharts/es6/component/Legend';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+// jsPDF and html2canvas are dynamically imported in generatePDFReport to reduce bundle size
 import { gradesAPI, subjectsAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
@@ -295,6 +294,10 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
     if (!element) return;
 
     try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf')
+      ]);
       const canvas = await html2canvas(element);
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF();

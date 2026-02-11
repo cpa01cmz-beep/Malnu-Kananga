@@ -1,4 +1,4 @@
- 
+  
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -231,6 +231,60 @@ describe('Badge Component', () => {
     it('renders with special characters', () => {
       render(<Badge>Badge with & special characters</Badge>);
       expect(screen.getByText('Badge with & special characters')).toBeInTheDocument();
+    });
+  });
+
+  describe('Pulse Animation', () => {
+    it('renders without pulse animation by default', () => {
+      render(<Badge>No Pulse</Badge>);
+      const badge = screen.getByText('No Pulse');
+      expect(badge).not.toHaveClass('animate-badge-pulse-subtle');
+      expect(badge).not.toHaveClass('animate-badge-pulse-moderate');
+      expect(badge).not.toHaveClass('animate-badge-pulse-strong');
+    });
+
+    it('applies subtle pulse animation when pulse=true', () => {
+      render(<Badge pulse>Pulsing</Badge>);
+      const badge = screen.getByText('Pulsing');
+      expect(badge).toHaveClass('animate-badge-pulse-subtle');
+    });
+
+    it('applies moderate pulse animation with pulseIntensity="moderate"', () => {
+      render(<Badge pulse pulseIntensity="moderate">Moderate Pulse</Badge>);
+      const badge = screen.getByText('Moderate Pulse');
+      expect(badge).toHaveClass('animate-badge-pulse-moderate');
+      expect(badge).not.toHaveClass('animate-badge-pulse-subtle');
+    });
+
+    it('applies strong pulse animation with pulseIntensity="strong"', () => {
+      render(<Badge pulse pulseIntensity="strong">Strong Pulse</Badge>);
+      const badge = screen.getByText('Strong Pulse');
+      expect(badge).toHaveClass('animate-badge-pulse-strong');
+      expect(badge).not.toHaveClass('animate-badge-pulse-subtle');
+    });
+
+    it('applies custom pulse duration via style attribute', () => {
+      render(<Badge pulse pulseDuration={3}>Custom Duration</Badge>);
+      const badge = screen.getByText('Custom Duration');
+      expect(badge).toHaveStyle({ animationDuration: '3s' });
+    });
+
+    it('uses default pulse duration when not specified', () => {
+      render(<Badge pulse>Default Duration</Badge>);
+      const badge = screen.getByText('Default Duration');
+      expect(badge).toHaveStyle({ animationDuration: '2s' });
+    });
+
+    it('combines pulse with other props correctly', () => {
+      render(
+        <Badge pulse pulseIntensity="moderate" variant="success" size="lg">
+          Complex Badge
+        </Badge>
+      );
+      const badge = screen.getByText('Complex Badge');
+      expect(badge).toHaveClass('animate-badge-pulse-moderate');
+      expect(badge).toHaveClass('bg-green-700');
+      expect(badge).toHaveClass('px-2.5');
     });
   });
 });

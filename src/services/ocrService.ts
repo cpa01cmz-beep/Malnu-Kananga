@@ -1,6 +1,7 @@
 import { createWorker, PSM, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS, OCR_SERVICE_CONFIG_EXTRA, HASH_CONFIG } from '../constants';
+import { generateValidationId } from '../utils/idGenerator';
 import { logger } from '../utils/logger';
 import { handleOCRError } from '../utils/serviceErrorHandlers';
 import { ocrCache } from './aiCacheService';
@@ -52,7 +53,7 @@ class OCRService {
     }
 
     try {
-      this.worker = await createWorker('ind', 1, {
+      this.worker = await createWorker(OCR_SERVICE_CONFIG_EXTRA.LANGUAGE, OCR_SERVICE_CONFIG_EXTRA.WORKER_COUNT, {
         logger: (m) => {
           if (m.status === 'recognizing text' && progressCallback) {
             progressCallback({
@@ -210,32 +211,30 @@ class OCRService {
 
   private looksLikeName(text: string): boolean {
     const words = text.split(' ');
-    return words.length >= 2 && words.length <= 4 && words.every(word => /^[A-Z][a-z]+$/.test(word));
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MIN/MAX constants
+    return words.length >= OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MIN && words.length <= OCR_SERVICE_CONFIG_EXTRA.NAME_WORD_MAX && words.every(word => /^[A-Z][a-z]+$/.test(word));
   }
 
   private looksLikeNISN(text: string): boolean {
-    const nisnPattern = /(?:NISN\s*[:\s]*)?(\d{10})/;
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT constant
+    const nisnPattern = new RegExp(`(?:NISN\\s*[:\\s]*)?(\\d{${OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT}})`);
     return nisnPattern.test(text);
   }
 
   private extractNISN(text: string): string {
-    const match = text.match(/(?:NISN\s*[:\s]*)?(\d{10})/);
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT constant
+    const match = text.match(new RegExp(`(?:NISN\\s*[:\\s]*)?(\\d{${OCR_SERVICE_CONFIG_EXTRA.NISN_DIGIT_COUNT}})`));
     return match ? match[1] : text;
   }
 
   private looksLikeSchoolName(text: string): boolean {
-    const schoolKeywords = ['SMP', 'MTs', 'SD', 'MI', 'SMA', 'MA', 'SMK'];
-    return schoolKeywords.some(keyword => text.toUpperCase().includes(keyword));
+    // Flexy: Using centralized OCR_SCHOOL_KEYWORDS constant
+    return OCR_SCHOOL_KEYWORDS.some(keyword => text.toUpperCase().includes(keyword));
   }
 
   private isValidSubject(subject: string): boolean {
-    const validSubjects = [
-      'Matematika', 'Bahasa Indonesia', 'Bahasa Inggris', 'IPA', 'IPS',
-      'Fisika', 'Kimia', 'Biologi', 'Sejarah', 'Geografi',
-      'Sosiologi', 'Ekonomi', 'PKN', 'Agama', 'Seni Budaya',
-      'Penjaskes', 'TIK', 'Bahasa Arab', 'Fiqih', 'Aqidah Akhlak',
-      'Bahasa Jawa', 'Muatan Lokal'
-    ];
+    // Flexy: Using centralized ACADEMIC_SUBJECTS constant instead of hardcoded array
+    const validSubjects = Object.values(ACADEMIC_SUBJECTS);
 
     const normalizedSubject = subject.toLowerCase();
     return validSubjects.some(s => s.toLowerCase().includes(normalizedSubject) || normalizedSubject.includes(s.toLowerCase()));
@@ -243,7 +242,7 @@ class OCRService {
 
   private isValidGrade(grade: string): boolean {
     const numericGrade = parseInt(grade, 10);
-    return !isNaN(numericGrade) && numericGrade >= 0 && numericGrade <= 100;
+    return !isNaN(numericGrade) && numericGrade >= GRADE_LIMITS.MIN && numericGrade <= GRADE_LIMITS.MAX;
   }
 
   private assessTextQuality(text: string, confidence: number): OCRTextQuality {
@@ -252,14 +251,15 @@ class OCRService {
     const characterCount = text.length;
     
     // Estimate accuracy based on confidence and text characteristics
+    // Flexy: Uses OCR_SERVICE_CONFIG_EXTRA constants for penalties
     let estimatedAccuracy = confidence;
-    if (wordCount < 10) estimatedAccuracy *= 0.8; // Penalize very short texts
-    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= 0.9; // Suspicious numbers
+    if (wordCount < 10) estimatedAccuracy *= OCR_SERVICE_CONFIG_EXTRA.SHORT_TEXT_PENALTY;
+    if (/\d{2,}/.test(text) && !/NISN|Nilai|Grade/i.test(text)) estimatedAccuracy *= OCR_SERVICE_CONFIG_EXTRA.SUSPICIOUS_NUMBERS_PENALTY;
     
     estimatedAccuracy = Math.max(0, Math.min(100, estimatedAccuracy));
     
-    const isHighQuality = confidence >= 70 && wordCount >= 20;
-    const isSearchable = confidence >= 50 && wordCount >= 5;
+    const isHighQuality = confidence >= OCR_SERVICE_CONFIG.QUALITY.HIGH_THRESHOLD && wordCount >= 20;
+    const isSearchable = confidence >= OCR_SERVICE_CONFIG.QUALITY.MEDIUM_THRESHOLD && wordCount >= 5;
     
     // Determine document type
     let documentType: OCRTextQuality['documentType'] = 'unknown';
@@ -315,7 +315,7 @@ class OCRService {
   ): void {
     try {
       const event: OCRValidationEvent = {
-        id: `ocr-validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: generateValidationId(type, documentId || `doc-${Date.now()}`),
         type,
         documentId,
         documentType,
@@ -331,9 +331,9 @@ class OCRService {
       const events = JSON.parse(localStorage.getItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS) || '[]');
       events.push(event);
       
-      // Keep only last 100 events
-      if (events.length > 100) {
-        events.splice(0, events.length - 100);
+      // Keep only last N events (configurable)
+      if (events.length > OCR_SERVICE_CONFIG.MAX_CACHED_EVENTS) {
+        events.splice(0, events.length - OCR_SERVICE_CONFIG.MAX_CACHED_EVENTS);
       }
       
       localStorage.setItem(STORAGE_KEYS.OCR_VALIDATION_EVENTS, JSON.stringify(events));
@@ -449,11 +449,11 @@ class OCRService {
       let hash = 0;
       for (let i = 0; i < uint8Array.length; i++) {
         const byte = uint8Array[i];
-        hash = ((hash << 5) - hash) + byte;
+        hash = ((hash << HASH_CONFIG.HASH_SHIFT_BITS) - hash) + byte;
         hash = hash & hash;
       }
       
-      return Math.abs(hash).toString(36) + `_${imageFile.size}_${imageFile.type}`;
+      return Math.abs(hash).toString(HASH_CONFIG.OUTPUT_BASE) + `_${imageFile.size}_${imageFile.type}`;
     } catch (error) {
       logger.error('Failed to hash file for OCR caching:', error);
       return `fallback_${imageFile.size}_${imageFile.type}_${Date.now()}`;

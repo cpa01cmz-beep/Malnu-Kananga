@@ -8,9 +8,10 @@ import {
 } from '../utils/errorHandler';
 import { ocrCache } from './aiCacheService';
 import type { GoogleGenAI as GoogleGenAIType } from '@google/genai';
+import { AI_MODELS, TEXT_TRUNCATION, OCR_ENHANCEMENT_CONFIG } from '../constants';
 
-// Models
-const FLASH_MODEL = 'gemini-2.5-flash';
+// Models - Flexy: Using centralized AI model names!
+const FLASH_MODEL = AI_MODELS.FLASH;
 
 // Lazy initialization of AI client with error handling
 let aiInstance: GoogleGenAIType | null = null;
@@ -57,7 +58,7 @@ async function getAIInstance(): Promise<GoogleGenAIType> {
 // Generate summary for OCR text
 export async function generateTextSummary(
   text: string,
-  maxLength: number = 150
+  maxLength: number = OCR_ENHANCEMENT_CONFIG.MAX_SUMMARY_LENGTH
 ): Promise<string> {
   if (!text || text.trim().length === 0) {
     return 'Tidak ada teks untuk dianalisis.';
@@ -102,7 +103,7 @@ export async function generateTextSummary(
     if (trimmedSummary) {
       ocrCache.set({
         operation: 'summary',
-        input: text.substring(0, 500),
+        input: text.substring(0, TEXT_TRUNCATION.MEDIUM_PREVIEW),
         context: `maxLength:${maxLength}`,
         thinkingMode: false
       }, trimmedSummary);
@@ -182,7 +183,7 @@ export async function compareTextsForSimilarity(
       // Cache the result
       ocrCache.set({
         operation: 'similarity',
-        input: `${text1.substring(0, 200)}|${text2.substring(0, 200)}`,
+        input: `${text1.substring(0, TEXT_TRUNCATION.COMPARISON_TEXT)}|${text2.substring(0, TEXT_TRUNCATION.COMPARISON_TEXT)}`,
         context: `threshold:${threshold}`,
         thinkingMode: false
       }, result);

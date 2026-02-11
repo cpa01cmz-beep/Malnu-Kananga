@@ -13,7 +13,7 @@ import { VoiceLanguage } from '../types';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { GRADIENT_CLASSES } from '../config/gradients';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CONVERSION } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
 import Button from './ui/Button';
@@ -365,10 +365,9 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
-    const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(CONVERSION.BYTES_PER_KB));
+    return Math.round((bytes / Math.pow(CONVERSION.BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const getAvailableSubjects = (): string[] => {
@@ -1558,7 +1557,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           ))
         ) : (
           <div className="col-span-full">
-            <EmptyState 
+            <EmptyState
               message="Tidak ada materi ditemukan untuk filter ini"
               icon={
                 <div className="mx-auto w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center text-neutral-400">
@@ -1567,6 +1566,26 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               }
               size="lg"
               ariaLabel="Tidak ada materi ditemukan"
+              suggestedActions={[
+                {
+                  label: 'Hapus Semua Filter',
+                  onClick: () => {
+                    setFilterSubject('Semua');
+                    setSearch('');
+                    setFilterTeacher('');
+                    setFilterDateRange('all');
+                    setFilterRating(0);
+                    setShowOnlyFavorites(false);
+                    setSortBy('date');
+                  },
+                  variant: 'primary'
+                },
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
             />
           </div>
         )}

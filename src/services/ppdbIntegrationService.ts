@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -102,25 +102,25 @@ class PPDBIntegrationService {
     try {
       const now = new Date();
       const year = now.getFullYear();
-      
-      // Get current counter from localStorage
+
+      // Get current counter from localStorage - Flexy: Use constants for formatting!
       const counterKey = STORAGE_KEYS.PPDB_NIS_COUNTER;
-      let counter = parseInt(localStorage.getItem(counterKey) || '0', 10);
-      
+      let counter = parseInt(localStorage.getItem(counterKey) || PPDB_CONFIG.NIS_INITIAL_COUNTER.toString(), PPDB_CONFIG.NIS_COUNTER_RADIX);
+
       // Increment counter
       counter += 1;
       localStorage.setItem(counterKey, counter.toString());
-      
-      // Generate NIS: YEAR + CLASS (10) + 4-digit sequence
-      const classCode = '10'; // Default class code for new students
-      const sequence = counter.toString().padStart(4, '0');
+
+      // Generate NIS: YEAR + CLASS + padded sequence
+      const classCode = DEFAULT_CLASS_CONFIG.NEW_STUDENT_CODE;
+      const sequence = counter.toString().padStart(PPDB_CONFIG.NIS_PADDING_LENGTH, ID_FORMAT.PAD_STRING);
       const nis = `${year}${classCode}${sequence}`;
-      
+
       logger.info('Generated NIS', { nis, year, classCode, counter });
       return nis;
     } catch (error) {
       logger.error('Failed to generate NIS:', error);
-      throw new Error('Gagal generate NIS');
+      throw new Error(SERVICE_ERROR_MESSAGES.NIS_GENERATION_FAILED);
     }
   }
 
@@ -132,14 +132,14 @@ class PPDBIntegrationService {
     try {
       // Default class assignment for new students
       // In production, this would load-balance based on existing student count
-      const classCode = '10'; // Class 10 (Grade 10)
-      const className = 'Kelas 10'; // Display name
+      const classCode = DEFAULT_CLASS_CONFIG.NEW_STUDENT_CODE;
+      const className = DEFAULT_CLASS_CONFIG.NEW_STUDENT_NAME;
 
       logger.info('Assigned student to class', { assignedClass: classCode, assignedClassName: className });
       return { className, class: classCode };
     } catch (error) {
       logger.error('Failed to assign class:', error);
-      throw new Error('Gagal menentukan kelas');
+      throw new Error(SERVICE_ERROR_MESSAGES.CLASS_ASSIGNMENT_FAILED);
     }
   }
 
@@ -152,18 +152,18 @@ class PPDBIntegrationService {
       const password = this.generateRandomPassword();
 
       const parentUser: Partial<User> = {
-        id: `user_${Date.now()}`,
+        id: `${ID_PREFIXES.USER}_${Date.now()}`,
         name: registrant.parentName,
         email: registrant.email,
-        role: 'parent',
+        role: USER_ROLES.PARENT,
         extraRole: null,
-        status: 'active',
+        status: USER_STATUS.ACTIVE,
       };
 
       const response = await usersAPI.create(parentUser);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Gagal membuat akun orang tua');
+        throw new Error(response.error || SERVICE_ERROR_MESSAGES.PARENT_ACCOUNT_FAILED);
       }
 
       const credentials: ParentAccountCredentials = {
@@ -178,7 +178,7 @@ class PPDBIntegrationService {
       return credentials;
     } catch (error) {
       logger.error('Failed to create parent account:', error);
-      throw new Error('Gagal membuat akun orang tua');
+      throw new Error(SERVICE_ERROR_MESSAGES.PARENT_ACCOUNT_FAILED);
     }
   }
 
@@ -195,8 +195,8 @@ class PPDBIntegrationService {
       const { className, class: classCode } = this.assignToClass();
 
       const student: Partial<Student> = {
-        id: `student_${Date.now()}`,
-        userId: `user_${Date.now()}`, // Student user account created separately
+        id: `${STUDENT_ID_PREFIX}${Date.now()}`,
+        userId: `${ID_PREFIXES.USER}_${Date.now()}`, // Student user account created separately
         nisn: registrant.nisn,
         nis,
         class: classCode,
@@ -212,7 +212,7 @@ class PPDBIntegrationService {
       const response = await studentsAPI.create(student);
 
       if (!response.success || !response.data) {
-        throw new Error(response.error || 'Gagal membuat data siswa');
+        throw new Error(response.error || SERVICE_ERROR_MESSAGES.STUDENT_CREATION_FAILED);
       }
 
       // Note: Parent-student relationship is created via student.parentName field
@@ -222,7 +222,7 @@ class PPDBIntegrationService {
       return response.data;
     } catch (error) {
       logger.error('Failed to convert registrant to student:', error);
-      throw new Error('Gagal membuat data siswa dari pendaftar PPDB');
+      throw new Error(SERVICE_ERROR_MESSAGES.STUDENT_CREATION_FAILED);
     }
   }
 
@@ -239,7 +239,7 @@ class PPDBIntegrationService {
       // Get registrant data
       const registrantResponse = await ppdbAPI.getById(registrantId);
       if (!registrantResponse.success || !registrantResponse.data) {
-        throw new Error('Pendaftar tidak ditemukan');
+        throw new Error(SERVICE_ERROR_MESSAGES.REGISTRANT_NOT_FOUND);
       }
 
       const registrant = registrantResponse.data;
@@ -445,34 +445,34 @@ class PPDBIntegrationService {
             name: registrant.parentName,
           },
         ],
-        subject: 'Selamat! Siswa Diterima di MA Malnu Kananga',
+        subject: `Selamat! Siswa Diterima di ${APP_CONFIG.SCHOOL_NAME}`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
+            <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
-            <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di MA Malnu Kananga.</p>
+            <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di ${APP_CONFIG.SCHOOL_NAME}.</p>
             
-            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.GRAY_BG}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Data Siswa</h3>
               <p><strong>Nama Lengkap:</strong> ${registrant.fullName}</p>
               <p><strong>NIS:</strong> ${nis}</p>
               <p><strong>Kelas:</strong> (Akan ditentukan kemudian)</p>
             </div>
             
-            <div style="background-color: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.INFO}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Akun Orang Tua</h3>
               <p>Berikut adalah akun untuk mengakses portal orang tua:</p>
               <p><strong>Username:</strong> ${credentials.username}</p>
               <p><strong>Password:</strong> ${credentials.password}</p>
-              <p style="color: #dc2626; font-size: 14px;">Silakan ganti password setelah login pertama.</p>
+              <p style="color: ${EMAIL_COLORS.WARNING}; font-size: 14px;">Silakan ganti password setelah login pertama.</p>
             </div>
             
             <p>Silakan login ke portal orang tua untuk melihat jadwal, nilai, dan informasi lainnya.</p>
             <p>Terima kasih,</p>
-            <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+            <p><strong>Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}</strong></p>
           </div>
         `,
-        text: `Selamat! ${registrant.fullName} telah diterima di MA Malnu Kananga.\n\nNIS: ${nis}\n\nAkun Orang Tua:\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nSilakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB MA Malnu Kananga`,
+        text: `Selamat! ${registrant.fullName} telah diterima di ${APP_CONFIG.SCHOOL_NAME}.\n\nNIS: ${nis}\n\nAkun Orang Tua:\nUsername: ${credentials.username}\nPassword: ${credentials.password}\n\nSilakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
         data: {
           templateId: 'enrollment_confirmation',
           registrantId: registrant.id,
@@ -518,7 +518,7 @@ class PPDBIntegrationService {
         },
         accepted: {
           title: 'Selamat! Anda Diterima',
-          body: 'Selamat! Anda telah diterima di MA Malnu Kananga. Tunggu informasi pendaftaran ulang.',
+          body: `Selamat! Anda telah diterima di ${APP_CONFIG.SCHOOL_NAME}. Tunggu informasi pendaftaran ulang.`,
         },
         enrolled: {
           title: 'Pendaftaran Selesai',
@@ -671,9 +671,9 @@ class PPDBIntegrationService {
    * Format: 8 characters, mixed case, numbers
    */
   private generateRandomPassword(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars = PASSWORD_GENERATION.CHARACTER_SET;
     let password = '';
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < PASSWORD_GENERATION.DEFAULT_LENGTH; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return password;
@@ -792,7 +792,7 @@ class PPDBIntegrationService {
       });
     } catch (error) {
       logger.error('Failed to rollback student account:', error);
-      throw new Error('Gagal melakukan rollback akun siswa');
+      throw new Error(SERVICE_ERROR_MESSAGES.ROLLBACK_FAILED);
     }
   }
 
@@ -814,11 +814,11 @@ class PPDBIntegrationService {
         subject: 'Selamat! Akun Siswa Telah Dibuat',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #10b981;">Selamat! Pendaftaran Diterima</h2>
+            <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
             <p>Kami dengan senang hati menginformasikan bahwa akun siswa untuk <strong>${registrant.fullName}</strong> telah dibuat secara otomatis.</p>
             
-            <div style="background-color: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <div style="background-color: ${EMAIL_COLORS.INFO}; padding: 15px; border-radius: 8px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Data Siswa</h3>
               <p><strong>Nama Lengkap:</strong> ${registrant.fullName}</p>
               <p><strong>NIS:</strong> ${nis}</p>
@@ -827,10 +827,10 @@ class PPDBIntegrationService {
             
             <p>Akun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.</p>
             <p>Terima kasih,</p>
-            <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+            <p><strong>Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}</strong></p>
           </div>
         `,
-        text: `Selamat! Akun siswa untuk ${registrant.fullName} telah dibuat secara otomatis.\n\nNIS: ${nis}\n\nAkun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB MA Malnu Kananga`,
+        text: `Selamat! Akun siswa untuk ${registrant.fullName} telah dibuat secara otomatis.\n\nNIS: ${nis}\n\nAkun parent dan akun siswa telah dibuat. Silakan login ke portal orang tua untuk informasi lebih lanjut.\n\nTerima kasih,\nPanitia PPDB ${APP_CONFIG.SCHOOL_NAME}`,
         data: {
           templateId: 'auto_creation_confirmation',
           registrantId: registrant.id,

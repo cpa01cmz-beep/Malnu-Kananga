@@ -6,7 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_CONFIG } from '../../constants';
+import { API_CONFIG, HTTP } from '../../constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -56,11 +56,11 @@ async function validateRequestPermissions(
     const method = options.method?.toUpperCase() || 'GET';
 
     const actionMap: Record<string, string> = {
-      'GET': 'read',
-      'POST': 'create',
-      'PUT': 'update',
-      'PATCH': 'update',
-      'DELETE': 'delete'
+      [HTTP.METHODS.GET]: 'read',
+      [HTTP.METHODS.POST]: 'create',
+      [HTTP.METHODS.PUT]: 'update',
+      [HTTP.METHODS.PATCH]: 'update',
+      [HTTP.METHODS.DELETE]: 'delete'
     };
 
     const action = actionMap[method] || 'read';
@@ -124,8 +124,9 @@ export async function request<T>(
   const skipQueue = options.skipQueue || false;
   const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
   
-  const method = options.method?.toUpperCase() || 'GET';
-  const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method);
+  const method = options.method?.toUpperCase() || HTTP.METHODS.GET;
+  const writeMethods: string[] = [HTTP.METHODS.POST, HTTP.METHODS.PUT, HTTP.METHODS.DELETE, HTTP.METHODS.PATCH];
+  const isWriteOperation = writeMethods.includes(method);
   
   if (!isOnline) {
     if (isWriteOperation && !skipQueue) {
@@ -169,7 +170,7 @@ export async function request<T>(
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': HTTP.HEADERS.CONTENT_TYPE_JSON,
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       } as HeadersInit,
@@ -179,7 +180,7 @@ export async function request<T>(
 
     performanceMonitor.recordResponse(endpoint, method, Date.now() - startReqTime, response.status);
 
-    if (response.status === 401 && !getIsRefreshing() && getAuthToken()) {
+    if (response.status === HTTP.STATUS_CODES.UNAUTHORIZED && !getIsRefreshing() && getAuthToken()) {
       if (!getIsRefreshing()) {
         setIsRefreshing(true);
         try {
@@ -193,7 +194,7 @@ export async function request<T>(
       }
     }
 
-    if (response.status === 403) {
+    if (response.status === HTTP.STATUS_CODES.FORBIDDEN) {
       const classifiedError = classifyError(new Error('Forbidden access'), {
         operation: `API ${method} ${endpoint}`,
         timestamp: Date.now()
@@ -202,7 +203,7 @@ export async function request<T>(
       throw classifiedError;
     }
 
-    if (response.status === 422) {
+    if (response.status === HTTP.STATUS_CODES.UNPROCESSABLE_ENTITY) {
       const classifiedError = classifyError(new Error('Validation error'), {
         operation: `API ${method} ${endpoint}`,
         timestamp: Date.now()

@@ -2,7 +2,7 @@
 // Handles caching of critical data for offline access
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, SCHEDULER_INTERVALS, CACHE_VERSIONS, LEGACY_STORAGE_KEYS } from '../constants';
 import type { Student, Grade, Attendance, Schedule, ParentChild, Class, User, Announcement } from '../types';
 import React from 'react';
 import { useNetworkStatus } from '../utils/networkStatus';
@@ -63,8 +63,8 @@ export interface SyncStatus {
 // ============================================
 
 const CACHE_DURATION = TIME_MS.ONE_DAY; // 24 hours
-const SYNC_INTERVAL = 30 * 60 * 1000; // 30 minutes
-const CACHE_VERSION = '1.0';
+const SYNC_INTERVAL = SCHEDULER_INTERVALS.OFFLINE_SYNC_CHECK; // 30 minutes
+const CACHE_VERSION = CACHE_VERSIONS.OFFLINE_DATA; // Flexy: Never hardcode cache versions!
 
 // ============================================
 // OFFLINE DATA SERVICE
@@ -555,7 +555,7 @@ class OfflineDataService {
     // Check sync status every 5 minutes
     this.syncInterval = setInterval(() => {
       this.notifySyncStatusChange();
-    }, 5 * 60 * 1000);
+    }, SCHEDULER_INTERVALS.OFFLINE_SYNC_CHECK);
   }
 
   private notifySyncStatusChange(): void {
@@ -571,11 +571,12 @@ class OfflineDataService {
 
   private migrateLegacyData(): void {
     // Handle any legacy data migration here
+    // Flexy: Using centralized constants instead of hardcoded keys
     try {
       const legacyKeys = [
-        'malnu_student_grades_cache',
-        'malnu_student_attendance_cache',
-        'malnu_parent_children_cache',
+        LEGACY_STORAGE_KEYS.STUDENT_GRADES_CACHE,
+        LEGACY_STORAGE_KEYS.STUDENT_ATTENDANCE_CACHE,
+        LEGACY_STORAGE_KEYS.PARENT_CHILDREN_CACHE,
       ];
 
       legacyKeys.forEach(key => {

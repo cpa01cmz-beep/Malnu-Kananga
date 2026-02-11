@@ -1,5 +1,79 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { useFieldValidation } from '../../hooks/useFieldValidation';
+import { XMarkIcon } from '../icons/MaterialIcons';
+import { idGenerators } from '../../utils/idGenerator';
+
+// Micro-UX: Character count indicator with progressive visual feedback
+interface CharacterCountIndicatorProps {
+  current: number;
+  max: number;
+  size: TextareaSize;
+}
+
+const CharacterCountIndicator: React.FC<CharacterCountIndicatorProps> = ({ current, max, size }) => {
+  const percentage = (current / max) * 100;
+  const isWarning = percentage >= 80 && percentage < 100;
+  const isError = percentage >= 100;
+
+  const getColorClasses = () => {
+    if (isError) return 'text-red-600 dark:text-red-400 font-semibold animate-pulse-once';
+    if (isWarning) return 'text-amber-600 dark:text-amber-400 font-medium';
+    return 'text-neutral-400 dark:text-neutral-500';
+  };
+
+  const getAriaLabel = () => {
+    if (isError) return `${current} dari ${max} karakter. Batas maksimum tercapai!`;
+    if (isWarning) return `${current} dari ${max} karakter. Mendekati batas.`;
+    return `${current} dari ${max} karakter`;
+  };
+
+  const helperTextSizeClasses: Record<TextareaSize, string> = {
+    sm: "text-xs",
+    md: "text-xs",
+    lg: "text-sm",
+  };
+
+  return (
+    <span 
+      className={`${helperTextSizeClasses[size]} ${getColorClasses()} transition-colors duration-200`}
+      aria-label={getAriaLabel()}
+      role="status"
+      aria-live="polite"
+    >
+      {current}/{max}
+    </span>
+  );
+};
+
+// Micro-UX: Visual progress bar for character limit
+interface CharacterProgressBarProps {
+  current: number;
+  max: number;
+}
+
+const CharacterProgressBar: React.FC<CharacterProgressBarProps> = ({ current, max }) => {
+  const percentage = Math.min((current / max) * 100, 100);
+  const isWarning = percentage >= 80 && percentage < 100;
+  const isError = percentage >= 100;
+
+  const getBarColor = () => {
+    if (isError) return 'bg-red-500';
+    if (isWarning) return 'bg-amber-500';
+    return 'bg-primary-500';
+  };
+
+  return (
+    <div 
+      className="h-1 w-full bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden"
+      aria-hidden="true"
+    >
+      <div 
+        className={`h-full ${getBarColor()} transition-all duration-300 ease-out rounded-full`}
+        style={{ width: `${percentage}%` }}
+      />
+    </div>
+  );
+};
 
 export type TextareaSize = 'sm' | 'md' | 'lg';
 export type TextareaState = 'default' | 'error' | 'success';
@@ -21,6 +95,8 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
     announceErrors?: boolean;
     describedBy?: string;
   };
+  showClearButton?: boolean;
+  clearOnEscape?: boolean;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed resize-none";
@@ -49,6 +125,12 @@ const helperTextSizeClasses: Record<TextareaSize, string> = {
   lg: "text-sm",
 };
 
+const sizeIconClasses: Record<TextareaSize, string> = {
+  sm: "w-4 h-4",
+  md: "w-5 h-5",
+  lg: "w-6 h-6",
+};
+
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   id,
   label,
@@ -64,6 +146,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   validateOnChange = true,
   validateOnBlur = true,
   accessibility = { announceErrors: true },
+  showClearButton = false,
+  clearOnEscape = false,
   className = '',
   value,
   onChange,
@@ -73,7 +157,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const internalRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
   
-  const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+  const textareaId = id || idGenerators.input();
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
   const errorTextId = errorText ? `${textareaId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
@@ -119,6 +203,28 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     }
   };
 
+  // Clear button handler
+  const handleClear = () => {
+    const syntheticEvent = {
+      target: { value: '' }
+    } as React.ChangeEvent<HTMLTextAreaElement>;
+    handleChange(syntheticEvent);
+    // Focus back on textarea after clearing for better UX
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+  // Escape key handler to clear input value
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (clearOnEscape && e.key === 'Escape') {
+      handleClear();
+    }
+    if (props.onKeyDown) {
+      props.onKeyDown(e);
+    }
+  };
+
   // Auto-focus management for validation errors
   useEffect(() => {
     if (validation.state.errors.length > 0 && validation.state.isTouched && textareaRef.current) {
@@ -145,6 +251,9 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
                     (validation.state.isValid ? state : 'error');
   const finalErrorText = validation.state.errors.length > 0 && validation.state.isTouched ? 
                         validation.state.errors[0] : errorText;
+
+  // Check if clear button should be shown
+  const hasClearButton = showClearButton && value && String(value).length > 0 && !props.disabled;
 
   // Enhanced accessibility attributes
   const accessibilityProps = {
@@ -180,9 +289,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         value={value}
         onChange={handleChange}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
         {...accessibilityProps}
         {...props}
       />
+
+        {/* Clear button - appears when there's a value and showClearButton is true */}
+        {hasClearButton && !validation.state.isValidating && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-3 top-3 p-0.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+            aria-label="Bersihkan textarea"
+            title="Bersihkan textarea"
+          >
+            <XMarkIcon className={sizeIconClasses[size]} aria-hidden="true" />
+          </button>
+        )}
 
         {validation.state.isValidating && (
           <div className="absolute right-3 top-3">
@@ -203,11 +326,21 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
         </p>
       )}
 
-      {/* Character count for accessibility */}
+      {/* Character count with visual feedback */}
       {props.maxLength && (
-        <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500 text-right`} aria-live="polite">
-          {String(value || '').length}/{props.maxLength}
-        </p>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <CharacterCountIndicator 
+              current={String(value || '').length} 
+              max={props.maxLength}
+              size={size}
+            />
+          </div>
+          <CharacterProgressBar 
+            current={String(value || '').length} 
+            max={props.maxLength}
+          />
+        </div>
       )}
     </div>
   );

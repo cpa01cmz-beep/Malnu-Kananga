@@ -4,6 +4,7 @@ import { PhotoIcon } from './icons/PhotoIcon';
 
 interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackText?: string;
+  lazy?: boolean;
 }
 
 const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ 
@@ -11,6 +12,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   alt, 
   className, 
   fallbackText,
+  lazy = true,
   ...props 
 }) => {
   const [hasError, setHasError] = useState(false);
@@ -30,12 +32,14 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
   }
 
   return (
-    <img 
-      src={src} 
-      alt={alt} 
+    <img
+      src={src}
+      alt={alt}
       className={className}
+      loading={lazy ? "lazy" : "eager"}
+      decoding="async"
       onError={() => setHasError(true)}
-      {...props} 
+      {...props}
     />
   );
 };

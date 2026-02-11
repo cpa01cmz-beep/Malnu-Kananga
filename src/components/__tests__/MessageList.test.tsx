@@ -167,7 +167,8 @@ describe('MessageList', () => {
     render(<MessageList onConversationSelect={mockOnConversationSelect} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Belum ada percakapan/i)).toBeInTheDocument();
+      expect(screen.getByText('Belum ada percakapan')).toBeInTheDocument();
+      expect(screen.getByText('Mulai percakapan baru untuk berkomunikasi')).toBeInTheDocument();
     });
   });
 

@@ -1,5 +1,6 @@
 import { ocrService, OCRExtractionResult, OCRProgress } from './ocrService';
 import { logger } from '../utils/logger';
+import { OCR_CONFIG, DATE_LOCALE, ID_FORMAT } from '../constants';
 
 export interface AttendanceStudentInfo {
   id: string;
@@ -356,21 +357,8 @@ class AttendanceOCRService {
    * Extract date from OCR text
    */
   private extractDateFromText(text: string): string {
-    // Indonesian month names to numeric mapping
-    const indonesianMonths: Record<string, string> = {
-      'januari': '01',
-      'februari': '02',
-      'maret': '03',
-      'april': '04',
-      'mei': '05',
-      'juni': '06',
-      'juli': '07',
-      'agustus': '08',
-      'september': '09',
-      'oktober': '10',
-      'november': '11',
-      'desember': '12'
-    };
+    // Use centralized month mapping - Flexy: Never hardcode locale data!
+    const indonesianMonths: Record<string, string> = { ...DATE_LOCALE.INDONESIAN_MONTHS_MAP };
 
     // Try common date formats
     const datePatterns = [
@@ -390,13 +378,13 @@ class AttendanceOCRService {
           const monthLower = part2.toLowerCase();
           if (indonesianMonths[monthLower]) {
             // Format: DD Month YYYY (e.g., "30 Januari 2026")
-            return `${part3}-${indonesianMonths[monthLower]}-${part1.padStart(2, '0')}`;
+            return `${part3}-${indonesianMonths[monthLower]}-${part1.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           } else if (part3.length === 4) {
             // Format: DD-MM-YYYY or DD/MM/YYYY
-            return `${part3}-${part2.padStart(2, '0')}-${part1.padStart(2, '0')}`;
+            return `${part3}-${part2.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}-${part1.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           } else {
             // Format: YYYY-MM-DD
-            return `${part1}-${part2.padStart(2, '0')}-${part3.padStart(2, '0')}`;
+            return `${part1}-${part2.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}-${part3.padStart(ID_FORMAT.PAD_LENGTH, ID_FORMAT.PAD_STRING)}`;
           }
         }
       }
@@ -497,8 +485,8 @@ class AttendanceOCRService {
       ? data.studentAttendance.reduce((sum, att) => sum + att.confidence, 0) / data.studentAttendance.length
       : 0;
     
-    if (avgConfidence < 60) {
-      warnings.push('Rata-rata confidence rendah (< 60%), perlu verifikasi manual');
+    if (avgConfidence < OCR_CONFIG.ATTENDANCE_CONFIDENCE_THRESHOLD) {
+      warnings.push(`Rata-rata confidence rendah (< ${OCR_CONFIG.ATTENDANCE_CONFIDENCE_THRESHOLD}%), perlu verifikasi manual`);
     }
 
     return {

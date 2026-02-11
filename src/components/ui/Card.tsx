@@ -1,4 +1,5 @@
-import React, { forwardRef, ButtonHTMLAttributes } from 'react';
+import React, { forwardRef, ButtonHTMLAttributes, useState } from 'react';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
 export type CardRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
@@ -67,7 +68,7 @@ const borderClasses: Record<CardBorder, string> = {
   'neutral-100': 'border border-neutral-100 dark:border-neutral-700'
 };
 
-const baseCardClasses = "bg-white dark:bg-neutral-800 transition-all duration-300";
+const baseCardClasses = "bg-white/95 dark:bg-neutral-800/95 transition-all duration-300 ease-out touch-manipulation relative overflow-hidden group focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 backdrop-blur-sm border border-neutral-200/60 dark:border-neutral-700/60 hover:border-neutral-300/80 dark:hover:border-neutral-600/80 hover:backdrop-blur-md";
 
 const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | InteractiveCardProps>(({
   children,
@@ -86,10 +87,38 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
   'aria-live': ariaLive,
   ...rest
 }, ref) => {
+  const [isPressed, setIsPressed] = useState(false);
+  const { onTap, onPress } = useHapticFeedback();
+
   const paddingClass = paddingClasses[padding];
   const roundedClass = roundedClasses[rounded];
   const shadowClass = shadowClasses[shadow];
   const borderClass = borderClasses[border];
+
+  const handleInteractionStart = () => {
+    if (variant === 'interactive' && !disabled) {
+      setIsPressed(true);
+      onTap();
+    }
+  };
+
+  const handleInteractionEnd = () => {
+    if (variant === 'interactive' && !disabled) {
+      setIsPressed(false);
+      onPress();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (variant === 'interactive' && !disabled && (e.key === 'Enter' || e.key === ' ')) {
+      e.preventDefault();
+      onTap();
+      setIsPressed(true);
+      // Trigger the button's native click event
+      (e.target as HTMLButtonElement).click();
+      setTimeout(() => setIsPressed(false), 150);
+    }
+  };
 
   const getCardClasses = (): string => {
     let classes = baseCardClasses;
@@ -97,22 +126,25 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
 
     switch (variant) {
       case 'hover':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900';
+        classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
         break;
       case 'interactive':
-        classes += ' hover:shadow-card-hover hover:-translate-y-1 hover:scale-[1.02] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 active:scale-95 text-left group';
+        classes += ` hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer ${
+          isPressed ? 'scale-[0.98] shadow-sm translate-y-0' : ''
+        }`;
         break;
       case 'gradient':
         if (gradient) {
-          classes = classes.replace('bg-white dark:bg-neutral-800', '');
+          classes = classes.replace('bg-white/95 dark:bg-neutral-800/95', '');
           classes += ` bg-gradient-to-br ${gradient.from} ${gradient.to}`;
           if (gradient.text === 'light') {
             classes += ' text-white';
           }
-          classes += ' hover:shadow-card-hover hover:-translate-y-0.5 hover:scale-[1.01] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900';
+          classes += ' hover:shadow-lg hover:-translate-y-1 hover:scale-[1.01] cursor-pointer';
         }
         break;
       default:
+        classes += ' hover:shadow-md';
         break;
     }
 
@@ -132,9 +164,34 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedby}
         className={getCardClasses()}
+        onTouchStart={handleInteractionStart}
+        onMouseDown={handleInteractionStart}
+        onTouchEnd={handleInteractionEnd}
+        onMouseUp={handleInteractionEnd}
+        onMouseLeave={() => setIsPressed(false)}
+        onKeyDown={handleKeyDown}
         {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
       >
-        {children}
+      {children}
+       {/* Enhanced press state overlay */}
+       {isPressed && (
+         <span className="absolute inset-0 rounded-xl bg-black/6 dark:bg-white/6 pointer-events-none transition-opacity duration-150">
+           <span className="absolute inset-0 bg-gradient-to-br from-transparent via-black/2 to-black/4"></span>
+           <span className="absolute inset-0 rounded-xl border border-black/10 dark:border-white/10"></span>
+         </span>
+       )}
+        {/* Enhanced shimmer effect for interactive cards */}
+        {(variant === 'interactive' || variant === 'hover') && (
+          <>
+            <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></span>
+            </span>
+            {/* Additional subtle glow on hover */}
+            <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <span className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]"></span>
+            </span>
+          </>
+        )}
       </button>
     );
   }
@@ -149,6 +206,18 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       className={getCardClasses()}
     >
       {children}
+      {/* Enhanced hover effect for non-interactive cards */}
+      {variant === 'hover' && (
+        <>
+          <span className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></span>
+          </span>
+          {/* Subtle inner glow on hover */}
+          <span className="absolute inset-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <span className="absolute inset-0 shadow-[inset_0_0_15px_rgba(0,0,0,0.03)] dark:shadow-[inset_0_0_15px_rgba(255,255,255,0.03)]"></span>
+          </span>
+        </>
+      )}
     </div>
   );
 });

@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef } from 'react';
+import { idGenerators } from '../../utils/idGenerator';
 
 export type FileInputSize = 'sm' | 'md' | 'lg';
 export type FileInputState = 'default' | 'error' | 'success';
@@ -68,7 +69,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   const internalRef = useRef<HTMLInputElement>(null);
   const fileInputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
   
-  const inputId = id || `fileinput-${Math.random().toString(36).substr(2, 9)}`;
+  const inputId = id || idGenerators.input();
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;

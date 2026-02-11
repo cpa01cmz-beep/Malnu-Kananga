@@ -25,7 +25,7 @@ import {
 } from '../types';
 import { logger } from '../utils/logger';
 import { authAPI } from '../services/apiService';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
@@ -143,9 +143,8 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       if (cachedInsights && cachedTimestamp) {
         const timestamp = parseInt(cachedTimestamp, 10);
         const cacheAge = Date.now() - timestamp;
-        const oneDay = 24 * 60 * 60 * 1000;
         
-        if (cacheAge < oneDay) {
+        if (cacheAge < TIME_MS.ONE_DAY) {
           setAiInsights(cachedInsights);
           logger.debug('Loaded cached AI insights for class:', classId);
         } else {
@@ -390,6 +389,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           title="Error Loading Analytics"
           message={error}
           variant="card"
+          userFriendlyMessage={error}
         />
         <div className="text-center mt-4">
           <Button

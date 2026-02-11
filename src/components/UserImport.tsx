@@ -6,6 +6,7 @@ import Modal from './ui/Modal';
 import Badge from './ui/Badge';
 import Alert from './ui/Alert';
 import ProgressBar from './ui/ProgressBar';
+import CopyButton from './ui/CopyButton';
 import { CloudArrowUpIcon } from './icons/CloudArrowUpIcon';
 import { CheckIcon } from './icons/CheckIcon';
 import { ExclamationTriangleIcon } from './icons/ExclamationTriangleIcon';
@@ -14,6 +15,7 @@ import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
+import { BYTES_PER_KB } from '../constants';
 
 export interface CSVRow {
   [key: string]: string;
@@ -47,6 +49,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -56,6 +59,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       setImportProgress(0);
       setImportResult(null);
       setIsClosing(false);
+      setUploadError(null);
     }
   }, [isOpen]);
 
@@ -132,7 +136,10 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const handleFileSelect = useCallback(async (selectedFile: File | null) => {
     if (!selectedFile) return;
 
+    setUploadError(null);
+
     if (!selectedFile.name.endsWith('.csv')) {
+      setUploadError('Format file tidak valid. Harap pilih file CSV (.csv)');
       logger.error('Invalid file type: Please select a CSV file');
       return;
     }
@@ -140,6 +147,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
     try {
       const data = await parseCSV(selectedFile);
       if (data.length === 0) {
+        setUploadError('File CSV kosong. Harap pastikan file memiliki data yang valid.');
         logger.error('CSV file is empty');
         return;
       }
@@ -147,6 +155,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
       const validatedUsers = data.map((row, index) => validateUser(row, index));
       setParsedUsers(validatedUsers);
       setFile(selectedFile);
+      setUploadError(null);
       setStep('preview');
     } catch (error) {
       const classifiedError = classifyError(error, {
@@ -154,6 +163,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
         timestamp: Date.now(),
       });
       logError(classifiedError);
+      setUploadError('Gagal memproses file CSV. Harap periksa format file dan coba lagi.');
       logger.error('Failed to parse CSV file. Please check format and try again.');
     }
   }, [parseCSV, validateUser]);
@@ -250,6 +260,18 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
   const validUserCount = parsedUsers.filter((user) => user.isValid).length;
   const invalidUserCount = parsedUsers.filter((user) => !user.isValid).length;
 
+  // Format import errors as CSV report for easy copying
+  const formatErrorReport = useCallback((): string => {
+    if (!importResult || importResult.errors.length === 0) return '';
+    
+    const headers = ['Row', 'Email', 'Error Message'];
+    const rows = importResult.errors.map(error => 
+      `${error.row},"${error.email}","${error.error.replace(/"/g, '""')}"`
+    );
+    
+    return [headers.join(','), ...rows].join('\n');
+  }, [importResult]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -324,6 +346,12 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
             className="hidden"
           />
 
+          {uploadError && (
+            <Alert variant="error" className="animate-in fade-in slide-in-from-top-2 duration-300">
+              <p>{uploadError}</p>
+            </Alert>
+          )}
+
           {file && (
             <div className="flex items-center justify-between p-3 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg">
               <div className="flex items-center gap-3">
@@ -333,7 +361,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
                     {file.name}
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    {(file.size / 1024).toFixed(2)} KB
+                    {(file.size / BYTES_PER_KB).toFixed(2)} KB
                   </p>
                 </div>
               </div>
@@ -403,7 +431,10 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
           <div className="flex justify-between pt-4 border-t border-neutral-200 dark:border-neutral-700">
             <Button
               variant="secondary"
-              onClick={() => setStep('upload')}
+              onClick={() => {
+                setStep('upload');
+                setUploadError(null);
+              }}
               disabled={isClosing}
             >
               Back
@@ -488,9 +519,32 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
 
           {importResult.errors.length > 0 && (
             <div className="max-h-64 overflow-y-auto border border-neutral-200 dark:border-neutral-700 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-neutral-900 dark:text-white mb-3">
-                Import Errors
-              </h4>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium text-neutral-900 dark:text-white">
+                  Import Errors ({importResult.errors.length})
+                </h4>
+                <CopyButton
+                  text={formatErrorReport()}
+                  variant="secondary"
+                  size="sm"
+                  tooltipPosition="left"
+                  successMessage="Error report copied!"
+                  ariaLabel="Copy error report to clipboard"
+                  onCopied={(success) => {
+                    if (success) {
+                      unifiedNotificationManager.showNotification({
+                        id: `error-report-copied-${Date.now()}`,
+                        type: 'system',
+                        title: 'Error Report Copied',
+                        body: 'Error details copied to clipboard as CSV format',
+                        priority: 'low',
+                        timestamp: new Date().toISOString(),
+                        read: false
+                      });
+                    }
+                  }}
+                />
+              </div>
               <div className="space-y-2">
                 {importResult.errors.map((error, index) => (
                   <div
@@ -509,6 +563,9 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
                   </div>
                 ))}
               </div>
+              <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 italic">
+                Copy the error report to fix these issues in your CSV file and re-import.
+              </p>
             </div>
           )}
 

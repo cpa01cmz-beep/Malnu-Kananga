@@ -22,6 +22,7 @@ import {
   USER_GUIDANCE
 } from '../utils/errorMessages';
 import AccessDenied from './AccessDenied';
+import { USER_ROLES, USER_STATUS, UI_STRINGS } from '../constants';
 
 interface UserManagementProps {
   onBack: () => void;
@@ -77,7 +78,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
   const canDeleteUser = canAccess('users.delete').canAccess;
 
   const handleAddUser = () => {
-      setCurrentUser({ role: 'student', status: 'active', extraRole: null });
+      setCurrentUser({ role: USER_ROLES.STUDENT, status: USER_STATUS.ACTIVE, extraRole: null });
       setIsEditing(false);
       setIsModalOpen(true);
   };
@@ -122,13 +123,13 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
       if (!currentUser.name || !currentUser.email) return;
 
       const userData = currentUser as User;
-      if (userData.role === 'admin') userData.extraRole = null;
-      if (userData.role === 'teacher' && userData.extraRole === 'osis') userData.extraRole = null;
-      if (userData.role === 'student' && userData.extraRole === 'staff') userData.extraRole = null;
-      if (userData.role === 'student' && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
-      if (userData.role === 'parent' && userData.extraRole !== null) userData.extraRole = null;
-      if (userData.role === 'student' && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
-      if (userData.role === 'parent' && userData.extraRole !== null) userData.extraRole = null;
+      if (userData.role === USER_ROLES.ADMIN) userData.extraRole = null;
+      if (userData.role === USER_ROLES.TEACHER && userData.extraRole === 'osis') userData.extraRole = null;
+      if (userData.role === USER_ROLES.STUDENT && userData.extraRole === 'staff') userData.extraRole = null;
+      if (userData.role === USER_ROLES.STUDENT && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
+      if (userData.role === USER_ROLES.PARENT && userData.extraRole !== null) userData.extraRole = null;
+      if (userData.role === USER_ROLES.STUDENT && (userData.extraRole === 'wakasek' || userData.extraRole === 'kepsek')) userData.extraRole = null;
+      if (userData.role === USER_ROLES.PARENT && userData.extraRole !== null) userData.extraRole = null;
 
       try {
           setIsSaving(true);
@@ -254,30 +255,30 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                                         {user.name}
                                         <div className="text-xs text-neutral-500 font-normal">{user.email}</div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <Badge
-                                             variant={user.role === 'admin' ? 'secondary' : user.role === 'teacher' ? 'info' : 'neutral'}
-                                             size="sm"
-                                         >
-                                             {user.role}
-                                         </Badge>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {user.extraRole ? (
-                                            <Badge
-                                                variant={
-                                                    user.extraRole === 'staff' ? 'info' :
-                                                    user.extraRole === 'osis' ? 'warning' :
-                                                    user.extraRole === 'wakasek' ? 'secondary' :
-                                                    user.extraRole === 'kepsek' ? 'error' :
-                                                    'neutral'
-                                                }
-                                                size="sm"
-                                            >
-                                                {user.extraRole}
-                                            </Badge>
-                                        ) : '-'}
-                                    </td>
+                                     <td className="px-6 py-4">
+                                         <Badge
+                                              variant={user.role === USER_ROLES.ADMIN ? 'secondary' : user.role === USER_ROLES.TEACHER ? 'info' : 'neutral'}
+                                              size="sm"
+                                          >
+                                              {user.role}
+                                          </Badge>
+                                     </td>
+                                     <td className="px-6 py-4">
+                                         {user.extraRole ? (
+                                             <Badge
+                                                 variant={
+                                                     user.extraRole === 'staff' ? 'info' :
+                                                     user.extraRole === 'osis' ? 'warning' :
+                                                     user.extraRole === 'wakasek' ? 'secondary' :
+                                                     user.extraRole === 'kepsek' ? 'error' :
+                                                     'neutral'
+                                                 }
+                                                 size="sm"
+                                             >
+                                                 {user.extraRole}
+                                             </Badge>
+                                         ) : '-'}
+                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         {canUpdateUser && (
                                             <Button 
@@ -348,9 +349,9 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                   setCurrentUser({...currentUser, role: r, extraRole: null});
                 }}
                 options={[
-                  { value: 'student', label: 'Siswa' },
-                  { value: 'teacher', label: 'Guru' },
-                  { value: 'admin', label: 'Admin' },
+                  { value: USER_ROLES.STUDENT, label: 'Siswa' },
+                  { value: USER_ROLES.TEACHER, label: 'Guru' },
+                  { value: USER_ROLES.ADMIN, label: 'Admin' },
                 ]}
                 fullWidth
               />
@@ -362,21 +363,21 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                 onChange={e => setCurrentUser({...currentUser, extraRole: (e.target.value as UserExtraRole) || undefined})}
                 options={[
                   { value: '', label: '- Tidak Ada -' },
-                  ...(currentUser.role === 'teacher' ? [
+                  ...(currentUser.role === USER_ROLES.TEACHER ? [
                     { value: 'staff', label: 'Staff TU/Sarpras' },
                     { value: 'wakasek', label: 'Wakasek' },
                     { value: 'kepsek', label: 'Kepsek' },
                   ] : []),
-                  ...(currentUser.role === 'student' ? [
+                  ...(currentUser.role === USER_ROLES.STUDENT ? [
                     { value: 'osis', label: 'Pengurus OSIS' },
                   ] : []),
                 ]}
-                disabled={currentUser.role === 'admin'}
+                disabled={currentUser.role === USER_ROLES.ADMIN}
                 fullWidth
               />
             </div>
             <Button type="submit" fullWidth isLoading={isSaving}>
-              {isSaving ? 'Menyimpan...' : 'Simpan'}
+              {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE}
             </Button>
           </form>
         </Modal>

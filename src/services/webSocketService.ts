@@ -3,6 +3,10 @@
     STORAGE_KEYS,
     RETRY_CONFIG,
     TIME_MS,
+    API_CONFIG,
+    TIME_CONVERSION,
+    WEBSOCKET_CONSTANTS,
+    WEBSOCKET_CLOSE_CODES,
     type UserRole
   } from '../constants';
   import { getAuthToken, parseJwtPayload, type AuthPayload } from './api/auth';
@@ -11,10 +15,10 @@
 
   /* eslint-disable no-undef -- WebSocket, MessageEvent, and CloseEvent are browser globals */
 
-// NOTE: Inline DEFAULT_API_BASE_URL definition to avoid circular dependency with config.ts
+// NOTE: Using API_CONFIG to avoid hardcoded URLs
 // See Issue #1323 for circular dependency fix
-const DEFAULT_API_BASE_URL = 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev';
-const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + '/ws';
+const DEFAULT_API_BASE_URL = API_CONFIG.DEFAULT_BASE_URL;
+const DEFAULT_WS_BASE_URL = DEFAULT_API_BASE_URL.replace('https://', 'wss://') + API_CONFIG.WS_PATH;
 
 
 
@@ -690,7 +694,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Check if JWT token is expired
    */
   private isTokenExpired(payload: AuthPayload): boolean {
-    const now = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / TIME_CONVERSION.MS_PER_SECOND);
     return payload.exp < now;
   }
 
@@ -698,7 +702,11 @@ private updateEventsData(event: RealTimeEvent): void {
    * Save connection state to localStorage
    */
   private saveConnectionState(): void {
-    localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(this.connectionState));
+    const stateToSave = {
+      ...this.connectionState,
+      subscriptions: Array.from(this.connectionState.subscriptions),
+    };
+    localStorage.setItem(STORAGE_KEYS.WS_CONNECTION, JSON.stringify(stateToSave));
   }
 
   /**
@@ -736,12 +744,12 @@ private updateEventsData(event: RealTimeEvent): void {
       this.visibilityChangeHandler = null;
     }
 
-    if (this.ws?.readyState === 1) {
+    if (this.ws?.readyState === WEBSOCKET_CONSTANTS.READY_STATE_OPEN) {
       this.ws.send(JSON.stringify({
         type: 'disconnect',
         timestamp: new Date().toISOString(),
       }));
-      this.ws.close(1000, 'Client disconnect');
+      this.ws.close(WEBSOCKET_CLOSE_CODES.NORMAL, 'Client disconnect');
     }
     
     this.ws = null;
@@ -765,7 +773,7 @@ private updateEventsData(event: RealTimeEvent): void {
    * Check if WebSocket is connected
    */
   isConnected(): boolean {
-    return this.connectionState.connected && this.ws?.readyState === 1;
+    return this.connectionState.connected && this.ws?.readyState === WEBSOCKET_CONSTANTS.READY_STATE_OPEN;
   }
 
   /**

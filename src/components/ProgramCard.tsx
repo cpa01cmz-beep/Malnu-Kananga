@@ -27,6 +27,8 @@ const ProgramCard: React.FC<ProgramCardProps> = ({ program, onClick, ariaLabel }
           src={program.imageUrl}
           alt={program.title}
           fallbackText="Gambar Program Tidak Tersedia"
+          width={800}
+          height={450}
         />
       </div>
       <div className="p-6 sm:p-7 flex-grow flex flex-col">

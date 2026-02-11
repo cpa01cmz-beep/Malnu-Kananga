@@ -391,6 +391,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
           title="Error Loading Data"
           message={error}
           variant="card"
+          userFriendlyMessage={error}
         />
         <div className="text-center mt-4">
           <Button onClick={fetchData} variant="red-solid">
@@ -700,6 +701,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
                     title="Gagal Memuat Materi"
                     message={materialsError}
                     variant="card"
+                    userFriendlyMessage={materialsError}
                   />
                 )}
 
