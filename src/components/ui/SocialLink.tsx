@@ -132,7 +132,7 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
       <a
         href={href}
         className={classes}
-        aria-label={label}
+        aria-label={disabled ? `${label} - Tersedia segera` : label}
         target={target}
         rel={rel}
         role={disabled ? "link" : undefined}
@@ -154,7 +154,7 @@ const SocialLink: React.FC<BaseSocialLinkProps> = ({
     <button
       type="button"
       className={classes}
-      aria-label={label}
+      aria-label={disabled ? `${label} - Tersedia segera` : label}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       onMouseDown={handleMouseDown}
