@@ -403,6 +403,30 @@ export const NOTIFICATION_ERROR_MESSAGES = {
     SERVICE_WORKER_FAILED: 'Service Worker tidak tersedia. Pastikan HTTPS aktif.',
 } as const;
 
+// Push notification log messages - Flexy: Never hardcode log messages!
+export const PUSH_NOTIFICATION_LOG_MESSAGES = {
+    INIT_FAILED: 'Failed to initialize push subscription',
+    SAVE_SUBSCRIPTION_FAILED: 'Failed to save push subscription:',
+    LOAD_SUBSCRIPTION_FAILED: 'Failed to load push subscription:',
+    CLEAR_SUBSCRIPTION_FAILED: 'Failed to clear push subscription:',
+    SERVICE_WORKER_NOT_SUPPORTED: 'Service Worker not supported, cannot load push subscription.',
+    SUBSCRIPTION_LOADED: 'Loaded existing push subscription from browser.',
+    NO_SUBSCRIPTION_FOUND: 'No active push subscription found.',
+    PERMISSION_ALREADY_GRANTED: 'Notification permission already granted',
+    PERMISSION_GRANTED: 'Notification permission granted',
+    PERMISSION_DENIED: 'Notification permission denied',
+    REQUEST_PERMISSION_FAILED: 'Failed to request notification permission:',
+    SUBSCRIBE_SUCCESS: 'Successfully subscribed to push notifications',
+    SUBSCRIBE_FAILED: 'Failed to subscribe to push notifications:',
+    NO_SUBSCRIPTION_TO_UNSUBSCRIBE: 'No active subscription to unsubscribe',
+    UNSUBSCRIBE_SUCCESS: 'Successfully unsubscribed from push notifications',
+    UNSUBSCRIBE_FAILED: 'Failed to unsubscribe from push notifications:',
+    CLEANUP_COMPLETE: 'Push notification handler cleaned up',
+    NOTIFICATIONS_NOT_SUPPORTED: 'Notifications not supported',
+    SERVICE_WORKER_NOT_AVAILABLE: 'Service worker not available',
+    PUSH_MANAGER_NOT_AVAILABLE: 'PushManager not available',
+} as const;
+
 export const NOTIFICATION_ICONS = {
     DEFAULT: '/pwa-192x192.png',
     ANNOUNCEMENT: '/pwa-192x192.png',
