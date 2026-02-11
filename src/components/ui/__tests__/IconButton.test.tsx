@@ -368,12 +368,20 @@ describe('IconButton', () => {
       expect(button).toHaveClass('cursor-wait', 'opacity-80');
     });
 
-    it('does not show tooltip when loading', () => {
+    it('shows loading tooltip with Memuat text when loading', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Help" isLoading />);
-      
-      // Tooltip should not be rendered when loading
-      const tooltip = screen.queryByRole('tooltip');
-      expect(tooltip).not.toBeInTheDocument();
+
+      const loadingTooltip = screen.getByRole('status');
+      expect(loadingTooltip).toBeInTheDocument();
+      expect(loadingTooltip).toHaveTextContent('Memuat...');
+      expect(loadingTooltip).toHaveClass('bg-blue-600');
+    });
+
+    it('does not show regular tooltip when loading', () => {
+      render(<IconButton icon={mockIcon} ariaLabel="Test" tooltip="Help" isLoading />);
+
+      const regularTooltip = screen.queryByRole('tooltip');
+      expect(regularTooltip).not.toBeInTheDocument();
     });
   });
 

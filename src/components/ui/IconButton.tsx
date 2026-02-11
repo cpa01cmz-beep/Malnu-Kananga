@@ -81,6 +81,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !isErrorVisible;
+  const hasLoadingTooltip = isLoading && Boolean(tooltip);
   const hasDisabledReason = Boolean(disabledReason) && disabled;
 
   // Handle success state with auto-reset
@@ -163,7 +164,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       ref={buttonRef}
       className={classes}
       disabled={disabled}
-      aria-describedby={hasTooltip ? tooltipId : undefined}
+      aria-describedby={hasTooltip ? tooltipId : hasLoadingTooltip ? `${tooltipId}-loading` : undefined}
       aria-busy={isLoading}
       aria-live="polite"
       aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : isErrorVisible ? `${ariaLabel} - Gagal` : shortcut ? `${ariaLabel} (${shortcut})` : ariaLabel}
@@ -265,6 +266,33 @@ const IconButton: React.FC<IconButtonProps> = ({
           <span
             className={`
               absolute w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45
+              ${tooltipArrowClasses[tooltipPosition]}
+            `.replace(/\s+/g, ' ').trim()}
+            aria-hidden="true"
+          />
+        </span>
+      )}
+      {/* Tooltip for loading state */}
+      {hasLoadingTooltip && (
+        <span
+          id={`${tooltipId}-loading`}
+          role="status"
+          aria-live="polite"
+          className={`
+            absolute z-50 px-2.5 py-1.5 text-xs font-medium text-white bg-blue-600 dark:bg-blue-500
+            rounded-md shadow-lg whitespace-nowrap pointer-events-none
+            transition-all duration-200 ease-out backdrop-blur-sm border border-blue-500 dark:border-blue-400
+            ${tooltipPositionClasses[tooltipPosition]}
+            opacity-100 scale-100
+          `.replace(/\s+/g, ' ').trim()}
+        >
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+            <span>Memuat...</span>
+          </span>
+          <span
+            className={`
+              absolute w-2 h-2 bg-blue-600 dark:bg-blue-500 rotate-45
               ${tooltipArrowClasses[tooltipPosition]}
             `.replace(/\s+/g, ' ').trim()}
             aria-hidden="true"
