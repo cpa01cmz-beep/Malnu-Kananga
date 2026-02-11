@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { UI_DELAYS } from '../constants';
 
 export interface AccessibilityOptions {
   announceChanges?: boolean;
@@ -64,7 +65,7 @@ export const useAccessibility = (options: AccessibilityOptions = {}) => {
     announcement.textContent = '';
     setTimeout(() => {
       announcement.textContent = message;
-    }, 100);
+    }, UI_DELAYS.ACCESSIBILITY_ANNOUNCE);
   }, [options.announceChanges]);
 
   // Trap focus within a container

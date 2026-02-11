@@ -1,5 +1,6 @@
 import React, { forwardRef, ButtonHTMLAttributes, useState } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { TIME_MS } from '../../constants';
 
 export type CardVariant = 'default' | 'hover' | 'interactive' | 'gradient';
 export type CardRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full';
@@ -116,7 +117,7 @@ const Card = forwardRef<HTMLDivElement | HTMLButtonElement, CardProps | Interact
       setIsPressed(true);
       // Trigger the button's native click event
       (e.target as HTMLButtonElement).click();
-      setTimeout(() => setIsPressed(false), 150);
+      setTimeout(() => setIsPressed(false), TIME_MS.ANIMATION);
     }
   };
 

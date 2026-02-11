@@ -5,7 +5,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import EnhancedSkeleton, { SkeletonVariant } from './EnhancedSkeleton';
-import { UI_DIMENSIONS } from '../../constants';
+import { UI_DIMENSIONS, TIME_MS } from '../../constants';
 
 interface SkeletonConfig {
   variant: SkeletonVariant;
@@ -39,7 +39,7 @@ export const SkeletonProvider: React.FC<SkeletonProviderProps> = ({ children }) 
 
   const stopLoading = useCallback(() => {
     setIsLoading(false);
-    setTimeout(() => setLoadingConfig(null), 300); // Keep skeleton visible briefly for smooth transition
+    setTimeout(() => setLoadingConfig(null), TIME_MS.DEBOUNCE);
   }, []);
 
   const value = {

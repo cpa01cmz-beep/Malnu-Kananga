@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
+import { UI_GESTURES } from '../../constants';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'bottom-sheet';
 export type ModalAnimation = 'fade-in' | 'fade-in-up' | 'scale-in' | 'slide-up';
@@ -61,7 +62,7 @@ const Modal: React.FC<ModalProps> = ({
   const [touchEnd, setTouchEnd] = React.useState(0);
 
   // Mobile swipe detection
-  const minSwipeDistance = 50;
+  const minSwipeDistance = UI_GESTURES.MIN_SWIPE_DISTANCE;
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(0);

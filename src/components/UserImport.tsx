@@ -15,7 +15,7 @@ import { api } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError } from '../utils/errorHandler';
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
-import { BYTES_PER_KB } from '../constants';
+import { BYTES_PER_KB, UI_DELAYS } from '../constants';
 
 export interface CSVRow {
   [key: string]: string;
@@ -232,7 +232,7 @@ const UserImport: React.FC<UserImportProps> = ({ isOpen, onClose, onImportComple
         logger.error(`Failed to import user at row ${user.rowIndex}:`, error);
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, UI_DELAYS.USER_IMPORT_DELAY));
     }
 
     setImportResult(result);
