@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 interface DisabledLinkButtonProps {
   /** Button text content */
@@ -16,10 +17,11 @@ interface DisabledLinkButtonProps {
 
 /**
  * DisabledLinkButton - A reusable disabled button with accessible tooltip
- * 
+ *
  * Micro-UX Features:
  * - Shows tooltip on hover AND focus (keyboard accessible)
- * - Respects reduced motion preferences
+ * - Haptic feedback on click attempt for tactile response
+ * - Shake animation to indicate disabled state (with reduced motion support)
  * - Proper ARIA labeling
  * - Smooth fade animations
  * - Consistent styling with design system
@@ -32,12 +34,39 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
   showComingSoonBadge = true,
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const { onError } = useHapticFeedback();
+  const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMouseEnter = () => setIsTooltipVisible(true);
   const handleMouseLeave = () => setIsTooltipVisible(false);
   const handleFocus = () => setIsTooltipVisible(true);
   const handleBlur = () => setIsTooltipVisible(false);
+
+  const handleClick = () => {
+    onError();
+    
+    if (!prefersReducedMotion) {
+      setIsShaking(true);
+      
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+      
+      shakeTimeoutRef.current = setTimeout(() => {
+        setIsShaking(false);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const baseClasses = `
     text-left
@@ -57,6 +86,7 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
     focus-visible:ring-offset-1
     dark:focus-visible:ring-offset-neutral-800
     hover:opacity-80
+    ${isShaking ? 'animate-shake' : ''}
   `;
 
   const tooltipClasses = `
@@ -104,6 +134,7 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
       onMouseLeave={handleMouseLeave}
       onFocus={handleFocus}
       onBlur={handleBlur}
+      onClick={handleClick}
     >
       <span className="flex items-center gap-2">
         {children}
