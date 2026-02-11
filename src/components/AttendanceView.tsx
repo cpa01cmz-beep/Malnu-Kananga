@@ -318,7 +318,18 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             ) : (
               <tr>
                 <td colSpan={4}>
-                  <EmptyState message="Belum ada riwayat kehadiran" size="md" variant="minimal" />
+                  <EmptyState
+                    message="Belum ada riwayat kehadiran"
+                    submessage="Data kehadiran Anda akan muncul setelah wali kelas mencatat presensi"
+                    size="md"
+                    variant="friendly"
+                    category="no-data"
+                    tips={[
+                      'Pastikan Anda hadir tepat waktu setiap hari',
+                      'Status kehadiran di atas menunjukkan kondisi hari ini',
+                      'Hubungi wali kelas jika ada ketidaksesuaian data'
+                    ]}
+                  />
                 </td>
               </tr>
             )}
