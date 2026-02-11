@@ -2,6 +2,11 @@
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
 import { EXTERNAL_URLS } from '../constants';
+import DocumentTextIcon from '../components/icons/DocumentTextIcon';
+import BuildingLibraryIcon from '../components/icons/BuildingLibraryIcon';
+import ClipboardDocumentCheckIcon from '../components/icons/ClipboardDocumentCheckIcon';
+import { UsersIcon } from '../components/icons/UsersIcon';
+import { getColorIconClass } from '../config/colorIcons';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
@@ -42,50 +47,31 @@ export const INITIAL_NEWS: LatestNews[] = [
     }
 ];
 
-export const getRelatedLinks = async () => {
-    const [
-        DocumentTextIconModule,
-        BuildingLibraryIconModule,
-        ClipboardDocumentCheckIconModule,
-        UsersIconModule,
-        { getColorIconClass }
-    ] = await Promise.all([
-        import('../components/icons/DocumentTextIcon'),
-        import('../components/icons/BuildingLibraryIcon'),
-        import('../components/icons/ClipboardDocumentCheckIcon'),
-        import('../components/icons/UsersIcon'),
-        import('../config/colorIcons')
-    ]);
-
-    const DocumentTextIcon = DocumentTextIconModule.default;
-    const BuildingLibraryIcon = BuildingLibraryIconModule.default;
-    const ClipboardDocumentCheckIcon = ClipboardDocumentCheckIconModule.default;
-    const UsersIcon = UsersIconModule.UsersIcon;
-
+export const getRelatedLinks = () => {
     return [
         {
             name: 'RDM Malnu Kananga',
             href: EXTERNAL_URLS.RDM_PORTAL,
             icon: React.createElement(DocumentTextIcon, { className: "w-8 h-8 sm:w-10 sm:h-10" }),
-            color: getColorIconClass('sky')
+            colorClass: getColorIconClass('sky')
         },
         {
             name: 'Kemenag RI',
             href: EXTERNAL_URLS.KEMENAG,
             icon: React.createElement(BuildingLibraryIcon),
-            color: getColorIconClass('emerald')
+            colorClass: getColorIconClass('emerald')
         },
         {
             name: 'EMIS Pendis',
             href: EXTERNAL_URLS.EMIS,
             icon: React.createElement(ClipboardDocumentCheckIcon),
-            color: getColorIconClass('amber')
+            colorClass: getColorIconClass('amber')
         },
         {
             name: 'Simpatika',
             href: EXTERNAL_URLS.SIMPATIKA,
             icon: React.createElement(UsersIcon, { className: "w-8 h-8 sm:w-10 sm:h-10" }),
-            color: getColorIconClass('indigo')
+            colorClass: getColorIconClass('indigo')
         }
     ];
 };
