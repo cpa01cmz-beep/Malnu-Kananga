@@ -4,7 +4,7 @@ import { studentsAPI, gradesAPI } from '../../services/apiService';
 import { parentGradeNotificationService } from '../../services/parentGradeNotificationService';
 import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { useOfflineActionQueue, type SyncResult } from '../../services/offlineActionQueueService';
-import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS } from '../../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS, TIME_MS } from '../../constants';
 import { DEFAULT_API_BASE_URL } from '../../config';
 import { logger } from '../../utils/logger';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
@@ -260,7 +260,7 @@ export const useGradingData = (
 
     const newTimeout = setTimeout(() => {
       handleAutoSave();
-    }, 2000);
+    }, 2 * TIME_MS.ONE_SECOND); // 2 seconds
 
     setAutoSaveTimeout(newTimeout);
   };

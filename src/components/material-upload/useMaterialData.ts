@@ -16,6 +16,7 @@ import {
   API_ERROR_MESSAGES,
   USER_GUIDANCE,
 } from '../../utils/errorMessages';
+import { RETRY_CONFIG } from '../../constants';
 import { validateMaterialData } from '../../utils/teacherValidation';
 import { idGenerators } from '../../utils/idGenerator';
 
@@ -279,7 +280,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
         operation: createOperation,
         config: {
           maxRetries: 3,
-          retryDelay: 2000
+          retryDelay: 2 * RETRY_CONFIG.DEFAULT_INITIAL_DELAY // 2 seconds
         }
       });
 
@@ -357,7 +358,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
         operation: deleteOperation,
         config: {
           maxRetries: 3,
-          retryDelay: 1000
+          retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY // 1 second
         }
       });
 

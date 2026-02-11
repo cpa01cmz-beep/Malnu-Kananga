@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 
+import { TIME_MS } from '../constants';
+
 export interface FocusScopeOptions {
   restoreFocus?: boolean;
   autoFocus?: boolean;
@@ -247,7 +249,7 @@ export const focusManager = {
     // Remove after announcement is made
     setTimeout(() => {
       document.body.removeChild(announcement);
-    }, 1000);
+    }, TIME_MS.ONE_SECOND);
   },
 };
 
