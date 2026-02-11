@@ -50,6 +50,7 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   const [_lastError, setLastError] = useState<string>('');
   const [transcriptBuffer, setTranscriptBuffer] = useState('');
   const [lastActivityTime, setLastActivityTime] = useState(Date.now());
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState<string>('');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const transcriptBufferRef = useRef(transcriptBuffer);
   const lastActivityTimeRef = useRef(lastActivityTime);
@@ -73,6 +74,43 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
   useEffect(() => {
     setPulseAnimation(isListening);
   }, [isListening]);
+
+  useEffect(() => {
+    if (!isSupported) {
+      setScreenReaderAnnouncement('Fitur suara tidak didukung browser ini');
+      return;
+    }
+
+    if (permissionState === 'denied') {
+      setScreenReaderAnnouncement('Izin mikrofon ditolak. Klik tombol untuk mengatur ulang.');
+      return;
+    }
+
+    switch (state) {
+      case 'listening':
+        if (continuous) {
+          setScreenReaderAnnouncement('Mode berkelanjutan aktif. Merekam suara. Klik tombol untuk berhenti dan mengirim.');
+        } else {
+          setScreenReaderAnnouncement('Merekam suara. Klik tombol untuk berhenti.');
+        }
+        break;
+      case 'processing':
+        setScreenReaderAnnouncement('Memproses suara...');
+        break;
+      case 'error':
+        setScreenReaderAnnouncement('Terjadi kesalahan pada fitur suara. Klik tombol untuk mencoba lagi.');
+        break;
+      case 'idle':
+      default:
+        if (transcriptBuffer && continuous) {
+          const preview = transcriptBuffer.substring(0, 50);
+          setScreenReaderAnnouncement(`Suara berhasil diproses. Teks: "${preview}${transcriptBuffer.length > 50 ? '...' : ''}"`);
+        } else {
+          setScreenReaderAnnouncement('Input suara siap. Klik tombol untuk mulai merekam.');
+        }
+        break;
+    }
+  }, [state, isSupported, permissionState, continuous, transcriptBuffer]);
 
   useEffect(() => {
     if (state === 'idle' && transcript) {
@@ -219,14 +257,24 @@ setTranscriptBuffer('');
 
   if (disabled) {
     return (
-      <button
-        disabled
-        className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
-        aria-label="Input suara dinonaktifkan"
-        title="Input suara dinonaktifkan"
-      >
-        <MicrophoneIcon className="w-5 h-5" />
-      </button>
+      <>
+        <button
+          disabled
+          className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
+          aria-label="Input suara dinonaktifkan"
+          title="Input suara dinonaktifkan"
+        >
+          <MicrophoneIcon className="w-5 h-5" />
+        </button>
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {screenReaderAnnouncement}
+        </div>
+      </>
     );
   }
 
@@ -262,32 +310,50 @@ setTranscriptBuffer('');
           }}
           className="absolute bottom-full right-0 mb-2 w-80 z-50"
         />
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {screenReaderAnnouncement}
+        </div>
       </div>
     );
   }
 
   return (
-    <button
-      onClick={handleClick}
-      disabled={!isSupported || disabled}
-       className={`
-         p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
-         ${getButtonStyle()}
-         ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
-         ${className}
-       `}
-      aria-label={getAriaLabel()}
-      aria-pressed={isListening}
-      title={getTooltipText()}
-    >
-      {isListening ? (
-        <MicrophoneIcon className="w-5 h-5" />
-      ) : state === 'error' ? (
-        <MicrophoneOffIcon className="w-5 h-5" />
-      ) : (
-        <MicrophoneIcon className="w-5 h-5" />
-      )}
-    </button>
+    <>
+      <button
+        onClick={handleClick}
+        disabled={!isSupported || disabled}
+         className={`
+           p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
+           ${getButtonStyle()}
+           ${pulseAnimation ? 'animate-pulse scale-110' : 'hover:scale-[1.02]'}
+           ${className}
+         `}
+        aria-label={getAriaLabel()}
+        aria-pressed={isListening}
+        title={getTooltipText()}
+      >
+        {isListening ? (
+          <MicrophoneIcon className="w-5 h-5" />
+        ) : state === 'error' ? (
+          <MicrophoneOffIcon className="w-5 h-5" />
+        ) : (
+          <MicrophoneIcon className="w-5 h-5" />
+        )}
+      </button>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {screenReaderAnnouncement}
+      </div>
+    </>
   );
 };
 
