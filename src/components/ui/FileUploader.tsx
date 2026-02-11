@@ -447,6 +447,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                     className="w-10 h-10 object-cover rounded"
                     width={40}
                     height={40}
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <span className="text-2xl">{getFileIcon(file.type)}</span>
