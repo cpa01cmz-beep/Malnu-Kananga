@@ -328,6 +328,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
         <Button
           onClick={handleCSVExport}
           variant="teal-solid"
+          aria-label="Ekspor nilai ke file CSV"
         >
           Export CSV
         </Button>
