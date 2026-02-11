@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import CopyButton from '../CopyButton';
 
 // Mock navigator.clipboard
@@ -309,5 +309,142 @@ describe('CopyButton', () => {
     
     expect(clearTimeoutSpy).toHaveBeenCalled();
     clearTimeoutSpy.mockRestore();
+  });
+
+  describe('Keyboard shortcut hint', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('shows keyboard shortcut hint on hover after delay', async () => {
+      render(<CopyButton text="Test text" showTooltip={true} />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      
+      let shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeUndefined();
+      
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      expect(shortcutTooltip).toHaveTextContent(/salin/);
+    });
+
+    it('hides keyboard shortcut hint on mouse leave', async () => {
+      render(<CopyButton text="Test text" showTooltip={true} />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      let shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      
+      fireEvent.mouseLeave(button);
+      
+      shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeUndefined();
+    });
+
+    it('shows correct keyboard shortcut based on platform', async () => {
+      const originalPlatform = navigator.platform;
+      
+      Object.defineProperty(navigator, 'platform', {
+        value: 'Win32',
+        configurable: true,
+      });
+      
+      const { rerender } = render(<CopyButton text="Test" showTooltip={true} />);
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      let shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('Ctrl'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      
+      fireEvent.mouseLeave(button);
+      Object.defineProperty(navigator, 'platform', {
+        value: 'MacIntel',
+        configurable: true,
+      });
+      
+      rerender(<CopyButton text="Test" showTooltip={true} />);
+      fireEvent.mouseEnter(screen.getByRole('button'));
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('⌘'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      
+      Object.defineProperty(navigator, 'platform', {
+        value: originalPlatform,
+        configurable: true,
+      });
+    });
+
+    it('does not show keyboard shortcut hint when button is in copied state', async () => {
+      render(<CopyButton text="Test" showTooltip={true} />);
+      
+      const button = screen.getByRole('button');
+      
+      fireEvent.mouseEnter(button);
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      let shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      
+      await act(async () => {
+        fireEvent.click(button);
+      });
+      
+      shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeUndefined();
+    });
+
+    it('shows keyboard shortcut hint on focus', async () => {
+      render(<CopyButton text="Test" showTooltip={true} />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      const shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeInTheDocument();
+    });
+
+    it('hides keyboard shortcut hint on blur', async () => {
+      render(<CopyButton text="Test" showTooltip={true} />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      await act(async () => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      let shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeInTheDocument();
+      
+      fireEvent.blur(button);
+      
+      shortcutTooltip = screen.queryAllByRole('tooltip').find(el => el.textContent?.includes('salin'));
+      expect(shortcutTooltip).toBeUndefined();
+    });
   });
 });

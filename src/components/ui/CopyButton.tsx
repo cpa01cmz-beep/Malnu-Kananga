@@ -91,6 +91,14 @@ const ErrorIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
+// Detect OS for keyboard shortcut display
+const getKeyboardShortcut = (): string => {
+  if (typeof navigator === 'undefined') return 'Ctrl+C';
+  const platform = navigator.platform.toLowerCase();
+  const isMac = platform.includes('mac') || platform.includes('darwin');
+  return isMac ? '⌘+C' : 'Ctrl+C';
+};
+
 const CopyButton: React.FC<CopyButtonProps> = ({
   text,
   variant = 'default',
@@ -109,11 +117,14 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const [buttonState, setButtonState] = useState<CopyButtonState>('idle');
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { onSuccess, onError } = useHapticFeedback();
   const hasTooltip = showTooltip;
+  const keyboardShortcut = getKeyboardShortcut();
 
   const isCopied = buttonState === 'copied';
   const isError = buttonState === 'error';
@@ -188,17 +199,27 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const showTooltipFn = useCallback(() => {
     if (buttonState === 'idle') {
       setIsTooltipVisible(true);
+      shortcutHintTimeoutRef.current = setTimeout(() => {
+        setShowShortcutHint(true);
+      }, 400);
     }
   }, [buttonState]);
 
   const hideTooltip = useCallback(() => {
     setIsTooltipVisible(false);
+    setShowShortcutHint(false);
+    if (shortcutHintTimeoutRef.current) {
+      clearTimeout(shortcutHintTimeoutRef.current);
+    }
   }, []);
 
   React.useEffect(() => {
     return () => {
       if (resetTimeoutRef.current) {
         clearTimeout(resetTimeoutRef.current);
+      }
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
       }
     };
   }, []);
@@ -311,6 +332,33 @@ const CopyButton: React.FC<CopyButtonProps> = ({
             aria-hidden="true"
           />
         </span>
+      )}
+
+      {showShortcutHint && buttonState === 'idle' && (
+        <div
+          className={`
+            absolute -top-9 left-1/2 -translate-x-1/2
+            px-2.5 py-1
+            bg-neutral-800 dark:bg-neutral-700
+            text-white text-[10px] font-medium
+            rounded-md shadow-md
+            whitespace-nowrap
+            transition-all duration-200 ease-out
+            pointer-events-none
+            z-50
+            ${showShortcutHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+          `.replace(/\s+/g, ' ').trim()}
+          role="tooltip"
+          aria-hidden={!showShortcutHint}
+        >
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+              {keyboardShortcut}
+            </kbd>
+            <span>salin</span>
+          </span>
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+        </div>
       )}
     </button>
   );
