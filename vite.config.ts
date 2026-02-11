@@ -206,6 +206,28 @@ export default defineConfig(({ mode }) => {
       },
       // BroCula: Enable CSS code splitting to reduce render-blocking CSS
       cssCodeSplit: true,
+      // BroCula: Improve chunk loading performance
+      assetsInlineLimit: 4096, // 4KB - inline small assets
+      // BroCula: Optimize module preload
+      modulePreload: {
+        polyfill: false, // Modern browsers support native modulepreload
+      },
+    },
+    // BroCula: Optimize dependency pre-bundling
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-router-dom',
+      ],
+      exclude: [
+        // Large libraries that should be lazy-loaded
+        'recharts',
+        'jspdf',
+        'html2canvas',
+        'tesseract.js',
+        '@google/genai',
+      ],
     },
   }
 
