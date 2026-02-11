@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useRef, useState, useCallback } from 'rea
 import { useFieldValidation } from '../../hooks/useFieldValidation';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 import { idGenerators } from '../../utils/idGenerator';
 
 // Micro-UX: Character count indicator with progressive visual feedback
@@ -153,19 +154,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   value,
   onChange,
   onBlur,
+  onFocus,
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
-  const textareaId = id || idGenerators.input();
+  const textareaId = id || idGenerators.textarea();
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
   const errorTextId = errorText ? `${textareaId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
   const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const _prefersReducedMotion = useReducedMotion();
   const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan textarea';
   const clearButtonTooltipId = `${textareaId}-clear-tooltip`;
 
@@ -181,6 +186,40 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       tooltipTimeoutRef.current = null;
     }
     setIsTooltipVisible(false);
+  }, []);
+
+  // Show escape hint when textarea is focused and has a value
+  const handleFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (clearOnEscape && value && String(value).length > 0) {
+      // Delay showing hint to avoid flickering on quick interactions
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, 400);
+    }
+    onFocus?.(e);
+  }, [clearOnEscape, value, onFocus]);
+
+  // Hide escape hint when textarea loses focus
+  const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
+    setShowEscapeHint(false);
+    if (escapeHintTimeoutRef.current) {
+      clearTimeout(escapeHintTimeoutRef.current);
+    }
+    validation.blurHandler();
+    onBlur?.(e);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onBlur]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (tooltipTimeoutRef.current) {
+        clearTimeout(tooltipTimeoutRef.current);
+      }
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    };
   }, []);
 
   const { onSelection } = useHapticFeedback();
@@ -214,13 +253,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       onChange(e);
     }
     validation.changeHandler(e.target.value);
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    validation.blurHandler();
-    if (onBlur) {
-      onBlur(e);
-    }
   };
 
   const handleClear = () => {
@@ -300,19 +332,46 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       )}
 
       <div className="relative">
+        {/* Keyboard shortcut hint for clearOnEscape - Micro UX Delight */}
+        {clearOnEscape && showEscapeHint && (
+          <div
+            className={`
+              absolute -top-9 left-1/2 -translate-x-1/2 
+              px-2.5 py-1 
+              bg-neutral-800 dark:bg-neutral-700 
+              text-white text-[10px] font-medium 
+              rounded-md shadow-md 
+              whitespace-nowrap
+              transition-all duration-200 ease-out
+              pointer-events-none
+              z-10
+            `.replace(/\s+/g, ' ').trim()}
+            role="tooltip"
+            aria-hidden={!showEscapeHint}
+          >
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">ESC</kbd>
+              <span>bersihkan</span>
+            </span>
+            {/* Tooltip arrow */}
+            <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </div>
+        )}
+
 <textarea
-        ref={textareaRef}
-        id={textareaId}
-        className={textareaClasses}
-        aria-describedby={describedBy}
-        aria-invalid={finalState === 'error'}
-        value={value}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        {...accessibilityProps}
-        {...props}
-      />
+         ref={textareaRef}
+         id={textareaId}
+         className={textareaClasses}
+         aria-describedby={describedBy}
+         aria-invalid={finalState === 'error'}
+         value={value}
+         onChange={handleChange}
+         onBlur={handleBlur}
+         onFocus={handleFocus}
+         onKeyDown={handleKeyDown}
+         {...accessibilityProps}
+         {...props}
+       />
 
         {hasClearButton && !validation.state.isValidating && (
           <>

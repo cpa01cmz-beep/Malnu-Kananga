@@ -101,6 +101,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
+                                    disabledReason="Facebook akan tersedia segera"
                                 />
                                 <SocialLink
                                     icon={<InstagramIcon />}
@@ -108,6 +109,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
+                                    disabledReason="Instagram akan tersedia segera"
                                 />
                                 <SocialLink
                                     icon={<YoutubeIcon />}
@@ -115,6 +117,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
+                                    disabledReason="YouTube akan tersedia segera"
                                 />
                             </div>
                     </div>

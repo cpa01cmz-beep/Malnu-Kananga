@@ -1,9 +1,7 @@
 import { Permission, UserRole, UserExtraRole, AccessResult, AuditLog } from '../types/permissions';
-import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../config/permissions';
+import { PERMISSIONS, ROLE_PERMISSION_MATRIX, EXTRA_ROLE_PERMISSIONS } from '../config/permissions';
 import { logger } from '../utils/logger';
 import { PERMISSION_CONFIG, USER_ROLES, USER_EXTRA_ROLES } from '../constants';
-
-const EXTRA_ROLE_PERMISSIONS: Record<string, string[]> = {};
 
 class PermissionService {
   private auditLogs: AuditLog[] = [];
