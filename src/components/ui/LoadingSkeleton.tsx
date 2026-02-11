@@ -1,4 +1,5 @@
 import React from 'react';
+import { UI_DIMENSIONS } from '../../constants';
 
 interface LoadingSkeletonProps {
   className?: string;
@@ -94,11 +95,11 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({
       <div className={`space-y-4 ${className}`}>
         {/* Card header */}
         <div className="flex items-center space-x-4">
-          <div 
+          <div
             className={`${getBaseClasses()} rounded-full`}
-            style={{ 
-              width: '48px', 
-              height: '48px',
+            style={{
+              width: UI_DIMENSIONS.SKELETON.AVATAR.width,
+              height: UI_DIMENSIONS.SKELETON.AVATAR.height,
               ...getSkeletonStyle()
             }}
           />

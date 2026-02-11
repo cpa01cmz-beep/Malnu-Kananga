@@ -119,15 +119,8 @@ export function MaterialForm({
           disabled={subjectsLoading}
           required
           size="md"
+          errorText={categoryValidation && !categoryValidation.valid ? categoryValidation.error : undefined}
         />
-        {categoryValidation && !categoryValidation.valid && (
-          <p className="text-sm text-red-600 dark:text-red-400 mt-1 flex items-center gap-1 animate-fade-in-up">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            {categoryValidation.error}
-          </p>
-        )}
       </div>
 
       <div className="bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/10 dark:to-blue-900/10 rounded-xl p-4 sm:p-6 border border-primary-200 dark:border-primary-700">

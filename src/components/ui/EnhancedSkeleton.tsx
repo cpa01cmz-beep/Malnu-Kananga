@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { UI_DIMENSIONS } from '../../constants';
 
 export type SkeletonVariant = 
   | 'text' 
@@ -123,8 +124,8 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
         <div
           className={`${baseClasses} rounded-full`}
           style={{
-            width: '48px',
-            height: '48px',
+            width: UI_DIMENSIONS.SKELETON.AVATAR.width,
+            height: UI_DIMENSIONS.SKELETON.AVATAR.height,
             ...getSkeletonStyle(),
           }}
         />
@@ -165,7 +166,7 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
         <div
           className={`${baseClasses} rounded-lg h-8`}
           style={{
-            width: '80px',
+            width: UI_DIMENSIONS.SKELETON.BUTTON_SMALL.width,
             ...getSkeletonStyle(),
           }}
         />
