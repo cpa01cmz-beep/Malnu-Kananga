@@ -278,6 +278,8 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
                     className="w-32 h-32 rounded-2xl object-cover border-4 border-white dark:border-neutral-700 shadow-lg"
                     width={128}
                     height={128}
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">

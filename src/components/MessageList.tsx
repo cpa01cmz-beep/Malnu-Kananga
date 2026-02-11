@@ -298,13 +298,15 @@ export function MessageList({
                 >
                    <div className="flex items-start gap-3">
                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-lg font-semibold text-white">
-                       {typeof avatar === 'string' && avatar.startsWith('http') ? (
-<img
+                        {typeof avatar === 'string' && avatar.startsWith('http') ? (
+                          <img
                             src={avatar}
                             alt={name}
                             className="h-full w-full rounded-full object-cover"
                             width={48}
                             height={48}
+                            loading="lazy"
+                            decoding="async"
                           />
                        ) : (
                          avatar
