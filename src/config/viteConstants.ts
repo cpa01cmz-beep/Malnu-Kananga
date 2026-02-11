@@ -3,7 +3,18 @@
  * 
  * This file centralizes all hardcoded values from vite.config.ts
  * to make the build system modular and maintainable.
+ * 
+ * NOTE: This file is used by vite.config.ts (Node.js context)
+ * and cannot import from src/constants.ts (browser context).
+ * Time constants are defined locally to avoid circular dependencies.
  */
+
+// Time constants in seconds (for cache configuration) - Flexy: Never hardcode time values!
+const TIME_SECONDS = {
+  ONE_HOUR: 60 * 60,
+  ONE_DAY: 24 * 60 * 60,
+  ONE_YEAR: 365 * 24 * 60 * 60,
+} as const;
 
 // PWA Theme and Branding Configuration
 export const PWA_CONFIG = {
@@ -15,24 +26,24 @@ export const PWA_CONFIG = {
   SCOPE: '/',
 } as const;
 
-// Cache Configuration for Workbox
+// Cache Configuration for Workbox - Flexy: Using modular time constants!
 export const CACHE_CONFIG = {
   CSS: {
     NAME: 'css-cache',
     MAX_ENTRIES: 50,
-    MAX_AGE_SECONDS: 60 * 60 * 24, // 24 hours
+    MAX_AGE_SECONDS: TIME_SECONDS.ONE_DAY,
     STATUSES: [0, 200] as const,
   },
   GOOGLE_FONTS: {
     NAME: 'google-fonts-cache',
     MAX_ENTRIES: 10,
-    MAX_AGE_SECONDS: 60 * 60 * 24 * 365, // 365 days (1 year)
+    MAX_AGE_SECONDS: TIME_SECONDS.ONE_YEAR,
     STATUSES: [0, 200] as const,
   },
   GSTATIC_FONTS: {
     NAME: 'gstatic-fonts-cache',
     MAX_ENTRIES: 10,
-    MAX_AGE_SECONDS: 60 * 60 * 24 * 365, // 365 days (1 year)
+    MAX_AGE_SECONDS: TIME_SECONDS.ONE_YEAR,
     STATUSES: [0, 200] as const,
   },
 } as const;
