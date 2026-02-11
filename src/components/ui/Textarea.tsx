@@ -159,7 +159,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || internalRef;
   const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
-  const textareaId = id || idGenerators.input();
+  const textareaId = id || idGenerators.textarea();
   const helperTextId = helperText ? `${textareaId}-helper` : undefined;
   const errorTextId = errorText ? `${textareaId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
