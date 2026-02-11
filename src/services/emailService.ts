@@ -16,9 +16,9 @@ import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS, DEL
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
-  private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS || 'malnu_email_notification_settings';
-  private analyticsKey = STORAGE_KEYS.EMAIL_ANALYTICS || 'malnu_email_analytics';
-  private deliveryHistoryKey = STORAGE_KEYS.EMAIL_DELIVERY_HISTORY || 'malnu_email_delivery_history';
+  private storageKey = STORAGE_KEYS.EMAIL_NOTIFICATION_SETTINGS;
+  private analyticsKey = STORAGE_KEYS.EMAIL_ANALYTICS;
+  private deliveryHistoryKey = STORAGE_KEYS.EMAIL_DELIVERY_HISTORY;
   private apiEndpoint = API_ENDPOINTS.EMAIL.SEND;
 
   constructor() {

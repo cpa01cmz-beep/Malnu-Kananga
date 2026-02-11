@@ -502,6 +502,9 @@ export const OPACITY_TOKENS = {
 // Time constants in milliseconds - use these instead of hardcoded calculations
 export const TIME_MS = {
     ONE_SECOND: 1000,
+    FIVE_SECONDS: 5 * 1000,
+    TEN_SECONDS: 10 * 1000,
+    THIRTY_SECONDS: 30 * 1000,
     ONE_MINUTE: 60 * 1000,
     FIVE_MINUTES: 5 * 60 * 1000,
     THIRTY_MINUTES: 30 * 60 * 1000,
@@ -682,6 +685,7 @@ export const SCHEDULER_INTERVALS = {
     AUTH_CHECK: 5 * 1000, // 5 seconds
     QUEUED_COUNT_UPDATE: 5 * 1000, // 5 seconds - for auto-save queue count updates
     SPEAKING_STATUS_CHECK: 1000, // 1 second - for voice notification speaking status
+    VOICE_MESSAGE_QUEUE_POLL: 100, // 100ms - for voice message queue status polling
 } as const;
 
 // Performance Monitoring Thresholds - Flexy: Never hardcode thresholds!
@@ -891,6 +895,11 @@ export const AI_CONFIG = {
     DEFAULT_CONFIDENCE_SCORE: 0.85,
     JSON_MIME_TYPE: 'application/json',
     MATERIAL_CONTENT_MAX: 500,
+    // Quiz generation defaults - Flexy: Never hardcode quiz defaults!
+    DEFAULT_QUIZ_TOTAL_POINTS: 100,
+    DEFAULT_QUIZ_DURATION_MINUTES: 30,
+    DEFAULT_QUIZ_PASSING_SCORE: 70,
+    DEFAULT_QUIZ_POINTS_PER_QUESTION: 10,
 } as const;
 
 // OCR configuration constants
@@ -2136,14 +2145,14 @@ export const ANNOUNCEMENT_STATUS_LABELS = {
     [ANNOUNCEMENT_STATUS.EXPIRED]: 'Kadaluarsa',
 } as const;
 
-// Placeholder Images - Flexy: Centralize placeholder URLs!
+// Placeholder Images - Using local placeholders to avoid external dependencies
 export const PLACEHOLDER_IMAGES = {
-    SCHOOL: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1200&h=400&fit=crop',
-    STUDENT: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&h=100&fit=crop',
-    TEACHER: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-    CLASS: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-    EVENT: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=400&fit=crop',
-    MATERIAL: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop',
+    SCHOOL: '/images/placeholder.svg',
+    STUDENT: '/images/placeholder.svg',
+    TEACHER: '/images/placeholder.svg',
+    CLASS: '/images/placeholder.svg',
+    EVENT: '/images/placeholder.svg',
+    MATERIAL: '/images/placeholder.svg',
 } as const;
 
 // Input Mask Placeholders - Flexy: Never hardcode mask placeholders!
@@ -2665,3 +2674,498 @@ export const TEST_CONSTANTS = {
         BIO: 'BIO',
     },
 } as const;
+
+// Gesture Configuration - Flexy: Never hardcode gesture values!
+export const GESTURE_CONFIG = {
+    SWIPE: {
+        THRESHOLD: 100,           // Minimum distance for swipe detection (pixels)
+        RESTRAINT: 100,           // Maximum perpendicular distance allowed
+        ALLOWED_TIME: 300,        // Maximum time for swipe gesture (milliseconds)
+    },
+    LONG_PRESS: {
+        DELAY: 500,               // Time before long press triggers (milliseconds)
+    },
+    PULL_TO_REFRESH: {
+        THRESHOLD: 80,            // Distance needed to trigger refresh (pixels)
+    },
+    SWIPE_TO_DELETE: {
+        THRESHOLD: 100,           // Distance needed to trigger delete (pixels)
+        ACTION_WIDTH: 80,         // Width of delete action area (pixels)
+    },
+} as const;
+
+// Progressive Loading Configuration - Flexy: Never hardcode loading values!
+export const PROGRESSIVE_LOADING_CONFIG = {
+    DEFAULT_DELAY: DELAY_MS.STANDARD,           // 200ms minimum loading time
+    DEFAULT_TIMEOUT: TIME_MS.TEN_SECONDS,       // 10 seconds maximum loading time
+    PROGRESS_INTERVAL: 100,                     // Progress update interval (milliseconds)
+    RESET_DELAY: 200,                           // Delay before resetting state (milliseconds)
+} as const;
+
+// ============================================================================
+// Comprehensive UI String Constants
+// ============================================================================
+
+// Notification Messages - Flexy: Never hardcode toast/snackbar messages!
+export const NOTIFICATION_MESSAGES = {
+    // Success messages
+    SUCCESS: {
+        SAVED: 'Data berhasil disimpan',
+        UPDATED: 'Data berhasil diperbarui',
+        DELETED: 'Data berhasil dihapus',
+        SUBMITTED: 'Data berhasil dikirim',
+        UPLOADED: 'File berhasil diunggah',
+        DOWNLOADED: 'File berhasil diunduh',
+        COPIED: 'Berhasil disalin ke clipboard',
+        SYNCED: 'Sinkronisasi berhasil',
+        SETTINGS_SAVED: 'Pengaturan berhasil disimpan',
+        SETTINGS_RESET: 'Pengaturan telah diatur ke pengaturan awal',
+        BACKUP_CREATED: 'Backup berhasil dibuat',
+        BACKUP_RESTORED: 'Backup berhasil dipulihkan',
+        EXPORTED: 'Data berhasil diekspor',
+        IMPORTED: 'Data berhasil diimpor',
+        PASSWORD_CHANGED: 'Password berhasil diubah',
+        PROFILE_UPDATED: 'Profil berhasil diperbarui',
+        LOGIN_SUCCESS: 'Login berhasil',
+        LOGOUT_SUCCESS: 'Logout berhasil',
+        CONNECTION_RESTORED: 'Koneksi terpulihkan',
+    },
+
+    // Error messages
+    ERROR: {
+        GENERIC: 'Terjadi kesalahan',
+        SAVE_FAILED: 'Gagal menyimpan data',
+        UPDATE_FAILED: 'Gagal memperbarui data',
+        DELETE_FAILED: 'Gagal menghapus data',
+        UPLOAD_FAILED: 'Gagal mengunggah file',
+        DOWNLOAD_FAILED: 'Gagal mengunduh file',
+        SYNC_FAILED: 'Gagal sinkronisasi',
+        SETTINGS_SAVE_FAILED: 'Gagal menyimpan pengaturan',
+        SETTINGS_RESET_FAILED: 'Gagal mengatur ulang pengaturan',
+        SETTINGS_BACKUP_FAILED: 'Gagal membackup pengaturan',
+        SETTINGS_RESTORE_FAILED: 'Gagal memulihkan pengaturan',
+        EXPORT_FAILED: 'Gagal mengekspor data',
+        IMPORT_FAILED: 'Gagal mengimpor data',
+        LOAD_FAILED: 'Gagal memuat data',
+        CONNECTION_FAILED: 'Gagal terhubung ke server',
+        NETWORK_ERROR: 'Terjadi kesalahan jaringan',
+        OFFLINE_ERROR: 'Tidak dapat melakukan aksi saat offline',
+        TIMEOUT_ERROR: 'Waktu tunggu habis',
+        UNAUTHORIZED: 'Anda tidak memiliki akses',
+        SESSION_EXPIRED: 'Sesi telah berakhir, silakan login kembali',
+        VALIDATION_ERROR: 'Data tidak valid',
+        NOT_FOUND: 'Data tidak ditemukan',
+    },
+
+    // Info messages
+    INFO: {
+        LOADING: 'Memuat data...',
+        SAVING: 'Menyimpan data...',
+        UPLOADING: 'Mengunggah...',
+        SYNCING: 'Menyinkronkan...',
+        PROCESSING: 'Memproses...',
+        SEARCHING: 'Mencari...',
+        CONNECTING: 'Menghubungkan...',
+        RECONNECTING: 'Menyambungkan kembali...',
+        PLEASE_WAIT: 'Mohon tunggu...',
+        NO_CHANGES: 'Tidak ada perubahan',
+        ALREADY_UP_TO_DATE: 'Data sudah terbaru',
+        ALREADY_EXISTS: 'Data sudah ada',
+        NO_DATA: 'Tidak ada data',
+        NO_RESULTS: 'Tidak ada hasil',
+        NO_CONNECTION: 'Tidak ada koneksi internet',
+        OFFLINE_MODE: 'Mode offline aktif',
+        CHANGES_UNSAVED: 'Anda memiliki perubahan yang belum disimpan',
+    },
+
+    // Warning messages
+    WARNING: {
+        UNSAVED_CHANGES: 'Perubahan belum disimpan, yakin ingin keluar?',
+        DELETE_CONFIRMATION: 'Data yang dihapus tidak dapat dikembalikan',
+        LARGE_FILE: 'File terlalu besar',
+        INVALID_FORMAT: 'Format file tidak valid',
+        BROWSER_UNSUPPORTED: 'Browser tidak mendukung fitur ini',
+        FEATURE_LIMITED: 'Fitur terbatas dalam mode offline',
+    },
+} as const;
+
+// Form Labels - Flexy: Never hardcode form field labels!
+export const FORM_LABELS = {
+    // Personal info
+    PERSONAL: {
+        FULL_NAME: 'Nama Lengkap',
+        FIRST_NAME: 'Nama Depan',
+        LAST_NAME: 'Nama Belakang',
+        NICKNAME: 'Nama Panggilan',
+        GENDER: 'Jenis Kelamin',
+        BIRTH_DATE: 'Tanggal Lahir',
+        BIRTH_PLACE: 'Tempat Lahir',
+        NISN: 'NISN',
+        NIS: 'NIS',
+        NIK: 'NIK',
+    },
+
+    // Contact info
+    CONTACT: {
+        EMAIL: 'Email',
+        PHONE: 'Nomor Telepon',
+        WHATSAPP: 'Nomor WhatsApp',
+        ADDRESS: 'Alamat Lengkap',
+        CITY: 'Kota/Kabupaten',
+        PROVINCE: 'Provinsi',
+        POSTAL_CODE: 'Kode Pos',
+    },
+
+    // Education info
+    EDUCATION: {
+        SCHOOL_NAME: 'Nama Sekolah',
+        SCHOOL_ADDRESS: 'Alamat Sekolah',
+        GRADUATION_YEAR: 'Tahun Lulus',
+        PREVIOUS_SCHOOL: 'Sekolah Asal',
+        MAJOR: 'Jurusan',
+        CLASS: 'Kelas',
+        ACADEMIC_YEAR: 'Tahun Ajaran',
+        SEMESTER: 'Semester',
+    },
+
+    // Parent info
+    PARENT: {
+        FATHER_NAME: 'Nama Ayah',
+        MOTHER_NAME: 'Nama Ibu',
+        PARENT_PHONE: 'Nomor Telepon Orang Tua',
+        GUARDIAN_NAME: 'Nama Wali',
+        GUARDIAN_PHONE: 'Nomor Telepon Wali',
+        PARENT_OCCUPATION: 'Pekerjaan Orang Tua',
+        PARENT_ADDRESS: 'Alamat Orang Tua',
+    },
+
+    // Account info
+    ACCOUNT: {
+        USERNAME: 'Username',
+        PASSWORD: 'Password',
+        NEW_PASSWORD: 'Password Baru',
+        CONFIRM_PASSWORD: 'Konfirmasi Password',
+        CURRENT_PASSWORD: 'Password Saat Ini',
+        ROLE: 'Peran',
+    },
+
+    // Common
+    COMMON: {
+        TITLE: 'Judul',
+        DESCRIPTION: 'Deskripsi',
+        CONTENT: 'Konten',
+        CATEGORY: 'Kategori',
+        STATUS: 'Status',
+        DATE: 'Tanggal',
+        TIME: 'Waktu',
+        REMARKS: 'Keterangan',
+        NOTES: 'Catatan',
+    },
+} as const;
+
+// Status Labels - Flexy: Never hardcode status display text!
+export const STATUS_LABELS = {
+    // Connection status
+    CONNECTION: {
+        ONLINE: 'Online',
+        OFFLINE: 'Offline',
+        CONNECTING: 'Menghubungkan...',
+        RECONNECTING: 'Menyambungkan kembali...',
+        CONNECTED: 'Terhubung',
+        DISCONNECTED: 'Terputus',
+    },
+
+    // Real-time status
+    REALTIME: {
+        ACTIVE: 'Real-time Aktif',
+        INACTIVE: 'Real-time Nonaktif',
+        SYNCING: 'Sinkronisasi...',
+        SYNCED: 'Tersinkron',
+        PENDING_SYNC: 'Menunggu sinkronisasi',
+    },
+
+    // Data status
+    DATA: {
+        LOADING: 'Memuat data...',
+        LOADED: 'Data Terkini',
+        UPDATING: 'Memperbarui...',
+        SAVED: 'Tersimpan',
+        MODIFIED: 'Diubah',
+        DIRTY: 'Belum disimpan',
+    },
+
+    // Feature status
+    FEATURE: {
+        ENABLED: 'Aktif',
+        DISABLED: 'Nonaktif',
+        AVAILABLE: 'Tersedia',
+        UNAVAILABLE: 'Tidak Tersedia',
+        SUPPORTED: 'Didukung',
+        UNSUPPORTED: 'Tidak Didukung',
+    },
+} as const;
+
+// Tab Labels - Flexy: Never hardcode tab navigation labels!
+export const TAB_LABELS = {
+    // Academic tabs
+    ACADEMIC: {
+        SCHEDULE: 'Jadwal Pelajaran',
+        ASSIGNMENTS: 'Tugas Saya',
+        MATERIALS: 'Materi Pelajaran',
+        GRADES: 'Nilai Akademik',
+        ATTENDANCE: 'Kehadiran',
+        REPORTS: 'Laporan',
+    },
+
+    // Communication tabs
+    COMMUNICATION: {
+        DISCUSSION: 'Grup Diskusi',
+        MESSAGES: 'Pesan',
+        ANNOUNCEMENTS: 'Pengumuman',
+        MEETINGS: 'Jadwal Meeting',
+    },
+
+    // PPDB tabs
+    PPDB: {
+        OVERVIEW: 'Ringkasan',
+        REGISTRATIONS: 'Pendaftaran',
+        STATISTICS: 'Statistik',
+        SETTINGS: 'Pengaturan',
+    },
+
+    // Profile tabs
+    PROFILE: {
+        OVERVIEW: 'Ringkasan',
+        EDIT: 'Edit Profil',
+        SETTINGS: 'Pengaturan',
+        SECURITY: 'Keamanan',
+        NOTIFICATIONS: 'Notifikasi',
+    },
+
+    // Admin tabs
+    ADMIN: {
+        DASHBOARD: 'Dashboard',
+        USERS: 'Pengguna',
+        CLASSES: 'Kelas',
+        SUBJECTS: 'Mata Pelajaran',
+        REPORTS: 'Laporan',
+        SETTINGS: 'Pengaturan',
+    },
+} as const;
+
+// Toolbar Labels - Flexy: Never hardcode toolbar button labels!
+export const TOOLBAR_LABELS = {
+    // Actions
+    ACTIONS: {
+        ADD: 'Tambah',
+        EDIT: 'Edit',
+        DELETE: 'Hapus',
+        VIEW: 'Lihat',
+        SAVE: 'Simpan',
+        CANCEL: 'Batal',
+        SUBMIT: 'Kirim',
+        RESET: 'Reset',
+        REFRESH: 'Refresh',
+        SEARCH: 'Cari',
+        FILTER: 'Filter',
+        SORT: 'Urutkan',
+        EXPORT: 'Ekspor',
+        IMPORT: 'Impor',
+        DOWNLOAD: 'Unduh',
+        UPLOAD: 'Unggah',
+        PRINT: 'Cetak',
+        SHARE: 'Bagikan',
+        COPY: 'Salin',
+    },
+
+    // Navigation
+    NAVIGATION: {
+        BACK: 'Kembali',
+        NEXT: 'Selanjutnya',
+        PREVIOUS: 'Sebelumnya',
+        FIRST: 'Pertama',
+        LAST: 'Terakhir',
+        HOME: 'Beranda',
+        DASHBOARD: 'Dashboard',
+        PROFILE: 'Profil',
+        SETTINGS: 'Pengaturan',
+        LOGOUT: 'Logout',
+    },
+
+    // Quick actions
+    QUICK_ACTIONS: {
+        OPEN_DASHBOARD: 'Buka Dashboard',
+        VIEW_WEBSITE: 'Lihat Website',
+        SEND_MESSAGE: 'Kirim Pesan',
+        NEW_REGISTRATION: 'Pendaftaran Baru',
+        SAVE_ALL: 'Simpan Semua',
+        SELECT_ALL: 'Pilih Semua',
+        DESELECT_ALL: 'Batal Pilih Semua',
+    },
+} as const;
+
+// Empty State Messages - Flexy: Never hardcode empty state text!
+export const EMPTY_STATE_MESSAGES = {
+    // Generic
+    GENERIC: {
+        TITLE: 'Tidak Ada Data',
+        DESCRIPTION: 'Belum ada data yang tersedia',
+        ACTION: 'Tambah Data',
+    },
+
+    // Specific contexts
+    LIBRARY: {
+        TITLE: 'Perpustakaan Kosong',
+        DESCRIPTION: 'Anda sudah berada di perpustakaan, tapi belum ada materi',
+        ACTION: 'Jelajahi Materi',
+    },
+
+    ASSIGNMENTS: {
+        TITLE: 'Tidak Ada Tugas',
+        DESCRIPTION: 'Belum ada tugas yang diberikan',
+        ACTION: 'Lihat Jadwal',
+    },
+
+    MESSAGES: {
+        TITLE: 'Tidak Ada Pesan',
+        DESCRIPTION: 'Belum ada pesan masuk',
+        ACTION: 'Kirim Pesan',
+    },
+
+    NOTIFICATIONS: {
+        TITLE: 'Tidak Ada Notifikasi',
+        DESCRIPTION: 'Belum ada notifikasi baru',
+        ACTION: 'Pengaturan Notifikasi',
+    },
+
+    SEARCH: {
+        TITLE: 'Tidak Ada Hasil',
+        DESCRIPTION: 'Pencarian tidak menemukan hasil',
+        ACTION: 'Ubah Pencarian',
+    },
+
+    OFFLINE: {
+        TITLE: 'Mode Offline',
+        DESCRIPTION: 'Anda sedang offline. Beberapa fitur terbatas.',
+        ACTION: 'Coba Lagi',
+    },
+} as const;
+
+// Confirmation Messages - Flexy: Never hardcode confirmation dialog text!
+export const CONFIRMATION_MESSAGES = {
+    // Delete confirmations
+    DELETE: {
+        TITLE: 'Konfirmasi Hapus',
+        MESSAGE: 'Apakah Anda yakin ingin menghapus data ini?',
+        WARNING: 'Tindakan ini tidak dapat dibatalkan.',
+        CONFIRM: 'Ya, Hapus',
+        CANCEL: 'Batal',
+    },
+
+    // Save confirmations
+    SAVE: {
+        TITLE: 'Simpan Perubahan',
+        MESSAGE: 'Apakah Anda ingin menyimpan perubahan?',
+        CONFIRM: 'Ya, Simpan',
+        CANCEL: 'Batal',
+        DISCARD: 'Buang Perubahan',
+    },
+
+    // Cancel confirmations
+    CANCEL: {
+        TITLE: 'Batal Perubahan',
+        MESSAGE: 'Perubahan belum disimpan. Yakin ingin keluar?',
+        CONFIRM: 'Ya, Keluar',
+        CANCEL: 'Lanjutkan Edit',
+    },
+
+    // Logout confirmation
+    LOGOUT: {
+        TITLE: 'Konfirmasi Logout',
+        MESSAGE: 'Apakah Anda yakin ingin keluar?',
+        CONFIRM: 'Ya, Logout',
+        CANCEL: 'Batal',
+    },
+
+    // Reset confirmations
+    RESET: {
+        TITLE: 'Reset Pengaturan',
+        MESSAGE: 'Ini akan mengembalikan semua pengaturan ke default. Lanjutkan?',
+        CONFIRM: 'Ya, Reset',
+        CANCEL: 'Batal',
+    },
+} as const;
+
+// Loading Messages - Flexy: Never hardcode loading state text!
+export const LOADING_MESSAGES = {
+    // Generic
+    GENERIC: 'Memuat...',
+    PLEASE_WAIT: 'Mohon tunggu...',
+
+    // Specific contexts
+    AUTH: {
+        LOGIN: 'Sedang login...',
+        LOGOUT: 'Sedang logout...',
+        VERIFYING: 'Memverifikasi...',
+    },
+
+    DATA: {
+        LOADING: 'Memuat data...',
+        SAVING: 'Menyimpan data...',
+        SYNCING: 'Menyinkronkan data...',
+        FETCHING: 'Mengambil data...',
+        UPDATING: 'Memperbarui data...',
+        DELETING: 'Menghapus data...',
+    },
+
+    FILE: {
+        UPLOADING: 'Mengunggah file...',
+        DOWNLOADING: 'Mengunduh file...',
+        PROCESSING: 'Memproses file...',
+        CONVERTING: 'Mengkonversi file...',
+    },
+
+    NETWORK: {
+        CONNECTING: 'Menghubungkan...',
+        RECONNECTING: 'Menyambungkan kembali...',
+        SYNCING: 'Sinkronisasi...',
+    },
+
+    AI: {
+        THINKING: 'AI sedang berpikir...',
+        PROCESSING: 'AI sedang memproses...',
+        GENERATING: 'AI sedang menghasilkan...',
+        ANALYZING: 'AI sedang menganalisis...',
+    },
+} as const;
+
+// Voice Feature Strings - Flexy: Never hardcode voice UI text!
+export const VOICE_UI_STRINGS = {
+    // Status
+    STATUS: {
+        LISTENING: 'Mendengarkan...',
+        PROCESSING: 'Memproses...',
+        SPEAKING: 'Bicara...',
+        IDLE: 'Ketuk untuk bicara',
+        ERROR: 'Terjadi kesalahan',
+    },
+
+    // Hints
+    HINTS: {
+        TAP_TO_SPEAK: 'Ketuk mikrofon untuk mulai bicara',
+        TAP_TO_STOP: 'Ketuk lagi untuk berhenti',
+        SPEAK_NOW: 'Silakan bicara sekarang',
+    },
+
+    // Errors
+    ERRORS: {
+        NO_SPEECH: 'Tidak ada suara terdeteksi',
+        NOT_SUPPORTED: 'Browser tidak mendukung fitur suara',
+        PERMISSION_DENIED: 'Izin mikrofon ditolak',
+        NETWORK_ERROR: 'Kesalahan jaringan saat memproses suara',
+    },
+} as const;
+
+// ============================================================================
+// End of UI String Constants
+// ============================================================================

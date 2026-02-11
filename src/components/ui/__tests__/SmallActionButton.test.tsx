@@ -266,7 +266,7 @@ describe('SmallActionButton', () => {
   describe('Dark Mode', () => {
     it('should apply dark mode styles for info variant', () => {
       render(<SmallActionButton variant="info">Info Button</SmallActionButton>);
-      
+
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'dark:bg-blue-900/20',
@@ -277,7 +277,7 @@ describe('SmallActionButton', () => {
 
     it('should apply dark mode styles for neutral variant', () => {
       render(<SmallActionButton variant="neutral">Neutral Button</SmallActionButton>);
-      
+
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'dark:bg-neutral-700',
@@ -288,7 +288,7 @@ describe('SmallActionButton', () => {
 
     it('should apply dark mode styles for secondary variant', () => {
       render(<SmallActionButton variant="secondary">Secondary Button</SmallActionButton>);
-      
+
       const button = screen.getByRole('button');
       expect(button).toHaveClass(
         'dark:bg-neutral-800',
@@ -296,6 +296,71 @@ describe('SmallActionButton', () => {
         'dark:border-neutral-600',
         'dark:hover:bg-neutral-700'
       );
+    });
+  });
+
+  describe('Success State', () => {
+    it('should render success checkmark when showSuccess is true', () => {
+      render(<SmallActionButton showSuccess>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      const checkmark = button.querySelector('svg');
+
+      expect(checkmark).toBeInTheDocument();
+      expect(checkmark).toHaveAttribute('viewBox', '0 0 24 24');
+      expect(button).toHaveClass('cursor-default');
+    });
+
+    it('should show success tooltip when showSuccess is true', () => {
+      render(<SmallActionButton showSuccess>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Berhasil');
+    });
+
+    it('should auto-hide success state after duration', async () => {
+      render(<SmallActionButton showSuccess successDuration={100}>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      expect(button.querySelector('svg')).toBeInTheDocument();
+
+      await new Promise(resolve => setTimeout(resolve, 150));
+
+      expect(screen.getByText('Save')).toBeInTheDocument();
+    });
+
+    it('should prioritize loading over success state', () => {
+      render(<SmallActionButton isLoading showSuccess>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-busy', 'true');
+      expect(button.querySelector('.animate-spin')).toBeInTheDocument();
+    });
+
+    it('should not show tooltip when in success state', () => {
+      render(<SmallActionButton tooltip="Click to save" showSuccess>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      expect(screen.queryByText('Click to save')).not.toBeInTheDocument();
+    });
+
+    it('should render success state with green text styling', () => {
+      render(<SmallActionButton showSuccess>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveTextContent('Save');
+    });
+
+    it('should not be clickable when showing success', () => {
+      const handleClick = vi.fn();
+      render(<SmallActionButton showSuccess onClick={handleClick}>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+
+      expect(handleClick).toHaveBeenCalled();
     });
   });
 });

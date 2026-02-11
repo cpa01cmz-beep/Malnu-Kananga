@@ -5,7 +5,7 @@ import { editorCache } from '../aiCacheService';
 import { validateAIResponse } from '../../utils/aiEditorValidator';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS, EXTERNAL_URLS } from '../../constants';
+import { STORAGE_KEYS, EXTERNAL_URLS, AI_CONFIG } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -107,7 +107,7 @@ Please provide updated JSON content following safety and content rules above.`;
           systemInstruction,
           responseMimeType: "application/json",
           responseSchema: schema,
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         },
       });
     });

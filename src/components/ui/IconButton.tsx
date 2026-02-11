@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useId } from 'react';
+import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -13,6 +13,16 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
   tooltipPosition?: IconButtonTooltipPosition;
   /** Reason shown in tooltip when button is disabled */
   disabledReason?: string;
+  /** Show loading spinner instead of icon */
+  isLoading?: boolean;
+  /** Show success state with checkmark */
+  showSuccess?: boolean;
+  /** Duration to show success state in milliseconds */
+  successDuration?: number;
+  /** Show error state with X mark */
+  showError?: boolean;
+  /** Duration to show error state in milliseconds */
+  errorDuration?: number;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
@@ -48,15 +58,72 @@ const IconButton: React.FC<IconButtonProps> = ({
   tooltip,
   tooltipPosition = 'bottom',
   disabledReason,
+  isLoading = false,
+  showSuccess = false,
+  successDuration = 2000,
+  showError = false,
+  errorDuration = 2000,
   className = '',
   disabled,
   ...props
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isSuccessVisible, setIsSuccessVisible] = useState(false);
+  const [isErrorVisible, setIsErrorVisible] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
-  const hasTooltip = Boolean(tooltip);
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !isErrorVisible;
   const hasDisabledReason = Boolean(disabledReason) && disabled;
+
+  // Handle success state with auto-reset
+  useEffect(() => {
+    if (showSuccess) {
+      setIsSuccessVisible(true);
+      setIsErrorVisible(false);
+
+      // Clear any existing timeout
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+
+      // Auto-reset success state after duration
+      successTimeoutRef.current = setTimeout(() => {
+        setIsSuccessVisible(false);
+      }, successDuration);
+    }
+
+    return () => {
+      if (successTimeoutRef.current) {
+        clearTimeout(successTimeoutRef.current);
+      }
+    };
+  }, [showSuccess, successDuration]);
+
+  // Handle error state with auto-reset
+  useEffect(() => {
+    if (showError) {
+      setIsErrorVisible(true);
+      setIsSuccessVisible(false);
+
+      // Clear any existing timeout
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+
+      // Auto-reset error state after duration
+      errorTimeoutRef.current = setTimeout(() => {
+        setIsErrorVisible(false);
+      }, errorDuration);
+    }
+
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, [showError, errorDuration]);
 
   const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
   const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
@@ -65,6 +132,9 @@ const IconButton: React.FC<IconButtonProps> = ({
     ${baseClasses}
     ${variantClasses[variant]}
     ${sizeClasses[size]}
+    ${isLoading ? 'cursor-wait opacity-80' : ''}
+    ${isSuccessVisible ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-700' : ''}
+    ${isErrorVisible ? 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-700' : ''}
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
@@ -86,16 +156,85 @@ const IconButton: React.FC<IconButtonProps> = ({
     <button
       ref={buttonRef}
       className={classes}
-      aria-label={ariaLabel}
+      disabled={disabled}
       aria-describedby={hasTooltip ? tooltipId : undefined}
+      aria-busy={isLoading}
+      aria-live="polite"
+      aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : isErrorVisible ? `${ariaLabel} - Gagal` : ariaLabel}
       onMouseEnter={hasTooltip ? showTooltip : undefined}
       onMouseLeave={hasTooltip ? hideTooltip : undefined}
       onFocus={hasTooltip ? showTooltip : undefined}
       onBlur={hasTooltip ? hideTooltip : undefined}
       {...props}
     >
-      <span className={iconSizeClasses[size]} aria-hidden="true">
-        {icon}
+      <span className={`${iconSizeClasses[size]} relative flex items-center justify-center`} aria-hidden="true">
+        {/* Loading Spinner */}
+        {isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <svg
+              className="animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+          </span>
+        )}
+
+        {/* Success Checkmark */}
+        {isSuccessVisible && !isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center animate-in fade-in zoom-in duration-200">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+        )}
+
+        {/* Error X Mark */}
+        {isErrorVisible && !isLoading && (
+          <span className="absolute inset-0 flex items-center justify-center animate-in fade-in zoom-in duration-200">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </span>
+        )}
+
+        {/* Original Icon */}
+        <span
+          className={`transition-all duration-200 ${
+            isLoading || isSuccessVisible || isErrorVisible ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+          }`}
+        >
+          {icon}
+        </span>
       </span>
       {hasTooltip && (
         <span

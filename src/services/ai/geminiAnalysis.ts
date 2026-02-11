@@ -4,11 +4,13 @@ import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
+import { AI_CONFIG } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
   handleAIError
 } from '../../utils/aiErrorHandler';
+import { idGenerators } from '../../utils/idGenerator';
 
 /**
  * Function to analyze Teacher Grading Data (Uses Gemini 3 Pro)
@@ -43,7 +45,7 @@ export async function analyzeClassPerformance(grades: { studentName: string; sub
         model: AI_MODELS.PRO_THINKING,
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });
@@ -90,7 +92,7 @@ export async function analyzeStudentPerformance(
     logger.info('Queueing AI analysis for offline execution');
 
     // Generate a unique ID for this analysis
-    const analysisId = `student_analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const analysisId = idGenerators.analysis('student');
 
     // Queue analysis using dynamic import to avoid circular dependency
     const { offlineActionQueueService } = await import('../offlineActionQueueService');
@@ -143,7 +145,7 @@ export async function analyzeStudentPerformance(
         model: AI_MODELS.PRO_THINKING,
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });
@@ -287,7 +289,7 @@ export async function generateAssignmentFeedback(
         config: {
           responseMimeType: "application/json",
           responseSchema: schema,
-          thinkingConfig: { thinkingBudget: 32768 }
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
         }
       });
     });
@@ -295,7 +297,7 @@ export async function generateAssignmentFeedback(
     const jsonText = (response.text || '').trim();
     const feedbackData = JSON.parse(jsonText);
 
-    feedbackData.id = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    feedbackData.id = idGenerators.feedback();
     feedbackData.generatedAt = new Date().toISOString();
     feedbackData.aiModel = AI_MODELS.PRO_THINKING;
 

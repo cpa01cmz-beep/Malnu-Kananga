@@ -121,7 +121,7 @@ class PerformanceMonitor {
       method,
       duration: Math.round(duration),
       status: status || 0,
-      success: success !== undefined ? success : status ? status < 400 : false,
+      success: success !== undefined ? success : status ? status < HTTP.STATUS_CODES.BAD_REQUEST : false,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
     };

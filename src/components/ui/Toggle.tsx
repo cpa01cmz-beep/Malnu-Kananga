@@ -1,5 +1,6 @@
 import React, { forwardRef, useState, useCallback } from 'react'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
+import { idGenerators } from '../../utils/idGenerator'
 
 // Haptic feedback utility
 const triggerHapticFeedback = (type: 'light' | 'medium' = 'light') => {
@@ -67,7 +68,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
     },
     ref
   ) => {
-    const toggleId = id || `toggle-${Math.random().toString(36).substr(2, 9)}`
+    const toggleId = id || idGenerators.input()
     const hasLabel = label || description
     const labelClasses = sizeClasses[toggleSize]
     const colorClass = colorClasses[color]
