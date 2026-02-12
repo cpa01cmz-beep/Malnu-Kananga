@@ -485,18 +485,46 @@ const DataTable = <T extends Record<string, unknown>>({
               <Tr>
                 {selection && (
                   <Th className="w-12" scope="col" aria-label="Pilih baris">
-                    <input
-                      type="checkbox"
-                      checked={isAllSelected}
-                      ref={(input) => {
-                        if (input) {
-                          input.indeterminate = isIndeterminate || false;
-                        }
-                      }}
-                      onChange={(e) => handleSelectAll(e.target.checked)}
-                      className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
-                      aria-label="Pilih semua baris"
-                    />
+                    <div className="relative group">
+                      <input
+                        type="checkbox"
+                        checked={isAllSelected}
+                        ref={(input) => {
+                          if (input) {
+                            input.indeterminate = isIndeterminate || false;
+                          }
+                        }}
+                        onChange={(e) => handleSelectAll(e.target.checked)}
+                        className="rounded border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50%"
+                        aria-label="Pilih semua baris"
+                        title="Pilih semua (Ctrl+A)"
+                      />
+
+                      <div
+                        className="
+                          absolute -top-10 left-1/2 -translate-x-1/2
+                          px-2.5 py-1.5
+                          bg-neutral-800 dark:bg-neutral-700
+                          text-white text-[10px] font-medium
+                          rounded-md shadow-md
+                          whitespace-nowrap
+                          transition-all duration-200 ease-out
+                          pointer-events-none
+                          z-50
+                          opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                        "
+                        role="tooltip"
+                        aria-hidden="true"
+                      >
+                        <span className="flex items-center gap-1">
+                          <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                            Ctrl+A
+                          </kbd>
+                          <span>pilih semua</span>
+                        </span>
+                        <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+                      </div>
+                    </div>
                   </Th>
                 )}
                 {columns.map((column) => (
