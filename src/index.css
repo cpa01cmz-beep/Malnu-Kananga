@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* BroCula: Font loading moved to index.html with non-blocking preload for better performance */
+/* See index.html for font loading strategy with onload handler */
 @import "tailwindcss";
 
 @theme {

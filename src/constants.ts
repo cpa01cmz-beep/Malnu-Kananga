@@ -216,10 +216,15 @@ export const USER_EXTRA_ROLES = {
 
 export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
 
+import { ENV } from './config/env';
+
 export const APP_CONFIG = {
-    SCHOOL_NAME: 'MA Malnu Kananga',
-    SCHOOL_NPSN: '69881502',
-    SCHOOL_ADDRESS: 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    SCHOOL_NAME: ENV.SCHOOL.NAME,
+    SCHOOL_NPSN: ENV.SCHOOL.NPSN,
+    SCHOOL_ADDRESS: ENV.SCHOOL.ADDRESS,
+    SCHOOL_PHONE: ENV.SCHOOL.PHONE,
+    SCHOOL_EMAIL: ENV.SCHOOL.EMAIL,
+    SCHOOL_WEBSITE: ENV.SCHOOL.WEBSITE,
     SK_PENDIRIAN: {
         NUMBER: 'D/Wi/MA./101/2000',
         DATE: '20-09-2000',
@@ -281,8 +286,8 @@ export const ERROR_MESSAGES = {
     NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
 } as const;
 
-export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
-export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
+export const ADMIN_EMAIL = ENV.EMAIL.ADMIN;
+export const INFO_EMAIL = ENV.SCHOOL.EMAIL;
 
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
@@ -900,6 +905,52 @@ export const ACADEMIC = {
     MAJOR_EXAM_TYPES: ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'] as const,
 } as const;
 
+// Flexy: Centralized grade letter calculation - Never hardcode grade thresholds!
+export const GRADE_LETTER_THRESHOLDS = {
+    A: { min: 90, letter: 'A', gpa: 4.0 },
+    A_MINUS: { min: 85, letter: 'A-', gpa: 3.7 },
+    B_PLUS: { min: 80, letter: 'B+', gpa: 3.3 },
+    B: { min: 75, letter: 'B', gpa: 3.0 },
+    B_MINUS: { min: 70, letter: 'B-', gpa: 2.7 },
+    C_PLUS: { min: 65, letter: 'C+', gpa: 2.3 },
+    C: { min: 60, letter: 'C', gpa: 2.0 },
+    C_MINUS: { min: 55, letter: 'C-', gpa: 1.7 },
+    D: { min: 50, letter: 'D', gpa: 1.0 },
+    E: { min: 0, letter: 'E', gpa: 0.0 },
+} as const;
+
+/**
+ * Get grade letter from score using centralized thresholds
+ * Flexy Principle: NEVER hardcode grade calculations!
+ * @param score - Numeric score (0-100)
+ * @returns Grade letter (A, A-, B+, etc.)
+ */
+export function getGradeLetter(score: number): string {
+    if (score >= GRADE_LETTER_THRESHOLDS.A.min) return GRADE_LETTER_THRESHOLDS.A.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.A_MINUS.min) return GRADE_LETTER_THRESHOLDS.A_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B_PLUS.min) return GRADE_LETTER_THRESHOLDS.B_PLUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B.min) return GRADE_LETTER_THRESHOLDS.B.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B_MINUS.min) return GRADE_LETTER_THRESHOLDS.B_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C_PLUS.min) return GRADE_LETTER_THRESHOLDS.C_PLUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C.min) return GRADE_LETTER_THRESHOLDS.C.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C_MINUS.min) return GRADE_LETTER_THRESHOLDS.C_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.D.min) return GRADE_LETTER_THRESHOLDS.D.letter;
+    return GRADE_LETTER_THRESHOLDS.E.letter;
+}
+
+/**
+ * Simplified grade letter for basic use cases (A, B, C, D only)
+ * Flexy Principle: NEVER hardcode grade calculations!
+ * @param score - Numeric score (0-100)
+ * @returns Simplified grade letter (A, B, C, D)
+ */
+export function getSimplifiedGradeLetter(score: number): string {
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.A) return 'A';
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.B) return 'B';
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.C) return 'C';
+    return 'D';
+}
+
 // File validation constants
 export const FILE_VALIDATION = {
     FILENAME_MAX_LENGTH: 255,
@@ -1127,6 +1178,54 @@ export const STAGGER_DELAYS = {
     FAST: 25,
     NORMAL: 50,
     SLOW: 100,
+} as const;
+
+// Animation Duration Constants - Flexy: Use these instead of hardcoded duration classes!
+// Provides both numeric values (ms) and Tailwind classes for consistency
+export const ANIMATION_DURATIONS = {
+    // Micro-interactions (instant feedback)
+    MICRO: 150,
+    INSTANT: 150,
+
+    // Fast transitions (hover states, small movements)
+    FAST: 200,
+    QUICK: 200,
+
+    // Standard transitions (most UI changes)
+    NORMAL: 300,
+    STANDARD: 300,
+
+    // Medium transitions (larger UI changes)
+    MEDIUM: 500,
+
+    // Slow transitions (emphasis, dramatic changes)
+    SLOW: 700,
+
+    // Very slow (special effects)
+    VERY_SLOW: 1000,
+
+    // Tailwind class equivalents
+    CLASSES: {
+        MICRO: 'duration-150',
+        INSTANT: 'duration-150',
+        FAST: 'duration-200',
+        QUICK: 'duration-200',
+        NORMAL: 'duration-300',
+        STANDARD: 'duration-300',
+        MEDIUM: 'duration-500',
+        SLOW: 'duration-700',
+        VERY_SLOW: 'duration-1000',
+    },
+} as const;
+
+// Animation Timing Functions - Flexy: Use these for consistent easing!
+export const ANIMATION_EASINGS = {
+    DEFAULT: 'ease-in-out',
+    IN: 'ease-in',
+    OUT: 'ease-out',
+    BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    SMOOTH: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    ELASTIC: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
 } as const;
 
 // Haptic feedback vibration patterns (milliseconds) - Flexy: Never hardcode haptic patterns!
@@ -1481,6 +1580,26 @@ export const ACADEMIC_SUBJECTS = {
     ARTS: 'Seni Budaya',
     PE: 'Penjasorkes',
     ENTREPRENEURSHIP: 'Kewirausahaan',
+} as const;
+
+// Student Performance Thresholds - Flexy: Never hardcode performance thresholds!
+export const STUDENT_PERFORMANCE_THRESHOLDS = {
+    // GPA thresholds for motivational messages
+    GPA: {
+        EXCELLENT: 85,  // GPA >= 85: "Luar biasa!"
+        GOOD: 75,       // GPA >= 75: "Prestasi baik!"
+        MINIMUM: 60,    // GPA >= 60: "Menunjukkan perbaikan"
+    },
+    // Attendance percentage thresholds
+    ATTENDANCE: {
+        EXCELLENT: 95,  // Attendance >= 95%: Excellent
+        GOOD: 90,       // Attendance >= 90%: Good
+    },
+    // Study recommendation thresholds
+    STUDY: {
+        FAILING: 70,    // Score < 70: Failing, needs high priority
+        DECLINING: 80,  // Score < 80: Declining, needs medium priority
+    },
 } as const;
 
 // Indonesian month names - Flexy: Never hardcode locale-specific data!
@@ -2007,6 +2126,7 @@ export const API_ENDPOINTS = {
         CLASSES: '/api/classes',
         SCHEDULES: '/api/schedules',
         GRADES: '/api/grades',
+        GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
     },
     // Events
@@ -2074,6 +2194,7 @@ export const API_ENDPOINTS = {
     // WebSocket
     WEBSOCKET: {
         CONNECT: '/ws',
+        UPDATES: '/api/updates',
     },
 } as const;
 
