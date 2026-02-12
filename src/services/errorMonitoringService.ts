@@ -53,6 +53,17 @@ class ErrorMonitoringService {
         environment: config.environment,
         release: config.release,
         tracesSampleRate: config.tracesSampleRate,
+        // BroCula: Disable replay and feedback to reduce bundle size
+        // These features add ~40KB+ of unused JavaScript on initial load
+        replaysSessionSampleRate: 0,
+        replaysOnErrorSampleRate: 0,
+        integrations: (integrations) => {
+          // Filter out replay and feedback integrations
+          return integrations.filter(integration => {
+            const name = integration.name;
+            return name !== 'Replay' && name !== 'Feedback';
+          });
+        },
       });
 
       this.environment = config.environment;
