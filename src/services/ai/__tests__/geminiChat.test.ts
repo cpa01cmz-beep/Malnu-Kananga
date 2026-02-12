@@ -296,7 +296,7 @@ describe('Gemini Chat', () => {
       // Should not throw
       expect(() => {
         // Try to consume the stream
-        if (stream.next) stream.next();
+        void (stream.next && stream.next());
       }).not.toThrow();
     });
 
@@ -310,7 +310,7 @@ describe('Gemini Chat', () => {
       const stream = getAIResponseStream('test', [], localContext);
 
       expect(() => {
-        if (stream.next) stream.next();
+        void (stream.next && stream.next());
       }).not.toThrow();
     });
   });
