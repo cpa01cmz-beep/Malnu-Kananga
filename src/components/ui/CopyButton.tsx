@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useId } from 'react';
+import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export type CopyButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost';
@@ -213,7 +213,24 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        buttonRef.current === document.activeElement &&
+        !disabled &&
+        buttonState === 'idle' &&
+        (e.ctrlKey || e.metaKey) &&
+        e.key === 'c'
+      ) {
+        handleCopy();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [buttonState, disabled, handleCopy]);
+
+  useEffect(() => {
     return () => {
       if (resetTimeoutRef.current) {
         clearTimeout(resetTimeoutRef.current);
@@ -258,7 +275,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const getAriaLabel = () => {
     if (isCopied) return `${ariaLabel} - ${successMessage}`;
     if (isError) return `${ariaLabel} - ${errorMessage}`;
-    return ariaLabel;
+    return `${ariaLabel} (Tekan ${keyboardShortcut} saat fokus)`;
   };
 
   return (
