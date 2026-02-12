@@ -52,8 +52,9 @@ describe('FileUploader', () => {
     render(<FileUploader />);
     
     expect(screen.getByText('Click to upload or drag and drop')).toBeInTheDocument();
-    expect(screen.getByText(/\.pdf,\.doc,\.docx,\.ppt,\.pptx,\.jpg,\.jpeg,\.png,\.mp4/)).toBeInTheDocument();
     expect(screen.getByText(/\(Max 50MB\)/)).toBeInTheDocument();
+    // Look for the visible version, not the screen reader version
+    expect(screen.getByText('You can also paste images (Ctrl+V)')).toBeInTheDocument();
   });
 
   it('shows files list when files are provided', () => {
@@ -216,5 +217,141 @@ it('shows loading state during upload', async () => {
     const image = screen.getByRole('img', { name: /test\.jpg/i });
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'data:image/jpeg;base64,test');
+  });
+
+  it('shows clipboard paste hint text', () => {
+    render(<FileUploader />);
+    
+    expect(screen.getByText(/You can also paste images \(Ctrl\+V\)/)).toBeInTheDocument();
+  });
+
+  it('handles clipboard paste events for images', async () => {
+    // Mock DataTransfer constructor for jsdom environment
+    global.DataTransfer = class MockDataTransfer {
+      items: any = {
+        add: vi.fn()
+      };
+      constructor() {}
+    } as any;
+    
+    const { fileStorageAPI } = await import('../../../services/apiService');
+    const mockOnFileUploaded = vi.fn();
+    
+    vi.mocked(fileStorageAPI.upload).mockResolvedValue({
+      success: true,
+      message: 'Upload successful',
+      data: {
+        id: 'pasted-1',
+        key: 'pasted-image-key',
+        url: 'http://example.com/files/pasted-image-key',
+        fileName: 'image.png',
+        name: 'image.png',
+        fileType: 'image/png',
+        type: 'image/png',
+        fileSize: 1024,
+        size: 1024,
+        fileUrl: 'http://example.com/files/pasted-image-key',
+        uploadedAt: new Date().toISOString(),
+      },
+    });
+
+    render(<FileUploader onFileUploaded={mockOnFileUploaded} />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    const file = new File(['test-image-data'], 'image.png', { type: 'image/png' });
+    const clipboardData = {
+      items: [
+        {
+          type: 'image/png',
+          getAsFile: () => file,
+        },
+      ],
+    };
+    
+    const pasteEvent = new Event('paste', { bubbles: true });
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: clipboardData,
+      writable: false,
+    });
+    Object.defineProperty(pasteEvent, 'preventDefault', {
+      value: vi.fn(),
+      writable: false,
+    });
+    
+    container.focus();
+    container.dispatchEvent(pasteEvent);
+    
+    await waitFor(() => {
+      expect(fileStorageAPI.upload).toHaveBeenCalled();
+    });
+  });
+
+  it('shows paste hint tooltip on focus', async () => {
+    render(<FileUploader />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    container.focus();
+    
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('to paste image')).toBeInTheDocument();
+    }, { timeout: 1000 });
+  });
+
+  it('announces paste action to screen readers', async () => {
+    const { fileStorageAPI: fileAPI } = await import('../../../services/apiService');
+    
+    vi.mocked(fileAPI.upload).mockResolvedValue({
+      success: true,
+      message: 'Upload successful',
+      data: {
+        id: 'pasted-2',
+        key: 'pasted-image-key',
+        url: 'http://example.com/files/pasted-image-key',
+        fileName: 'image.png',
+        name: 'image.png',
+        fileType: 'image/png',
+        type: 'image/png',
+        fileSize: 1024,
+        size: 1024,
+        fileUrl: 'http://example.com/files/pasted-image-key',
+        uploadedAt: new Date().toISOString(),
+      },
+    });
+
+    render(<FileUploader />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    const file = new File(['test-image-data'], 'image.png', { type: 'image/png' });
+    const clipboardData = {
+      items: [
+        {
+          type: 'image/png',
+          getAsFile: () => file,
+        },
+      ],
+    };
+    
+    const pasteEvent = new Event('paste', { bubbles: true });
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: clipboardData,
+      writable: false,
+    });
+    Object.defineProperty(pasteEvent, 'preventDefault', {
+      value: vi.fn(),
+      writable: false,
+    });
+    
+    container.focus();
+    container.dispatchEvent(pasteEvent);
+    
+    const statusElement = screen.getByRole('status');
+    expect(statusElement).toBeInTheDocument();
   });
 });

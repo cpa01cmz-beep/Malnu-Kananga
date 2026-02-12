@@ -63,18 +63,32 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [announcement, setAnnouncement] = useState<string>('');
   const uploadStartTimeRef = useRef<number>(0);
   const [dragActive, setDragActive] = useState(false);
+  const [isPasteSupported, setIsPasteSupported] = useState(false);
+  const [showPasteHint, setShowPasteHint] = useState(false);
+  const [isPastedImage, setIsPastedImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pasteHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const announceToScreenReader = useCallback((message: string) => {
     setAnnouncement(message);
     setTimeout(() => setAnnouncement(''), COMPONENT_TIMEOUTS.SCREEN_READER_ANNOUNCEMENT_CLEAR);
-  }, []);  
+  }, []);
+
+  useEffect(() => {
+    const hasClipboardAPI = typeof navigator !== 'undefined' && 'clipboard' in navigator;
+    const supportsPasteEvent = 'onpaste' in document;
+    setIsPasteSupported(hasClipboardAPI || supportsPasteEvent);
+  }, []);
 
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+      }
+      if (pasteHintTimeoutRef.current) {
+        clearTimeout(pasteHintTimeoutRef.current);
       }
     };
   }, []);
@@ -123,7 +137,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         resolve(undefined);
         return;
       }
-      
+
       // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
@@ -132,7 +146,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     });
   }, []);
 
-  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => { // eslint-disable-line no-undef
+  // eslint-disable-next-line no-undef
+  const handleFileSelect = useCallback(async (selectedFiles: FileList | null) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     const filesArray = Array.from(selectedFiles);
@@ -162,12 +177,12 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       uploadStartTimeRef.current = Date.now();
       announceToScreenReader(`Starting upload of ${file.name}`);
 
-      const abortController = new AbortController();  
+      const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
       try {
         const preview = await createPreview(file);
-        
+
         const response = await fileStorageAPI.upload(file, uploadPath, {
           onProgress: (progress) => {
             setUploadProgress(progress.percentage);
@@ -228,9 +243,86 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         setEstimatedTimeRemaining(0);
         setUploadedBytes(0);
         abortControllerRef.current = null;
+        setIsPastedImage(false);
       }
     }
   }, [files, maxFiles, allowMultiple, uploadPath, onFileUploaded, validateFile, createPreview, announceToScreenReader]);
+
+  const handlePaste = useCallback((e: Event) => {
+    if (disabled || uploading || !isPasteSupported) return;
+
+    // eslint-disable-next-line no-undef
+    const clipboardEvent = e as ClipboardEvent;
+    const activeElement = document.activeElement;
+    const isFocusedInContainer = containerRef.current?.contains(activeElement);
+    const isFileInputFocused = activeElement === fileInputRef.current;
+
+    if (!isFocusedInContainer && !isFileInputFocused) return;
+
+    const items = clipboardEvent.clipboardData?.items;
+    if (!items) return;
+
+    const imageFiles: File[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) {
+          imageFiles.push(file);
+        }
+      }
+    }
+
+    if (imageFiles.length > 0) {
+      e.preventDefault();
+
+      if ('vibrate' in navigator) {
+        navigator.vibrate(20);
+      }
+
+      setIsPastedImage(true);
+
+      // eslint-disable-next-line no-undef
+      const dataTransfer = new DataTransfer();
+      imageFiles.forEach(file => dataTransfer.items.add(file));
+
+      announceToScreenReader(`${imageFiles.length} image${imageFiles.length > 1 ? 's' : ''} pasted from clipboard`);
+      handleFileSelect(dataTransfer.files);
+    }
+  }, [disabled, uploading, isPasteSupported, handleFileSelect, announceToScreenReader]);
+
+  useEffect(() => {
+    if (!isPasteSupported) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('paste', handlePaste, true);
+
+    return () => {
+      container.removeEventListener('paste', handlePaste, true);
+    };
+  }, [isPasteSupported, handlePaste]);
+
+  const handleContainerFocus = () => {
+    if (isPasteSupported && !disabled && !uploading) {
+      pasteHintTimeoutRef.current = setTimeout(() => {
+        setShowPasteHint(true);
+      }, 500);
+    }
+  };
+
+  const handleContainerBlur = (e: React.FocusEvent) => {
+    // eslint-disable-next-line no-undef
+    if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+      setShowPasteHint(false);
+      if (pasteHintTimeoutRef.current) {
+        clearTimeout(pasteHintTimeoutRef.current);
+      }
+    }
+  };
 
   const handleCancelUpload = () => {
     if (abortControllerRef.current) {
@@ -306,7 +398,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         <div className="w-full max-w-sm">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Uploading...
+              {isPastedImage ? 'Uploading pasted image...' : 'Uploading...'}
             </span>
             <span className="text-sm font-semibold text-green-600 dark:text-green-400">
               {uploadProgress}%
@@ -354,12 +446,23 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         <p className="text-xs text-neutral-500 dark:text-neutral-400">
           {`${acceptedFileTypes} (Max ${maxSizeMB}MB)${allowMultiple ? ` • Up to ${maxFiles} files` : ''}`}
         </p>
+        {isPasteSupported && (
+          <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-2">
+            You can also paste images (Ctrl+V)
+          </p>
+        )}
       </>
     );
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div
+      ref={containerRef}
+      className={`space-y-4 ${className}`}
+      onFocus={handleContainerFocus}
+      onBlur={handleContainerBlur}
+      tabIndex={-1}
+    >
       <input
         ref={fileInputRef}
         type="file"
@@ -381,7 +484,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop files'}
           aria-describedby="upload-instructions"
           aria-dropeffect={dragActive ? "copy" : "none"}
-          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 ${
+          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 relative ${
             disabled || uploading
               ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
               : dragActive
@@ -390,6 +493,21 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           }`}
         >
           {getUploadArea()}
+
+          {showPasteHint && isPasteSupported && !disabled && !uploading && (
+            <div
+              className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-1 duration-200"
+              role="tooltip"
+            >
+              <span className="flex items-center gap-1.5">
+                <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold border border-neutral-500">
+                  Ctrl+V
+                </kbd>
+                <span>to paste image</span>
+              </span>
+              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+            </div>
+          )}
         </button>
       )}
 
@@ -397,6 +515,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         Supported file types: {acceptedFileTypes}. Maximum file size: {maxSizeMB}MB.
         {allowMultiple ? ` You can upload up to ${maxFiles} files.` : ''}
         {dragActive ? ' Files detected. Release to drop.' : ''}
+        {isPasteSupported ? ' You can paste images from clipboard using Ctrl+V.' : ''}
       </span>
 
       {variant === 'minimal' && (
