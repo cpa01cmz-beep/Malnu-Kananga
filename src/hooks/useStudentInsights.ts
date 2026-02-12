@@ -5,7 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
-import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS, ID_FORMAT } from '../constants';
+import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS, ID_FORMAT, getGradeLetter, STUDENT_PERFORMANCE_THRESHOLDS } from '../constants';
 import { useRealtimeEvent } from './useWebSocket';
 import type { RealTimeEvent } from '../services/webSocketService';
 
@@ -491,19 +491,9 @@ export const useStudentInsights = ({
   };
 };
 
-// Helper functions
-function getGradeFromScore(score: number): string {
-  if (score >= 90) return 'A';
-  if (score >= 85) return 'A-';
-  if (score >= 80) return 'B+';
-  if (score >= 75) return 'B';
-  if (score >= 70) return 'B-';
-  if (score >= 65) return 'C+';
-  if (score >= 60) return 'C';
-  if (score >= 55) return 'C-';
-  if (score >= 50) return 'D';
-  return 'E';
-}
+// Helper functions - Using centralized grade calculation from constants.ts
+// Flexy Principle: NEVER hardcode grade thresholds!
+const getGradeFromScore = getGradeLetter;
 
 function formatMonth(monthString: string): string {
   const [year, month] = monthString.split('-');
@@ -526,8 +516,8 @@ function generateStudyRecommendations(
 ): StudyRecommendation[] {
   const recommendations: StudyRecommendation[] = [];
   
-  // Priority: failing subjects first
-  const failingSubjects = gradePerformance.filter(gp => gp.averageScore < 70);
+  // Priority: failing subjects first - Using centralized threshold
+  const failingSubjects = gradePerformance.filter(gp => gp.averageScore < STUDENT_PERFORMANCE_THRESHOLDS.STUDY.FAILING);
   failingSubjects.forEach(subject => {
     recommendations.push({
       priority: 'high',
@@ -538,8 +528,8 @@ function generateStudyRecommendations(
     });
   });
   
-  // Priority: declining subjects
-  const decliningSubjects = gradePerformance.filter(gp => gp.trend === 'declining' && gp.averageScore < 80);
+  // Priority: declining subjects - Using centralized threshold
+  const decliningSubjects = gradePerformance.filter(gp => gp.trend === 'declining' && gp.averageScore < STUDENT_PERFORMANCE_THRESHOLDS.STUDY.DECLINING);
   decliningSubjects.forEach(subject => {
     recommendations.push({
       priority: 'medium',
@@ -550,8 +540,8 @@ function generateStudyRecommendations(
     });
   });
   
-  // Attendance recommendation
-  if (attendanceInsight.percentage < 90) {
+  // Attendance recommendation - Using centralized threshold
+  if (attendanceInsight.percentage < STUDENT_PERFORMANCE_THRESHOLDS.ATTENDANCE.GOOD) {
     recommendations.push({
       priority: 'high',
       subject: 'Kehadiran',
@@ -565,11 +555,12 @@ function generateStudyRecommendations(
 }
 
 function generateMotivationalMessage(gpa: number, attendancePercentage: number): string {
-  if (gpa >= 85 && attendancePercentage >= 95) {
+  // Using centralized performance thresholds - Flexy Principle: NEVER hardcode!
+  if (gpa >= STUDENT_PERFORMANCE_THRESHOLDS.GPA.EXCELLENT && attendancePercentage >= STUDENT_PERFORMANCE_THRESHOLDS.ATTENDANCE.EXCELLENT) {
     return 'Luar biasa! Pertahankan prestasi dan disiplin Anda!';
-  } else if (gpa >= 75 && attendancePercentage >= 90) {
+  } else if (gpa >= STUDENT_PERFORMANCE_THRESHOLDS.GPA.GOOD && attendancePercentage >= STUDENT_PERFORMANCE_THRESHOLDS.ATTENDANCE.GOOD) {
     return 'Prestasi baik! Terus tingkatkan dengan fokus pada mata pelajaran yang perlu perhatian.';
-  } else if (gpa >= 60) {
+  } else if (gpa >= STUDENT_PERFORMANCE_THRESHOLDS.GPA.MINIMUM) {
     return 'Anda menunjukkan perbaikan! Tetap konsisten dan jangan ragu minta bantuan.';
   } else {
     return 'Setiap langkah kecil menuju perbaikan itu berharga. Terus berusaha dan jangan menyerah!';

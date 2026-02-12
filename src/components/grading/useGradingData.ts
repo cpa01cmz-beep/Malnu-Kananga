@@ -4,7 +4,7 @@ import { studentsAPI, gradesAPI } from '../../services/apiService';
 import { parentGradeNotificationService } from '../../services/parentGradeNotificationService';
 import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { useOfflineActionQueue, type SyncResult } from '../../services/offlineActionQueueService';
-import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS, TIME_MS, API_ENDPOINTS } from '../../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS, TIME_MS, API_ENDPOINTS, getSimplifiedGradeLetter } from '../../constants';
 import { DEFAULT_API_BASE_URL } from '../../config';
 import { logger } from '../../utils/logger';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
@@ -445,7 +445,7 @@ export const useGradingData = (
           const grade = grades.find(g => g.id === save.studentId);
           if (grade) {
             const finalScore = calculateFinalGrade(grade.assignment, grade.midExam, grade.finalExam);
-            const gradeLetter = finalScore >= 85 ? 'A' : finalScore >= 75 ? 'B' : finalScore >= 60 ? 'C' : 'D';
+            const gradeLetter = getSimplifiedGradeLetter(finalScore);
 
             await notifyGradeUpdate(
               grade.name,
