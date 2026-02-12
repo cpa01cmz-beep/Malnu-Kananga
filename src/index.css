@@ -2,6 +2,14 @@
 /* See index.html for font loading strategy with onload handler */
 @import "tailwindcss";
 
+/* BroCula: Tailwind CSS v4 source configuration
+ * Define source files to scan for class name detection
+ * This helps tree-shake unused CSS and reduces bundle size
+ */
+@source "../src/**/*.{js,ts,jsx,tsx}";
+@source "../index.html";
+@source "../src/**/*.css";
+
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);
   --color-primary-100: var(--theme-primary-100, 142 71% 88%);
