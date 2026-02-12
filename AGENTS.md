@@ -51,11 +51,7 @@
 
 *Note: These are development dependencies. No security impact. Updates can be applied during next maintenance window.*
 
-<<<<<<< HEAD
-**Active Branches (32 branches + main):**
-=======
 **Active Branches (31 branches + main):**
->>>>>>> origin/main
 All branches from Feb 9-12 with active development:
 - `feature/ai-services-tests`
 - `feature/brocula-performance-optimization-20260212`
@@ -85,20 +81,14 @@ All branches from Feb 9-12 with active development:
 - `fix/ulw-loop-bugfixer-run45-audit-update`
 - `fix/ulw-loop-bugfixer-run47-audit-update`
 - `fix/ulw-loop-bugfixer-run48-audit-update`
-<<<<<<< HEAD
-- `fix/ulw-loop-bugfixer-run51-audit-update` (NEW - this report)
-=======
->>>>>>> origin/main
+- `fix/ulw-loop-bugfixer-run51-audit-update`
 - `fix/ulw-loop-lint-errors-20260210`
 - `fix/ulw-loop-repokeeper-run29-docs-update`
 - `fix/ulw-loop-repokeeper-run33-merge-conflict`
 - `fix/ulw-loop-repokeeper-run45-docs-update`
 - `fix/ulw-loop-repokeeper-run47-docs-update`
-<<<<<<< HEAD
 - `fix/ulw-loop-repokeeper-run48-docs-update`
 - `fix/ulw-loop-repokeeper-run51-docs-update`
-=======
->>>>>>> origin/main
 
 **Open Pull Requests:**
 - **PR #1817**: perf(brocula): Lazy load heavy components - Reduce dashboard chunk by 25%
