@@ -2563,6 +2563,41 @@ export const BREAKPOINTS = {
     XXL: 1536,  // Large desktop
 } as const;
 
+// Development Thresholds - Flexy: Never hardcode development-specific values!
+// These values are used for development environment configurations
+export const DEVELOPMENT_THRESHOLDS = {
+    // Error rate thresholds (percentage)
+    ERROR_RATE: {
+        WARNING: 10,   // Production warning threshold
+        DEV: 20,       // Development threshold (more permissive)
+        CRITICAL: 20,  // Critical alert threshold
+    },
+    // Memory thresholds (percentage)
+    MEMORY: {
+        WARNING: 80,
+        CRITICAL: 90,
+    },
+    // Consecutive failures threshold
+    CONSECUTIVE_FAILURES: {
+        WARNING: 5,    // Production warning
+        CRITICAL: 10,  // Critical alert
+    },
+    // Cache/PWA size thresholds (MB)
+    CACHE_SIZE: {
+        WARNING: 50,   // 50 MB warning
+    },
+    // WebSocket reconnect attempts
+    WEBSOCKET: {
+        MAX_RECONNECT_ATTEMPTS: 10,
+    },
+    // Max metrics to store
+    MAX_METRICS: 1000,
+    // Alert retention
+    ALERT_RETENTION: {
+        MAX_ALERTS: 100,
+    },
+} as const;
+
 // ============================================================================
 // UI Dimensions - Flexy: Never hardcode pixel values!
 // Centralized dimension constants for consistent sizing across components
