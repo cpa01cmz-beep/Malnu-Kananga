@@ -25,6 +25,81 @@
     <!-- Using rel="preload" + onload pattern to eliminate render-blocking -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
+    
+    <!-- BroCula: Critical CSS inlined to prevent render-blocking and reduce CLS -->
+    <!-- These styles are essential for initial paint and layout stability -->
+    <style>
+      /* Critical CSS for above-the-fold content - prevents layout shifts */
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        -moz-tab-size: 4;
+        tab-size: 4;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.5;
+        color: #111827;
+        background-color: #ffffff;
+        min-height: 100vh;
+        /* Prevent layout shift during font loading */
+        font-display: optional;
+      }
+      
+      #root {
+        min-height: 100vh;
+        /* Reserve space to prevent layout shift */
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Prevent FOUC (Flash of Unstyled Content) */
+      .loading {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-out 0.1s forwards;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      /* Ensure images don't cause layout shifts */
+      img {
+        max-width: 100%;
+        height: auto;
+        /* Reserve space for images before they load */
+        background-color: #f3f4f6;
+      }
+      
+      /* Critical layout classes */
+      .min-h-screen {
+        min-height: 100vh;
+      }
+      
+      .flex {
+        display: flex;
+      }
+      
+      .flex-col {
+        flex-direction: column;
+      }
+      
+      .items-center {
+        align-items: center;
+      }
+      
+      .justify-center {
+        justify-content: center;
+      }
+    </style>
 
     <!-- Note: Vite automatically handles module preloading -->
     
