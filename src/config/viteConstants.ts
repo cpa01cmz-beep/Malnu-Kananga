@@ -132,6 +132,7 @@ export const VENDOR_CHUNKS = {
   TESTS: 'tests',
   ICONS: 'vendor-icons',
   API: 'vendor-api',
+  SENTRY: 'vendor-sentry',
 } as const;
 
 // External Dependencies
