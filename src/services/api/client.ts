@@ -6,7 +6,7 @@ import { permissionService } from '../permissionService';
 import { isNetworkError } from '../../utils/networkStatus';
 import { classifyError, logError } from '../../utils/errorHandler';
 import { performanceMonitor } from '../performanceMonitor';
-import { API_CONFIG, HTTP } from '../../constants';
+import { API_CONFIG, HTTP, ERROR_MESSAGES } from '../../constants';
 import {
   getAuthToken,
   isTokenExpiringSoon,
@@ -71,8 +71,8 @@ async function validateRequestPermissions(
       userExtraRole as UserExtraRole,
       permissionId,
       {
-        userId: 'api-request',
-        ip: typeof window !== 'undefined' ? window.location.hostname : 'server'
+        userId: API_CONFIG.REQUEST_USER_ID,
+        ip: typeof window !== 'undefined' ? window.location.hostname : API_CONFIG.DEFAULT_IP_ADDRESS
       }
     );
 
@@ -135,7 +135,7 @@ export async function request<T>(
     
     return {
       success: false,
-      message: 'Anda sedang offline. Pastikan koneksi internet Anda aktif untuk melanjutkan.',
+      message: ERROR_MESSAGES.OFFLINE_ERROR,
       error: 'OFFLINE_ERROR'
     };
   }
@@ -154,8 +154,8 @@ export async function request<T>(
         if (!permissionCheck.allowed) {
           return {
             success: false,
-            message: 'Access denied: ' + (permissionCheck.reason || 'Insufficient permissions'),
-            error: 'Access denied: ' + (permissionCheck.reason || 'Insufficient permissions')
+            message: `${ERROR_MESSAGES.ACCESS_DENIED}: ${permissionCheck.reason || ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS}`,
+            error: `${ERROR_MESSAGES.ACCESS_DENIED}: ${permissionCheck.reason || ERROR_MESSAGES.INSUFFICIENT_PERMISSIONS}`
           };
         }
       } catch (error) {
@@ -195,7 +195,7 @@ export async function request<T>(
     }
 
     if (response.status === HTTP.STATUS_CODES.FORBIDDEN) {
-      const classifiedError = classifyError(new Error('Forbidden access'), {
+      const classifiedError = classifyError(new Error(ERROR_MESSAGES.FORBIDDEN_ACCESS), {
         operation: `API ${method} ${endpoint}`,
         timestamp: Date.now()
       });
@@ -204,7 +204,7 @@ export async function request<T>(
     }
 
     if (response.status === HTTP.STATUS_CODES.UNPROCESSABLE_ENTITY) {
-      const classifiedError = classifyError(new Error('Validation error'), {
+      const classifiedError = classifyError(new Error(ERROR_MESSAGES.VALIDATION_ERROR), {
         operation: `API ${method} ${endpoint}`,
         timestamp: Date.now()
       });

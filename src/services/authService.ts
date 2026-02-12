@@ -5,7 +5,7 @@ import {
   logError,
   createValidationError
 } from '../utils/errorHandler';
-import { API_ENDPOINTS } from '../constants';
+import { API_ENDPOINTS, ERROR_MESSAGES } from '../constants';
 
 export interface User {
   id?: string;
@@ -20,7 +20,7 @@ export class AuthService {
   async login(email: string, password: string): Promise<boolean> {
     try {
       if (!email || !password) {
-        const error = createValidationError('login', 'Email dan password harus diisi');
+        const error = createValidationError('login', ERROR_MESSAGES.VALIDATION_EMAIL_PASSWORD_REQUIRED);
         logError(error);
         throw error;
       }
