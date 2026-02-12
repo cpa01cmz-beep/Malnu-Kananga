@@ -128,7 +128,7 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
       disabled
       className={`${baseClasses} ${className}`.trim()}
       title={disabledReason}
-      aria-label={ariaLabel || `${children} (Segera hadir)`}
+      aria-label={ariaLabel}
       aria-disabled="true"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
