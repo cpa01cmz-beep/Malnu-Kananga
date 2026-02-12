@@ -70,7 +70,7 @@ describe('Gemini Chat', () => {
       mockWithCircuitBreaker.mockReturnValue(mockStream);
 
       const { getAIResponseStream } = await import('../geminiChat');
-      const stream = getAIResponseStream('test message', [], {
+      const _stream = getAIResponseStream('test message', [], {
         featuredPrograms: [{ title: 'Test Program', description: 'Test', imageUrl: 'test.jpg' }],
         latestNews: [{ title: 'Test News', date: '2024-01-01', category: 'General', imageUrl: 'test.jpg' }]
       });
@@ -136,7 +136,7 @@ describe('Gemini Chat', () => {
       const stream = getAIResponseStream('test message', [], localContext);
       
       // Start consuming the stream to trigger the circuit breaker call
-      for await (const chunk of stream) {
+      for await (const _chunk of stream) {
         // Just consume
       }
 
@@ -222,7 +222,7 @@ describe('Gemini Chat', () => {
       const { getAIResponseStream } = await import('../geminiChat');
       const stream = getAIResponseStream('test message', [], undefined, true);
 
-      for await (const chunk of stream) {
+      for await (const _chunk of stream) {
         // Consume
       }
 
@@ -252,7 +252,7 @@ describe('Gemini Chat', () => {
       const { getAIResponseStream } = await import('../geminiChat');
       const stream = getAIResponseStream('test message', []);
 
-      for await (const chunk of stream) {
+      for await (const _chunk of stream) {
         // Consume
       }
 
@@ -296,7 +296,7 @@ describe('Gemini Chat', () => {
       // Should not throw
       expect(() => {
         // Try to consume the stream
-        stream.next && stream.next();
+        void (stream.next && stream.next());
       }).not.toThrow();
     });
 
@@ -310,7 +310,7 @@ describe('Gemini Chat', () => {
       const stream = getAIResponseStream('test', [], localContext);
 
       expect(() => {
-        stream.next && stream.next();
+        void (stream.next && stream.next());
       }).not.toThrow();
     });
   });
@@ -336,7 +336,7 @@ describe('Gemini Chat', () => {
 
       const stream = getAIResponseStream('How are you?', history);
 
-      for await (const chunk of stream) {
+      for await (const _chunk of stream) {
         // Consume
       }
 
@@ -358,7 +358,7 @@ describe('Gemini Chat', () => {
       const { getAIResponseStream } = await import('../geminiChat');
       const stream = getAIResponseStream('First message', []);
 
-      for await (const chunk of stream) {
+      for await (const _chunk of stream) {
         // Consume
       }
 
