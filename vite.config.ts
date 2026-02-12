@@ -154,6 +154,12 @@ export default defineConfig(({ mode }) => {
               return VENDOR_CHUNKS.ICONS;
             }
 
+            // BroCula: Split Sentry into separate chunk to prevent unused code in main bundle
+            // Sentry replay and feedback modules add ~50KB+ of unused JavaScript
+            if (id.includes('@sentry')) {
+              return 'vendor-sentry';
+            }
+
             // Fix circular dependency: Keep apiService.ts and services/api in same chunk
             if (id.includes('/services/api') || id.includes('/services/apiService')) {
               return VENDOR_CHUNKS.API;
