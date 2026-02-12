@@ -13,7 +13,7 @@ import { useAutoSave } from '../hooks/useAutoSave';
 import Button from './ui/Button';
 import LoadingSpinner from './ui/LoadingSpinner';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { STORAGE_KEYS, COMPONENT_DELAYS, UI_STRINGS } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS, UI_STRINGS, INPUT_MIN_VALUES } from '../constants';
 
 interface ParentNotificationSettingsProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -269,15 +269,15 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
                      <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                        Hari Alert Nilai Kosong
                      </label>
-                     <input
-                       type="number"
-                       min="1"
-                       max="30"
-                       value={settings.missingGradeDays}
-                       onChange={(e) => updateSettings({ missingGradeDays: Number(e.target.value) })}
-                       className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                       disabled={!settings.enabled}
-                     />
+                      <input
+                        type="number"
+                        min={INPUT_MIN_VALUES.DAYS}
+                        max="30"
+                        value={settings.missingGradeDays}
+                        onChange={(e) => updateSettings({ missingGradeDays: Number(e.target.value) })}
+                        className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        disabled={!settings.enabled}
+                      />
                      <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
                        Kirim alert setelah {settings.missingGradeDays} hari tidak ada nilai
                      </p>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Quiz, QuizQuestion } from '../types';
 import { QuizQuestionType, QuizDifficulty } from '../types';
+import { INPUT_MIN_VALUES } from '../constants';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
@@ -294,7 +295,7 @@ function QuestionCard({ question, index, isEditing, onEdit, onSave, onDelete }: 
               </label>
               <Input
                 type="number"
-                min="1"
+                min={INPUT_MIN_VALUES.POINTS}
                 max="100"
                 value={editedQuestion.points}
                 onChange={(e) => setEditedQuestion(prev => ({ ...prev, points: parseInt(e.target.value) || 10 }))}
@@ -524,7 +525,7 @@ function AddQuestionModal({ onClose, onAdd }: AddQuestionModalProps) {
             </label>
             <Input
               type="number"
-              min="1"
+              min={INPUT_MIN_VALUES.POINTS}
               max="100"
               value={newQuestion.points}
               onChange={(e) => setNewQuestion(prev => ({ ...prev, points: parseInt(e.target.value) || 10 }))}

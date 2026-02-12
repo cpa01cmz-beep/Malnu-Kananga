@@ -3,6 +3,7 @@
 import type { ELibrary } from '../../../types';
 import { request } from '../client';
 import { getAuthToken } from '../auth';
+import { API_ENDPOINTS } from '../../../constants';
 
 // ============================================
 // E-LIBRARY API
@@ -10,43 +11,43 @@ import { getAuthToken } from '../auth';
 
 export const eLibraryAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: ELibrary[]; error?: string }> {
-    return request<ELibrary[]>('/api/e_library');
+    return request<ELibrary[]>(API_ENDPOINTS.LIBRARY.MATERIALS);
   },
 
   async getById(id: string): Promise<{ success: boolean; message: string; data?: ELibrary; error?: string }> {
-    return request<ELibrary>(`/api/e_library/${id}`);
+    return request<ELibrary>(`${API_ENDPOINTS.LIBRARY.MATERIALS}/${id}`);
   },
 
   async getByCategory(category: string): Promise<{ success: boolean; message: string; data?: ELibrary[]; error?: string }> {
-    return request<ELibrary[]>(`/api/e_library?category=${category}`);
+    return request<ELibrary[]>(`${API_ENDPOINTS.LIBRARY.MATERIALS}?category=${category}`);
   },
 
   async getBySubject(subjectId: string): Promise<{ success: boolean; message: string; data?: ELibrary[]; error?: string }> {
-    return request<ELibrary[]>(`/api/e_library?subject_id=${subjectId}`);
+    return request<ELibrary[]>(`${API_ENDPOINTS.LIBRARY.MATERIALS}?subject_id=${subjectId}`);
   },
 
   async create(material: Partial<ELibrary>): Promise<{ success: boolean; message: string; data?: ELibrary; error?: string }> {
-    return request<ELibrary>('/api/e_library', {
+    return request<ELibrary>(API_ENDPOINTS.LIBRARY.MATERIALS, {
       method: 'POST',
       body: JSON.stringify(material),
     });
   },
 
   async update(id: string, material: Partial<ELibrary>): Promise<{ success: boolean; message: string; data?: ELibrary; error?: string }> {
-    return request<ELibrary>(`/api/e_library/${id}`, {
+    return request<ELibrary>(`${API_ENDPOINTS.LIBRARY.MATERIALS}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(material),
     });
   },
 
   async incrementDownloadCount(id: string): Promise<{ success: boolean; message: string; data?: ELibrary; error?: string }> {
-    return request<ELibrary>(`/api/e_library/${id}/download`, {
+    return request<ELibrary>(`${API_ENDPOINTS.LIBRARY.MATERIALS}/${id}/download`, {
       method: 'PUT',
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/e_library/${id}`, {
+    return request<null>(`${API_ENDPOINTS.LIBRARY.MATERIALS}/${id}`, {
       method: 'DELETE',
     });
   },
@@ -145,26 +146,25 @@ export const fileStorageAPI = {
         });
       }
 
-      xhr.open('POST', `${API_BASE_URL}/api/files/upload`);
+      xhr.open('POST', `${API_BASE_URL}${API_ENDPOINTS.FILES.UPLOAD}`);
       xhr.setRequestHeader('Authorization', token ? `Bearer ${token}` : '');
       xhr.send(formData);
     });
   },
 
   async delete(key: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/files/delete?key=${encodeURIComponent(key)}`, {
+    return request<null>(API_ENDPOINTS.FILES.DELETE(key), {
       method: 'DELETE',
     });
   },
 
   async list(prefix?: string): Promise<{ success: boolean; message: string; data?: Array<{ key: string; size: number; uploaded: string }>; error?: string }> {
-    const urlPrefix = prefix ? `?prefix=${encodeURIComponent(prefix)}` : '';
     return request<Array<{ key: string; size: number; uploaded: string }>>(
-      `/api/files/list${urlPrefix}`
+      API_ENDPOINTS.FILES.LIST(prefix)
     );
   },
 
   getDownloadUrl(key: string): string {
-    return `${API_BASE_URL}/api/files/download?key=${encodeURIComponent(key)}`;
+    return `${API_BASE_URL}${API_ENDPOINTS.FILES.DOWNLOAD(key)}`;
   },
 };

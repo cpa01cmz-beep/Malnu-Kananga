@@ -2,6 +2,7 @@
 
 import { request, type ApiResponse } from '../client';
 import type { ParentPayment } from '../../../types/users';
+import { API_ENDPOINTS } from '../../../constants';
 
 export interface CreatePaymentRequest {
   amount: number;
@@ -37,22 +38,22 @@ export interface PaymentStatusResponse {
 
 export const paymentsAPI = {
   async createPayment(paymentRequest: CreatePaymentRequest): Promise<ApiResponse<PaymentData>> {
-    return request<PaymentData>('/api/payments/create', {
+    return request<PaymentData>(API_ENDPOINTS.PAYMENTS.CREATE, {
       method: 'POST',
       body: JSON.stringify(paymentRequest),
     });
   },
 
   async getPaymentStatus(paymentId: string): Promise<ApiResponse<PaymentStatusResponse['status']>> {
-    return request<PaymentStatusResponse['status']>(`/api/payments/${paymentId}/status`);
+    return request<PaymentStatusResponse['status']>(API_ENDPOINTS.PAYMENTS.STATUS(paymentId));
   },
 
   async getPaymentHistory(studentId: string): Promise<ApiResponse<ParentPayment[]>> {
-    return request<ParentPayment[]>(`/api/payments/history?student_id=${studentId}`);
+    return request<ParentPayment[]>(API_ENDPOINTS.PAYMENTS.HISTORY(studentId));
   },
 
   async cancelPayment(paymentId: string): Promise<ApiResponse<null>> {
-    return request<null>(`/api/payments/${paymentId}/cancel`, {
+    return request<null>(API_ENDPOINTS.PAYMENTS.CANCEL(paymentId), {
       method: 'POST',
     });
   },

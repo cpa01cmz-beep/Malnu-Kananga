@@ -28,6 +28,7 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import { CHART_COLORS } from '../config/chartColors';
 import Input from './ui/Input';
+import { INPUT_MIN_VALUES } from '../constants';
 import Select from './ui/Select';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -402,7 +403,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   label="Jumlah"
                   required
                   type="number"
-                  min="1"
+                  min={INPUT_MIN_VALUES.QUANTITY}
                   value={newItem.quantity}
                   onChange={e => setNewItem({...newItem, quantity: Number(e.target.value)})}
                   size="sm"
