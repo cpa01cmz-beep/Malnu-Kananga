@@ -135,7 +135,7 @@ describe('Input Component', () => {
       );
       
       // Tooltip button should be present with the tooltip text as aria-label
-      const tooltipButton = screen.getByLabelText('Minimal 8 karakter dengan huruf dan angka');
+      const tooltipButton = screen.getByLabelText('Informasi: Minimal 8 karakter dengan huruf dan angka');
       expect(tooltipButton).toBeInTheDocument();
       expect(tooltipButton.tagName.toLowerCase()).toBe('button');
     });

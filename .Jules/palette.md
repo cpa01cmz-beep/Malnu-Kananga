@@ -4,6 +4,13 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-12 - Tooltip Button Accessibility Fix
+**Learning**: Icon-only buttons that provide tooltip information must remain focusable for keyboard users. Setting `tabIndex={-1}` on tooltip buttons prevents keyboard users from accessing important contextual information.
+
+**Action**: Always keep tooltip-containing IconButtons focusable unless there's a specific accessibility reason not to. Use clear, descriptive ARIA labels that include both the action and context (e.g., "Informasi: [tooltip text]" instead of just the tooltip text).
+
+---
+
 ## 2026-02-11 - Accessibility Aria-Label Pattern
 **Learning:** Even in a well-maintained codebase with 456+ aria-label implementations, critical accessibility gaps exist in high-traffic components. The GradingActions component handles CSV/PDF exports for thousands of users but was missing screen reader support on the "Export CSV" button.
 

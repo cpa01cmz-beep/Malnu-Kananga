@@ -296,12 +296,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
           {tooltip && (
             <IconButton
               icon={<InformationCircleIcon className={sizeIconClasses[size]} />}
-              ariaLabel={tooltip}
+              ariaLabel={`Informasi: ${tooltip}`}
               tooltip={tooltip}
               size="sm"
               variant="ghost"
               className="ml-1 inline-flex align-middle"
-              tabIndex={-1}
             />
           )}
           {props.required && (
