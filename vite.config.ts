@@ -227,13 +227,14 @@ export default defineConfig(({ mode }) => {
         'react-router-dom',
         '@heroicons/react/24/outline',
         '@heroicons/react/24/solid',
+        // Tesseract.js v7 uses CommonJS - must be pre-bundled for browser compatibility
+        'tesseract.js',
       ],
       exclude: [
         // Large libraries that should be lazy-loaded - reduces initial bundle
         'recharts',
         'jspdf',
         'html2canvas',
-        'tesseract.js',
         '@google/genai',
         'jspdf-autotable',
       ],
