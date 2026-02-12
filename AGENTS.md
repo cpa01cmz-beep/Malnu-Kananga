@@ -1964,6 +1964,79 @@ git push origin --delete branch-name
 git for-each-ref --sort=committerdate refs/remotes/origin/ --format='%(committerdate:short) %(refname:short)'
 ```
 
+### Flexy Modularity Principles (Eliminating Hardcoded Values)
+
+This codebase follows **Flexy Modularity** principles - eliminating hardcoded values for maintainability and multi-tenant support.
+
+#### Centralized Constants
+
+**API Endpoints** - Use `API_ENDPOINTS` from `constants.ts`:
+```typescript
+import { API_ENDPOINTS } from '../constants';
+
+// Good ✓
+fetch(API_ENDPOINTS.AUTH.LOGIN)
+fetch(API_ENDPOINTS.ACADEMIC.GRADES)
+fetch(API_ENDPOINTS.WEBSOCKET.UPDATES)
+
+// Bad ✗
+fetch('/api/auth/login')
+fetch('/api/grades')
+```
+
+**Animation Durations** - Use `ANIMATION_DURATIONS` from `constants.ts`:
+```typescript
+import { ANIMATION_DURATIONS } from '../constants';
+
+// Good ✓
+className={`transition-all ${ANIMATION_DURATIONS.CLASSES.FAST}`}
+const duration = ANIMATION_DURATIONS.NORMAL;
+
+// Bad ✗
+className="transition-all duration-200"
+const duration = 300;
+```
+
+**School Configuration** - Use `ENV` from `config/env.ts`:
+```typescript
+import { ENV } from '../config/env';
+
+// Good ✓
+<h1>{ENV.SCHOOL.NAME}</h1>
+<a href={`mailto:${ENV.EMAIL.ADMIN}`}>
+
+// Bad ✗
+<h1>MA Malnu Kananga</h1>
+<a href="mailto:admin@malnu-kananga.sch.id">
+```
+
+**Storage Keys** - Use `STORAGE_KEYS` from `constants.ts`:
+```typescript
+import { STORAGE_KEYS } from '../constants';
+
+// Good ✓
+localStorage.setItem(STORAGE_KEYS.USERS, data)
+
+// Bad ✗
+localStorage.setItem('malnu_users', data)
+```
+
+#### Environment Variables
+
+School-specific values are configurable via environment variables:
+
+```bash
+# .env
+VITE_SCHOOL_NAME=MA Malnu Kananga
+VITE_SCHOOL_NPSN=69881502
+VITE_SCHOOL_ADDRESS=...
+VITE_SCHOOL_PHONE=...
+VITE_SCHOOL_EMAIL=...
+VITE_ADMIN_EMAIL=...
+```
+
+This enables multi-tenant deployments - different schools can use the same codebase with different configurations.
+
 ### Repository Health Checks
 - ✅ Typecheck: PASS (0 errors)
 - ✅ Lint: PASS (0 warnings, max 20)

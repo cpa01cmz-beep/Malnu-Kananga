@@ -4,7 +4,7 @@ import { studentsAPI, gradesAPI } from '../../services/apiService';
 import { parentGradeNotificationService } from '../../services/parentGradeNotificationService';
 import { unifiedNotificationManager } from '../../services/notifications/unifiedNotificationManager';
 import { useOfflineActionQueue, type SyncResult } from '../../services/offlineActionQueueService';
-import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS, TIME_MS } from '../../constants';
+import { STORAGE_KEYS, SCHEDULER_INTERVALS, GRADE_LIMITS, TIME_MS, API_ENDPOINTS } from '../../constants';
 import { DEFAULT_API_BASE_URL } from '../../config';
 import { logger } from '../../utils/logger';
 import { useEventNotifications } from '../../hooks/useEventNotifications';
@@ -283,7 +283,7 @@ export const useGradingData = (
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}${API_ENDPOINTS.ACADEMIC.GRADE_BY_ID(grade.id)}`,
             method: 'PUT'
           });
 
@@ -348,7 +348,7 @@ export const useGradingData = (
               midExam: grade.midExam,
               finalExam: grade.finalExam,
             },
-            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/grades/${grade.id}`,
+            endpoint: `${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}${API_ENDPOINTS.ACADEMIC.GRADE_BY_ID(grade.id)}`,
             method: 'PUT'
           });
 
