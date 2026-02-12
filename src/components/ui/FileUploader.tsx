@@ -310,7 +310,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     if (isPasteSupported && !disabled && !uploading) {
       pasteHintTimeoutRef.current = setTimeout(() => {
         setShowPasteHint(true);
-      }, 500);
+      }, 400)
     }
   };
 
@@ -439,7 +439,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
     return (
       <>
-        <CloudArrowUpIcon className="w-12 h-12 text-neutral-400 dark:text-neutral-500 mb-4" />
+        <CloudArrowUpIcon className="w-12 h-12 text-neutral-400 dark:text-neutral-500 mb-4" aria-hidden="true" />
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
           Click to upload or drag and drop
         </p>
@@ -481,31 +481,32 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : 'Click to upload or drag and drop files'}
+          aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : `Click to upload or drag and drop files. ${isPasteSupported ? 'You can also paste images using Ctrl+V.' : ''} Supported types: ${acceptedFileTypes}. Max size: ${maxSizeMB}MB`}
           aria-describedby="upload-instructions"
           aria-dropeffect={dragActive ? "copy" : "none"}
-          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 relative ${
+          className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 ease-out w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 relative overflow-hidden ${
             disabled || uploading
               ? 'border-neutral-200 bg-neutral-50 dark:bg-neutral-900/50 cursor-not-allowed'
               : dragActive
-              ? 'border-primary-500 bg-primary-100/50 dark:bg-primary-900/20 ring-2 ring-primary-500/30'
-              : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10'
+              ? 'border-primary-500 bg-primary-100/50 dark:bg-primary-900/20 ring-2 ring-primary-500/30 scale-[1.02] shadow-lg'
+              : 'border-neutral-300 dark:border-neutral-600 hover:border-primary-400 hover:bg-primary-50/50 dark:hover:bg-primary-900/10 hover:shadow-md'
           }`}
         >
           {getUploadArea()}
 
           {showPasteHint && isPasteSupported && !disabled && !uploading && (
             <div
-              className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-1 duration-200"
+              className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-2 duration-200 backdrop-blur-sm border border-neutral-700 dark:border-neutral-600"
               role="tooltip"
+              aria-hidden={!showPasteHint}
             >
-              <span className="flex items-center gap-1.5">
-                <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold border border-neutral-500">
+              <span className="flex items-center gap-2">
+                <kbd className="px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono font-bold border border-neutral-500 shadow-sm">
                   Ctrl+V
                 </kbd>
-                <span>to paste image</span>
+                <span>tempel gambar</span>
               </span>
-              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-900 dark:border-t-neutral-700" aria-hidden="true" />
             </div>
           )}
         </button>
