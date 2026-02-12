@@ -5,6 +5,7 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 import { UserIcon } from './icons/UserIcon';
 import { LockIcon } from './icons/LockIcon';
 import { ELibrary, UserRole, UserExtraRole } from '../types';
+import { USER_ROLES } from '../constants';
 import { materialPermissionService, MaterialShareAudit as ShareAudit } from '../services/materialPermissionService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
@@ -318,7 +319,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
                           {getPermissionIcon(perm.permission)}
                           <div>
                             <p className="text-sm font-medium text-neutral-900 dark:text-white">
-                              {perm.role === 'teacher' ? 'Guru' : perm.role === 'student' ? 'Siswa' : 'Orang Tua'}
+                              {perm.role === USER_ROLES.TEACHER ? 'Guru' : perm.role === USER_ROLES.STUDENT ? 'Siswa' : 'Orang Tua'}
                             </p>
                             <p className="text-xs text-neutral-500 dark:text-neutral-400">
                               {getPermissionLabel(perm.permission)}
@@ -562,7 +563,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
                           className="sr-only"
                         />
                         <span className="text-sm font-medium text-neutral-900 dark:text-white">
-                          {role === 'teacher' ? 'Guru' : role === 'student' ? 'Siswa' : 'Orang Tua'}
+                          {role === USER_ROLES.TEACHER ? 'Guru' : role === USER_ROLES.STUDENT ? 'Siswa' : 'Orang Tua'}
                         </span>
                       </label>
                     ))}

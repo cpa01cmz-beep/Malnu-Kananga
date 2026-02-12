@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
+import { STORAGE_KEYS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export type FontFamily = 'default' | 'dyslexia' | 'atkinson' | 'open-dyslexic' | 'helvetica';
@@ -58,7 +59,7 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
   const [settings, setSettings] = useState<AccessibilitySettings>(() => {
     // Load settings from localStorage
     try {
-      const saved = localStorage.getItem('malnu_accessibility_settings');
+      const saved = localStorage.getItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS);
       return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
     } catch {
       return defaultSettings;
@@ -94,7 +95,7 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Save settings to localStorage
   useEffect(() => {
-    localStorage.setItem('malnu_accessibility_settings', JSON.stringify(settings));
+    localStorage.setItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS, JSON.stringify(settings));
   }, [settings]);
 
   // Apply CSS custom properties based on settings
