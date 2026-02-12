@@ -1610,12 +1610,16 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
                   Rating
                 </label>
-                <div className="flex gap-2 justify-center">
+                <div className="flex gap-2 justify-center" role="radiogroup" aria-label="Rating bintang">
                   {[1, 2, 3, 4, 5].map((rating) => (
                     <button
                       key={rating}
                       onClick={() => setUserRating(rating)}
-                      className="text-3xl transition-colors"
+                      className="text-3xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 rounded p-1"
+                      aria-label={`Beri rating ${rating} bintang`}
+                      aria-pressed={rating <= userRating}
+                      aria-selected={rating <= userRating}
+                      type="button"
                     >
                       <span className={rating <= userRating ? 'text-yellow-500' : 'text-neutral-300'}>
                         ★
