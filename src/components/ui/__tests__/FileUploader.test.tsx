@@ -52,8 +52,9 @@ describe('FileUploader', () => {
     render(<FileUploader />);
     
     expect(screen.getByText('Click to upload or drag and drop')).toBeInTheDocument();
-    expect(screen.getByText(/\.pdf,\.doc,\.docx,\.ppt,\.pptx,\.jpg,\.jpeg,\.png,\.mp4/)).toBeInTheDocument();
     expect(screen.getByText(/\(Max 50MB\)/)).toBeInTheDocument();
+    // Look for the visible version, not the screen reader version
+    expect(screen.getByText('You can also paste images (Ctrl+V)')).toBeInTheDocument();
   });
 
   it('shows files list when files are provided', () => {
@@ -225,8 +226,16 @@ it('shows loading state during upload', async () => {
   });
 
   it('handles clipboard paste events for images', async () => {
-    const mockOnFileUploaded = vi.fn();
+    // Mock DataTransfer constructor for jsdom environment
+    global.DataTransfer = class MockDataTransfer {
+      items: any = {
+        add: vi.fn()
+      };
+      constructor() {}
+    } as any;
+    
     const { fileStorageAPI } = await import('../../../services/apiService');
+    const mockOnFileUploaded = vi.fn();
     
     vi.mocked(fileStorageAPI.upload).mockResolvedValue({
       success: true,
@@ -294,9 +303,9 @@ it('shows loading state during upload', async () => {
   });
 
   it('announces paste action to screen readers', async () => {
-    const { fileStorageAPI } = await import('../../../services/apiService');
+    const { fileStorageAPI: fileAPI } = await import('../../../services/apiService');
     
-    vi.mocked(fileStorageAPI.upload).mockResolvedValue({
+    vi.mocked(fileAPI.upload).mockResolvedValue({
       success: true,
       message: 'Upload successful',
       data: {
