@@ -6,6 +6,7 @@ import Button from './ui/Button';
 import Input from './ui/Input';
 import Select from './ui/Select';
 import { EmptyState } from './ui/LoadingState';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 
 interface CommunicationDashboardProps {
   _currentUser?: { id: string; name: string; role: string };
@@ -19,6 +20,10 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
   const [showFilters, setShowFilters] = useState(false);
   const [exportFormat, setExportFormat] = useState<'pdf' | 'csv' | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    entryId: string | null;
+  }>({ isOpen: false, entryId: null });
 
   const loadLogs = useCallback(() => {
     try {
@@ -61,17 +66,21 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
   };
 
   const handleDelete = async (entryId: string) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus catatan ini?')) {
-      return;
-    }
+    setConfirmDialog({ isOpen: true, entryId });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDialog.entryId) return;
 
     try {
-      const deleted = communicationLogService.deleteLogEntry(entryId);
+      const deleted = communicationLogService.deleteLogEntry(confirmDialog.entryId);
       if (deleted) {
         loadLogs();
       }
     } catch (error) {
       logger.error('Failed to delete log entry:', error);
+    } finally {
+      setConfirmDialog({ isOpen: false, entryId: null });
     }
   };
 
@@ -302,6 +311,16 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
           )}
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={confirmDialog.isOpen}
+        title="Hapus Catatan Komunikasi"
+        message="Apakah Anda yakin ingin menghapus catatan komunikasi ini? Tindakan ini tidak dapat dibatalkan."
+        type="danger"
+        confirmText="Hapus"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, entryId: null })}
+      />
     </div>
   );
 }
