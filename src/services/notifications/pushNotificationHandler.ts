@@ -66,17 +66,29 @@ export class PushNotificationHandler {
   }
 
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    try {
+      const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
+      // Use Buffer.from for Node.js compatibility, fallback to window.atob for browser
+      let rawData: string;
+      if (typeof Buffer !== 'undefined') {
+        rawData = Buffer.from(base64, 'base64').toString('binary');
+      } else {
+        rawData = window.atob(base64);
+      }
 
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
+      const outputArray = new Uint8Array(rawData.length);
+
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+
+      return outputArray;
+    } catch (error) {
+      logger.error('Failed to decode base64 string:', error);
+      throw new Error(`Invalid base64 string: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    return outputArray;
   }
 
   async requestPermission(): Promise<boolean> {

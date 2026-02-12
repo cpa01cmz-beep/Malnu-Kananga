@@ -80,6 +80,13 @@ const CharacterProgressBar: React.FC<CharacterProgressBarProps> = ({ current, ma
 export type TextareaSize = 'sm' | 'md' | 'lg';
 export type TextareaState = 'default' | 'error' | 'success';
 
+const getKeyboardShortcut = (): string => {
+  if (typeof navigator === 'undefined') return 'Ctrl+Enter';
+  const platform = navigator.platform.toLowerCase();
+  const isMac = platform.includes('mac') || platform.includes('darwin');
+  return isMac ? '⌘+Enter' : 'Ctrl+Enter';
+};
+
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   helperText?: string;
@@ -99,6 +106,10 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   };
   showClearButton?: boolean;
   clearOnEscape?: boolean;
+  /** Enable Ctrl+Enter (or Cmd+Enter on Mac) to submit the textarea */
+  submitOnCtrlEnter?: boolean;
+  /** Callback fired when user presses Ctrl+Enter */
+  onSubmit?: () => void;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed resize-none";
@@ -150,6 +161,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   accessibility = { announceErrors: true },
   showClearButton = false,
   clearOnEscape = false,
+  submitOnCtrlEnter = false,
+  onSubmit,
   className = '',
   value,
   onChange,
@@ -170,9 +183,12 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
 
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const [showSubmitHint, setShowSubmitHint] = useState(false);
   const _prefersReducedMotion = useReducedMotion();
   const CLEAR_BUTTON_TOOLTIP_TEXT = 'Bersihkan textarea';
   const clearButtonTooltipId = `${textareaId}-clear-tooltip`;
+  const submitHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const keyboardShortcut = getKeyboardShortcut();
 
   const showTooltip = useCallback(() => {
     tooltipTimeoutRef.current = setTimeout(() => {
@@ -188,29 +204,34 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     setIsTooltipVisible(false);
   }, []);
 
-  // Show escape hint when textarea is focused and has a value
   const handleFocus = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (clearOnEscape && value && String(value).length > 0) {
-      // Delay showing hint to avoid flickering on quick interactions
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
       }, 400);
     }
+    if (submitOnCtrlEnter && value && String(value).length > 0) {
+      submitHintTimeoutRef.current = setTimeout(() => {
+        setShowSubmitHint(true);
+      }, 600);
+    }
     onFocus?.(e);
-  }, [clearOnEscape, value, onFocus]);
+  }, [clearOnEscape, submitOnCtrlEnter, value, onFocus]);
 
-  // Hide escape hint when textarea loses focus
   const handleBlur = useCallback((e: React.FocusEvent<HTMLTextAreaElement>) => {
     setShowEscapeHint(false);
+    setShowSubmitHint(false);
     if (escapeHintTimeoutRef.current) {
       clearTimeout(escapeHintTimeoutRef.current);
+    }
+    if (submitHintTimeoutRef.current) {
+      clearTimeout(submitHintTimeoutRef.current);
     }
     validation.blurHandler();
     onBlur?.(e);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onBlur]);
 
-  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (tooltipTimeoutRef.current) {
@@ -219,10 +240,13 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       if (escapeHintTimeoutRef.current) {
         clearTimeout(escapeHintTimeoutRef.current);
       }
+      if (submitHintTimeoutRef.current) {
+        clearTimeout(submitHintTimeoutRef.current);
+      }
     };
   }, []);
 
-  const { onSelection } = useHapticFeedback();
+  const { onSelection, onSuccess } = useHapticFeedback();
 
   const validation = useFieldValidation({
     value: String(value || ''),
@@ -267,10 +291,16 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     setIsTooltipVisible(false);
   };
 
-  // Escape key handler to clear input value
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (clearOnEscape && e.key === 'Escape') {
       handleClear();
+    }
+    if (submitOnCtrlEnter && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (onSubmit && value && String(value).length > 0) {
+        onSuccess();
+        onSubmit();
+      }
     }
     if (props.onKeyDown) {
       props.onKeyDown(e);
@@ -307,12 +337,18 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   // Check if clear button should be shown
   const hasClearButton = showClearButton && value && String(value).length > 0 && !props.disabled;
 
-  // Enhanced accessibility attributes
   const accessibilityProps = {
     'aria-required': props.required,
     'aria-errormessage': finalErrorText ? errorTextId : undefined,
     ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
     ...(validation.state.isValidating && { 'aria-busy': true })
+  };
+
+  const getAriaLabel = () => {
+    if (submitOnCtrlEnter && props['aria-label']) {
+      return `${props['aria-label']} (Tekan ${keyboardShortcut} untuk mengirim)`;
+    }
+    return props['aria-label'];
   };
 
   return (
@@ -332,7 +368,6 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
       )}
 
       <div className="relative">
-        {/* Keyboard shortcut hint for clearOnEscape - Micro UX Delight */}
         {clearOnEscape && showEscapeHint && (
           <div
             className={`
@@ -353,8 +388,33 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
               <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">ESC</kbd>
               <span>bersihkan</span>
             </span>
-            {/* Tooltip arrow */}
             <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+          </div>
+        )}
+
+        {submitOnCtrlEnter && showSubmitHint && (
+          <div
+            className={`
+              absolute -top-9 right-4
+              px-2.5 py-1 
+              bg-primary-600 dark:bg-primary-500 
+              text-white text-[10px] font-medium 
+              rounded-md shadow-md 
+              whitespace-nowrap
+              transition-all duration-200 ease-out
+              pointer-events-none
+              z-10
+            `.replace(/\s+/g, ' ').trim()}
+            role="tooltip"
+            aria-hidden={!showSubmitHint}
+          >
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0 bg-primary-700 dark:bg-primary-600 rounded text-[9px] font-bold border border-primary-500">
+                {keyboardShortcut}
+              </kbd>
+              <span>kirim</span>
+            </span>
+            <span className="absolute top-full right-6 border-4 border-transparent border-t-primary-600 dark:border-t-primary-500" aria-hidden="true" />
           </div>
         )}
 
@@ -364,6 +424,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
          className={textareaClasses}
          aria-describedby={describedBy}
          aria-invalid={finalState === 'error'}
+         aria-label={getAriaLabel()}
          value={value}
          onChange={handleChange}
          onBlur={handleBlur}

@@ -219,21 +219,31 @@ export default defineConfig(({ mode }) => {
         polyfill: false, // Modern browsers support native modulepreload
       },
     },
-    // BroCula: Optimize dependency pre-bundling
+    // BroCula: Optimize dependency pre-bundling for faster dev builds and better caching
     optimizeDeps: {
       include: [
         'react',
         'react-dom',
         'react-router-dom',
+        '@heroicons/react/24/outline',
+        '@heroicons/react/24/solid',
       ],
       exclude: [
-        // Large libraries that should be lazy-loaded
+        // Large libraries that should be lazy-loaded - reduces initial bundle
         'recharts',
         'jspdf',
         'html2canvas',
         'tesseract.js',
         '@google/genai',
+        'jspdf-autotable',
       ],
+      // BroCula: Force dependency optimization on build for better chunking
+      force: true,
+    },
+    // BroCula: CSS configuration for better performance
+    css: {
+      // Enable CSS source maps for debugging (set to false in production for smaller builds)
+      devSourcemap: mode !== 'production',
     },
   }
 
