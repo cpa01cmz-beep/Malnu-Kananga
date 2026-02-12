@@ -192,7 +192,7 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const resetSettings = () => {
     setSettings(defaultSettings);
-    localStorage.removeItem('malnu_accessibility_settings');
+    localStorage.removeItem(STORAGE_KEYS.ACCESSIBILITY_SETTINGS);
   };
 
   const applyDyslexiaFont = () => {

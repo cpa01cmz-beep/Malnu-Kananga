@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
-import { EXTERNAL_URLS } from '../constants';
+import { EXTERNAL_URLS, USER_ROLES } from '../constants';
 import DocumentTextIcon from '../components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from '../components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from '../components/icons/ClipboardDocumentCheckIcon';
@@ -86,14 +86,14 @@ export const INITIAL_USERS: User[] = [
         id: '1', 
         name: 'Ahmad Dahlan', 
         email: 'admin@malnu.sch.id', 
-        role: 'admin', 
+        role: USER_ROLES.ADMIN, 
         status: 'active' 
     },
     { 
         id: '2', 
         name: 'Siti Aminah, S.Pd.', 
         email: 'guru.staff@malnu.sch.id', 
-        role: 'teacher', 
+        role: USER_ROLES.TEACHER, 
         extraRole: 'staff', // Guru merangkap Staff Tata Usaha/Sarpras
         status: 'active' 
     },
@@ -101,7 +101,7 @@ export const INITIAL_USERS: User[] = [
         id: '3', 
         name: 'Budi Santoso', 
         email: 'siswa.osis@malnu.sch.id', 
-        role: 'student', 
+        role: USER_ROLES.STUDENT, 
         extraRole: 'osis', // Siswa merangkap Ketua OSIS
         status: 'active' 
     },
@@ -109,7 +109,7 @@ export const INITIAL_USERS: User[] = [
         id: '4', 
         name: 'Rudi Hartono, M.Pd.', 
         email: 'guru.biasa@malnu.sch.id', 
-        role: 'teacher', 
+        role: USER_ROLES.TEACHER, 
         extraRole: null, 
         status: 'active' 
     },
@@ -117,7 +117,7 @@ export const INITIAL_USERS: User[] = [
         id: '5', 
         name: 'Dewi Sartika', 
         email: 'siswa.biasa@malnu.sch.id', 
-        role: 'student', 
+        role: USER_ROLES.STUDENT, 
         extraRole: null, 
         status: 'active' 
     },
@@ -125,7 +125,7 @@ export const INITIAL_USERS: User[] = [
         id: '6',
         name: 'Andi Pratama',
         email: 'andi.osis@malnu.sch.id',
-        role: 'student',
+        role: USER_ROLES.STUDENT,
         extraRole: 'osis', // Siswa merangkap Wakil Ketua OSIS
         status: 'active'
     },
@@ -133,7 +133,7 @@ export const INITIAL_USERS: User[] = [
         id: '7',
         name: 'Nurul Hidayah, S.Kom',
         email: 'nurul.staff@malnu.sch.id',
-        role: 'teacher',
+        role: USER_ROLES.TEACHER,
         extraRole: 'staff', // Guru merangkap Staff IT/Laboran
         status: 'active'
     }

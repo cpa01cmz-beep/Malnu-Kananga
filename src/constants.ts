@@ -195,6 +195,7 @@ export const STORAGE_KEYS = {
 
     ACCESSIBILITY_SETTINGS: 'malnu_accessibility_settings',
     COMMAND_PALETTE_RECENT: 'malnu_command_palette_recent',
+    SPACING_DENSITY: 'malnu_spacing_density',
 } as const;
 
 export const USER_ROLES = {

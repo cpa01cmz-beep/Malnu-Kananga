@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SpacingContext } from '../hooks/useSpacing';
+import { STORAGE_KEYS } from '../constants';
 
 export type Density = 'comfortable' | 'compact' | 'spacious';
 
@@ -100,7 +101,7 @@ export const SpacingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [density, setDensity] = useState<Density>(() => {
     // Check for saved preference or use system preference
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('malnu_spacing_density') as Density;
+      const saved = localStorage.getItem(STORAGE_KEYS.SPACING_DENSITY) as Density;
       if (saved && ['comfortable', 'compact', 'spacious'].includes(saved)) {
         return saved;
       }
@@ -114,7 +115,7 @@ export const SpacingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
 
   useEffect(() => {
-    localStorage.setItem('malnu_spacing_density', density);
+    localStorage.setItem(STORAGE_KEYS.SPACING_DENSITY, density);
   }, [density]);
 
   const getSpacing = (category: 'component' | 'section' | 'layout' | 'micro', size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'): string => {
