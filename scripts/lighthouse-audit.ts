@@ -57,8 +57,9 @@ async function main() {
   try {
     console.log('Running Lighthouse audit on http://localhost:3456...\n');
     
+    const chromePath = '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome';
     const output = execSync(
-      'lighthouse http://localhost:3456 --chrome-flags="--headless --no-sandbox --disable-gpu" --preset=desktop --output=json --output-path=./lighthouse-report.json 2>&1',
+      `lighthouse http://localhost:3456 --chrome-flags="--headless --no-sandbox --disable-gpu" --preset=desktop --output=json --output-path=./lighthouse-report.json --chrome-path="${chromePath}" 2>&1`,
       { encoding: 'utf-8', maxBuffer: 10 * 1024 * 1024 }
     );
     
