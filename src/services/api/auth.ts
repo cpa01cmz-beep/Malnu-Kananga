@@ -1,7 +1,7 @@
 // api/auth.ts - Authentication API and Token Management
 
 import type { User, UserExtraRole } from '../../types';
-import { STORAGE_KEYS, TIME_SECONDS } from '../../constants';
+import { STORAGE_KEYS, TIME_SECONDS, API_ENDPOINTS } from '../../constants';
 import { logger } from '../../utils/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -120,7 +120,7 @@ export { getRefreshToken };
 
 export const authAPI = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -141,7 +141,7 @@ export const authAPI = {
     if (!token) return;
 
     try {
-      await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGOUT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ export const authAPI = {
     if (!refreshToken) return false;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.REFRESH_TOKEN}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
@@ -204,7 +204,7 @@ export const authAPI = {
   },
 
   async forgotPassword(email: string): Promise<ApiResponse<unknown>> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.FORGOT_PASSWORD}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
@@ -215,7 +215,7 @@ export const authAPI = {
   },
 
   async verifyResetToken(token: string): Promise<ApiResponse<unknown>> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/verify-reset-token`, {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.VERIFY_RESET_TOKEN}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token }),
@@ -226,7 +226,7 @@ export const authAPI = {
   },
 
   async resetPassword(token: string, password: string): Promise<ApiResponse<unknown>> {
-    const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.AUTH.RESET_PASSWORD}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, password }),
