@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from './Table';
 import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
@@ -10,6 +10,7 @@ import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
 import { DATATABLE_CONFIG } from '../../constants';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -69,7 +70,221 @@ export interface DataTableProps<T = Record<string, unknown>> {
     onRefresh?: () => void;
     onClearFilter?: () => void;
   };
+  /** Custom empty state actions */
+  emptyActions?: {
+    onAddNew?: () => void;
+    addNewLabel?: string;
+    onClearFilter?: () => void;
+    clearFilterLabel?: string;
+  };
 }
+
+// Enhanced Empty State Component with keyboard shortcut hints
+interface EmptyStateProps {
+  message: string;
+  hasFilter: boolean;
+  hasSearch: boolean;
+  searchValue: string;
+  onClearSearch: () => void;
+  onClearFilter?: () => void;
+  onAddNew?: () => void;
+  addNewLabel?: string;
+}
+
+const EnhancedEmptyState: React.FC<EmptyStateProps> = ({
+  message,
+  hasFilter,
+  hasSearch,
+  searchValue,
+  onClearSearch,
+  onClearFilter,
+  onAddNew,
+  addNewLabel = 'Tambah Baru',
+}) => {
+  const prefersReducedMotion = useReducedMotion();
+  const [isVisible, setIsVisible] = useState(false);
+  const [showSearchHint, setShowSearchHint] = useState(false);
+  const searchHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      const timer = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(true);
+    }
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (hasFilter && !hasSearch) {
+      searchHintTimeoutRef.current = setTimeout(() => {
+        setShowSearchHint(true);
+      }, 800);
+    }
+    return () => {
+      if (searchHintTimeoutRef.current) {
+        clearTimeout(searchHintTimeoutRef.current);
+      }
+    };
+  }, [hasFilter, hasSearch]);
+
+  useEffect(() => {
+    const handleFocusSearch = () => {
+      setShowSearchHint(false);
+      if (searchHintTimeoutRef.current) {
+        clearTimeout(searchHintTimeoutRef.current);
+      }
+    };
+    document.addEventListener('datatable:focus-search', handleFocusSearch);
+    return () => {
+      document.removeEventListener('datatable:focus-search', handleFocusSearch);
+    };
+  }, []);
+
+  return (
+    <div
+      className={`text-center py-16 px-6 transition-all duration-500 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
+      role="status"
+      aria-live="polite"
+    >
+      <div className="mb-6 flex justify-center">
+        <div
+          className={`w-20 h-20 bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700 rounded-2xl flex items-center justify-center shadow-inner transition-all duration-500 ${
+            isVisible ? 'scale-100 rotate-0' : 'scale-90 rotate-[-10deg]'
+          }`}
+          style={{ transitionDelay: '100ms' }}
+        >
+          <svg
+            className="w-10 h-10 text-neutral-400 dark:text-neutral-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <h3
+        className={`text-xl font-bold text-neutral-900 dark:text-white mb-3 transition-all duration-500 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+        }`}
+        style={{ transitionDelay: '200ms' }}
+      >
+        {hasSearch ? 'Tidak Ditemukan' : 'Tidak Ada Data'}
+      </h3>
+
+      <p
+        className={`text-neutral-600 dark:text-neutral-400 mb-2 leading-relaxed max-w-md mx-auto transition-all duration-500 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+        }`}
+        style={{ transitionDelay: '300ms' }}
+      >
+        {hasSearch ? (
+          <>
+            Tidak ada hasil untuk pencarian{' '}
+            <kbd className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded text-sm font-mono text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-600">
+              {searchValue}
+            </kbd>
+          </>
+        ) : (
+          message
+        )}
+      </p>
+
+      {hasFilter && showSearchHint && !hasSearch && (
+        <div
+          className="mb-6 flex justify-center transition-all duration-300"
+          role="tooltip"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 rounded-full text-sm border border-primary-200 dark:border-primary-700">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Gunakan</span>
+            <kbd className="px-1.5 py-0.5 bg-primary-100 dark:bg-primary-800 rounded text-xs font-bold">
+              Ctrl+F
+            </kbd>
+            <span>atau kolom pencarian di atas</span>
+          </div>
+        </div>
+      )}
+
+      <div
+        className={`flex flex-col sm:flex-row gap-3 justify-center items-center transition-all duration-500 ${
+          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+        }`}
+        style={{ transitionDelay: '400ms' }}
+      >
+        {hasSearch && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearSearch}
+            icon={<XMarkIcon className="w-4 h-4" />}
+            className="touch-manipulation haptic-feedback"
+          >
+            Hapus Pencarian
+          </Button>
+        )}
+
+        {hasFilter && onClearFilter && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onClearFilter}
+            icon={<FunnelIcon className="w-4 h-4" />}
+            className="touch-manipulation haptic-feedback"
+          >
+            Hapus Filter
+          </Button>
+        )}
+
+        {onAddNew && (
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onAddNew}
+            className="touch-manipulation haptic-feedback"
+          >
+            {addNewLabel}
+          </Button>
+        )}
+      </div>
+
+      {(hasFilter || hasSearch) && (
+        <div
+          className={`mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-700 transition-all duration-500 ${
+            isVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{ transitionDelay: '500ms' }}
+        >
+          <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-2">Shortcut Keyboard:</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {hasFilter && (
+              <kbd className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs border border-neutral-200 dark:border-neutral-600">
+                Ctrl+F → Cari
+              </kbd>
+            )}
+            {hasSearch && (
+              <kbd className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded text-xs border border-neutral-200 dark:border-neutral-600">
+                Esc → Bersihkan
+              </kbd>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const DataTable = <T extends Record<string, unknown>>({
   data,
@@ -93,12 +308,17 @@ const DataTable = <T extends Record<string, unknown>>({
   mobileLayout = 'table',
   cardTitleColumn,
   errorRecovery,
+  emptyActions,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
 
   const handleSearch = (value: string) => {
     setLocalSearch(value);
     filter?.onSearch(value);
+  };
+
+  const handleFocusSearch = () => {
+    document.dispatchEvent(new CustomEvent('datatable:focus-search'));
   };
 
   const handleSort = (column: Column<T>) => {
@@ -348,30 +568,16 @@ const DataTable = <T extends Record<string, unknown>>({
           </div>
         )}
         {empty && !loading && !error && (
-          <div className="text-center py-16 px-6">
-            <div className="mb-6 flex justify-center">
-              <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-neutral-400 dark:text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-            </div>
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">Tidak Ada Data</h3>
-            <p className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed max-w-sm mx-auto">{emptyMessage}</p>
-            {filter?.searchable && (
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSearch('')}
-                  icon={<XMarkIcon className="w-4 h-4" />}
-                  className="touch-manipulation haptic-feedback"
-                >
-                  Hapus Pencarian
-                </Button>
-              </div>
-            )}
-          </div>
+          <EnhancedEmptyState
+            message={emptyMessage}
+            hasFilter={!!filter?.searchable}
+            hasSearch={!!localSearch}
+            searchValue={localSearch}
+            onClearSearch={() => handleSearch('')}
+            onClearFilter={emptyActions?.onClearFilter || errorRecovery?.onClearFilter}
+            onAddNew={emptyActions?.onAddNew}
+            addNewLabel={emptyActions?.addNewLabel}
+          />
         )}
       </LoadingOverlay>
     );
@@ -390,6 +596,7 @@ const DataTable = <T extends Record<string, unknown>>({
                 <SearchInput
                   value={localSearch}
                   onChange={(e) => handleSearch(e.target.value)}
+                  onFocus={handleFocusSearch}
                   placeholder={filter?.placeholder || 'Cari data...'}
                   size="sm"
                   fullWidth={true}

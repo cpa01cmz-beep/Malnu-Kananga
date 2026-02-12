@@ -56,7 +56,7 @@ describe('DataTable', () => {
   it('displays loading state', () => {
     render(<DataTable data={[]} columns={mockColumns} loading={true} />);
     
-    expect(screen.getByText('Loading data...')).toBeInTheDocument();
+    expect(screen.getByText(/Memuat data/i)).toBeInTheDocument();
   });
 
   it('displays empty state', () => {
@@ -75,7 +75,7 @@ describe('DataTable', () => {
   it('displays error state', () => {
     render(<DataTable data={[]} columns={mockColumns} error="Failed to load data" />);
     
-    expect(screen.getByText('Error loading data')).toBeInTheDocument();
+    expect(screen.getByText(/Terjadi Kesalahan/i)).toBeInTheDocument();
     expect(screen.getByText('Failed to load data')).toBeInTheDocument();
   });
 
@@ -92,7 +92,7 @@ describe('DataTable', () => {
       />
     );
     
-    const searchInput = screen.getByPlaceholderText('Search...');
+    const searchInput = screen.getByPlaceholderText(/Cari data/i);
     fireEvent.change(searchInput, { target: { value: 'John' } });
     
     await waitFor(() => {
@@ -209,7 +209,7 @@ describe('DataTable', () => {
       />
     );
     
-    const selectAllCheckbox = screen.getByLabelText('Select all rows');
+    const selectAllCheckbox = screen.getByLabelText(/Pilih semua baris/i);
     fireEvent.click(selectAllCheckbox);
     
     await waitFor(() => {
