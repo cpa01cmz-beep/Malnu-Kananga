@@ -287,6 +287,12 @@ export const ERROR_MESSAGES = {
     COMMAND_NOT_RECOGNIZED: 'Perintah tidak dikenali. Silakan coba lagi.',
     QUEUE_FULL: 'Antrian pesan penuh. Tunggu hingga pesan selesai dibaca.',
     NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
+    OFFLINE_ERROR: 'Anda sedang offline. Pastikan koneksi internet Anda aktif untuk melanjutkan.',
+    ACCESS_DENIED: 'Access denied',
+    INSUFFICIENT_PERMISSIONS: 'Insufficient permissions',
+    VALIDATION_EMAIL_PASSWORD_REQUIRED: 'Email dan password harus diisi',
+    FORBIDDEN_ACCESS: 'Forbidden access',
+    VALIDATION_ERROR: 'Validation error',
 } as const;
 
 export const ADMIN_EMAIL = ENV.EMAIL.ADMIN;
@@ -725,6 +731,8 @@ export const TIME_FORMAT = {
 export const API_CONFIG = {
     DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
     WS_PATH: '/ws',
+    REQUEST_USER_ID: 'api-request',
+    DEFAULT_IP_ADDRESS: 'server',
 } as const;
 
 // Language and Locale Codes - Flexy: Never hardcode language codes!
