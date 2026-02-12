@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useState, useCallback, useEffect } from 'react';
 import { idGenerators } from '../../utils/idGenerator';
 
 export type FileInputSize = 'sm' | 'md' | 'lg';
@@ -11,6 +11,11 @@ interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
   size?: FileInputSize;
   state?: FileInputState;
   fullWidth?: boolean;
+  /** Enable clipboard paste support for files */
+  allowPaste?: boolean;
+  /** Callback when files are pasted from clipboard */
+  // eslint-disable-next-line no-undef
+  onFilesPasted?: (files: FileList) => void;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:transition-all file:duration-200 file:ease-out file:hover:scale-[1.02] file:active:scale-95 file:focus:outline-none file:focus:ring-2 file:focus:ring-offset-2";
@@ -54,6 +59,19 @@ const helperTextSizeClasses: Record<FileInputSize, string> = {
   lg: "text-sm",
 };
 
+/**
+ * Get the appropriate keyboard shortcut label based on platform
+ */
+const getKeyboardShortcutLabel = (): string => {
+  if (typeof navigator !== 'undefined' && navigator.platform) {
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes('mac') || platform.includes('darwin')) {
+      return '⌘+V';
+    }
+  }
+  return 'Ctrl+V';
+};
+
 const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   id,
   label,
@@ -64,15 +82,148 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   fullWidth = false,
   className = '',
   value,
+  allowPaste = true,
+  onFilesPasted,
+  onChange,
+  disabled,
   ...props
 }, ref) => {
   const internalRef = useRef<HTMLInputElement>(null);
   const fileInputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const inputId = id || idGenerators.input();
   const helperTextId = helperText ? `${inputId}-helper` : undefined;
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const describedBy = [helperTextId, errorTextId].filter(Boolean).join(' ') || undefined;
+
+  // State for paste support and UI feedback
+  const [isPasteSupported, setIsPasteSupported] = useState(false);
+  const [showPasteHint, setShowPasteHint] = useState(false);
+  const [announcement, setAnnouncement] = useState<string>('');
+  const pasteHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const keyboardShortcut = getKeyboardShortcutLabel();
+
+  // Check if clipboard paste is supported
+  useEffect(() => {
+    const hasClipboardAPI = typeof navigator !== 'undefined' && 'clipboard' in navigator;
+    const supportsPasteEvent = 'onpaste' in document;
+    setIsPasteSupported(hasClipboardAPI || supportsPasteEvent);
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pasteHintTimeoutRef.current) {
+        clearTimeout(pasteHintTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Announce to screen readers
+  const announceToScreenReader = useCallback((message: string) => {
+    setAnnouncement(message);
+    setTimeout(() => setAnnouncement(''), 1000);
+  }, []);
+
+  // Handle paste events
+  // eslint-disable-next-line no-undef
+  const handlePaste = useCallback((e: ClipboardEvent) => {
+    if (disabled || !allowPaste || !isPasteSupported) return;
+
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const files: File[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === 'file') {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    }
+
+    if (files.length > 0) {
+      e.preventDefault();
+
+      // Haptic feedback for mobile
+      if ('vibrate' in navigator) {
+        navigator.vibrate(20);
+      }
+
+      // Create FileList-like object
+      // eslint-disable-next-line no-undef
+      const dataTransfer = new DataTransfer();
+      files.forEach(file => dataTransfer.items.add(file));
+
+      // Trigger onChange with the pasted files
+      if (onChange) {
+        const syntheticEvent = {
+          target: fileInputRef.current,
+          currentTarget: fileInputRef.current,
+          preventDefault: () => {},
+          stopPropagation: () => {},
+          nativeEvent: e,
+          bubbles: true,
+          cancelable: true,
+          type: 'change',
+          timeStamp: Date.now(),
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+        // Set the files on the input element
+        if (fileInputRef.current) {
+          fileInputRef.current.files = dataTransfer.files;
+        }
+
+        onChange(syntheticEvent);
+      }
+
+      // Call the onFilesPasted callback
+      if (onFilesPasted) {
+        onFilesPasted(dataTransfer.files);
+      }
+
+      announceToScreenReader(`${files.length} file${files.length > 1 ? 's' : ''} pasted from clipboard`);
+    }
+  }, [disabled, allowPaste, isPasteSupported, onChange, onFilesPasted, fileInputRef, announceToScreenReader]);
+
+  // Setup paste event listener
+  useEffect(() => {
+    if (!allowPaste || !isPasteSupported) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('paste', handlePaste, true);
+
+    return () => {
+      container.removeEventListener('paste', handlePaste, true);
+    };
+  }, [allowPaste, isPasteSupported, handlePaste]);
+
+  // Show paste hint on focus
+  const handleFocus = () => {
+    if (allowPaste && isPasteSupported && !disabled) {
+      pasteHintTimeoutRef.current = setTimeout(() => {
+        setShowPasteHint(true);
+      }, 400);
+    }
+  };
+
+  // Hide paste hint on blur
+  const handleBlur = (e: React.FocusEvent) => {
+    // Only hide if focus moved outside the container
+    // eslint-disable-next-line no-undef
+    if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+      setShowPasteHint(false);
+      if (pasteHintTimeoutRef.current) {
+        clearTimeout(pasteHintTimeoutRef.current);
+      }
+    }
+  };
 
   const stateStyle = stateClasses[state];
   const inputClasses = `
@@ -86,7 +237,11 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   `.replace(/\s+/g, ' ').trim();
 
   return (
-    <div className={`${fullWidth ? 'w-full' : ''} space-y-1.5`}>
+    <div 
+      ref={containerRef}
+      className={`${fullWidth ? 'w-full' : ''} space-y-1.5 relative`}
+      onBlur={handleBlur}
+    >
       {label && (
         <label
           htmlFor={inputId}
@@ -97,21 +252,57 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
         </label>
       )}
 
-      <input
-        ref={fileInputRef}
-        id={inputId}
-        type="file"
-        className={inputClasses}
-        aria-describedby={describedBy}
-        aria-invalid={state === 'error'}
-        value={value || undefined}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          ref={fileInputRef}
+          id={inputId}
+          type="file"
+          className={inputClasses}
+          aria-describedby={describedBy}
+          aria-invalid={state === 'error'}
+          aria-label={allowPaste && isPasteSupported ? `${props['aria-label'] || label || 'File input'} (Press ${keyboardShortcut} to paste)` : props['aria-label']}
+          value={value || undefined}
+          onFocus={handleFocus}
+          disabled={disabled}
+          onChange={onChange}
+          {...props}
+        />
 
-      {helperText && (
+        {allowPaste && isPasteSupported && showPasteHint && !disabled && (
+          <div
+            className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-1 duration-200"
+            role="tooltip"
+            aria-hidden="false"
+          >
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold border border-neutral-500">
+                {keyboardShortcut}
+              </kbd>
+              <span>to paste file</span>
+            </span>
+            <span 
+              className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" 
+              aria-hidden="true" 
+            />
+          </div>
+        )}
+      </div>
+
+      {helperText ? (
         <p id={helperTextId} className={`${helperTextSizeClasses[size]} text-neutral-500 dark:text-neutral-400`}>
           {helperText}
+          {allowPaste && isPasteSupported && (
+            <span className="block text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">
+              You can also paste files ({keyboardShortcut})
+            </span>
+          )}
         </p>
+      ) : (
+        allowPaste && isPasteSupported && (
+          <p className={`${helperTextSizeClasses[size]} text-neutral-400 dark:text-neutral-500`}>
+            Tip: Press {keyboardShortcut} to paste files from clipboard
+          </p>
+        )
       )}
 
       {errorText && (
@@ -119,6 +310,15 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
           {errorText}
         </p>
       )}
+
+      <div
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+        role="status"
+      >
+        {announcement}
+      </div>
     </div>
   );
 });
