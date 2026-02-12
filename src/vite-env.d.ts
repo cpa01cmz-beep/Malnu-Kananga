@@ -14,6 +14,14 @@ declare module 'virtual:pwa-register' {
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL: string;
   readonly VITE_GEMINI_API_KEY: string;
+  // Flexy: School configuration for multi-tenant support
+  readonly VITE_SCHOOL_NAME: string;
+  readonly VITE_SCHOOL_NPSN: string;
+  readonly VITE_SCHOOL_ADDRESS: string;
+  readonly VITE_SCHOOL_PHONE: string;
+  readonly VITE_SCHOOL_EMAIL: string;
+  readonly VITE_SCHOOL_WEBSITE: string;
+  readonly VITE_ADMIN_EMAIL: string;
   readonly BASE_URL: string;
   readonly MODE: string;
   readonly DEV: boolean;
