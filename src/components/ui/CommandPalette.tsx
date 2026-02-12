@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { logger } from '../../utils/logger';
+import { STORAGE_KEYS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
-// Storage key for recent commands
-const RECENT_COMMANDS_KEY = 'malnu_command_palette_recent';
+const RECENT_COMMANDS_KEY = STORAGE_KEYS.COMMAND_PALETTE_RECENT;
 const MAX_RECENT_COMMANDS = 5;
 
 export interface Command {

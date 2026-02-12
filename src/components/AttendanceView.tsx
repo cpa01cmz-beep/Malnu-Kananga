@@ -13,6 +13,7 @@ import Button from './ui/Button';
 import { pdfExportService } from '../services/pdfExportService';
 import { logger } from '../utils/logger';
 import { EmptyState } from './ui/LoadingState';
+import { USER_ROLES } from '../constants';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -140,7 +141,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   };
 
   // Check permissions - different requirements based on role - AFTER all hooks
-  const attendanceAccess = user?.role === 'student' 
+  const attendanceAccess = user?.role === USER_ROLES.STUDENT 
     ? canAccess('content.read') // Students can view their own attendance
     : canAccess('academic.attendance'); // Staff can manage attendance
 
