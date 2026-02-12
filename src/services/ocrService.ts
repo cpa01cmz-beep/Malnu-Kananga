@@ -1,5 +1,9 @@
-import { createWorker, PSM, Worker } from 'tesseract.js';
+import { createWorker, Worker } from 'tesseract.js';
 import { OCRValidationEvent, UserRole } from '../types';
+
+// PSM (Page Segmentation Mode) enum values
+// Defined locally because tesseract.js exports PSM via CommonJS which Vite cannot resolve
+const PSM_AUTO = '3';
 import { STORAGE_KEYS, OCR_SERVICE_CONFIG, GRADE_LIMITS, ACADEMIC_SUBJECTS, OCR_SCHOOL_KEYWORDS, OCR_SERVICE_CONFIG_EXTRA, HASH_CONFIG } from '../constants';
 import { generateValidationId } from '../utils/idGenerator';
 import { logger } from '../utils/logger';
@@ -70,7 +74,7 @@ class OCRService {
       }) as Worker;
 
       await this.worker!.setParameters({
-        tessedit_pageseg_mode: PSM.AUTO,
+        tessedit_pageseg_mode: PSM_AUTO as unknown as undefined,
       });
 
       this.isInitialized = true;
