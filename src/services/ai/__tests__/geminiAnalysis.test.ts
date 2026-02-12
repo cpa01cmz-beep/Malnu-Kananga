@@ -8,7 +8,8 @@ const mockAnalysisCache = {
 
 const mockWithCircuitBreaker = vi.fn();
 const mockIdGenerators = {
-  analysis: vi.fn()
+  analysis: vi.fn(),
+  feedback: vi.fn()
 };
 
 vi.mock('../aiCacheService', () => ({
