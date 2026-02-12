@@ -11,7 +11,7 @@ import {
   Class,
   User
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, INPUT_MIN_VALUES } from '../constants';
 import { unifiedNotificationManager } from '../services/notifications/unifiedNotificationManager';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import FileUpload from './FileUpload';
@@ -377,7 +377,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
                 type="number"
                 value={maxScore}
                 onChange={(e) => setMaxScore(Number(e.target.value))}
-                min="1"
+                min={INPUT_MIN_VALUES.SCORE}
                 className="w-full"
                 disabled={submitting}
               />
@@ -558,7 +558,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
                       type="number"
                       value={criteria.maxScore}
                       onChange={(e) => updateRubricCriteria(index, 'maxScore', Number(e.target.value))}
-                      min="1"
+                      min={INPUT_MIN_VALUES.SCORE}
                       disabled={submitting}
                     />
 

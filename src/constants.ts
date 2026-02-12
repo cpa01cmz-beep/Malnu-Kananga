@@ -633,6 +633,17 @@ export const VALIDATION_LIMITS = {
     MAX_SUGGESTIONS: 5,
 } as const;
 
+// Input minimum values - Flexy: Never hardcode min values!
+export const INPUT_MIN_VALUES = {
+    QUANTITY: 1,
+    SCORE: 1,
+    POINTS: 1,
+    DAYS: 1,
+    DURATION_MINUTES: 1,
+    PASSING_SCORE: 1,
+    MAX_ATTEMPTS: 1,
+} as const;
+
 // UI delays in milliseconds
 export const UI_DELAYS = {
     DEBOUNCE_DEFAULT: 1000,
