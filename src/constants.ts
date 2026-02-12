@@ -216,10 +216,15 @@ export const USER_EXTRA_ROLES = {
 
 export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
 
+import { ENV } from './config/env';
+
 export const APP_CONFIG = {
-    SCHOOL_NAME: 'MA Malnu Kananga',
-    SCHOOL_NPSN: '69881502',
-    SCHOOL_ADDRESS: 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    SCHOOL_NAME: ENV.SCHOOL.NAME,
+    SCHOOL_NPSN: ENV.SCHOOL.NPSN,
+    SCHOOL_ADDRESS: ENV.SCHOOL.ADDRESS,
+    SCHOOL_PHONE: ENV.SCHOOL.PHONE,
+    SCHOOL_EMAIL: ENV.SCHOOL.EMAIL,
+    SCHOOL_WEBSITE: ENV.SCHOOL.WEBSITE,
     SK_PENDIRIAN: {
         NUMBER: 'D/Wi/MA./101/2000',
         DATE: '20-09-2000',
@@ -281,8 +286,8 @@ export const ERROR_MESSAGES = {
     NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
 } as const;
 
-export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
-export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
+export const ADMIN_EMAIL = ENV.EMAIL.ADMIN;
+export const INFO_EMAIL = ENV.SCHOOL.EMAIL;
 
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
@@ -1173,6 +1178,54 @@ export const STAGGER_DELAYS = {
     FAST: 25,
     NORMAL: 50,
     SLOW: 100,
+} as const;
+
+// Animation Duration Constants - Flexy: Use these instead of hardcoded duration classes!
+// Provides both numeric values (ms) and Tailwind classes for consistency
+export const ANIMATION_DURATIONS = {
+    // Micro-interactions (instant feedback)
+    MICRO: 150,
+    INSTANT: 150,
+
+    // Fast transitions (hover states, small movements)
+    FAST: 200,
+    QUICK: 200,
+
+    // Standard transitions (most UI changes)
+    NORMAL: 300,
+    STANDARD: 300,
+
+    // Medium transitions (larger UI changes)
+    MEDIUM: 500,
+
+    // Slow transitions (emphasis, dramatic changes)
+    SLOW: 700,
+
+    // Very slow (special effects)
+    VERY_SLOW: 1000,
+
+    // Tailwind class equivalents
+    CLASSES: {
+        MICRO: 'duration-150',
+        INSTANT: 'duration-150',
+        FAST: 'duration-200',
+        QUICK: 'duration-200',
+        NORMAL: 'duration-300',
+        STANDARD: 'duration-300',
+        MEDIUM: 'duration-500',
+        SLOW: 'duration-700',
+        VERY_SLOW: 'duration-1000',
+    },
+} as const;
+
+// Animation Timing Functions - Flexy: Use these for consistent easing!
+export const ANIMATION_EASINGS = {
+    DEFAULT: 'ease-in-out',
+    IN: 'ease-in',
+    OUT: 'ease-out',
+    BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    SMOOTH: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    ELASTIC: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
 } as const;
 
 // Haptic feedback vibration patterns (milliseconds) - Flexy: Never hardcode haptic patterns!
@@ -2073,6 +2126,7 @@ export const API_ENDPOINTS = {
         CLASSES: '/api/classes',
         SCHEDULES: '/api/schedules',
         GRADES: '/api/grades',
+        GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
     },
     // Events
@@ -2140,6 +2194,7 @@ export const API_ENDPOINTS = {
     // WebSocket
     WEBSOCKET: {
         CONNECT: '/ws',
+        UPDATES: '/api/updates',
     },
 } as const;
 
