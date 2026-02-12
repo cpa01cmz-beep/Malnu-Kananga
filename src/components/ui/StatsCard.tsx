@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUpIcon, TrendingDownIcon, TrendingFlatIcon } from '../icons/MaterialIcons';
 import ProgressRing from './ProgressRing';
 import BarChart from './BarChart';
+import AnimatedCounter from './AnimatedCounter';
 
 export interface StatsCardProps {
   title: string;
@@ -187,7 +188,11 @@ const StatsCard: React.FC<StatsCardProps> = ({
       </div>
 
       <div className={`${valueSizeClasses[size]} font-bold text-neutral-900 dark:text-white mb-2`}>
-        {value}
+        {typeof value === 'number' ? (
+          <AnimatedCounter value={value} className={valueSizeClasses[size]} />
+        ) : (
+          value
+        )}
       </div>
 
       <div className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
