@@ -14,6 +14,7 @@ import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import Card from './ui/Card';
 import Modal from './ui/Modal';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import Select from './ui/Select';
@@ -29,7 +30,6 @@ import {
   VALIDATION_MESSAGES,
   SUCCESS_MESSAGES,
   API_ERROR_MESSAGES,
-  USER_GUIDANCE,
 } from '../utils/errorMessages';
 interface AnnouncementManagerProps {
   onBack: () => void;
@@ -46,9 +46,11 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
   const [showPreviewModal, setShowPreviewModal] = useState<Announcement | null>(null);
-  const [showAnalyticsModal, setShowAnalyticsModal] = useState<Announcement | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+const [showAnalyticsModal, setShowAnalyticsModal] = useState<Announcement | null>(null);
+const [loading, setLoading] = useState(false);
+const [saving, setSaving] = useState(false);
+const [deleteDialogOpen, setDeleteDialogOpen] = useState<Announcement | null>(null);
+const [deleting, setDeleting] = useState(false);
 
   const [formData, setFormData] = useState<AnnouncementFormData>({
     title: '',
@@ -206,27 +208,33 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
     }
   };
 
-  // Delete announcement
-  const handleDelete = async (id: string) => {
-    if (!confirm(USER_GUIDANCE.CONFIRM_DELETE)) {
-      return;
-    }
+  const handleDelete = async (announcement: Announcement) => {
+    setDeleteDialogOpen(announcement);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteDialogOpen) return;
 
     if (!isOnline) {
       onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
+      setDeleteDialogOpen(null);
       return;
     }
 
+    setDeleting(true);
     try {
-      await apiService.announcements.delete(id);
-      setAnnouncements((prev: Announcement[]) => prev.filter(a => a.id !== id));
+      await apiService.announcements.delete(deleteDialogOpen.id);
+      setAnnouncements((prev: Announcement[]) => prev.filter(a => a.id !== deleteDialogOpen.id));
       onShowToast(SUCCESS_MESSAGES.ANNOUNCEMENT_DELETED, 'success');
-      if (showAnalyticsModal?.id === id) {
+      if (showAnalyticsModal?.id === deleteDialogOpen.id) {
         setShowAnalyticsModal(null);
       }
+      setDeleteDialogOpen(null);
     } catch (error) {
       logger.error('Failed to delete announcement:', error);
       onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -443,7 +451,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             variant="ghost"
                           />
                           <IconButton
-                            onClick={() => handleDelete(announcement.id)}
+                            onClick={() => handleDelete(announcement)}
                             icon={<TrashIcon className="w-5 h-5" />}
                             title="Hapus"
                             ariaLabel="Hapus"
@@ -650,6 +658,20 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
             })()}
           </div>
         </Modal>
+      )}
+
+      {deleteDialogOpen && (
+        <ConfirmationDialog
+          isOpen={!!deleteDialogOpen}
+          title="Hapus Pengumuman"
+          message={`Apakah Anda yakin ingin menghapus pengumuman "${deleteDialogOpen.title}"? Tindakan ini tidak dapat dibatalkan.`}
+          confirmText="Hapus"
+          cancelText="Batal"
+          type="danger"
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteDialogOpen(null)}
+          isLoading={deleting}
+        />
       )}
     </main>
   );
