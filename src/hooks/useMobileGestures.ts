@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { BREAKPOINTS } from '../constants';
+import { BREAKPOINTS, UI_GESTURES } from '../constants';
 
 export interface SwipeGestureOptions {
   threshold?: number;
@@ -22,16 +22,16 @@ export interface TouchPoint {
 
 export const useGestures = (options: SwipeGestureOptions = {}) => {
   const {
-    threshold = 50,
-    restraint = 100,
-    allowedTime = 300,
+    threshold = UI_GESTURES.MIN_SWIPE_DISTANCE,
+    restraint = UI_GESTURES.RESTRAINT,
+    allowedTime = UI_GESTURES.ALLOWED_TIME,
     onSwipeLeft,
     onSwipeRight,
     onSwipeUp,
     onSwipeDown,
     onTap,
     onLongPress,
-    longPressDelay = 500,
+    longPressDelay = UI_GESTURES.LONG_PRESS_DELAY,
   } = options;
 
   const [touchStart, setTouchStart] = useState<TouchPoint | null>(null);

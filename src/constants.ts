@@ -652,6 +652,7 @@ export const VALIDATION_LIMITS = {
     PREVIEW_LENGTH: 200,
     MAX_DISPLAY_ITEMS: 5,
     MAX_SUGGESTIONS: 5,
+    NEWS_CATEGORY_MAX: 100, // Maximum length for news category names
 } as const;
 
 // Input minimum values - Flexy: Never hardcode min values!
@@ -676,6 +677,7 @@ export const UI_DELAYS = {
     SYNC_BATCH_DELAY: 100, // Delay between processing batch operations
     // Flexy Principle: Accessibility timing must be configurable!
     ACCESSIBILITY_ANNOUNCE: 100, // Delay for screen reader announcements to ensure proper DOM update
+    SKELETON_DELAY: 200, // Delay before showing skeleton loader (ms)
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
@@ -683,6 +685,9 @@ export const UI_GESTURES = {
     MIN_SWIPE_DISTANCE: 50, // Minimum swipe distance in pixels to trigger actions
     SWIPE_VELOCITY_THRESHOLD: 0.5, // Minimum velocity for swipe detection
     TOUCH_ACTION_DELAY: 50, // Delay before processing touch actions
+    RESTRAINT: 100, // Maximum perpendicular movement allowed during swipe
+    ALLOWED_TIME: 300, // Maximum time allowed for a swipe gesture (ms)
+    LONG_PRESS_DELAY: 500, // Delay before triggering long press (ms)
 } as const;
 
 // Cache and storage limits
@@ -720,16 +725,6 @@ export const TIME_FORMAT = {
 export const API_CONFIG = {
     DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
     WS_PATH: '/ws',
-    ENDPOINTS: {
-        CHAT: '/api/chat',
-        LOGIN: '/api/auth/login',
-        LOGOUT: '/api/auth/logout',
-        FORGOT_PASSWORD: '/api/auth/forgot-password',
-        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
-        RESET_PASSWORD: '/api/auth/reset-password',
-        USERS: '/api/users',
-        USER_PASSWORD: '/api/users/:userId/password',
-    },
 } as const;
 
 // Language and Locale Codes - Flexy: Never hardcode language codes!
@@ -2238,6 +2233,11 @@ export const API_ENDPOINTS = {
     WEBSOCKET: {
         CONNECT: '/ws',
         UPDATES: '/api/updates',
+    },
+    // Download
+    DOWNLOAD: {
+        VERSION: (versionId: string) => `/api/download/version/${versionId}`,
+        TEMPLATE: (templateId: string) => `/api/templates/download/${templateId}`,
     },
 } as const;
 

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FormEvent } from 'react';
 import { ValidationRule, ValidationResult } from '../utils/validation';
+import { UI_DELAYS } from '../constants';
 
 /**
  * Enhanced Form Validation with Real-time Feedback
@@ -61,7 +62,7 @@ export const useFormValidation = (
   const {
     validateOnChange = true,
     validateOnBlur = true,
-    debounceMs = 300,
+    debounceMs = UI_DELAYS.DEBOUNCE_SHORT,
     clearErrorsOnFocus = true,
     focusFirstError = true,
     announceErrors = true,
