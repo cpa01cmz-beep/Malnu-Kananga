@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { UserExtraRole } from '../../types';
 import { useNetworkStatus, getSlowConnectionMessage } from '../../utils/networkStatus';
 import { logger } from '../../utils/logger';
@@ -6,17 +6,20 @@ import { usePushNotifications } from '../../hooks/useUnifiedNotifications';
 import { useOfflineDataService } from '../../services/offlineDataService';
 import { useDashboardVoiceCommands } from '../../hooks/useDashboardVoiceCommands';
 import ScheduleView from '../ScheduleView';
-import ELibrary from '../ELibrary';
 import AcademicGrades from '../AcademicGrades';
 import AttendanceView from '../AttendanceView';
 import StudentInsights from '../StudentInsights';
-import OsisEvents from '../OsisEvents';
 import StudentAssignments from '../StudentAssignments';
 import { GroupChat } from '../GroupChat';
-import StudyPlanGenerator from '../StudyPlanGenerator';
-import StudyPlanAnalytics from '../StudyPlanAnalytics';
 import VoiceCommandsHelp from '../VoiceCommandsHelp';
 import { CardSkeleton } from '../ui/Skeleton';
+
+// BroCula: Lazy load heavy components to reduce initial bundle size
+// These components are only loaded when user navigates to specific views
+const ELibrary = lazy(() => import('../ELibrary'));
+const OsisEvents = lazy(() => import('../OsisEvents'));
+const StudyPlanGenerator = lazy(() => import('../StudyPlanGenerator'));
+const StudyPlanAnalytics = lazy(() => import('../StudyPlanAnalytics'));
 import Button from '../ui/Button';
 import ErrorMessage from '../ui/ErrorMessage';
 import { authAPI } from '../../services/apiService';
@@ -235,27 +238,43 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
              )}
 
              {currentView === 'schedule' && <ScheduleView onBack={() => setCurrentView('home')} />}
-             {currentView === 'library' && <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />}
-             {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-             {currentView === 'assignments' && <StudentAssignments onBack={() => setCurrentView('home')} onShowToast={onShowToast} studentId={studentData?.id || ''} studentName={studentData?.nis || ''} />}
-             {currentView === 'groups' && (
-               <div className="animate-fade-in-up">
-                 <GroupChat
-                   currentUser={{
-                     id: studentData?.userId || '',
-                     name: studentData?.nis || 'Siswa',
-                     email: '',
-                     role: 'student',
-                     status: 'active',
-                   }}
-                 />
-               </div>
-             )}
-             {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
-             {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-             {currentView === 'osis' && <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-             {currentView === 'study-plan' && <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
-             {currentView === 'study-analytics' && <StudyPlanAnalytics onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+              {currentView === 'library' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
+                </Suspense>
+              )}
+              {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+              {currentView === 'assignments' && <StudentAssignments onBack={() => setCurrentView('home')} onShowToast={onShowToast} studentId={studentData?.id || ''} studentName={studentData?.nis || ''} />}
+              {currentView === 'groups' && (
+                <div className="animate-fade-in-up">
+                  <GroupChat
+                    currentUser={{
+                      id: studentData?.userId || '',
+                      name: studentData?.nis || 'Siswa',
+                      email: '',
+                      role: 'student',
+                      status: 'active',
+                    }}
+                  />
+                </div>
+              )}
+              {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
+              {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+              {currentView === 'osis' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+                </Suspense>
+              )}
+              {currentView === 'study-plan' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <StudyPlanGenerator onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+                </Suspense>
+              )}
+              {currentView === 'study-analytics' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <StudyPlanAnalytics onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+                </Suspense>
+              )}
 
             <StudentPortalQuiz
               selectedQuiz={selectedQuiz}
