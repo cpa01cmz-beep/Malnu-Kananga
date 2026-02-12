@@ -8,7 +8,8 @@ const mockAnalysisCache = {
 
 const mockWithCircuitBreaker = vi.fn();
 const mockIdGenerators = {
-  analysis: vi.fn()
+  analysis: vi.fn(),
+  feedback: vi.fn()
 };
 
 vi.mock('../aiCacheService', () => ({
@@ -92,7 +93,7 @@ describe('Gemini Analysis', () => {
 
     it('should construct proper analysis prompt', async () => {
       mockAnalysisCache.get.mockReturnValue(undefined);
-      const mockResponse = { text: 'Analysis result' };
+      const _mockResponse = { text: 'Analysis result' };
       mockWithCircuitBreaker.mockImplementation((fn) => {
         return fn();
       });
