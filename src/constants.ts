@@ -246,9 +246,9 @@ export const EXTERNAL_URLS = {
     KEMENAG: 'https://kemenag.go.id',
     EMIS: 'https://emis.kemenag.go.id',
     SIMPATIKA: 'https://simpatika.kemenag.go.id',
-    // Google Fonts - Flexy: Never hardcode external URLs!
-    GOOGLE_FONTS_INTER: 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
-    GOOGLE_FONTS_JETBRAINS: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
+    // Google Fonts - Flexy: Using ENV-driven configuration instead of hardcoded URLs
+    GOOGLE_FONTS_INTER: ENV.EXTERNAL.GOOGLE_FONTS_INTER,
+    GOOGLE_FONTS_JETBRAINS: ENV.EXTERNAL.GOOGLE_FONTS_JETBRAINS,
 } as const;
 
 export const VOICE_CONFIG = {
