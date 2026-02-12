@@ -577,6 +577,27 @@ export const PAGINATION_DEFAULTS = {
     MAX_VISIBLE_PAGES: 5,
 } as const;
 
+// Display limits for array slice operations - Flexy: Never hardcode slice limits!
+export const DISPLAY_LIMITS = {
+    RECOMMENDATIONS: 5,
+    SUGGESTIONS: 5,
+    RELATED_CONCEPTS: 8,
+    SIMILAR_ITEMS: 5,
+    RECENT_ITEMS: 3,
+    PREVIEW_ITEMS: 6,
+    AUDIT_LOGS: 50,
+    TABLE_ROWS: 10,
+    CHART_POINTS: 10,
+    SEARCH_RESULTS: 20,
+    MAX_KEYWORDS: 10,
+    NOTIFICATION_PREVIEW: 3,
+    MESSAGE_PREVIEW: 3,
+    COMPARISON_ITEMS: 5,
+    HISTORY_ITEMS: 100,
+    SUGGESTED_QUERIES: 5,
+    TEMPLATE_EXAMPLES: 5,
+} as const;
+
 // Retry and timeout configuration
 export const RETRY_CONFIG = {
     DEFAULT_INITIAL_DELAY: 1000,
