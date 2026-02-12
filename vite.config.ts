@@ -233,10 +233,8 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true,
       // BroCula: Improve chunk loading performance
       assetsInlineLimit: 4096, // 4KB - inline small assets
-      // BroCula: Optimize module preload
-      modulePreload: {
-        polyfill: false, // Modern browsers support native modulepreload
-      },
+      // Prevent eager loading of dashboard chunks - saves 471 KB on initial load
+      modulePreload: false,
     },
     // BroCula: Optimize dependency pre-bundling for faster dev builds and better caching
     optimizeDeps: {
