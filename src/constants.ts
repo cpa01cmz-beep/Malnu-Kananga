@@ -2162,8 +2162,16 @@ export const API_ENDPOINTS = {
     // Payments
     PAYMENTS: {
         CREATE: '/api/payments/create',
-        STATUS: '/api/payments/status',
-        HISTORY: '/api/payments/history',
+        STATUS: (paymentId: string) => `/api/payments/${paymentId}/status`,
+        HISTORY: (studentId: string) => `/api/payments/history?student_id=${studentId}`,
+        CANCEL: (paymentId: string) => `/api/payments/${paymentId}/cancel`,
+    },
+    // Files
+    FILES: {
+        UPLOAD: '/api/files/upload',
+        DOWNLOAD: (key: string) => `/api/files/download?key=${encodeURIComponent(key)}`,
+        DELETE: (key: string) => `/api/files/delete?key=${encodeURIComponent(key)}`,
+        LIST: (prefix?: string) => `/api/files/list${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ''}`,
     },
     // Messaging
     MESSAGING: {
