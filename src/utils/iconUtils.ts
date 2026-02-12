@@ -6,11 +6,16 @@ export const ICON_SIZES = {
   xs: 'w-3 h-3',      // 12px
   sm: 'w-4 h-4',      // 16px
   md: 'w-5 h-5',      // 20px
+  'custom-md': 'w-5.5 h-5.5', // 22px - Flexy: ProfileSection icon sizing
   lg: 'w-6 h-6',      // 24px
   xl: 'w-8 h-8',      // 32px
   '2xl': 'w-10 h-10', // 40px
   '3xl': 'w-12 h-12', // 48px
   '4xl': 'w-16 h-16', // 64px
+  // Card icon sizes - Flexy: PPDBSection responsive icons
+  'card-sm': 'w-14 h-14',     // 56px
+  'card-md': 'w-16 h-16',     // 64px
+  'card-lg': 'w-20 h-20',     // 80px
 } as const;
 
 export const ICON_TOUCH_SIZES = {
