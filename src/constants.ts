@@ -3498,3 +3498,67 @@ export const SITE_EDITOR_LIMITS = {
     MIN_INPUT_LENGTH: 3,
     MAX_SITE_NAME_LENGTH: 100,
 } as const;
+
+// ============================================================================
+// Flexy Modularity Additions - Run #48
+// ============================================================================
+
+// Template file size limits - Flexy: Never hardcode template sizes!
+export const TEMPLATE_FILE_SIZE_LIMITS = {
+    SMALL: 45000,
+    MEDIUM: 75000,
+    LARGE: 55000,
+    XL: 125000,
+    QUIZ_TEMPLATE: 512000,
+} as const;
+
+// SVG Constants - Flexy: Never hardcode SVG attributes!
+export const SVG_CONSTANTS = {
+    XMLNS: 'http://www.w3.org/2000/svg',
+    DEFAULT_VIEWBOX: '0 0 24 24',
+    DEFAULT_FILL: 'none',
+    DEFAULT_STROKE: 'currentColor',
+    DEFAULT_STROKE_WIDTH: 2,
+    DEFAULT_STROKE_LINECAP: 'round',
+    DEFAULT_STROKE_LINEJOIN: 'round',
+} as const;
+
+// Additional Component Timeouts - Flexy: Centralized timeout values!
+export const FEEDBACK_TIMEOUTS = {
+    SUCCESS_FEEDBACK_DURATION: 2000,
+    COPY_BUTTON_RESET_DELAY: 2000,
+    SWIPE_CONFIRM_DELAY: 2000,
+    AUTOSAVE_INTERVAL: 2000,
+    FILE_UPLOAD_TIMEOUT: 2000,
+    ACTIVITY_TIMEOUT: 10000,
+    QUIZ_TIMEOUT: 30000,
+} as const;
+
+// Date calculation constants - Flexy: Never hardcode time calculations!
+export const DATE_CALCULATION_CONSTANTS = {
+    MS_PER_SECOND: 1000,
+    MS_PER_MINUTE: 1000 * 60,
+    MS_PER_HOUR: 1000 * 60 * 60,
+    MS_PER_DAY: 1000 * 60 * 60 * 24,
+    MS_PER_WEEK: 1000 * 60 * 60 * 24 * 7,
+    MS_PER_YEAR: 1000 * 60 * 60 * 24 * 365,
+} as const;
+
+// Animation class constants - Flexy: Never hardcode animation classes!
+export const ANIMATION_CLASSES = {
+    SPINNER: 'animate-spin h-4 w-4',
+    SHIMMER: 'animate-shimmer',
+    PULSE: 'animate-pulse',
+    BOUNCE: 'animate-bounce',
+    FADE_IN: 'animate-fade-in',
+    SLIDE_IN: 'animate-slide-in',
+    DURATION_1000: 'duration-1000',
+    DURATION_500: 'duration-500',
+    DURATION_300: 'duration-300',
+    DURATION_200: 'duration-200',
+    DURATION_150: 'duration-150',
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #48
+// ============================================================================
