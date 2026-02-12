@@ -1,12 +1,19 @@
-// errorMonitoringService.ts - Sentry-based error tracking and monitoring
-
-import * as Sentry from '@sentry/react';
+import {
+  init,
+  setUser as sentrySetUser,
+  setTag as sentrySetTag,
+  setTags as sentrySetTags,
+  setExtra as sentrySetExtra,
+  setExtras as sentrySetExtras,
+  captureException as sentryCaptureException,
+  captureMessage as sentryCaptureMessage,
+  addBreadcrumb as sentryAddBreadcrumb,
+  withScope,
+  flush as sentryFlush,
+} from '@sentry/react';
+import type { Scope } from '@sentry/react';
 import { logger, LogLevel } from '../utils/logger';
 import { COMPONENT_TIMEOUTS } from '../constants';
-
-// ============================================
-// TYPES
-// ============================================
 
 export interface ErrorMonitoringConfig {
   dsn: string;
@@ -29,18 +36,11 @@ export interface ErrorSeverity {
   level: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
 }
 
-// ============================================
-// SERVICE CLASS
-// ============================================
-
 class ErrorMonitoringService {
   private initialized: boolean = false;
   private environment: 'development' | 'production' | 'staging' = 'development';
   private performanceSpans: Map<string, number> = new Map();
 
-  /**
-   * Initialize Sentry error monitoring
-   */
   init(config: ErrorMonitoringConfig): void {
     if (this.initialized) {
       logger.warn('Error monitoring already initialized');
@@ -48,11 +48,13 @@ class ErrorMonitoringService {
     }
 
     try {
-      Sentry.init({
+      init({
         dsn: config.dsn,
         environment: config.environment,
         release: config.release,
         tracesSampleRate: config.tracesSampleRate,
+        replaysSessionSampleRate: 0,
+        replaysOnErrorSampleRate: 0,
       });
 
       this.environment = config.environment;
@@ -63,20 +65,14 @@ class ErrorMonitoringService {
     }
   }
 
-  /**
-   * Check if monitoring is initialized
-   */
   isEnabled(): boolean {
     return this.initialized && this.environment !== 'development';
   }
 
-  /**
-   * Set user context for error tracking
-   */
   setUser(user: { id: string; email: string; role: string; extraRole?: string | null }): void {
     if (!this.isEnabled()) return;
 
-    Sentry.setUser({
+    sentrySetUser({
       id: user.id,
       email: user.email,
       role: user.role,
@@ -86,17 +82,11 @@ class ErrorMonitoringService {
     logger.debug('User context set for error monitoring', { userId: user.id, role: user.role });
   }
 
-  /**
-   * Clear user context
-   */
   clearUser(): void {
-    Sentry.setUser(null);
+    sentrySetUser(null);
     logger.debug('User context cleared');
   }
 
-  /**
-   * Capture an exception
-   */
   captureException(error: Error, context?: ErrorContext, severity?: ErrorSeverity['level']): void {
     if (!this.isEnabled()) {
       logger.error('Exception (not sent to monitoring):', error.message, error);
@@ -105,29 +95,26 @@ class ErrorMonitoringService {
 
     if (context) {
       if (context.user) {
-        Sentry.setUser(context.user);
+        sentrySetUser(context.user);
       }
       if (context.tags) {
-        Sentry.setTags(context.tags);
+        sentrySetTags(context.tags);
       }
       if (context.extra) {
-        Sentry.setExtras(context.extra);
+        sentrySetExtras(context.extra);
       }
     }
 
-    Sentry.withScope((scope) => {
+    withScope((scope: Scope) => {
       if (severity) {
         scope.setLevel(severity);
       }
-      Sentry.captureException(error);
+      sentryCaptureException(error);
     });
 
     logger.error('Exception captured:', error.message, error);
   }
 
-  /**
-   * Capture a message
-   */
   captureMessage(message: string, level?: 'error' | 'warning' | 'info', context?: ErrorContext): void {
     if (!this.isEnabled()) {
       logger.log(LogLevel.INFO, `Message (not sent to monitoring) [${level || 'info'}]: ${message}`);
@@ -136,59 +123,44 @@ class ErrorMonitoringService {
 
     if (context) {
       if (context.user) {
-        Sentry.setUser(context.user);
+        sentrySetUser(context.user);
       }
       if (context.tags) {
-        Sentry.setTags(context.tags);
+        sentrySetTags(context.tags);
       }
       if (context.extra) {
-        Sentry.setExtras(context.extra);
+        sentrySetExtras(context.extra);
       }
     }
 
-    Sentry.captureMessage(message, level);
+    sentryCaptureMessage(message, level);
     logger.log(LogLevel.INFO, `Message captured [${level || 'info'}]: ${message}`);
   }
 
-  /**
-   * Set tag for current scope
-   */
   setTag(key: string, value: string): void {
     if (!this.isEnabled()) return;
-    Sentry.setTag(key, value);
+    sentrySetTag(key, value);
   }
 
-  /**
-   * Set tags for current scope
-   */
   setTags(tags: Record<string, string>): void {
     if (!this.isEnabled()) return;
-    Sentry.setTags(tags);
+    sentrySetTags(tags);
   }
 
-  /**
-   * Set extra context for current scope
-   */
   setExtra(key: string, value: unknown): void {
     if (!this.isEnabled()) return;
-    Sentry.setExtra(key, value);
+    sentrySetExtra(key, value);
   }
 
-  /**
-   * Set extras for current scope
-   */
   setExtras(extras: Record<string, unknown>): void {
     if (!this.isEnabled()) return;
-    Sentry.setExtras(extras);
+    sentrySetExtras(extras);
   }
 
-  /**
-   * Add breadcrumb for tracking user actions
-   */
   addBreadcrumb(category: string, message: string, data?: Record<string, unknown>): void {
     if (!this.isEnabled()) return;
 
-    Sentry.addBreadcrumb({
+    sentryAddBreadcrumb({
       category,
       message,
       data,
@@ -198,9 +170,6 @@ class ErrorMonitoringService {
     logger.debug('Breadcrumb added:', { category, message });
   }
 
-  /**
-   * Start performance span
-   */
   startTransaction(name: string, operation: string = 'custom'): void {
     if (!this.isEnabled()) return;
 
@@ -208,9 +177,6 @@ class ErrorMonitoringService {
     logger.debug('Transaction started:', { name, operation });
   }
 
-  /**
-   * End performance span
-   */
   endTransaction(name: string, _status?: string): void {
     if (!this.isEnabled()) return;
 
@@ -225,29 +191,15 @@ class ErrorMonitoringService {
     logger.debug('Transaction ended:', { name, duration: `${duration}ms` });
   }
 
-  /**
-   * Flush pending events
-   */
   async flush(timeout: number = COMPONENT_TIMEOUTS.ERROR_FLUSH): Promise<boolean> {
     try {
       if (!this.isEnabled()) return true;
-      return Sentry.flush(timeout);
+      return sentryFlush(timeout);
     } catch (error) {
       logger.error('Error flushing Sentry events:', error);
       return false;
     }
   }
-
-  /**
-   * Get Sentry instance for advanced usage
-   */
-  getSentry(): typeof Sentry {
-    return Sentry;
-  }
 }
-
-// ============================================
-// EXPORTS
-// ============================================
 
 export const errorMonitoringService = new ErrorMonitoringService();

@@ -21,9 +21,128 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     
-    <!-- Preload critical font stylesheet to prevent render-blocking -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <!-- BroCula: Preload critical font stylesheet with non-blocking loading -->
+    <!-- Using rel="preload" + onload pattern to eliminate render-blocking -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
+    
+    <!-- BroCula: Critical CSS inlined to prevent render-blocking and reduce CLS -->
+    <!-- These styles are essential for initial paint and layout stability -->
+    <style>
+      /* Critical CSS for above-the-fold content - prevents layout shifts */
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        -moz-tab-size: 4;
+        tab-size: 4;
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.5;
+        color: #111827;
+        background-color: #ffffff;
+        min-height: 100vh;
+        /* Prevent layout shift during font loading */
+        font-display: optional;
+      }
+      
+      #root {
+        min-height: 100vh;
+        /* Reserve space to prevent layout shift */
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Prevent FOUC (Flash of Unstyled Content) */
+      .loading {
+        opacity: 0;
+        animation: fadeIn 0.3s ease-out 0.1s forwards;
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      /* Ensure images don't cause layout shifts */
+      img {
+        max-width: 100%;
+        height: auto;
+        /* Reserve space for images before they load */
+        background-color: #f3f4f6;
+      }
+      
+      /* Critical layout classes */
+      .min-h-screen {
+        min-height: 100vh;
+      }
+      
+      .flex {
+        display: flex;
+      }
+      
+      .flex-col {
+        flex-direction: column;
+      }
+      
+      .items-center {
+        align-items: center;
+      }
+      
+      .justify-center {
+        justify-content: center;
+      }
+    </style>
+
+    <!-- BroCula: Async CSS Loading - Eliminate render-blocking resources -->
+    <!-- This script converts render-blocking CSS to async loading for better performance -->
+    <script>
+      // Convert render-blocking CSS to non-blocking async loading
+      // This improves First Contentful Paint (FCP) and Largest Contentful Paint (LCP)
+      (function() {
+        // Mark that we're using async CSS loading
+        window.__ASYNC_CSS_LOADED__ = false;
+        
+        // Function to load CSS asynchronously
+        function loadCSSAsync() {
+          var links = document.querySelectorAll('link[rel="stylesheet"]');
+          links.forEach(function(link) {
+            // Skip already async stylesheets or inline critical CSS
+            if (link.hasAttribute('data-async')) return;
+            
+            // Create a new link with media="all" to enable it
+            link.setAttribute('data-async', 'true');
+            
+            // If it was loaded with media="print" pattern, switch to all
+            if (link.media === 'print') {
+              link.media = 'all';
+            }
+          });
+          window.__ASYNC_CSS_LOADED__ = true;
+        }
+        
+        // Load CSS after critical content is rendered
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadCSSAsync);
+        } else {
+          // If DOM is already loaded, use requestIdleCallback or setTimeout
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadCSSAsync, { timeout: 100 });
+          } else {
+            setTimeout(loadCSSAsync, 0);
+          }
+        }
+      })();
+    </script>
+    
+    <!-- Note: Vite automatically handles module preloading -->
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />

@@ -13,7 +13,7 @@ import IconButton from './ui/IconButton';
 import Badge from './ui/Badge';
 import { ThemeManager } from '../services/themeManager';
 import { getGradientClass } from '../config/gradients';
-import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES, UI_SPACING, UI_GESTURES } from '../constants';
+import { OPACITY_TOKENS, HEADER_NAV_STRINGS, USER_ROLES, UI_SPACING, UI_GESTURES, BREAKPOINTS } from '../constants';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { 
@@ -125,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({
 
     // Haptic feedback utility
     const triggerHapticFeedback = (type: 'light' | 'medium' | 'heavy' = 'light') => {
-        if ('vibrate' in navigator && window.innerWidth <= 768) {
+        if ('vibrate' in navigator && window.innerWidth <= BREAKPOINTS.MD) {
             const pattern = {
                 light: [10],
                 medium: [25],
@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({
     
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth >= 768) {
+            if (window.innerWidth >= BREAKPOINTS.MD) {
                 setIsMenuOpen(false);
             }
         };

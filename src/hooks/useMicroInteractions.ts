@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect } from 'react';
 
-import { TIME_MS } from '../constants';
+import { TIME_MS, ANIMATION_DURATIONS } from '../constants';
 
 /**
  * Enhanced Micro-interactions Hook
@@ -71,7 +71,7 @@ export const useMicroInteractions = (
     success = false,
     error = false,
     respectReducedMotion = true,
-    animationDuration = 300,
+    animationDuration = ANIMATION_DURATIONS.NORMAL,
     onHoverStart,
     onHoverEnd,
     onClick,

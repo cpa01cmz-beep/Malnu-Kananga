@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { UI_DELAYS } from '../constants';
 
 /**
  * Hook for conditional skeleton loading with delay
@@ -8,7 +9,7 @@ import { useState, useEffect } from 'react';
  * @param delay - Delay in ms before showing skeleton (prevents flicker for fast loads)
  * @returns boolean indicating whether to show skeleton
  */
-export const useSkeleton = (isLoading: boolean, delay = 200): boolean => {
+export const useSkeleton = (isLoading: boolean, delay = UI_DELAYS.SKELETON_DELAY): boolean => {
   const [showSkeleton, setShowSkeleton] = useState(false);
 
   useEffect(() => {

@@ -552,22 +552,6 @@ describe('ErrorMonitoringService', () => {
     });
   });
 
-  describe('getSentry', () => {
-    beforeEach(() => {
-      errorMonitoringService.init({
-        dsn: 'https://test@sentry.io/123',
-        environment: 'production',
-        tracesSampleRate: 0.1,
-      });
-    });
-
-    it('should return Sentry instance', () => {
-      const sentryInstance = errorMonitoringService.getSentry();
-
-      expect(sentryInstance).toBe(Sentry);
-    });
-  });
-
   describe('Integration Tests', () => {
     it('should handle complete error tracking workflow', () => {
       // Initialize

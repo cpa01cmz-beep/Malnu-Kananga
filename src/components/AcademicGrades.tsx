@@ -15,7 +15,7 @@ import { ResponsiveContainer } from 'recharts/es6/component/ResponsiveContainer'
 import { gradesAPI, subjectsAPI, attendanceAPI } from '../services/apiService';
 import { Grade, Subject, Attendance } from '../types';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, USER_ROLES } from '../constants';
 import { useCanAccess } from '../hooks/useCanAccess';
 import {
   API_ERROR_MESSAGES,
@@ -339,7 +339,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
     : '0';
 
   // Permission checks - Students can view their own grades, staff need permissions - AFTER all hooks
-  const gradesAccess = user?.role === 'student' 
+  const gradesAccess = user?.role === USER_ROLES.STUDENT 
     ? canAccess('content.read') // Students can view their own grades
     : canAccess('academic.grades'); // Staff need grade management permissions
 

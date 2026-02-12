@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { ValidationRule, ValidationResult, announceValidation } from '../utils/validation';
+import { UI_DELAYS } from '../constants';
 
 export interface ValidationTrigger {
   onBlur?: boolean;
@@ -56,7 +57,7 @@ export function useFieldValidation<T = string>(options: UseFieldValidationOption
     rules = [],
     triggers = defaultTriggers,
     validateOnMount = false,
-    debounceMs = 300,
+    debounceMs = UI_DELAYS.DEBOUNCE_SHORT,
     accessibility = {
       announceErrors: true,
       errorRole: 'alert'

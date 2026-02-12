@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { User, UserRole, UserExtraRole } from '../types';
-import { STORAGE_KEYS, UI_STRINGS } from '../constants';
+import { STORAGE_KEYS, UI_STRINGS, USER_ROLES } from '../constants';
 import { authService } from '../services/authService';
 import { usersAPI } from '../services/apiService';
 import { useErrorHandler } from '../hooks/useErrorHandler';
@@ -68,7 +68,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
 
   const targetUserId = userId || currentUser?.id;
   const isOwnProfile = currentUser?.id === targetUserId;
-  const canEditProfile = isOwnProfile || currentUser?.role === 'admin';
+  const canEditProfile = isOwnProfile || currentUser?.role === USER_ROLES.ADMIN;
 
   const fetchUser = useCallback(async () => {
     if (!targetUserId) return;
@@ -216,15 +216,15 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
   };
 
   const getRoleBadgeVariant = (role: UserRole): BadgeVariant => {
-    return role === 'admin' ? 'secondary' : role === 'teacher' ? 'info' : 'neutral';
+    return role === USER_ROLES.ADMIN ? 'secondary' : role === USER_ROLES.TEACHER ? 'info' : 'neutral';
   };
 
   const getExtraRoleBadgeVariant = (extraRole: UserExtraRole | undefined): BadgeVariant => {
     if (!extraRole) return 'neutral';
-    return extraRole === 'staff' ? 'info' :
-           extraRole === 'osis' ? 'warning' :
-           extraRole === 'wakasek' ? 'secondary' :
-           extraRole === 'kepsek' ? 'error' : 'neutral';
+    return extraRole === USER_ROLES.STAFF ? 'info' :
+           extraRole === USER_ROLES.OSIS ? 'warning' :
+           extraRole === USER_ROLES.WAKASEK ? 'secondary' :
+           extraRole === USER_ROLES.KEPSEK ? 'error' : 'neutral';
   };
 
   if (isLoading) {

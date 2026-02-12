@@ -605,7 +605,7 @@ function validateProgramStructure(program: FeaturedProgram): boolean {
     program.description.length <= MAX_DESCRIPTION_LENGTH &&
     program.imageUrl !== undefined &&
     typeof program.imageUrl === 'string' &&
-    program.imageUrl.length <= 500
+    program.imageUrl.length <= VALIDATION_LIMITS.IMAGE_URL_MAX
   );
 }
 
@@ -621,10 +621,10 @@ function validateNewsStructure(news: LatestNews): boolean {
     news.category &&
     typeof news.category === 'string' &&
     news.category.length > 0 &&
-    news.category.length <= 100 &&
+    news.category.length <= VALIDATION_LIMITS.NEWS_CATEGORY_MAX &&
     news.imageUrl !== undefined &&
     typeof news.imageUrl === 'string' &&
-    news.imageUrl.length <= 500
+    news.imageUrl.length <= VALIDATION_LIMITS.IMAGE_URL_MAX
   );
 }
 

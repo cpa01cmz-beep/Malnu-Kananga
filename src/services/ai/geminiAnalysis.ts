@@ -4,7 +4,7 @@ import { getAIInstance, AI_MODELS } from './geminiClient';
 import { analysisCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { AI_CONFIG } from '../../constants';
+import { AI_CONFIG, API_ENDPOINTS } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -100,7 +100,7 @@ export async function analyzeStudentPerformance(
       type: 'create',
       entity: 'ai_analysis',
       entityId: analysisId,
-      endpoint: '/api/ai/student-analysis',
+      endpoint: API_ENDPOINTS.AI.STUDENT_ANALYSIS,
       method: 'POST',
       data: {
         operation: 'studentAnalysis',

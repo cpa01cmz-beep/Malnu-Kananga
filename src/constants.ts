@@ -189,9 +189,12 @@ export const STORAGE_KEYS = {
 
     // Activity Feed (new)
     ACTIVITY_FEED: 'malnu_activity_feed',
-    
+
     // Progress Report Auto-Generation (new)
     PROGRESS_REPORT_AUTO_GENERATION_AUDIT: 'malnu_progress_report_auto_generation_audit',
+
+    ACCESSIBILITY_SETTINGS: 'malnu_accessibility_settings',
+    COMMAND_PALETTE_RECENT: 'malnu_command_palette_recent',
 } as const;
 
 export const USER_ROLES = {
@@ -216,10 +219,15 @@ export const USER_EXTRA_ROLES = {
 
 export type UserExtraRole = typeof USER_EXTRA_ROLES[keyof typeof USER_EXTRA_ROLES];
 
+import { ENV } from './config/env';
+
 export const APP_CONFIG = {
-    SCHOOL_NAME: 'MA Malnu Kananga',
-    SCHOOL_NPSN: '69881502',
-    SCHOOL_ADDRESS: 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    SCHOOL_NAME: ENV.SCHOOL.NAME,
+    SCHOOL_NPSN: ENV.SCHOOL.NPSN,
+    SCHOOL_ADDRESS: ENV.SCHOOL.ADDRESS,
+    SCHOOL_PHONE: ENV.SCHOOL.PHONE,
+    SCHOOL_EMAIL: ENV.SCHOOL.EMAIL,
+    SCHOOL_WEBSITE: ENV.SCHOOL.WEBSITE,
     SK_PENDIRIAN: {
         NUMBER: 'D/Wi/MA./101/2000',
         DATE: '20-09-2000',
@@ -281,8 +289,8 @@ export const ERROR_MESSAGES = {
     NETWORK_ERROR: 'Kesalahan jaringan terjadi. Periksa koneksi internet Anda.',
 } as const;
 
-export const ADMIN_EMAIL = 'admin@malnu-kananga.sch.id';
-export const INFO_EMAIL = 'info@ma-malnukananga.sch.id';
+export const ADMIN_EMAIL = ENV.EMAIL.ADMIN;
+export const INFO_EMAIL = ENV.SCHOOL.EMAIL;
 
 export const VOICE_COMMANDS = {
     OPEN_SETTINGS: ['buka pengaturan', 'buka setting', 'open settings', 'open setting'],
@@ -569,6 +577,27 @@ export const PAGINATION_DEFAULTS = {
     MAX_VISIBLE_PAGES: 5,
 } as const;
 
+// Display limits for array slice operations - Flexy: Never hardcode slice limits!
+export const DISPLAY_LIMITS = {
+    RECOMMENDATIONS: 5,
+    SUGGESTIONS: 5,
+    RELATED_CONCEPTS: 8,
+    SIMILAR_ITEMS: 5,
+    RECENT_ITEMS: 3,
+    PREVIEW_ITEMS: 6,
+    AUDIT_LOGS: 50,
+    TABLE_ROWS: 10,
+    CHART_POINTS: 10,
+    SEARCH_RESULTS: 20,
+    MAX_KEYWORDS: 10,
+    NOTIFICATION_PREVIEW: 3,
+    MESSAGE_PREVIEW: 3,
+    COMPARISON_ITEMS: 5,
+    HISTORY_ITEMS: 100,
+    SUGGESTED_QUERIES: 5,
+    TEMPLATE_EXAMPLES: 5,
+} as const;
+
 // Retry and timeout configuration
 export const RETRY_CONFIG = {
     DEFAULT_INITIAL_DELAY: 1000,
@@ -623,6 +652,18 @@ export const VALIDATION_LIMITS = {
     PREVIEW_LENGTH: 200,
     MAX_DISPLAY_ITEMS: 5,
     MAX_SUGGESTIONS: 5,
+    NEWS_CATEGORY_MAX: 100, // Maximum length for news category names
+} as const;
+
+// Input minimum values - Flexy: Never hardcode min values!
+export const INPUT_MIN_VALUES = {
+    QUANTITY: 1,
+    SCORE: 1,
+    POINTS: 1,
+    DAYS: 1,
+    DURATION_MINUTES: 1,
+    PASSING_SCORE: 1,
+    MAX_ATTEMPTS: 1,
 } as const;
 
 // UI delays in milliseconds
@@ -636,6 +677,7 @@ export const UI_DELAYS = {
     SYNC_BATCH_DELAY: 100, // Delay between processing batch operations
     // Flexy Principle: Accessibility timing must be configurable!
     ACCESSIBILITY_ANNOUNCE: 100, // Delay for screen reader announcements to ensure proper DOM update
+    SKELETON_DELAY: 200, // Delay before showing skeleton loader (ms)
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
@@ -643,6 +685,9 @@ export const UI_GESTURES = {
     MIN_SWIPE_DISTANCE: 50, // Minimum swipe distance in pixels to trigger actions
     SWIPE_VELOCITY_THRESHOLD: 0.5, // Minimum velocity for swipe detection
     TOUCH_ACTION_DELAY: 50, // Delay before processing touch actions
+    RESTRAINT: 100, // Maximum perpendicular movement allowed during swipe
+    ALLOWED_TIME: 300, // Maximum time allowed for a swipe gesture (ms)
+    LONG_PRESS_DELAY: 500, // Delay before triggering long press (ms)
 } as const;
 
 // Cache and storage limits
@@ -680,16 +725,6 @@ export const TIME_FORMAT = {
 export const API_CONFIG = {
     DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
     WS_PATH: '/ws',
-    ENDPOINTS: {
-        CHAT: '/api/chat',
-        LOGIN: '/api/auth/login',
-        LOGOUT: '/api/auth/logout',
-        FORGOT_PASSWORD: '/api/auth/forgot-password',
-        VERIFY_RESET_TOKEN: '/api/auth/verify-reset-token',
-        RESET_PASSWORD: '/api/auth/reset-password',
-        USERS: '/api/users',
-        USER_PASSWORD: '/api/users/:userId/password',
-    },
 } as const;
 
 // Language and Locale Codes - Flexy: Never hardcode language codes!
@@ -899,6 +934,52 @@ export const ACADEMIC = {
     NISN_LENGTH: 10,
     MAJOR_EXAM_TYPES: ['mid_exam', 'final_exam', 'uts', 'uas', 'final_test'] as const,
 } as const;
+
+// Flexy: Centralized grade letter calculation - Never hardcode grade thresholds!
+export const GRADE_LETTER_THRESHOLDS = {
+    A: { min: 90, letter: 'A', gpa: 4.0 },
+    A_MINUS: { min: 85, letter: 'A-', gpa: 3.7 },
+    B_PLUS: { min: 80, letter: 'B+', gpa: 3.3 },
+    B: { min: 75, letter: 'B', gpa: 3.0 },
+    B_MINUS: { min: 70, letter: 'B-', gpa: 2.7 },
+    C_PLUS: { min: 65, letter: 'C+', gpa: 2.3 },
+    C: { min: 60, letter: 'C', gpa: 2.0 },
+    C_MINUS: { min: 55, letter: 'C-', gpa: 1.7 },
+    D: { min: 50, letter: 'D', gpa: 1.0 },
+    E: { min: 0, letter: 'E', gpa: 0.0 },
+} as const;
+
+/**
+ * Get grade letter from score using centralized thresholds
+ * Flexy Principle: NEVER hardcode grade calculations!
+ * @param score - Numeric score (0-100)
+ * @returns Grade letter (A, A-, B+, etc.)
+ */
+export function getGradeLetter(score: number): string {
+    if (score >= GRADE_LETTER_THRESHOLDS.A.min) return GRADE_LETTER_THRESHOLDS.A.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.A_MINUS.min) return GRADE_LETTER_THRESHOLDS.A_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B_PLUS.min) return GRADE_LETTER_THRESHOLDS.B_PLUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B.min) return GRADE_LETTER_THRESHOLDS.B.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.B_MINUS.min) return GRADE_LETTER_THRESHOLDS.B_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C_PLUS.min) return GRADE_LETTER_THRESHOLDS.C_PLUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C.min) return GRADE_LETTER_THRESHOLDS.C.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.C_MINUS.min) return GRADE_LETTER_THRESHOLDS.C_MINUS.letter;
+    if (score >= GRADE_LETTER_THRESHOLDS.D.min) return GRADE_LETTER_THRESHOLDS.D.letter;
+    return GRADE_LETTER_THRESHOLDS.E.letter;
+}
+
+/**
+ * Simplified grade letter for basic use cases (A, B, C, D only)
+ * Flexy Principle: NEVER hardcode grade calculations!
+ * @param score - Numeric score (0-100)
+ * @returns Simplified grade letter (A, B, C, D)
+ */
+export function getSimplifiedGradeLetter(score: number): string {
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.A) return 'A';
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.B) return 'B';
+    if (score >= ACADEMIC.GRADE_THRESHOLDS.C) return 'C';
+    return 'D';
+}
 
 // File validation constants
 export const FILE_VALIDATION = {
@@ -1127,6 +1208,54 @@ export const STAGGER_DELAYS = {
     FAST: 25,
     NORMAL: 50,
     SLOW: 100,
+} as const;
+
+// Animation Duration Constants - Flexy: Use these instead of hardcoded duration classes!
+// Provides both numeric values (ms) and Tailwind classes for consistency
+export const ANIMATION_DURATIONS = {
+    // Micro-interactions (instant feedback)
+    MICRO: 150,
+    INSTANT: 150,
+
+    // Fast transitions (hover states, small movements)
+    FAST: 200,
+    QUICK: 200,
+
+    // Standard transitions (most UI changes)
+    NORMAL: 300,
+    STANDARD: 300,
+
+    // Medium transitions (larger UI changes)
+    MEDIUM: 500,
+
+    // Slow transitions (emphasis, dramatic changes)
+    SLOW: 700,
+
+    // Very slow (special effects)
+    VERY_SLOW: 1000,
+
+    // Tailwind class equivalents
+    CLASSES: {
+        MICRO: 'duration-150',
+        INSTANT: 'duration-150',
+        FAST: 'duration-200',
+        QUICK: 'duration-200',
+        NORMAL: 'duration-300',
+        STANDARD: 'duration-300',
+        MEDIUM: 'duration-500',
+        SLOW: 'duration-700',
+        VERY_SLOW: 'duration-1000',
+    },
+} as const;
+
+// Animation Timing Functions - Flexy: Use these for consistent easing!
+export const ANIMATION_EASINGS = {
+    DEFAULT: 'ease-in-out',
+    IN: 'ease-in',
+    OUT: 'ease-out',
+    BOUNCE: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    SMOOTH: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    ELASTIC: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
 } as const;
 
 // Haptic feedback vibration patterns (milliseconds) - Flexy: Never hardcode haptic patterns!
@@ -1481,6 +1610,26 @@ export const ACADEMIC_SUBJECTS = {
     ARTS: 'Seni Budaya',
     PE: 'Penjasorkes',
     ENTREPRENEURSHIP: 'Kewirausahaan',
+} as const;
+
+// Student Performance Thresholds - Flexy: Never hardcode performance thresholds!
+export const STUDENT_PERFORMANCE_THRESHOLDS = {
+    // GPA thresholds for motivational messages
+    GPA: {
+        EXCELLENT: 85,  // GPA >= 85: "Luar biasa!"
+        GOOD: 75,       // GPA >= 75: "Prestasi baik!"
+        MINIMUM: 60,    // GPA >= 60: "Menunjukkan perbaikan"
+    },
+    // Attendance percentage thresholds
+    ATTENDANCE: {
+        EXCELLENT: 95,  // Attendance >= 95%: Excellent
+        GOOD: 90,       // Attendance >= 90%: Good
+    },
+    // Study recommendation thresholds
+    STUDY: {
+        FAILING: 70,    // Score < 70: Failing, needs high priority
+        DECLINING: 80,  // Score < 80: Declining, needs medium priority
+    },
 } as const;
 
 // Indonesian month names - Flexy: Never hardcode locale-specific data!
@@ -2007,6 +2156,7 @@ export const API_ENDPOINTS = {
         CLASSES: '/api/classes',
         SCHEDULES: '/api/schedules',
         GRADES: '/api/grades',
+        GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
     },
     // Events
@@ -2039,8 +2189,16 @@ export const API_ENDPOINTS = {
     // Payments
     PAYMENTS: {
         CREATE: '/api/payments/create',
-        STATUS: '/api/payments/status',
-        HISTORY: '/api/payments/history',
+        STATUS: (paymentId: string) => `/api/payments/${paymentId}/status`,
+        HISTORY: (studentId: string) => `/api/payments/history?student_id=${studentId}`,
+        CANCEL: (paymentId: string) => `/api/payments/${paymentId}/cancel`,
+    },
+    // Files
+    FILES: {
+        UPLOAD: '/api/files/upload',
+        DOWNLOAD: (key: string) => `/api/files/download?key=${encodeURIComponent(key)}`,
+        DELETE: (key: string) => `/api/files/delete?key=${encodeURIComponent(key)}`,
+        LIST: (prefix?: string) => `/api/files/list${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ''}`,
     },
     // Messaging
     MESSAGING: {
@@ -2074,6 +2232,12 @@ export const API_ENDPOINTS = {
     // WebSocket
     WEBSOCKET: {
         CONNECT: '/ws',
+        UPDATES: '/api/updates',
+    },
+    // Download
+    DOWNLOAD: {
+        VERSION: (versionId: string) => `/api/download/version/${versionId}`,
+        TEMPLATE: (templateId: string) => `/api/templates/download/${templateId}`,
     },
 } as const;
 
@@ -2561,6 +2725,41 @@ export const BREAKPOINTS = {
     LG: 1024,   // Tablet landscape/Desktop
     XL: 1280,   // Desktop
     XXL: 1536,  // Large desktop
+} as const;
+
+// Development Thresholds - Flexy: Never hardcode development-specific values!
+// These values are used for development environment configurations
+export const DEVELOPMENT_THRESHOLDS = {
+    // Error rate thresholds (percentage)
+    ERROR_RATE: {
+        WARNING: 10,   // Production warning threshold
+        DEV: 20,       // Development threshold (more permissive)
+        CRITICAL: 20,  // Critical alert threshold
+    },
+    // Memory thresholds (percentage)
+    MEMORY: {
+        WARNING: 80,
+        CRITICAL: 90,
+    },
+    // Consecutive failures threshold
+    CONSECUTIVE_FAILURES: {
+        WARNING: 5,    // Production warning
+        CRITICAL: 10,  // Critical alert
+    },
+    // Cache/PWA size thresholds (MB)
+    CACHE_SIZE: {
+        WARNING: 50,   // 50 MB warning
+    },
+    // WebSocket reconnect attempts
+    WEBSOCKET: {
+        MAX_RECONNECT_ATTEMPTS: 10,
+    },
+    // Max metrics to store
+    MAX_METRICS: 1000,
+    // Alert retention
+    ALERT_RETENTION: {
+        MAX_ALERTS: 100,
+    },
 } as const;
 
 // ============================================================================

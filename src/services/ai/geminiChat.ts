@@ -3,7 +3,7 @@ import { getAIInstance, DEFAULT_API_BASE_URL, AI_MODELS } from './geminiClient';
 import { chatCache } from '../aiCacheService';
 import { withCircuitBreaker } from '../../utils/errorHandler';
 import { logger } from '../../utils/logger';
-import { AI_CONFIG, APP_CONFIG } from '../../constants';
+import { AI_CONFIG, APP_CONFIG, API_ENDPOINTS } from '../../constants';
 import {
   getAIErrorMessage,
   AIOperationType,
@@ -11,7 +11,7 @@ import {
 } from '../../utils/aiErrorHandler';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || DEFAULT_API_BASE_URL;
-const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}/api/chat`;
+const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}${API_ENDPOINTS.AI.CHAT}`;
 
 // Local Context Interface
 export interface LocalContext {

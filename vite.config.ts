@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
+import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -16,6 +16,24 @@ import {
   EXTERNAL_DEPS,
 } from './src/config/viteConstants'
 
+function asyncCssPlugin(): Plugin {
+  return {
+    name: 'async-css',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return html.replace(
+        /<link rel="stylesheet" crossorigin href="([^"]+)"\s*\/?>/g,
+        (match, href) => {
+          if (match.includes('preload') || match.includes('media=')) {
+            return match
+          }
+          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'" />\n    <noscript><link rel="stylesheet" href="${href}" /></noscript>`
+        }
+      )
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Set NODE_ENV explicitly for production mode
@@ -26,6 +44,7 @@ export default defineConfig(({ mode }) => {
   const config = {
     plugins: [
       react(),
+      asyncCssPlugin(),
       VitePWA({
         registerType: WORKBOX_CONFIG.REGISTER_TYPE,
         includeAssets: [...PWA_MANIFEST.INCLUDE_ASSETS],
@@ -154,6 +173,12 @@ export default defineConfig(({ mode }) => {
               return VENDOR_CHUNKS.ICONS;
             }
 
+            // BroCula: Split Sentry into separate chunk to prevent unused code in main bundle
+            // Sentry replay and feedback modules add ~50KB+ of unused JavaScript
+            if (id.includes('@sentry')) {
+              return 'vendor-sentry';
+            }
+
             // Fix circular dependency: Keep apiService.ts and services/api in same chunk
             if (id.includes('/services/api') || id.includes('/services/apiService')) {
               return VENDOR_CHUNKS.API;
@@ -213,21 +238,32 @@ export default defineConfig(({ mode }) => {
         polyfill: false, // Modern browsers support native modulepreload
       },
     },
-    // BroCula: Optimize dependency pre-bundling
+    // BroCula: Optimize dependency pre-bundling for faster dev builds and better caching
     optimizeDeps: {
       include: [
         'react',
         'react-dom',
         'react-router-dom',
+        '@heroicons/react/24/outline',
+        '@heroicons/react/24/solid',
+        // Tesseract.js v7 uses CommonJS - must be pre-bundled for browser compatibility
+        'tesseract.js',
       ],
       exclude: [
-        // Large libraries that should be lazy-loaded
+        // Large libraries that should be lazy-loaded - reduces initial bundle
         'recharts',
         'jspdf',
         'html2canvas',
-        'tesseract.js',
         '@google/genai',
+        'jspdf-autotable',
       ],
+      // BroCula: Force dependency optimization on build for better chunking
+      force: true,
+    },
+    // BroCula: CSS configuration for better performance
+    css: {
+      // Enable CSS source maps for debugging (set to false in production for smaller builds)
+      devSourcemap: mode !== 'production',
     },
   }
 
