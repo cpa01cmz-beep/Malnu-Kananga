@@ -217,4 +217,132 @@ it('shows loading state during upload', async () => {
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('src', 'data:image/jpeg;base64,test');
   });
+
+  it('shows clipboard paste hint text', () => {
+    render(<FileUploader />);
+    
+    expect(screen.getByText(/You can also paste images \(Ctrl\+V\)/)).toBeInTheDocument();
+  });
+
+  it('handles clipboard paste events for images', async () => {
+    const mockOnFileUploaded = vi.fn();
+    const { fileStorageAPI } = await import('../../../services/apiService');
+    
+    vi.mocked(fileStorageAPI.upload).mockResolvedValue({
+      success: true,
+      message: 'Upload successful',
+      data: {
+        id: 'pasted-1',
+        key: 'pasted-image-key',
+        url: 'http://example.com/files/pasted-image-key',
+        fileName: 'image.png',
+        name: 'image.png',
+        fileType: 'image/png',
+        type: 'image/png',
+        fileSize: 1024,
+        size: 1024,
+        fileUrl: 'http://example.com/files/pasted-image-key',
+        uploadedAt: new Date().toISOString(),
+      },
+    });
+
+    render(<FileUploader onFileUploaded={mockOnFileUploaded} />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    const file = new File(['test-image-data'], 'image.png', { type: 'image/png' });
+    const clipboardData = {
+      items: [
+        {
+          type: 'image/png',
+          getAsFile: () => file,
+        },
+      ],
+    };
+    
+    const pasteEvent = new Event('paste', { bubbles: true });
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: clipboardData,
+      writable: false,
+    });
+    Object.defineProperty(pasteEvent, 'preventDefault', {
+      value: vi.fn(),
+      writable: false,
+    });
+    
+    container.focus();
+    container.dispatchEvent(pasteEvent);
+    
+    await waitFor(() => {
+      expect(fileStorageAPI.upload).toHaveBeenCalled();
+    });
+  });
+
+  it('shows paste hint tooltip on focus', async () => {
+    render(<FileUploader />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    container.focus();
+    
+    await waitFor(() => {
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      expect(screen.getByText('to paste image')).toBeInTheDocument();
+    }, { timeout: 1000 });
+  });
+
+  it('announces paste action to screen readers', async () => {
+    const { fileStorageAPI } = await import('../../../services/apiService');
+    
+    vi.mocked(fileStorageAPI.upload).mockResolvedValue({
+      success: true,
+      message: 'Upload successful',
+      data: {
+        id: 'pasted-2',
+        key: 'pasted-image-key',
+        url: 'http://example.com/files/pasted-image-key',
+        fileName: 'image.png',
+        name: 'image.png',
+        fileType: 'image/png',
+        type: 'image/png',
+        fileSize: 1024,
+        size: 1024,
+        fileUrl: 'http://example.com/files/pasted-image-key',
+        uploadedAt: new Date().toISOString(),
+      },
+    });
+
+    render(<FileUploader />);
+    
+    const container = screen.getByRole('button').parentElement;
+    if (!container) throw new Error('Container not found');
+    
+    const file = new File(['test-image-data'], 'image.png', { type: 'image/png' });
+    const clipboardData = {
+      items: [
+        {
+          type: 'image/png',
+          getAsFile: () => file,
+        },
+      ],
+    };
+    
+    const pasteEvent = new Event('paste', { bubbles: true });
+    Object.defineProperty(pasteEvent, 'clipboardData', {
+      value: clipboardData,
+      writable: false,
+    });
+    Object.defineProperty(pasteEvent, 'preventDefault', {
+      value: vi.fn(),
+      writable: false,
+    });
+    
+    container.focus();
+    container.dispatchEvent(pasteEvent);
+    
+    const statusElement = screen.getByRole('status');
+    expect(statusElement).toBeInTheDocument();
+  });
 });
