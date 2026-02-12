@@ -414,7 +414,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
         )}
 
         {/* Clear button - appears when there's a value and showClearButton is true */}
-        {hasClearButton && !validation.state.isValidating && finalState !== 'error' && finalState !== 'success' && (
+        {showClearButton && !validation.state.isValidating && finalState !== 'error' && finalState !== 'success' && (
           <button
             type="button"
             onClick={() => {
@@ -427,11 +427,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
                 inputRef.current.focus();
               }
             }}
-            className={`absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 min-w-[2.75rem] min-h-[2.75rem] flex items-center justify-center hover:scale-110 active:scale-95 ${
+            className={`absolute top-1/2 -translate-y-1/2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-primary-500/50 min-w-[2.75rem] min-h-[2.75rem] flex items-center justify-center hover:scale-110 active:scale-95 ${
               rightIcon ? 'right-10' : 'right-3'
-            }`}
-            aria-label="Bersihkan input"
-            title="Bersihkan input"
+            } ${hasClearButton ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-75 pointer-events-none'}`}
+            aria-label="Bersihkan input (Tekan Escape)"
+            title="Bersihkan input (Tekan Escape)"
+            aria-hidden={!hasClearButton}
+            tabIndex={hasClearButton ? 0 : -1}
           >
             <XMarkIcon className={`${sizeIconClasses[size]} transition-transform duration-200 hover:rotate-90`} aria-hidden="true" />
           </button>

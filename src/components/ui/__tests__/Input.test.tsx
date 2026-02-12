@@ -150,7 +150,7 @@ describe('Input Component', () => {
       // Query all buttons (tooltip icon is a button)
       const buttons = screen.queryAllByRole('button');
       // Filter out any clear buttons that might be present
-      const iconButtons = buttons.filter(btn => btn.getAttribute('aria-label') !== 'Bersihkan input');
+      const iconButtons = buttons.filter(btn => !btn.getAttribute('aria-label')?.startsWith('Bersihkan input'));
       expect(iconButtons.length).toBe(0);
     });
 
@@ -730,8 +730,73 @@ describe('Input Component', () => {
       const input = screen.getByLabelText('Search');
       
       fireEvent.keyDown(input, { key: 'Escape' });
-      
+
       expect(mockOnChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Clear Button UX Enhancements', () => {
+    it('shows clear button with keyboard shortcut hint in aria-label', () => {
+      render(
+        <Input
+          value="Test value"
+          showClearButton
+          onChange={mockOnChange}
+        />
+      );
+
+      const clearButton = screen.getByRole('button', { name: /bersihkan input/i });
+      expect(clearButton).toBeInTheDocument();
+      expect(clearButton).toHaveAttribute('aria-label', 'Bersihkan input (Tekan Escape)');
+      expect(clearButton).toHaveAttribute('title', 'Bersihkan input (Tekan Escape)');
+    });
+
+    it('clear button has opacity transition classes for smooth appearance', () => {
+      render(
+        <Input
+          value="Test value"
+          showClearButton
+          onChange={mockOnChange}
+        />
+      );
+
+      const clearButton = screen.getByRole('button', { name: /bersihkan input/i });
+      expect(clearButton).toHaveClass('transition-all', 'duration-300');
+      expect(clearButton).toHaveClass('opacity-100', 'scale-100');
+    });
+
+    it('clear button is hidden when input is empty', () => {
+      render(
+        <Input
+          value=""
+          showClearButton
+          onChange={mockOnChange}
+        />
+      );
+
+      // Use querySelector to find the button even when aria-hidden
+      const clearButton = document.querySelector('button[aria-label="Bersihkan input (Tekan Escape)"]');
+      expect(clearButton).toBeInTheDocument();
+      expect(clearButton).toHaveClass('opacity-0', 'scale-75');
+      expect(clearButton).toHaveAttribute('aria-hidden', 'true');
+      expect(clearButton).toHaveAttribute('tabIndex', '-1');
+    });
+
+    it('clear button clears input and focuses back on input when clicked', () => {
+      render(
+        <Input
+          value="Test value"
+          showClearButton
+          onChange={mockOnChange}
+        />
+      );
+
+      const clearButton = screen.getByRole('button', { name: /bersihkan input/i });
+      fireEvent.click(clearButton);
+
+      expect(mockOnChange).toHaveBeenCalledWith(expect.objectContaining({
+        target: { value: '' }
+      }));
     });
   });
 });
