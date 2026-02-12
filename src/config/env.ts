@@ -19,7 +19,12 @@ export const ENV = {
   EMAIL: {
     ADMIN: import.meta.env.VITE_ADMIN_EMAIL || 'admin@malnu-kananga.sch.id',
   },
+  EXTERNAL: {
+    GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
+    GOOGLE_FONTS_JETBRAINS: import.meta.env.VITE_GOOGLE_FONTS_JETBRAINS || 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
+  },
 } as const;
 
 export type SchoolConfig = typeof ENV.SCHOOL;
 export type EmailConfig = typeof ENV.EMAIL;
+export type ExternalConfig = typeof ENV.EXTERNAL;
