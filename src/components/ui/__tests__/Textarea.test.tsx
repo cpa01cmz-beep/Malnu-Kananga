@@ -337,4 +337,123 @@ describe('Textarea Component', () => {
       expect(hint).not.toBeInTheDocument();
     });
   });
+
+  describe('Ctrl+Enter submit functionality', () => {
+    it('should not submit on Ctrl+Enter by default', () => {
+      const handleSubmit = vi.fn();
+      render(<Textarea value="Some text" onSubmit={handleSubmit} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Enter', ctrlKey: true });
+
+      expect(handleSubmit).not.toHaveBeenCalled();
+    });
+
+    it('should call onSubmit when Ctrl+Enter is pressed and submitOnCtrlEnter is true', () => {
+      const handleSubmit = vi.fn();
+      render(<Textarea value="Some text" submitOnCtrlEnter onSubmit={handleSubmit} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Enter', ctrlKey: true });
+
+      expect(handleSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onSubmit when Cmd+Enter is pressed (Mac) and submitOnCtrlEnter is true', () => {
+      const handleSubmit = vi.fn();
+      render(<Textarea value="Some text" submitOnCtrlEnter onSubmit={handleSubmit} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Enter', metaKey: true });
+
+      expect(handleSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not call onSubmit when textarea is empty', () => {
+      const handleSubmit = vi.fn();
+      render(<Textarea value="" submitOnCtrlEnter onSubmit={handleSubmit} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.keyDown(textarea, { key: 'Enter', ctrlKey: true });
+
+      expect(handleSubmit).not.toHaveBeenCalled();
+    });
+
+    it('should prevent default behavior when Ctrl+Enter is pressed', () => {
+      const handleSubmit = vi.fn();
+      render(<Textarea value="Some text" submitOnCtrlEnter onSubmit={handleSubmit} />);
+      const textarea = screen.getByRole('textbox');
+
+      const keyDownEvent = fireEvent.keyDown(textarea, { key: 'Enter', ctrlKey: true });
+
+      expect(keyDownEvent).toBe(false);
+    });
+
+    it('should show submit hint tooltip when focused with value and submitOnCtrlEnter is true', async () => {
+      render(<Textarea value="Some text" submitOnCtrlEnter />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+
+      await waitFor(() => {
+        const hints = screen.getAllByRole('tooltip');
+        const submitHint = hints.find(hint => hint.textContent?.includes('kirim'));
+        expect(submitHint).toBeInTheDocument();
+        expect(submitHint).toHaveTextContent('kirim');
+      }, { timeout: 700 });
+    });
+
+    it('should not show submit hint when submitOnCtrlEnter is false', async () => {
+      render(<Textarea value="Some text" submitOnCtrlEnter={false} />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await new Promise(resolve => setTimeout(resolve, 700));
+      const hints = screen.queryAllByRole('tooltip');
+      const submitHint = hints.find(hint => hint.textContent?.includes('kirim'));
+      expect(submitHint).toBeUndefined();
+    });
+
+    it('should not show submit hint when textarea is empty', async () => {
+      render(<Textarea value="" submitOnCtrlEnter />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await new Promise(resolve => setTimeout(resolve, 700));
+      const hints = screen.queryAllByRole('tooltip');
+      const submitHint = hints.find(hint => hint.textContent?.includes('kirim'));
+      expect(submitHint).toBeUndefined();
+    });
+
+    it('should hide submit hint when textarea loses focus', async () => {
+      render(<Textarea value="Some text" submitOnCtrlEnter />);
+      const textarea = screen.getByRole('textbox');
+
+      fireEvent.focus(textarea);
+      await waitFor(() => {
+        const hints = screen.getAllByRole('tooltip');
+        expect(hints.some(hint => hint.textContent?.includes('kirim'))).toBe(true);
+      }, { timeout: 700 });
+
+      fireEvent.blur(textarea);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const hints = screen.queryAllByRole('tooltip');
+      const submitHint = hints.find(hint => hint.textContent?.includes('kirim'));
+      expect(submitHint).toBeUndefined();
+    });
+
+    it('should include keyboard shortcut in aria-label when submitOnCtrlEnter is true', () => {
+      render(
+        <Textarea
+          value="Some text"
+          submitOnCtrlEnter
+          aria-label="Pesan"
+        />
+      );
+      const textarea = screen.getByRole('textbox');
+
+      expect(textarea).toHaveAttribute('aria-label', expect.stringContaining('Tekan'));
+      expect(textarea).toHaveAttribute('aria-label', expect.stringContaining('untuk mengirim'));
+    });
+  });
 });
