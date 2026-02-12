@@ -321,6 +321,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           variant="green-solid"
           isLoading={isExportingPDF}
           aria-label="Ekspor nilai siswa ke file PDF"
+          disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
         >
           {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
         </Button>
