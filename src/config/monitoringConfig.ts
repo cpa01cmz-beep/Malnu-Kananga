@@ -4,7 +4,8 @@
 import { 
   TIME_MS, 
   RETRY_CONFIG, 
-  PERFORMANCE_THRESHOLDS 
+  PERFORMANCE_THRESHOLDS,
+  DEVELOPMENT_THRESHOLDS
 } from '../constants';
 
 // ============================================
@@ -74,7 +75,7 @@ export const getPerformanceMonitoringConfig = (): PerformanceMonitoringConfig =>
     enabled: isProduction,
     errorRateThreshold: isProduction 
       ? PERFORMANCE_THRESHOLDS.ERROR_RATE_ALERT_PERCENT 
-      : 20, // 20% in dev
+      : DEVELOPMENT_THRESHOLDS.ERROR_RATE.DEV,
     averageResponseTimeThreshold: isProduction 
       ? PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS 
       : TIME_MS.TEN_SECONDS,
@@ -110,7 +111,7 @@ export const getHealthMetricsConfig = (): HealthMetricsConfig => {
     alertRetentionPeriod: TIME_MS.ONE_WEEK,
     maxAlerts: 100,
     memoryWarningThreshold: PERFORMANCE_THRESHOLDS.MEMORY_WARNING_PERCENT,
-    memoryCriticalThreshold: 90,
+    memoryCriticalThreshold: DEVELOPMENT_THRESHOLDS.MEMORY.CRITICAL,
   };
 };
 
@@ -142,18 +143,18 @@ export interface AlertThresholds {
 export const getAlertThresholds = (): AlertThresholds => {
   return {
     websocket: {
-      maxReconnectAttempts: 10,
+      maxReconnectAttempts: DEVELOPMENT_THRESHOLDS.WEBSOCKET.MAX_RECONNECT_ATTEMPTS,
       connectionTimeout: RETRY_CONFIG.WEBSOCKET_CONNECTION_TIMEOUT,
       pingTimeout: TIME_MS.FIVE_SECONDS,
     },
     pwa: {
       offlineTimeoutWarning: TIME_MS.ONE_MINUTE,
-      cacheSizeWarning: 50, // 50 MB - specific to PWA config
+      cacheSizeWarning: DEVELOPMENT_THRESHOLDS.CACHE_SIZE.WARNING,
     },
     performance: {
       slowResponseWarning: PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS,
-      errorRateCritical: 20, // 20% - specific to alert thresholds
-      consecutiveFailuresCritical: 10,
+      errorRateCritical: DEVELOPMENT_THRESHOLDS.ERROR_RATE.CRITICAL,
+      consecutiveFailuresCritical: DEVELOPMENT_THRESHOLDS.CONSECUTIVE_FAILURES.CRITICAL,
     },
   };
 };
