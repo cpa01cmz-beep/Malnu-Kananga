@@ -328,8 +328,10 @@ const GradingActions: React.FC<GradingActionsProps> = ({
 
         <Button
           onClick={handleCSVExport}
+          disabled={grades.length === 0}
           variant="teal-solid"
           aria-label="Ekspor nilai ke file CSV"
+          disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
         >
           Export CSV
         </Button>
