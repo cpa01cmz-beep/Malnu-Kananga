@@ -63,6 +63,8 @@ export default [
         IntersectionObserver: 'readonly',
         IntersectionObserverEntry: 'readonly',
         AbortController: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
       },
     },
     plugins: {
