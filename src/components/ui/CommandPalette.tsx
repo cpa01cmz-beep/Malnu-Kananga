@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { logger } from '../../utils/logger';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
+
+// Storage key for recent commands
+const RECENT_COMMANDS_KEY = 'malnu_command_palette_recent';
+const MAX_RECENT_COMMANDS = 5;
 
 export interface Command {
   id: string;
@@ -21,7 +26,32 @@ interface CommandPaletteProps {
   placeholder?: string;
   emptyMessage?: string;
   maxResults?: number;
+  /** Enable haptic feedback on navigation and selection */
+  enableHaptic?: boolean;
+  /** Show recent commands section */
+  showRecentCommands?: boolean;
 }
+
+// Get recent commands from localStorage
+const getRecentCommands = (): string[] => {
+  try {
+    const stored = localStorage.getItem(RECENT_COMMANDS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+// Save recent command to localStorage
+const saveRecentCommand = (commandId: string) => {
+  try {
+    const recent = getRecentCommands();
+    const updated = [commandId, ...recent.filter(id => id !== commandId)].slice(0, MAX_RECENT_COMMANDS);
+    localStorage.setItem(RECENT_COMMANDS_KEY, JSON.stringify(updated));
+  } catch {
+    // Ignore storage errors
+  }
+};
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({
   isOpen,
@@ -29,19 +59,44 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   commands,
   placeholder = 'Cari perintah atau ketik ? untuk bantuan...',
   emptyMessage = 'Tidak ada perintah yang ditemukan',
-  maxResults = 10
+  maxResults = 10,
+  enableHaptic = true,
+  showRecentCommands = true,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filteredCommands, setFilteredCommands] = useState<Command[]>([]);
+  const [recentCommandIds, setRecentCommandIds] = useState<string[]>([]);
+  const [announcement, setAnnouncement] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const { onTap, onSelection, onSuccess } = useHapticFeedback();
+
+  // Load recent commands when opened
+  useEffect(() => {
+    if (isOpen && showRecentCommands) {
+      setRecentCommandIds(getRecentCommands());
+    }
+  }, [isOpen, showRecentCommands]);
 
   // Filter commands based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setFilteredCommands(commands.filter(cmd => !cmd.disabled).slice(0, maxResults));
+      // Show recent commands first when no search query
+      if (showRecentCommands && recentCommandIds.length > 0) {
+        const recentCommands = recentCommandIds
+          .map(id => commands.find(cmd => cmd.id === id))
+          .filter((cmd): cmd is Command => cmd !== undefined && !cmd.disabled);
+        
+        const otherCommands = commands
+          .filter(cmd => !cmd.disabled && !recentCommandIds.includes(cmd.id))
+          .slice(0, maxResults - recentCommands.length);
+        
+        setFilteredCommands([...recentCommands, ...otherCommands]);
+      } else {
+        setFilteredCommands(commands.filter(cmd => !cmd.disabled).slice(0, maxResults));
+      }
       return;
     }
 
@@ -58,13 +113,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     
     setFilteredCommands(filtered);
     setSelectedIndex(0);
-  }, [searchQuery, commands, maxResults]);
+  }, [searchQuery, commands, maxResults, showRecentCommands, recentCommandIds]);
 
   // Reset state when opened
   useEffect(() => {
     if (isOpen) {
       setSearchQuery('');
       setSelectedIndex(0);
+      setAnnouncement('Command palette opened');
       // Focus input after a short delay to ensure modal is rendered
       setTimeout(() => {
         inputRef.current?.focus();
@@ -72,23 +128,44 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     }
   }, [isOpen]);
 
-  // Handle keyboard navigation
+  // Check if a command is recent
+  const _isRecentCommand = useCallback((commandId: string) => {
+    return recentCommandIds.includes(commandId) && !searchQuery;
+  }, [recentCommandIds, searchQuery]);
+
+  // Handle keyboard navigation with haptic feedback
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
-        setSelectedIndex(prev => 
-          prev < filteredCommands.length - 1 ? prev + 1 : prev
-        );
+        setSelectedIndex(prev => {
+          const newIndex = prev < filteredCommands.length - 1 ? prev + 1 : prev;
+          if (newIndex !== prev && enableHaptic) {
+            onTap();
+          }
+          return newIndex;
+        });
         break;
       case 'ArrowUp':
         event.preventDefault();
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : 0);
+        setSelectedIndex(prev => {
+          const newIndex = prev > 0 ? prev - 1 : 0;
+          if (newIndex !== prev && enableHaptic) {
+            onTap();
+          }
+          return newIndex;
+        });
         break;
       case 'Enter':
         event.preventDefault();
         if (filteredCommands[selectedIndex]) {
-          filteredCommands[selectedIndex].action();
+          const command = filteredCommands[selectedIndex];
+          if (enableHaptic) {
+            onSuccess();
+          }
+          saveRecentCommand(command.id);
+          setAnnouncement(`${command.label} executed`);
+          command.action();
           onClose();
         }
         break;
@@ -97,7 +174,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         onClose();
         break;
     }
-  }, [filteredCommands, selectedIndex, onClose]);
+  }, [filteredCommands, selectedIndex, onClose, enableHaptic, onTap, onSuccess]);
 
   // Scroll selected item into view
   useEffect(() => {
@@ -109,15 +186,28 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     }
   }, [selectedIndex]);
 
-  // Handle command execution
-  const handleCommandClick = useCallback((command: Command) => {
+  // Handle command execution with haptic feedback
+  const handleCommandClick = useCallback((command: Command, _index: number) => {
     try {
+      if (enableHaptic) {
+        onSuccess();
+      }
+      saveRecentCommand(command.id);
+      setAnnouncement(`${command.label} executed`);
       command.action();
       onClose();
     } catch (error) {
       logger.error('Command execution failed:', error);
     }
-  }, [onClose]);
+  }, [onClose, enableHaptic, onSuccess]);
+
+  // Handle mouse enter with subtle haptic feedback
+  const handleMouseEnter = useCallback((index: number) => {
+    setSelectedIndex(index);
+    if (enableHaptic && index !== selectedIndex) {
+      onSelection();
+    }
+  }, [selectedIndex, enableHaptic, onSelection]);
 
   // Group commands by category
   const groupedCommands = useMemo(() => {
@@ -209,15 +299,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       return (
                         <li key={command.id}>
                           <button
-                            onClick={() => handleCommandClick(command)}
+                            onClick={() => handleCommandClick(command, globalIndex)}
                             className={`w-full px-4 py-3 flex items-center gap-3 text-left transition-colors ${
-                              isSelected 
-                                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300' 
+                              isSelected
+                                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
                                 : 'hover:bg-neutral-50 dark:hover:bg-neutral-700/50 text-neutral-700 dark:text-neutral-200'
                             }`}
                             role="option"
                             aria-selected={isSelected}
-                            onMouseEnter={() => setSelectedIndex(globalIndex)}
+                            onMouseEnter={() => handleMouseEnter(globalIndex)}
                           >
                             {command.icon && (
                               <span className="flex-shrink-0 text-neutral-400 dark:text-neutral-500">
@@ -272,20 +362,40 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           )}
         </div>
 
-        {/* Footer */}
-        <div className="px-4 py-2 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded">↑</kbd>
-              <kbd className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded">↓</kbd>
+        {/* Footer with Enhanced Keyboard Shortcuts */}
+        <div className="px-4 py-3 border-t border-neutral-200 dark:border-neutral-700 flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-900/50">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-neutral-700 rounded shadow-sm border border-neutral-200 dark:border-neutral-600 font-mono">↑</kbd>
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-neutral-700 rounded shadow-sm border border-neutral-200 dark:border-neutral-600 font-mono">↓</kbd>
               <span className="ml-1">navigasi</span>
             </span>
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded">↵</kbd>
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-neutral-700 rounded shadow-sm border border-neutral-200 dark:border-neutral-600 font-mono">↵</kbd>
               <span className="ml-1">pilih</span>
             </span>
+            <span className="hidden sm:flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-white dark:bg-neutral-700 rounded shadow-sm border border-neutral-200 dark:border-neutral-600 font-mono">esc</kbd>
+              <span className="ml-1">tutup</span>
+            </span>
           </div>
-          <span>{filteredCommands.length} perintah</span>
+          <div className="flex items-center gap-2">
+            {filteredCommands.length > 0 && (
+              <span className="text-neutral-400 dark:text-neutral-500">
+                {selectedIndex + 1} / {filteredCommands.length}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Screen reader announcement */}
+        <div
+          className="sr-only"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {announcement}
         </div>
       </div>
     </div>
