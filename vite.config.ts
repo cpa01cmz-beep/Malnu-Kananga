@@ -1,5 +1,5 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite'
+import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -16,6 +16,24 @@ import {
   EXTERNAL_DEPS,
 } from './src/config/viteConstants'
 
+function asyncCssPlugin(): Plugin {
+  return {
+    name: 'async-css',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return html.replace(
+        /<link rel="stylesheet" crossorigin href="([^"]+)"\s*\/?>/g,
+        (match, href) => {
+          if (match.includes('preload') || match.includes('media=')) {
+            return match
+          }
+          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'" />\n    <noscript><link rel="stylesheet" href="${href}" /></noscript>`
+        }
+      )
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   // Set NODE_ENV explicitly for production mode
@@ -26,6 +44,7 @@ export default defineConfig(({ mode }) => {
   const config = {
     plugins: [
       react(),
+      asyncCssPlugin(),
       VitePWA({
         registerType: WORKBOX_CONFIG.REGISTER_TYPE,
         includeAssets: [...PWA_MANIFEST.INCLUDE_ASSETS],
