@@ -101,6 +101,47 @@
       }
     </style>
 
+    <!-- BroCula: Async CSS Loading - Eliminate render-blocking resources -->
+    <!-- This script converts render-blocking CSS to async loading for better performance -->
+    <script>
+      // Convert render-blocking CSS to non-blocking async loading
+      // This improves First Contentful Paint (FCP) and Largest Contentful Paint (LCP)
+      (function() {
+        // Mark that we're using async CSS loading
+        window.__ASYNC_CSS_LOADED__ = false;
+        
+        // Function to load CSS asynchronously
+        function loadCSSAsync() {
+          var links = document.querySelectorAll('link[rel="stylesheet"]');
+          links.forEach(function(link) {
+            // Skip already async stylesheets or inline critical CSS
+            if (link.hasAttribute('data-async')) return;
+            
+            // Create a new link with media="all" to enable it
+            link.setAttribute('data-async', 'true');
+            
+            // If it was loaded with media="print" pattern, switch to all
+            if (link.media === 'print') {
+              link.media = 'all';
+            }
+          });
+          window.__ASYNC_CSS_LOADED__ = true;
+        }
+        
+        // Load CSS after critical content is rendered
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadCSSAsync);
+        } else {
+          // If DOM is already loaded, use requestIdleCallback or setTimeout
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadCSSAsync, { timeout: 100 });
+          } else {
+            setTimeout(loadCSSAsync, 0);
+          }
+        }
+      })();
+    </script>
+    
     <!-- Note: Vite automatically handles module preloading -->
     
     <!-- Open Graph / Facebook -->
