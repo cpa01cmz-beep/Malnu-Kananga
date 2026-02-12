@@ -16,7 +16,7 @@ import {
   API_ERROR_MESSAGES,
   USER_GUIDANCE,
 } from '../../utils/errorMessages';
-import { RETRY_CONFIG } from '../../constants';
+import { RETRY_CONFIG, API_ENDPOINTS } from '../../constants';
 import { validateMaterialData } from '../../utils/teacherValidation';
 import { idGenerators } from '../../utils/idGenerator';
 
@@ -253,7 +253,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
           entity: 'material',
           entityId: idGenerators.material(),
           data: newMaterial,
-          endpoint: '/api/library',
+          endpoint: API_ENDPOINTS.LIBRARY.MATERIALS,
           method: 'POST',
         });
 
@@ -324,7 +324,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
           entity: 'material',
           entityId: idGenerators.material(),
           data: queuedMaterial,
-          endpoint: '/api/library',
+          endpoint: API_ENDPOINTS.LIBRARY.MATERIALS,
           method: 'POST',
         });
 

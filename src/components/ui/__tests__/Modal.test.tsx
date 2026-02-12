@@ -601,4 +601,103 @@ describe('Modal', () => {
       expect(button2).toHaveFocus();
     });
   });
+
+  describe('Escape Key Hint Tooltip', () => {
+    it('shows escape hint tooltip when hovering over modal', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      expect(tooltip).toHaveTextContent('ESC');
+      expect(tooltip).toHaveTextContent('untuk menutup');
+    });
+
+    it('hides escape hint tooltip when mouse leaves modal', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      
+      await user.unhover(modal);
+      
+      expect(tooltip).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    it('does not show escape hint when closeOnEscape is false', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose} closeOnEscape={false}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.queryByRole('tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('does not show escape hint when showCloseButton is false', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose} showCloseButton={false}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.queryByRole('tooltip');
+      expect(tooltip).not.toBeInTheDocument();
+    });
+
+    it('tooltip has correct styling classes', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('bg-neutral-800', 'text-white', 'rounded-lg');
+    });
+
+    it('tooltip has kbd element for ESC key', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const kbd = screen.getByText('ESC');
+      expect(kbd.tagName.toLowerCase()).toBe('kbd');
+    });
+
+    it('tooltip is positioned above close button', async () => {
+      const handleClose = vi.fn();
+      const user = userEvent.setup();
+      render(<Modal isOpen={true} onClose={handleClose}>Content</Modal>);
+      
+      const modal = screen.getByRole('dialog');
+      await user.hover(modal);
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('-top-10');
+    });
+  });
 });
