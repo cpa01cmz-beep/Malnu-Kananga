@@ -4,6 +4,7 @@
     RETRY_CONFIG,
     TIME_MS,
     API_CONFIG,
+    API_ENDPOINTS,
     TIME_CONVERSION,
     WEBSOCKET_CONSTANTS,
     WEBSOCKET_CLOSE_CODES,
@@ -604,7 +605,7 @@ private updateEventsData(event: RealTimeEvent): void {
     const lastSync = localStorage.getItem(STORAGE_KEYS.LAST_SYNC_TIME) || new Date(0).toISOString();
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}/api/updates`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL}${API_ENDPOINTS.WEBSOCKET.UPDATES}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

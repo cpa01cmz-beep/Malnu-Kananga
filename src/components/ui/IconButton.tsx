@@ -76,10 +76,12 @@ const IconButton: React.FC<IconButtonProps> = ({
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
   const [isErrorVisible, setIsErrorVisible] = useState(false);
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !isErrorVisible;
   const hasLoadingTooltip = isLoading && Boolean(tooltip);
   const hasDisabledReason = Boolean(disabledReason) && disabled;
@@ -132,8 +134,31 @@ const IconButton: React.FC<IconButtonProps> = ({
     };
   }, [showError, errorDuration]);
 
-  const showTooltip = useCallback(() => setIsTooltipVisible(true), []);
-  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+  useEffect(() => {
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showTooltip = useCallback(() => {
+    setIsTooltipVisible(true);
+    if (shortcut && !isLoading && !isSuccessVisible && !isErrorVisible) {
+      shortcutHintTimeoutRef.current = setTimeout(() => {
+        setShowShortcutHint(true);
+      }, 400);
+    }
+  }, [shortcut, isLoading, isSuccessVisible, isErrorVisible]);
+
+  const hideTooltip = useCallback(() => {
+    setIsTooltipVisible(false);
+    setShowShortcutHint(false);
+    if (shortcutHintTimeoutRef.current) {
+      clearTimeout(shortcutHintTimeoutRef.current);
+      shortcutHintTimeoutRef.current = null;
+    }
+  }, []);
 
   const classes = `
     ${baseClasses}
@@ -319,6 +344,33 @@ const IconButton: React.FC<IconButtonProps> = ({
             aria-hidden="true"
           />
         </span>
+      )}
+
+      {showShortcutHint && shortcut && !isLoading && !isSuccessVisible && !isErrorVisible && (
+        <div
+          className={`
+            absolute -top-9 left-1/2 -translate-x-1/2
+            px-2.5 py-1
+            bg-neutral-800 dark:bg-neutral-700
+            text-white text-[10px] font-medium
+            rounded-md shadow-md
+            whitespace-nowrap
+            transition-all duration-200 ease-out
+            pointer-events-none
+            z-50
+            ${showShortcutHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+          `.replace(/\s+/g, ' ').trim()}
+          role="tooltip"
+          aria-hidden={!showShortcutHint}
+        >
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+              {shortcut}
+            </kbd>
+            <span>shortcut</span>
+          </span>
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+        </div>
       )}
     </button>
   );
