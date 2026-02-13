@@ -5,6 +5,7 @@ import Heading from '../ui/Heading';
 import { getResponsiveGradient } from '../../config/gradients';
 import { HEIGHT_CLASSES } from '../../config/heights';
 import { UI_SPACING } from '../../constants';
+import { ANIMATION_PRESETS } from '../../utils/animationUtils';
 import { buildTypographyClasses, TYPOGRAPHY_PATTERNS } from '../../utils/typographyUtils';
 
 const HeroSection: React.FC = () => {
@@ -15,7 +16,7 @@ const HeroSection: React.FC = () => {
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO')}`}></div>
       <div className={`absolute inset-0 ${getResponsiveGradient('HERO_DECORATIVE', 'HERO_DECORATIVE')}`}></div>
       <div className="relative z-10 w-full max-w-6xl mx-auto">
-        <div className={`inline-flex items-center ${UI_SPACING.GAP_TIGHT} ${UI_SPACING.PADDING_COMFORTABLE} mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-md hover:shadow-lg animate-scale-in transition-all duration-300 hover:scale-[1.05] group glass-effect text-contrast-enhanced mobile-gesture-feedback card-interactive button-depth-hover`}>
+        <div className={`inline-flex items-center ${UI_SPACING.GAP_TIGHT} ${UI_SPACING.PADDING_COMFORTABLE} mb-8 sm:mb-10 rounded-full bg-primary-100/95 dark:bg-primary-900/80 border border-primary-200/90 dark:border-primary-700/80 backdrop-blur-md shadow-md hover:shadow-lg animate-scale-in transition-all duration-300 ${ANIMATION_PRESETS.hoverScaleBig} group glass-effect text-contrast-enhanced mobile-gesture-feedback card-interactive button-depth-hover`}>
           <span className="flex h-2.5 w-2.5 rounded-full bg-primary-500 animate-pulse ring-2 ring-primary-300 dark:ring-primary-700 group-hover:animate-pulse status-indicator badge-pulse"></span>
           <span className="text-sm font-semibold tracking-wide text-primary-700 dark:text-primary-300 transition-colors duration-300 group-hover:text-primary-800 dark:group-hover:text-primary-200 text-contrast-enhanced link-underline-animated">Penerimaan Siswa Baru 2025</span>
         </div>
