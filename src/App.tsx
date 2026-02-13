@@ -43,7 +43,7 @@ const NewsSection = lazy(() => import('./components/sections/NewsSection'));
 const PPDBSection = lazy(() => import('./components/sections/PPDBSection'));
 
 import type { FeaturedProgram, LatestNews, UserRole, UserExtraRole } from './types';
-import { STORAGE_KEYS, USER_ROLES, ROLE_DISPLAY_NAMES } from './constants';
+import { STORAGE_KEYS, USER_ROLES, ROLE_DISPLAY_NAMES, LOADING_MESSAGES } from './constants';
 import useLocalStorage from './hooks/useLocalStorage';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { api } from './services/apiService';
@@ -354,7 +354,7 @@ const App: React.FC = () => {
       switch (userRole) {
           case USER_ROLES.ADMIN:
               return (
-                <Suspense fallback={<SuspenseLoading message="Memuat dashboard admin..." />}>
+                <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.DASHBOARD_ADMIN} />}>
                     <AdminDashboard
                       onOpenEditor={() => setIsEditorOpen(true)}
                       onShowToast={showToast}
@@ -363,7 +363,7 @@ const App: React.FC = () => {
               );
           case USER_ROLES.TEACHER:
               return (
-                <Suspense fallback={<SuspenseLoading message="Memuat dashboard guru..." />}>
+                <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.DASHBOARD_TEACHER} />}>
                     <TeacherDashboard
                       extraRole={userExtraRole}
                       onShowToast={showToast}
@@ -372,7 +372,7 @@ const App: React.FC = () => {
               );
           case USER_ROLES.PARENT:
               return (
-                <Suspense fallback={<SuspenseLoading message="Memuat dashboard wali murid..." />}>
+                <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.DASHBOARD_PARENT} />}>
                     <ParentDashboard
                       onShowToast={showToast}
                     />
@@ -381,7 +381,7 @@ const App: React.FC = () => {
           case USER_ROLES.STUDENT:
           default:
               return (
-                <Suspense fallback={<SuspenseLoading message="Memuat portal siswa..." />}>
+                <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.DASHBOARD_STUDENT} />}>
                     <StudentPortal
                       extraRole={userExtraRole}
                       onShowToast={showToast}
@@ -395,7 +395,7 @@ const App: React.FC = () => {
     <NotificationProvider>
       <ErrorBoundary>
         {resetToken ? (
-          <Suspense fallback={<SuspenseLoading message="Memuat halaman reset password..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PAGE_RESET_PASSWORD} />}>
             <ResetPassword />
           </Suspense>
         ) : (
@@ -429,23 +429,23 @@ const App: React.FC = () => {
         </main>
       ) : (
         <main id="main-content" tabIndex={-1}>
-          <Suspense fallback={<SuspenseLoading message="Memuat halaman..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PAGE} />}>
             <HeroSection />
           </Suspense>
-          <Suspense fallback={<SuspenseLoading message="Memuat tautan..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.LINKS} />}>
             <RelatedLinksSection />
           </Suspense>
-          <Suspense fallback={<SuspenseLoading message="Memuat profil..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PROFILE} />}>
             <ProfileSection />
           </Suspense>
-          <Suspense fallback={<SuspenseLoading message="Memuat PPDB..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PPDB} />}>
             <PPDBSection onRegisterClick={() => setIsPPDBOpen(true)} />
           </Suspense>
           {/* Robustness Fix: Added fallback to empty array to prevent crashes if localStorage data is corrupted/incomplete */}
-          <Suspense fallback={<SuspenseLoading message="Memuat program..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PROGRAMS} />}>
             <ProgramsSection programs={siteContent?.featuredPrograms || []} />
           </Suspense>
-          <Suspense fallback={<SuspenseLoading message="Memuat berita..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.NEWS} />}>
             <NewsSection news={siteContent?.latestNews || []} />
           </Suspense>
         </main>
@@ -461,7 +461,7 @@ const App: React.FC = () => {
         }`}
         aria-hidden={!isChatOpen}
       >
-        <Suspense fallback={<SuspenseLoading message="Memuat asisten AI..." />}>
+        <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.AI_ASSISTANT} />}>
           <ChatWindow
             isOpen={isChatOpen}
             closeChat={() => setIsChatOpen(false)}
@@ -479,7 +479,7 @@ const App: React.FC = () => {
         />
       </Suspense>
       
-      <Suspense fallback={<SuspenseLoading message="Memuat formulir pendaftaran..." />}>
+      <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.PPDB_FORM} />}>
         <PPDBRegistration
           isOpen={isPPDBOpen}
           onClose={() => setIsPPDBOpen(false)}
@@ -487,14 +487,14 @@ const App: React.FC = () => {
         />
       </Suspense>
 
-      <Suspense fallback={<SuspenseLoading message="Memuat dokumentasi..." />}>
+      <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.DOCUMENTATION} />}>
         <DocumentationPage
           isOpen={isDocsOpen}
           onClose={() => setIsDocsOpen(false)}
         />
       </Suspense>
 
-      <Suspense fallback={<SuspenseLoading message="Memuat editor..." />}>
+      <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.EDITOR} />}>
         <SiteEditor
           isOpen={isEditorOpen}
           onClose={() => setIsEditorOpen(false)}
