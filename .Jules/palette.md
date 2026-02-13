@@ -432,3 +432,18 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 **Pattern**: When adding `title` to icon-only buttons, ALWAYS also add `aria-label`. The `title` attribute only helps mouse users with tooltips, while `aria-label` is needed for screen reader users. Check adjacent buttons in the same component for consistency.
 
+---
+
+## 2026-02-13 - LoadingState Error Buttons Accessibility
+
+**Learning**: The LoadingState component's ErrorState sub-component had action buttons ("Coba Lagi" and "Muat Ulang Halaman") that were missing both aria-label and keyboard shortcut hints. This is a high-impact UI component used across multiple pages for error states.
+
+**Action**: Add both aria-label and shortcut props to error state action buttons:
+- "Coba Lagi" (Retry) button: `aria-label="Coba lagi memuat data"`, `shortcut="Ctrl+R"`
+- "Muat Ulang Halaman" (Reload) button: `aria-label="Muat ulang halaman"`, `shortcut="Ctrl+Shift+R"`
+
+**File Fixed**:
+- src/components/ui/LoadingState.tsx - Added accessibility to error state action buttons
+
+**Pattern**: Always audit reusable UI components for accessibility - fixing one component benefits multiple pages. LoadingState is used in error states throughout the app, so this single fix improves accessibility across the entire application.
+

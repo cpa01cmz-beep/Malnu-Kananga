@@ -363,6 +363,8 @@ const ErrorState: React.FC<ErrorStateProps> = ({
                 navigator.vibrate([15, 5, 15]);
               }
             }}
+            aria-label="Coba lagi memuat data"
+            shortcut="Ctrl+R"
             size={size === 'lg' ? 'lg' : 'md'}
             className="touch-manipulation haptic-feedback mobile-touch-target hover-lift-enhanced"
           >
@@ -371,6 +373,8 @@ const ErrorState: React.FC<ErrorStateProps> = ({
           <Button
             variant="outline"
             onClick={() => window.location.reload()}
+            aria-label="Muat ulang halaman"
+            shortcut="Ctrl+Shift+R"
             size={size === 'lg' ? 'lg' : 'md'}
             className="touch-manipulation haptic-feedback mobile-touch-target"
           >
