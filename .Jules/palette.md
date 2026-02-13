@@ -4,6 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - Schedule View Mode Toggle Accessibility
+
+**Learning**: The ParentScheduleView and ScheduleView components had view mode toggle buttons (Daftar/Kalender) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which view mode was currently active. Additionally, the day selector buttons in ScheduleView had the same issue.
+
+**Action**: Add `aria-pressed={boolean}` to all view mode toggle buttons and day selector buttons:
+- ParentScheduleView.tsx: Daftar button `aria-pressed={viewMode === 'list'}`, Kalender button `aria-pressed={viewMode === 'month'}`
+- ScheduleView.tsx: Daftar button `aria-pressed={viewMode === 'list'}`, Kalender button `aria-pressed={viewMode === 'month'}`, day selector buttons `aria-pressed={activeDay === day}`
+
+**Files Fixed**:
+- src/components/ParentScheduleView.tsx - Added aria-pressed to 2 view mode buttons
+- src/components/ScheduleView.tsx - Added aria-pressed to 2 view mode buttons + 7 day selector buttons (added type="button" as well)
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Button groups where only one can be selected (radio-like behavior)
+- View mode toggles (list, grid, calendar, etc.)
+- Day/date selectors
+- Filter buttons in lists and tables
+- Any button that changes appearance based on state
+
+---
+
 ## 2026-02-13 - MessageList Filter Button Accessibility
 
 **Learning**: The MessageList component had filter toggle buttons (Semua, Pribadi, Grup, Belum Dibaca) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which filter was currently active.
