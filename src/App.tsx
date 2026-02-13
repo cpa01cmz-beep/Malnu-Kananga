@@ -92,7 +92,9 @@ const App: React.FC = () => {
   usePerformanceMonitoring();
 
   useEffect(() => {
-    initializeMonitoring();
+    initializeMonitoring().catch((error) => {
+      logger.error('Failed to initialize monitoring:', error);
+    });
   }, []);
 
   useEffect(() => {

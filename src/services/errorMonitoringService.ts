@@ -1,17 +1,3 @@
-import {
-  init,
-  setUser as sentrySetUser,
-  setTag as sentrySetTag,
-  setTags as sentrySetTags,
-  setExtra as sentrySetExtra,
-  setExtras as sentrySetExtras,
-  captureException as sentryCaptureException,
-  captureMessage as sentryCaptureMessage,
-  addBreadcrumb as sentryAddBreadcrumb,
-  withScope,
-  flush as sentryFlush,
-} from '@sentry/react';
-import type { Scope } from '@sentry/react';
 import { logger, LogLevel } from '../utils/logger';
 import { COMPONENT_TIMEOUTS } from '../constants';
 
@@ -36,43 +22,60 @@ export interface ErrorSeverity {
   level: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
 }
 
+type SentryModule = typeof import('@sentry/react');
+
 class ErrorMonitoringService {
   private initialized: boolean = false;
   private environment: 'development' | 'production' | 'staging' = 'development';
   private performanceSpans: Map<string, number> = new Map();
+  private sentryModule: SentryModule | null = null;
+  private initPromise: Promise<void> | null = null;
 
-  init(config: ErrorMonitoringConfig): void {
+  async init(config: ErrorMonitoringConfig): Promise<void> {
     if (this.initialized) {
       logger.warn('Error monitoring already initialized');
       return;
     }
 
-    try {
-      init({
-        dsn: config.dsn,
-        environment: config.environment,
-        release: config.release,
-        tracesSampleRate: config.tracesSampleRate,
-        replaysSessionSampleRate: 0,
-        replaysOnErrorSampleRate: 0,
-      });
+    if (!config.dsn) {
+      logger.info('Error monitoring disabled (no DSN configured)');
+      return;
+    }
 
-      this.environment = config.environment;
-      this.initialized = true;
-      logger.info('Error monitoring initialized', { environment: config.environment });
+    try {
+      this.initPromise = this.loadAndInitSentry(config);
+      await this.initPromise;
     } catch (error) {
       logger.error('Failed to initialize error monitoring', error);
     }
+  }
+
+  private async loadAndInitSentry(config: ErrorMonitoringConfig): Promise<void> {
+    const sentry = await import('@sentry/react');
+    this.sentryModule = sentry;
+
+    sentry.init({
+      dsn: config.dsn,
+      environment: config.environment,
+      release: config.release,
+      tracesSampleRate: config.tracesSampleRate,
+      replaysSessionSampleRate: 0,
+      replaysOnErrorSampleRate: 0,
+    });
+
+    this.environment = config.environment;
+    this.initialized = true;
+    logger.info('Error monitoring initialized', { environment: config.environment });
   }
 
   isEnabled(): boolean {
     return this.initialized && this.environment !== 'development';
   }
 
-  setUser(user: { id: string; email: string; role: string; extraRole?: string | null }): void {
-    if (!this.isEnabled()) return;
+  async setUser(user: { id: string; email: string; role: string; extraRole?: string | null }): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
 
-    sentrySetUser({
+    this.sentryModule.setUser({
       id: user.id,
       email: user.email,
       role: user.role,
@@ -82,85 +85,98 @@ class ErrorMonitoringService {
     logger.debug('User context set for error monitoring', { userId: user.id, role: user.role });
   }
 
-  clearUser(): void {
-    sentrySetUser(null);
+  async clearUser(): Promise<void> {
+    if (!this.sentryModule) return;
+    this.sentryModule.setUser(null);
     logger.debug('User context cleared');
   }
 
-  captureException(error: Error, context?: ErrorContext, severity?: ErrorSeverity['level']): void {
-    if (!this.isEnabled()) {
+  async captureException(error: Error, context?: ErrorContext, severity?: ErrorSeverity['level']): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise.catch(() => {});
+    }
+
+    if (!this.isEnabled() || !this.sentryModule) {
       logger.error('Exception (not sent to monitoring):', error.message, error);
       return;
     }
 
+    const { withScope, setUser, setTags, setExtras, captureException } = this.sentryModule;
+
     if (context) {
       if (context.user) {
-        sentrySetUser(context.user);
+        setUser(context.user);
       }
       if (context.tags) {
-        sentrySetTags(context.tags);
+        setTags(context.tags);
       }
       if (context.extra) {
-        sentrySetExtras(context.extra);
+        setExtras(context.extra);
       }
     }
 
-    withScope((scope: Scope) => {
+    withScope((scope) => {
       if (severity) {
         scope.setLevel(severity);
       }
-      sentryCaptureException(error);
+      captureException(error);
     });
 
     logger.error('Exception captured:', error.message, error);
   }
 
-  captureMessage(message: string, level?: 'error' | 'warning' | 'info', context?: ErrorContext): void {
-    if (!this.isEnabled()) {
+  async captureMessage(message: string, level?: 'error' | 'warning' | 'info', context?: ErrorContext): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise.catch(() => {});
+    }
+
+    if (!this.isEnabled() || !this.sentryModule) {
       logger.log(LogLevel.INFO, `Message (not sent to monitoring) [${level || 'info'}]: ${message}`);
       return;
     }
 
+    const { setUser, setTags, setExtras, captureMessage } = this.sentryModule;
+
     if (context) {
       if (context.user) {
-        sentrySetUser(context.user);
+        setUser(context.user);
       }
       if (context.tags) {
-        sentrySetTags(context.tags);
+        setTags(context.tags);
       }
       if (context.extra) {
-        sentrySetExtras(context.extra);
+        setExtras(context.extra);
       }
     }
 
-    sentryCaptureMessage(message, level);
+    captureMessage(message, level);
     logger.log(LogLevel.INFO, `Message captured [${level || 'info'}]: ${message}`);
   }
 
-  setTag(key: string, value: string): void {
-    if (!this.isEnabled()) return;
-    sentrySetTag(key, value);
+  async setTag(key: string, value: string): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
+    this.sentryModule.setTag(key, value);
   }
 
-  setTags(tags: Record<string, string>): void {
-    if (!this.isEnabled()) return;
-    sentrySetTags(tags);
+  async setTags(tags: Record<string, string>): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
+    this.sentryModule.setTags(tags);
   }
 
-  setExtra(key: string, value: unknown): void {
-    if (!this.isEnabled()) return;
-    sentrySetExtra(key, value);
+  async setExtra(key: string, value: unknown): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
+    this.sentryModule.setExtra(key, value);
   }
 
-  setExtras(extras: Record<string, unknown>): void {
-    if (!this.isEnabled()) return;
-    sentrySetExtras(extras);
+  async setExtras(extras: Record<string, unknown>): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
+    this.sentryModule.setExtras(extras);
   }
 
-  addBreadcrumb(category: string, message: string, data?: Record<string, unknown>): void {
-    if (!this.isEnabled()) return;
+  async addBreadcrumb(category: string, message: string, data?: Record<string, unknown>): Promise<void> {
+    if (!this.isEnabled() || !this.sentryModule) return;
 
-    sentryAddBreadcrumb({
+    this.sentryModule.addBreadcrumb({
       category,
       message,
       data,
@@ -193,8 +209,8 @@ class ErrorMonitoringService {
 
   async flush(timeout: number = COMPONENT_TIMEOUTS.ERROR_FLUSH): Promise<boolean> {
     try {
-      if (!this.isEnabled()) return true;
-      return sentryFlush(timeout);
+      if (!this.isEnabled() || !this.sentryModule) return true;
+      return this.sentryModule.flush(timeout);
     } catch (error) {
       logger.error('Error flushing Sentry events:', error);
       return false;
