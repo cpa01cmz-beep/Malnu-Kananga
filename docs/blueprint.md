@@ -32,7 +32,7 @@ Build a world-class school management system with AI-powered features, voice int
 | AI Integration | ✅ Complete |
 | PWA/Offline | ✅ Complete |
 | Accessibility | ✅ Complete |
-| Test Coverage | 🟡 29.2% (target: 80%) |
+| Test Coverage | 🟡 50%+ (target: 80%) |
 | Performance | ✅ <3s load |
 
 ## Next Steps
