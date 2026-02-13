@@ -23,6 +23,7 @@ import { parentGradeNotificationService } from '../services/parentGradeNotificat
 import Breadcrumb from './ui/Breadcrumb';
 import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
+import SmallActionButton from './ui/SmallActionButton';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
 import { STORAGE_KEYS, TIME_MS, UI_STRINGS } from '../constants';
@@ -604,13 +605,14 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     >
                       Sembunyikan
                     </button>
-                    <button
+                    <SmallActionButton
                       onClick={refreshInsights}
                       disabled={insightsLoading}
-                      className="text-sm px-3 py-1 bg-primary-100 hover:bg-primary-200 dark:bg-primary-900/30 dark:hover:bg-primary-900/50 rounded-lg disabled:opacity-50"
+                      tooltip="Muat ulang data"
+                      shortcut="Ctrl+R"
                     >
                       {insightsLoading ? UI_STRINGS.LOADING : 'Perbarui'}
-                    </button>
+                    </SmallActionButton>
                   </div>
                 </div>
 
