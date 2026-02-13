@@ -36,6 +36,24 @@ export interface RealTimeEvent {
   userId: string;
 }
 
+export interface PresenceData {
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  currentPage?: string;
+  lastSeen: string;
+  status: 'online' | 'away' | 'offline';
+}
+
+export interface PresenceEvent {
+  type: 'user_online' | 'user_offline' | 'user_heartbeat' | 'presence_update';
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  data?: PresenceData;
+  timestamp: string;
+}
+
 export type RealTimeEventType =
   | 'grade_created' | 'grade_updated' | 'grade_deleted'
   | 'attendance_marked' | 'attendance_updated'
@@ -46,7 +64,9 @@ export type RealTimeEventType =
   | 'message_created' | 'message_updated' | 'message_deleted'
   | 'message_read'
   | 'conversation_created' | 'conversation_updated' | 'conversation_deleted'
-  | 'notification_created' | 'notification_read';
+  | 'notification_created' | 'notification_read'
+  | 'user_online' | 'user_offline' | 'user_heartbeat'
+  | 'presence_update';
 
 export interface WebSocketConnectionState {
   connected: boolean;

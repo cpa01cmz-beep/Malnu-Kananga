@@ -373,3 +373,17 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - aria-label for screen reader accessibility
 - shortcut="Ctrl+R" to make the keyboard shortcut discoverable
 
+---
+
+## 2026-02-13 - Generate QR Code Button Aria-Label
+
+**Learning**: The SchoolInventory component had a Generate QR Code button that used `title` for tooltip but was missing `aria-label` for screen reader accessibility. Interestingly, the adjacent Delete button already had both `title` and `aria-label`, showing this was an oversight rather than a pattern issue.
+
+**Action**: Add `aria-label` to icon-only buttons that already have `title` but are missing screen reader support:
+- SchoolInventory.tsx: Added `aria-label={\`Generate QR Code untuk ${item.itemName}\`}`
+
+**File Fixed**:
+- src/components/SchoolInventory.tsx - Added aria-label to Generate QR Code button
+
+**Pattern**: When adding `title` to icon-only buttons, ALWAYS also add `aria-label`. The `title` attribute only helps mouse users with tooltips, while `aria-label` is needed for screen reader users. Check adjacent buttons in the same component for consistency.
+

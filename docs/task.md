@@ -99,15 +99,19 @@
 - `formUtils`: 21 tests (form field classes, validation feedback)
 
 ### T009: Real-time Collaboration (F010)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: Medium
 **Description**: Enable real-time features using existing WebSocket infrastructure.
 **Rationale**: F010 - Enhance communication and monitoring.
 **Actions**:
-- [ ] Add presence indicators (who's online)
-- [ ] Add real-time notifications for grade/attendance changes
-- [ ] Add admin activity dashboard
-**Notes**: Leverage existing WebSocket infrastructure. Minimal new code needed.
+- [x] Add presence indicators (who's online)
+- [x] Add real-time notifications for grade/attendance changes
+- [x] Add admin activity dashboard
+**Notes**: Leveraged existing WebSocket infrastructure. Implemented:
+- Added presence event types to webSocketService (user_online, user_offline, user_heartbeat, presence_update)
+- Created usePresence hook for tracking online users
+- Created PresenceIndicator UI component with dot, badge, list, and avatar variants
+- Added presence indicator to AdminDashboard with online user count
 
 ---
 

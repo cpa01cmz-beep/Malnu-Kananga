@@ -34,8 +34,10 @@ import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
+import { usePresence } from '../hooks/usePresence';
 import { RealTimeEventType } from '../services/webSocketService';
 import { WebSocketStatus } from './WebSocketStatus';
+import PresenceIndicator from './ui/PresenceIndicator';
 import { useSchoolInsights } from '../hooks/useSchoolInsights';
 
 interface AdminDashboardProps {
@@ -168,6 +170,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     eventTypes: adminEventTypes,
     enabled: isOnline,
     onEvent: handleAdminRealtimeEvent,
+  });
+
+  const { onlineUsers, isTracking: isPresenceTracking } = usePresence({
+    enabled: isOnline && isConnected,
   });
 
   const getCurrentUserId = (): string => {
@@ -757,6 +763,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                           <span className="text-neutral-600 dark:text-neutral-400">
                               {isConnected ? 'Real-time Aktif' : isConnecting ? 'Menghubungkan...' : 'Tidak Terhubung'}
                           </span>
+                          {isPresenceTracking && onlineUsers.length > 0 && (
+                            <div className="ml-auto">
+                              <PresenceIndicator
+                                users={onlineUsers}
+                                variant="badge"
+                                showCount
+                              />
+                            </div>
+                          )}
                       </div>
                   )}
                 </Card>
