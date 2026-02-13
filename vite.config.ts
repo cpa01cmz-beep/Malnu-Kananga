@@ -34,6 +34,31 @@ function asyncCssPlugin(): Plugin {
   }
 }
 
+function modulePreloadPlugin(): Plugin {
+  return {
+    name: 'module-preload',
+    apply: 'build',
+    transformIndexHtml(html, ctx) {
+      const chunks = Object.keys(ctx.bundle || {})
+        .filter(name => name.endsWith('.js'))
+        .filter(name => name.includes('vendor-react') || name.includes('index-'))
+        .slice(0, 3)
+      
+      const preloadLinks = chunks
+        .map(name => {
+          const path = name.startsWith('assets/') ? name.slice(7) : name
+          return `<link rel="modulepreload" href="/assets/${path}" crossorigin>`
+        })
+        .join('\n    ')
+      
+      if (preloadLinks) {
+        return html.replace('<head>', `<head>\n    ${preloadLinks}`)
+      }
+      return html
+    },
+  }
+}
+
   // https://vitejs.dev/config/
 // BroCula: Enhanced chunking strategy to minimize unused JavaScript on initial load
 // Key principle: Heavy libraries and dashboard components should ONLY load when needed
@@ -47,6 +72,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       asyncCssPlugin(),
+      modulePreloadPlugin(),
       VitePWA({
         registerType: WORKBOX_CONFIG.REGISTER_TYPE,
         includeAssets: [...PWA_MANIFEST.INCLUDE_ASSETS],
