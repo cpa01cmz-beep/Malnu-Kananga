@@ -626,6 +626,16 @@ export const DISPLAY_LIMITS = {
     TEMPLATE_EXAMPLES: 5,
 } as const;
 
+// UI Component Limits - Flexy: Centralized limits for UI components to ensure consistency
+export const UI_LIMITS = {
+    // Chat Window limits
+    CHAT_MAX_HISTORY_SIZE: 20,
+    CHAT_MAX_MESSAGES_SIZE: 100,
+
+    // Command Palette limits
+    COMMAND_PALETTE_MAX_RECENT: 5,
+} as const;
+
 // Retry and timeout configuration
 export const RETRY_CONFIG = {
     DEFAULT_INITIAL_DELAY: 1000,
@@ -760,7 +770,7 @@ export const TIME_FORMAT = {
 
 // API Configuration - Centralized to avoid circular dependencies
 export const API_CONFIG = {
-    DEFAULT_BASE_URL: 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
+    DEFAULT_BASE_URL: ENV.API.BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
     WS_PATH: '/ws',
     REQUEST_USER_ID: 'api-request',
     DEFAULT_IP_ADDRESS: 'server',
@@ -1778,7 +1788,7 @@ export const DEMO_USERS = {
     },
     STUDENT: {
         name: 'Budi Santoso',
-        email: 'budi.santoso@malnu.sch.id',
+        email: EMAIL_DOMAINS.STUDENT,
     },
 } as const;
 
@@ -2722,6 +2732,10 @@ export const LEGACY_STORAGE_KEYS = {
     STUDENT_GRADES_CACHE: 'malnu_student_grades_cache',
     STUDENT_ATTENDANCE_CACHE: 'malnu_student_attendance_cache',
     PARENT_CHILDREN_CACHE: 'malnu_parent_children_cache',
+    SUBJECTS_CACHE: 'malnu_subjects_cache',
+    CLASSES_CACHE: 'malnu_classes_cache',
+    CATEGORY_SUGGESTIONS: 'malnu_category_suggestions',
+    MATERIAL_STATS: 'malnu_material_stats',
 } as const;
 
 // Number formatting constants - Flexy: Never hardcode decimal places!

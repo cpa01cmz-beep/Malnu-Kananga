@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS, TIME_MS } from '../../constants';
+import { STORAGE_KEYS, TIME_MS, UI_LIMITS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 const RECENT_COMMANDS_KEY = STORAGE_KEYS.COMMAND_PALETTE_RECENT;
-const MAX_RECENT_COMMANDS = 5;
+const MAX_RECENT_COMMANDS = UI_LIMITS.COMMAND_PALETTE_MAX_RECENT;
 
 export interface Command {
   id: string;
