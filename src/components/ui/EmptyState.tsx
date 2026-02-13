@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from './Button';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { DELAY_MS } from '../../constants';
 
 /**
  * Comprehensive Empty State Components
@@ -52,7 +53,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
   useEffect(() => {
     if (animate && !prefersReducedMotion) {
-      const timer = setTimeout(() => setIsVisible(true), 50);
+      const timer = setTimeout(() => setIsVisible(true), DELAY_MS.SHORT);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);

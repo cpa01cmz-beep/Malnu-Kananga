@@ -5,6 +5,8 @@
  * and visual effects to eliminate hardcoded values.
  */
 
+import { DESIGN_TOKENS } from './design-tokens';
+
 // ============================================================================
 // EASING FUNCTIONS
 // ============================================================================
@@ -148,10 +150,9 @@ export const SIZE = {
 // ============================================================================
 
 export const COLOR = {
-  // Primary brand colors
   PRIMARY: {
     BLUE: '#3b82f6',
-    WHITE: '#ffffff',
+    WHITE: DESIGN_TOKENS.colors.neutral[0],
   },
   // Gradient definitions
   GRADIENT: {
@@ -175,7 +176,7 @@ export const FOCUS_RING = {
   WIDTH: 3,
   WIDTH_OFFSET: 2,
   COLOR: 'rgba(59, 130, 246, 0.3)',
-  COLOR_WHITE: '#ffffff',
+  COLOR_WHITE: DESIGN_TOKENS.colors.neutral[0],
 } as const;
 
 // ============================================================================

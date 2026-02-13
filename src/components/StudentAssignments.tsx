@@ -537,6 +537,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
             <div className="flex justify-end gap-3 mt-6">
               <Button
                 variant="ghost"
+                shortcut="Esc"
                 onClick={() => {
                   setCurrentView('list');
                   setSubmissionText('');
@@ -547,13 +548,15 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
               >
                 Batal
               </Button>
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            disabled={submitting || (!submissionText && attachments.length === 0)}
-          >
-            {submitting ? 'Mengirim...' : 'Kirim Tugas'}
-          </Button>
+              <Button
+                variant="primary"
+                shortcut="Enter"
+                isLoading={submitting}
+                onClick={handleSubmit}
+                disabled={submitting || (!submissionText && attachments.length === 0)}
+              >
+                {submitting ? 'Mengirim...' : 'Kirim Tugas'}
+              </Button>
             </div>
 
             {selectedAssignment.attachments && selectedAssignment.attachments.length > 0 && (

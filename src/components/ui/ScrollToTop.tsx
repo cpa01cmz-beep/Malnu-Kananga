@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
-import { ANIMATION_DURATIONS } from '../../constants';
+import { ANIMATION_DURATIONS, UI_DELAYS } from '../../constants';
 
 export interface ScrollToTopProps {
   /** Minimum scroll position (in pixels) before button appears */
@@ -120,7 +120,7 @@ const ScrollToTop: React.FC<ScrollToTopProps> = ({
     setIsHovered(true);
     tooltipTimeoutRef.current = setTimeout(() => {
       setShowTooltip(true);
-    }, 500);
+    }, UI_DELAYS.TOOLTIP_SHOW);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
