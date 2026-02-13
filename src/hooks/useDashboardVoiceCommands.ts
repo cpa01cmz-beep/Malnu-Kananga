@@ -5,6 +5,38 @@ import { UserRole, UserExtraRole } from '../types/permissions';
 import { logger } from '../utils/logger';
 import { USER_ROLES } from '../constants';
 
+// All known dashboard voice commands
+const KNOWN_DASHBOARD_COMMANDS = new Set([
+  // Common commands
+  'GO_HOME',
+  'LOGOUT',
+  'HELP',
+  // Admin commands
+  'SHOW_PPDB',
+  'VIEW_GRADES_OVERVIEW',
+  'OPEN_LIBRARY',
+  'GO_TO_CALENDAR',
+  'SHOW_STATISTICS',
+  // Teacher commands
+  'SHOW_MY_CLASSES',
+  'OPEN_GRADING',
+  'VIEW_ATTENDANCE',
+  'CREATE_ANNOUNCEMENT',
+  'VIEW_SCHEDULE',
+  'OPEN_MESSAGES',
+  'OPEN_GROUPS',
+  'SEND_MESSAGE',
+  // Student commands
+  'SHOW_MY_GRADES',
+  'CHECK_ATTENDANCE',
+  'VIEW_INSIGHTS',
+  // Parent commands
+  'VIEW_CHILD_GRADES',
+  'VIEW_CHILD_ATTENDANCE',
+  'VIEW_CHILD_SCHEDULE',
+  'SEE_NOTIFICATIONS',
+]);
+
 interface UseDashboardVoiceCommandsOptions {
   userRole: UserRole;
   extraRole?: UserExtraRole;
@@ -81,7 +113,11 @@ export const useDashboardVoiceCommands = ({
   const handleVoiceCommand = useCallback((command: VoiceCommand): boolean => {
     logger.debug('Handling dashboard voice command:', command);
     
-    // Check if command is available for current role
+    if (!KNOWN_DASHBOARD_COMMANDS.has(command.action)) {
+      logger.warn('Unknown dashboard command:', command.action);
+      return false;
+    }
+    
     if (!availableCommands.includes(command.action)) {
       logger.warn(`Command ${command.action} not available for role ${userRole}`);
       return false;
