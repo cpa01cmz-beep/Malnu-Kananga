@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import { useSwipeGestures } from '../../utils/gestures';
+import { TIME_MS } from '../../constants';
 
 export type BottomSheetSize = 'auto' | 'compact' | 'medium' | 'large' | 'full';
 export type BottomSheetPosition = 'bottom' | 'center' | 'top';
@@ -202,7 +203,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         if (sheetRef.current) {
           sheetRef.current.focus();
         }
-      }, 100);
+      }, TIME_MS.MODERATE);
     }
   }, [isOpen, onOpen, onTap]);
 

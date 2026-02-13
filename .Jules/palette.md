@@ -125,3 +125,36 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - Adding visible labels would break the UI design
 
 Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 input-label relationships.
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
+
+---
+
+## 2026-02-13 - Save Button Keyboard Shortcut Discovery
+
+**Learning**: High-traffic save buttons (grades, attendance, announcements) were missing keyboard shortcut hints. Teachers save grades daily, but couldn't discover the efficient Ctrl+S keyboard shortcut. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
+
+**Action**: Add `shortcut="Ctrl+S"` prop to all save/submit buttons in high-traffic data entry components. This makes the keyboard shortcut discoverable through tooltip hints.
+
+**Components Updated**:
+- GradingManagement.tsx - Added shortcut="Ctrl+S" to save grades button
+- AttendanceManagement.tsx - Added shortcut="Ctrl+S" to save attendance button
+- AnnouncementManager.tsx - Added shortcut="Ctrl+S" to save announcement button
+
+**Pattern**: Follows the established keyboard shortcut pattern:
+- Send buttons: Enter (for message input)
+- Refresh/retry buttons: Ctrl+R (for data reload)
+- Save buttons: Ctrl+S (for form submission)
+
+Always audit save/submit buttons in forms - if they persist data, add keyboard shortcut hints.

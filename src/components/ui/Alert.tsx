@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import IconButton from './IconButton';
 import InformationCircleIcon from '../icons/InformationCircleIcon';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { TIME_MS } from '../../constants';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'neutral';
 export type AlertSize = 'sm' | 'md' | 'lg';
@@ -160,7 +161,7 @@ const Alert: React.FC<AlertProps> = ({
       // Small delay to ensure animation plays after render
       const timer = setTimeout(() => {
         setIsVisible(true);
-      }, 10);
+      }, TIME_MS.VERY_SHORT);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);
@@ -177,7 +178,7 @@ const Alert: React.FC<AlertProps> = ({
           setIsExiting(true);
           setTimeout(() => {
             onClose?.();
-          }, 200);
+          }, TIME_MS.MEDIUM);
         }
       }, autoDismiss);
       return () => clearTimeout(timer);
