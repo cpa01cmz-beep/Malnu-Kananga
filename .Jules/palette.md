@@ -158,3 +158,19 @@ Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 inp
 - Save buttons: Ctrl+S (for form submission)
 
 Always audit save/submit buttons in forms - if they persist data, add keyboard shortcut hints.
+
+---
+
+## 2026-02-13 - Native confirm() Replacement with Accessible Dialog
+
+**Learning**: The AnnouncementManager component used native browser `confirm()` for delete confirmation, which is:
+- Not accessible (no screen reader support)
+- Blocking and jarring for users
+- Not stylistically consistent with the app
+
+**Action**: Replace native `confirm()` with the accessible `ConfirmationDialog` component already in the codebase. This pattern should be applied to all delete/destructive actions.
+
+**Files Fixed**:
+- AnnouncementManager.tsx - Replaced confirm() with ConfirmationDialog
+
+**Pattern**: Always audit for native `confirm()`, `alert()`, or `prompt()` usage - replace with accessible UI components.
