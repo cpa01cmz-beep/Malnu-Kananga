@@ -3568,6 +3568,44 @@ export const LOADING_MESSAGES = {
         GENERATING: 'AI sedang menghasilkan...',
         ANALYZING: 'AI sedang menganalisis...',
     },
+
+    // Dashboard loading messages
+    DASHBOARD_ADMIN: 'Memuat dashboard admin...',
+    DASHBOARD_TEACHER: 'Memuat dashboard guru...',
+    DASHBOARD_PARENT: 'Memuat dashboard wali murid...',
+    DASHBOARD_STUDENT: 'Memuat portal siswa...',
+
+    // Page/Section loading messages
+    PAGE: 'Memuat halaman...',
+    PAGE_RESET_PASSWORD: 'Memuat halaman reset password...',
+    LINKS: 'Memuat tautan...',
+    PROFILE: 'Memuat profil...',
+    PPDB: 'Memuat PPDB...',
+    PROGRAMS: 'Memuat program...',
+    NEWS: 'Memuat berita...',
+    PPDB_FORM: 'Memuat formulir pendaftaran...',
+    DOCUMENTATION: 'Memuat dokumentasi...',
+    EDITOR: 'Memuat editor...',
+    AI_ASSISTANT: 'Memuat asisten AI...',
+
+    // Teacher features
+    GRADE_MANAGEMENT: 'Memuat manajemen nilai...',
+    CLASS_MANAGEMENT: 'Memuat manajemen kelas...',
+    MATERIAL_UPLOAD: 'Memuat upload materi...',
+    INVENTORY: 'Memuat inventaris...',
+    ASSIGNMENT_CREATION: 'Memuat pembuatan tugas...',
+    ASSIGNMENT_GRADING: 'Memuat penilaian tugas...',
+    GRADE_ANALYSIS: 'Memuat analisis nilai...',
+    QUIZ_GENERATOR: 'Memuat generator kuis...',
+    QUIZ_INTEGRATION: 'Memuat integrasi kuis...',
+
+    // Communication
+    MESSAGES: 'Memuat pesan...',
+    GROUPS: 'Memuat grup...',
+    COMMUNICATION_LOG: 'Memuat log komunikasi...',
+
+    // Parent portal
+    PARENT_PORTAL: 'Memuat data portal wali murid...',
 } as const;
 
 // Voice Feature Strings - Flexy: Never hardcode voice UI text!

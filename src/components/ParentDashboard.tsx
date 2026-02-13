@@ -25,7 +25,7 @@ import Card from './ui/Card';
 import OfflineBanner from './ui/OfflineBanner';
 import { useDashboardVoiceCommands } from '../hooks/useDashboardVoiceCommands';
 import { useOfflineDataService, useOfflineData, type CachedParentData, type CachedStudentData } from '../services/offlineDataService';
-import { STORAGE_KEYS, TIME_MS, UI_STRINGS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_STRINGS, LOADING_MESSAGES } from '../constants';
 
 import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
@@ -475,7 +475,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     return (
       <main className="pt-24 sm:pt-32 min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <SuspenseLoading message="Memuat data portal wali murid..." size="lg" />
+          <SuspenseLoading message={LOADING_MESSAGES.PARENT_PORTAL} size="lg" />
         </div>
       </main>
     );
