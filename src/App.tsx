@@ -158,7 +158,9 @@ const App: React.FC = () => {
     };
     
     checkAuth();
-    loadDefaultContent();
+    loadDefaultContent().catch((error) => {
+      logger.error('Failed to load default content:', error);
+    });
     
     // Only check permission status, don't request on load (Lighthouse best practice)
     // Permission will be requested when user interacts with notification settings
@@ -241,13 +243,18 @@ const App: React.FC = () => {
   };
 
   const confirmResetContent = async () => {
-    const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
-    setSiteContent({
-      featuredPrograms: INITIAL_PROGRAMS,
-      latestNews: INITIAL_NEWS
-    });
-    setIsResetConfirmOpen(false);
-    showToast('Konten dikembalikan ke pengaturan awal.', 'info');
+    try {
+      const { INITIAL_PROGRAMS, INITIAL_NEWS } = await import('./data/defaults');
+      setSiteContent({
+        featuredPrograms: INITIAL_PROGRAMS,
+        latestNews: INITIAL_NEWS
+      });
+      setIsResetConfirmOpen(false);
+      showToast('Konten dikembalikan ke pengaturan awal.', 'info');
+    } catch (error) {
+      logger.error('Failed to reset content:', error);
+      showToast('Gagal mengembalikan konten ke pengaturan awal.', 'error');
+    }
   };
 
   const handleSWUpdate = () => {
