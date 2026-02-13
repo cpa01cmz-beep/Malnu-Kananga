@@ -42,6 +42,12 @@ export const STORAGE_KEYS = {
     AUTH_TOKEN: 'malnu_auth_token',
     REFRESH_TOKEN: 'malnu_refresh_token',
     
+    // Two-Factor Authentication (2FA)
+    TWO_FACTOR_SECRET: (userId: string) => `malnu_2fa_secret_${userId}`,
+    TWO_FACTOR_ENABLED: (userId: string) => `malnu_2fa_enabled_${userId}`,
+    TWO_FACTOR_BACKUP_CODES: (userId: string) => `malnu_2fa_backup_codes_${userId}`,
+    TWO_FACTOR_PENDING_SETUP: 'malnu_2fa_pending_setup',
+    
     // User and push notification data (refactored from hardcoded)
     USER: 'malnu_user',
     CHILDREN: 'malnu_children',

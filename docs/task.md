@@ -217,16 +217,24 @@
 - [ ] Add batch generation for class-wide documents
 
 ### T014: Two-Factor Authentication (F017)
-**Status**: ❌ Pending
+**Status**: 🟡 In Progress
 **Priority**: Medium
 **Description**: Add two-factor authentication for enhanced account security.
 **Rationale**: F017 - Protect sensitive student data with 2FA.
 **Actions**:
-- [ ] Add TOTP-based 2FA implementation
-- [ ] Add QR code setup for authenticator apps
-- [ ] Add backup codes for account recovery
+- [x] Add TOTP-based 2FA implementation
+- [x] Add QR code setup for authenticator apps
+- [x] Add backup codes for account recovery
 - [ ] Add optional 2FA toggle in user settings
 - [ ] Add admin enforcement option for specific roles
+**Notes**: Implemented:
+- Created `src/services/totpService.ts` with full TOTP implementation using Web Crypto API
+- Created `src/components/ui/TwoFactorAuth.tsx` with Three components:
+  - TwoFactorSetup: Setup flow with QR code scanning
+  - TwoFactorDisable: Disable 2FA with verification
+  - TwoFactorStatus: Shows current 2FA status
+- Added storage keys in constants.ts for 2FA data
+- Uses QRCode library for authenticator app setup
 
 ### T015: Scheduled Automation System (F018)
 **Status**: ❌ Pending
@@ -318,4 +326,9 @@
   - Created: src/hooks/useStudentGoals.ts (goals management hook)
   - Created: src/services/studentBadgeService.ts (badge/achievement system)
   - Core infrastructure ready for UI integration
+- T014 (Two-Factor Authentication): In progress
+  - Created: src/services/totpService.ts (TOTP implementation using Web Crypto API)
+  - Created: src/components/ui/TwoFactorAuth.tsx (Setup, Disable, Status components)
+  - Added: Storage keys in constants.ts for 2FA data
+  - Uses QRCode library for authenticator setup
 - TypeScript and lint checks pass
