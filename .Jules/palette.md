@@ -272,3 +272,19 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 
 **Pattern**: Always audit form and settings buttons - if they persist data, use the Button component with shortcut hints for discoverable keyboard shortcuts.
 
+---
+
+## 2026-02-13 - FolderNavigation Button Keyboard Shortcuts
+
+**Learning**: The FolderNavigation component handles folder creation and editing with action buttons ("Buat", "Simpan", "Batal") but they were missing keyboard shortcut hints. This follows the pattern from QuizGenerator, QuizPreview, and other high-traffic form components.
+
+**Action**: Add keyboard shortcut hints to FolderNavigation action buttons:
+- "Buat" (Create) button: shortcut="Ctrl+Enter" (natural for form submission)
+- "Simpan" (Save) button: shortcut="Ctrl+S" (standard save)
+- "Batal" (Cancel) buttons: shortcut="Esc" (standard cancel)
+
+**File Fixed**:
+- FolderNavigation.tsx - Added shortcut hints to 4 action buttons (2 lines each)
+
+**Pattern**: Always audit folder/material management forms for missing keyboard shortcut hints on action buttons. Use Ctrl+Enter for create actions in forms that use Enter for newlines.
+

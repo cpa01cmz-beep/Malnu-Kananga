@@ -362,6 +362,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
               variant="blue-solid"
               size="sm"
               onClick={createFolder}
+              shortcut="Ctrl+Enter"
             >
               Buat
             </Button>
@@ -372,6 +373,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                   setNewFolderDescription('');
                 }}
                 variant="neutral"
+                shortcut="Esc"
               >
                 Batal
               </SmallActionButton>
@@ -412,6 +414,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
               onClick={() => updateFolder(editingFolder)}
               variant="primary"
               fullWidth
+              shortcut="Ctrl+S"
             >
               Simpan
             </SmallActionButton>
@@ -419,6 +422,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
               onClick={() => setEditingFolder(null)}
               variant="neutral"
               fullWidth
+              shortcut="Esc"
             >
               Batal
             </SmallActionButton>
