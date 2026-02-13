@@ -125,3 +125,20 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - Adding visible labels would break the UI design
 
 Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 input-label relationships.
+
+---
+
+## 2026-02-13 - Quiz Button Keyboard Shortcut Discovery
+
+**Learning**: Quiz creation components (QuizGenerator, QuizPreview) had save and cancel buttons that support keyboard shortcuts (Ctrl+S, Esc) but users couldn't discover them without visual hints. This follows a pattern seen in ChatWindow, SiteEditor, and analytics dashboards.
+
+**Action**: Add `shortcut` prop to all save and cancel buttons in quiz-related components:
+- QuizGenerator.tsx: Cancel (Esc), Save Quiz (Ctrl+S)
+- QuizPreview.tsx: Main Cancel (Esc), Save (Ctrl+S), Question edit Save (Ctrl+S), Question edit Cancel (Esc)
+
+**Pattern**: Always audit form components with keyboard shortcuts - if they handle Ctrl+S for save or Esc for cancel, add shortcut hints to make them discoverable. This applies to:
+- Quiz generators/editors
+- Form wizards
+- Modal dialogs with save/cancel
+- Any component with keyboard-handled actions
+
