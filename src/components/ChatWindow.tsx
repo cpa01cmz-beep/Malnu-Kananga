@@ -414,6 +414,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
             ariaLabel="Kirim pesan"
+            shortcut="Enter"
             size="md"
             variant="primary"
             className="p-2.5 mb-0.5"
