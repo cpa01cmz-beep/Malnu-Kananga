@@ -844,6 +844,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             aria-label="Pencarian lanjutan"
             aria-expanded={showAdvancedSearch}
             aria-controls="advanced-search-panel"
+            shortcut="Enter"
           >
             <FunnelIcon className="w-5 h-5" />
           </Button>
@@ -854,6 +855,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Tampilkan hanya favorit"
+            shortcut="Enter"
           >
             <StarIcon className="w-5 h-5" />
           </Button>
@@ -864,6 +866,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Pencarian semantik AI"
+            shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center">
               {isSemanticMode ? '🧠' : '🔍'}
@@ -878,6 +881,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             aria-label="Opsi pencarian semantik"
             aria-expanded={showSemanticOptions}
             aria-controls="semantic-options-panel"
+            shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               ⚙️
@@ -889,6 +893,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Pengaturan OCR"
+            shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               <DocumentTextIcon />
@@ -914,6 +919,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Bantuan perintah suara"
+            shortcut="F1"
           >
             <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
               ❓
