@@ -543,7 +543,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                       <h4 className="font-medium text-gray-900">{rec.title}</h4>
                       <p className="text-sm text-gray-600 mt-1">{rec.description}</p>
                       {rec.actionable && (
-                        <button className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
+                        <button aria-label={`Lihat detail rekomendasi: ${rec.title}`} className="mt-2 text-sm text-blue-600 hover:text-blue-800 font-medium">
                           Lihat detail →
                         </button>
                       )}
@@ -773,7 +773,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
                       </div>
                       <p className="text-sm text-gray-600">{rec.description}</p>
                       {rec.actionable && (
-                        <button className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                        <button aria-label={`Lihat detail rekomendasi: ${rec.title}`} className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                           </svg>
