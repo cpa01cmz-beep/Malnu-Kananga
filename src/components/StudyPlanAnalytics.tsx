@@ -393,7 +393,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
             <Button variant="secondary" onClick={handleRefreshAnalytics}>
               Perbarui
             </Button>
-            <Button variant="secondary" onClick={handleExportAnalytics}>
+            <Button variant="secondary" onClick={handleExportAnalytics} aria-label="Ekspor analitik rencana belajar ke PDF">
               Ekspor
             </Button>
             <Button variant="secondary" onClick={onBack}>
