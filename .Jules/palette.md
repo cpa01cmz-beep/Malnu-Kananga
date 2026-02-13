@@ -97,3 +97,31 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 ---
 
 ## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
+
+**Learning**: Refresh buttons in analytics dashboards (StudentInsights, StudyPlanAnalytics) support Ctrl+R keyboard shortcut but users couldn't discover it without visual hints. Adding `shortcut="Ctrl+R"` prop makes the shortcut visible on hover/focus.
+
+**Action**: Add shortcut hints to all refresh/reload buttons in analytics components. Use `shortcut="Ctrl+R"` prop which displays a hint tooltip.
+
+**Components Fixed**:
+- StudentInsights.tsx - Added shortcut="Ctrl+R" to refresh button
+- StudyPlanAnalytics.tsx - Added shortcut="Ctrl+R" to refresh button
+
+---
+
+## 2026-02-13 - Form Input Label Association in FolderNavigation
+
+**Learning**: Native `<input>` and `<textarea>` elements in FolderNavigation's create folder form were missing proper label associations. The heading "Buat Folder Baru" served as the visual label but screen readers couldn't associate it with the inputs.
+
+**Action**: Use `aria-labelledby` to associate form inputs with their heading labels:
+1. Add unique `id` to the heading element (e.g., `id="create-folder-heading"`)
+2. Add `aria-labelledby="create-folder-heading"` to each input that belongs to that form section
+
+**File Fixed**:
+- FolderNavigation.tsx - Added id and aria-labelledby to create folder form inputs
+
+**Pattern**: This pattern is useful when:
+- Using headings as implicit labels for form sections
+- Multiple inputs share the same label context
+- Adding visible labels would break the UI design
+
+Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 input-label relationships.
