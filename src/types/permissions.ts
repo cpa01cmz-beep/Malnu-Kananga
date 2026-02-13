@@ -15,6 +15,7 @@ export interface Role {
   name: string;
   description: string;
   permissions: Permission['id'][];
+  baseRoleId?: string;
 }
 
 export interface PermissionMatrix {

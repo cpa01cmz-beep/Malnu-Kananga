@@ -396,7 +396,8 @@ export function GroupChat({ currentUser }: GroupChatProps) {
             <div className="flex space-x-3">
               <Button
                 onClick={() => setShowNewGroupModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                variant="outline"
+                shortcut="Esc"
               >
                 Batal
               </Button>

@@ -146,6 +146,12 @@ export const STORAGE_KEYS = {
 
     // Grade History for tracking changes (new)
     GRADE_HISTORY: 'malnu_grade_history',
+
+    // Custom Role-Based Permissions (F021 - new)
+    CUSTOM_ROLES: 'malnu_custom_roles',
+    ROLE_TEMPLATES: 'malnu_role_templates',
+    CUSTOM_ROLE_ASSIGNMENTS: 'malnu_custom_role_assignments',
+    PERMISSION_INHERITANCE: 'malnu_permission_inheritance',
     
     // Audit Log for admin actions (new - T004)
     AUDIT_LOG: 'malnu_audit_log',
