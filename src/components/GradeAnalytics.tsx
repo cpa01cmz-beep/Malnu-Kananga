@@ -30,6 +30,8 @@ import Card from './ui/Card';
 import Button from './ui/Button';
 import Tab from './ui/Tab';
 import Select from './ui/Select';
+import Input from './ui/Input';
+import { Toggle } from './ui/Toggle';
 import { EmptyState } from './ui/LoadingState';
 import ErrorMessage from './ui/ErrorMessage';
 import { CardSkeleton } from './ui/Skeleton';
@@ -38,6 +40,8 @@ import { CHART_COLORS } from '../config/chartColors';
 import { analyzeClassPerformance } from '../services/ai';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { pdfExportService } from '../services/pdfExportService';
+import Papa from 'papaparse';
 
 interface GradeAnalyticsProps {
   onBack: () => void;
@@ -78,6 +82,11 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
   const [aiInsights, setAiInsights] = useState<string | null>(null);
   const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
   const [aiInsightsError, setAiInsightsError] = useState<string | null>(null);
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
+    start: new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
+  const [showComparison, setShowComparison] = useState(false);
 
   const showToast = useCallback((msg: string, type: 'success' | 'error' | 'warning' | 'info') => {
     onShowToast(msg, type);
@@ -316,22 +325,42 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     analyzeClassGrades();
   }, [analyzeClassGrades]);
 
-  const exportAnalyticsReport = () => {
+  const exportAnalyticsReport = (format: 'pdf' | 'csv' = 'pdf') => {
     if (!analytics) return;
     
-    const reportData = {
-      className: analytics.className,
-      totalStudents: analytics.totalStudents,
-      averageScore: analytics.averageScore,
-      gradeDistribution: analytics.gradeDistribution,
-      submissionRate: analytics.submissionRate,
-      topPerformers: analytics.topPerformers,
-      needsAttention: analytics.needsAttention,
-      exportDate: new Date().toISOString()
-    };
-
-    localStorage.setItem(STORAGE_KEYS.GRADE_ANALYTICS_EXPORT(analytics.classId), JSON.stringify(reportData));
-    showToast('Laporan analitik berhasil disimpan', 'success');
+    if (format === 'pdf') {
+      const gradeData = analytics.studentPerformances.map(s => ({
+        subjectName: analytics.className,
+        grade: Math.round(s.averageScore),
+        className: analytics.className,
+        semester: dateRange.start + ' - ' + dateRange.end,
+        remarks: s.averageScore >= 85 ? 'Sangat Baik' : s.averageScore >= 75 ? 'Baik' : s.averageScore >= 60 ? 'Cukup' : 'Perlu Perhatian'
+      }));
+      
+      pdfExportService.createGradesReport(gradeData);
+      showToast('Laporan PDF berhasil diunduh', 'success');
+    } else {
+      const csvData = analytics.studentPerformances.map(s => ({
+        'Nama Siswa': s.studentName,
+        'Rata-rata Nilai': s.averageScore.toFixed(1),
+        'Total Tugas': s.totalAssignments,
+        'Tugas Selesai': s.completedAssignments,
+        'Tingkat Pengumpulan (%)': s.submissionRate.toFixed(0),
+        'Predikat': s.averageScore >= 85 ? 'A' : s.averageScore >= 75 ? 'B' : s.averageScore >= 60 ? 'C' : 'D',
+        'Trend': s.trend === 'improving' ? 'Meningkat' : s.trend === 'declining' ? 'Menurun' : 'Stabil'
+      }));
+      
+      const csv = Papa.unparse(csvData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `analitik-nilai-${analytics.className.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Laporan CSV berhasil diunduh', 'success');
+    }
   };
 
   const gradeDistributionData = analytics ? [
@@ -435,11 +464,18 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           </p>
         </div>
         <Button
-          onClick={exportAnalyticsReport}
+          onClick={() => exportAnalyticsReport('pdf')}
           variant="blue-solid"
-          aria-label="Ekspor laporan analitik nilai ke file"
+          aria-label="Ekspor laporan analitik nilai ke PDF"
         >
-          Export Laporan
+          Export PDF
+        </Button>
+        <Button
+          onClick={() => exportAnalyticsReport('csv')}
+          variant="secondary"
+          aria-label="Ekspor laporan analitik nilai ke CSV"
+        >
+          Export CSV
         </Button>
       </div>
 
@@ -457,22 +493,61 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         className="mb-4"
       />
 
-      <div className="flex items-center gap-4 mb-6">
-        <label htmlFor="assignment-type-filter" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          Filter Jenis Tugas:
-        </label>
-        <Select
-          id="assignment-type-filter"
-          value={assignmentTypeFilter}
-          onChange={(e) => setAssignmentTypeFilter(e.target.value as AssignmentTypeFilter)}
-          className="w-48"
-        >
-          {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </Select>
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <label htmlFor="assignment-type-filter" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Filter Jenis Tugas:
+          </label>
+          <Select
+            id="assignment-type-filter"
+            value={assignmentTypeFilter}
+            onChange={(e) => setAssignmentTypeFilter(e.target.value as AssignmentTypeFilter)}
+            className="w-40"
+          >
+            {Object.entries(ASSIGNMENT_TYPE_LABELS).map(([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </Select>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <label htmlFor="date-start" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Dari:
+          </label>
+          <Input
+            id="date-start"
+            type="date"
+            value={dateRange.start}
+            onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+            className="w-40"
+          />
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <label htmlFor="date-end" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Sampai:
+          </label>
+          <Input
+            id="date-end"
+            type="date"
+            value={dateRange.end}
+            onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+            className="w-40"
+          />
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Toggle
+            id="show-comparison"
+            checked={showComparison}
+            onChange={(e) => setShowComparison(e.target.checked)}
+          />
+          <label htmlFor="show-comparison" className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+            Bandingkan dengan semester lalu
+          </label>
+        </div>
       </div>
 
       {activeTab === 'overview' && (
