@@ -447,4 +447,61 @@ describe('CopyButton', () => {
       expect(shortcutTooltip).toBeUndefined();
     });
   });
+
+  describe('Screen reader accessibility', () => {
+    it('has a screen reader announcement element with aria-live', () => {
+      render(<CopyButton text="Test text" />);
+      
+      const announcement = screen.getByRole('status', { hidden: true });
+      expect(announcement).toBeInTheDocument();
+      expect(announcement).toHaveAttribute('aria-live', 'polite');
+      expect(announcement).toHaveAttribute('aria-atomic', 'true');
+      expect(announcement).toHaveClass('sr-only');
+    });
+
+    it('announces success message to screen readers when copy succeeds', async () => {
+      render(<CopyButton text="Test text" successMessage="Berhasil disalin!" />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+      
+      await waitFor(() => {
+        const announcement = screen.getByRole('status', { hidden: true });
+        expect(announcement).toHaveTextContent('Berhasil disalin! Text telah disalin ke clipboard');
+      });
+    });
+
+    it('announces error message to screen readers when copy fails', async () => {
+      mockWriteText.mockRejectedValue(new Error('Clipboard failed'));
+      mockExecCommand.mockReturnValue(false);
+      
+      render(<CopyButton text="Test text" errorMessage="Gagal menyalin" />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+      
+      await waitFor(() => {
+        const announcement = screen.getByRole('status', { hidden: true });
+        expect(announcement).toHaveTextContent('Gagal menyalin Gagal menyalin teks. Silakan coba lagi.');
+      });
+    });
+
+    it('clears announcement after reset delay', async () => {
+      render(<CopyButton text="Test text" resetDelay={500} />);
+      
+      const button = screen.getByRole('button');
+      fireEvent.click(button);
+      
+      await waitFor(() => {
+        const announcement = screen.getByRole('status', { hidden: true });
+        expect(announcement).not.toHaveTextContent('');
+      });
+      
+      // Wait for the reset delay plus a small buffer
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      const announcement = screen.getByRole('status', { hidden: true });
+      expect(announcement).toHaveTextContent('');
+    }, 15000);
+  });
 });

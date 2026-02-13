@@ -76,7 +76,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           variant="card" 
         />
         <div className="mt-4 flex gap-3">
-          <Button onClick={handleRefresh} variant="primary" isLoading={isGenerating}>
+          <Button onClick={handleRefresh} variant="primary" isLoading={isGenerating} shortcut="Ctrl+R">
             Coba Lagi
           </Button>
           <Button onClick={onBack} variant="ghost">
@@ -226,6 +226,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             variant="ghost" 
             isLoading={isGenerating}
             disabled={loading}
+            shortcut="Ctrl+R"
           >
             {isGenerating ? 'Menganalisis...' : '🔄 Refresh'}
           </Button>

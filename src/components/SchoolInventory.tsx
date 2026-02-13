@@ -765,6 +765,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               variant="blue-solid"
               size="sm"
               icon={<ArrowDownTrayIcon />}
+              aria-label="Ekspor laporan inventaris ke file"
             >
               Export Laporan
             </Button>

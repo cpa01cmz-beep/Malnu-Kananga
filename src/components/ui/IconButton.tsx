@@ -368,7 +368,7 @@ const IconButton: React.FC<IconButtonProps> = ({
             <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
               {shortcut}
             </kbd>
-            <span>shortcut</span>
+            <span>pintasan</span>
           </span>
           <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
         </div>

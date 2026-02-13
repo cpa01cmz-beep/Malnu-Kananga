@@ -318,6 +318,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
               isLoading={isSaving}
               variant="success"
               size="md"
+              shortcut="Ctrl+S"
             >
               {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE}
             </Button>

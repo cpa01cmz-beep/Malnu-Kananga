@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { EnhancedInputProps, ValidationState } from './types';
+import { DEBOUNCE_DELAYS } from '../../constants';
 export type { EnhancedInputProps, ValidationState } from './types';
 
 /**
@@ -13,7 +14,7 @@ export const EnhancedInput: React.FC<EnhancedInputProps> = ({
   validateOnBlur = true,
   showError = true,
   showWarning = true,
-  debounceMs = 300,
+  debounceMs = DEBOUNCE_DELAYS.FIELD_VALIDATION,
   onValidationChange,
   customError,
   successMessage,
