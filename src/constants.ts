@@ -2215,15 +2215,21 @@ export const API_ENDPOINTS = {
     // Academic
     ACADEMIC: {
         SUBJECTS: '/api/subjects',
+        SUBJECT_BY_ID: (id: string) => `/api/subjects/${id}`,
         CLASSES: '/api/classes',
+        CLASS_BY_ID: (id: string) => `/api/classes/${id}`,
         SCHEDULES: '/api/schedules',
+        SCHEDULE_BY_ID: (id: string) => `/api/schedules/${id}`,
         GRADES: '/api/grades',
         GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
+        ASSIGNMENTS: '/api/assignments',
+        ASSIGNMENT_BY_ID: (id: string) => `/api/assignments/${id}`,
     },
     // Events
     EVENTS: {
         BASE: '/api/school_events',
+        BY_ID: (id: string) => `/api/school_events/${id}`,
         REGISTRATIONS: '/api/event_registrations',
     },
     // PPDB
@@ -2241,6 +2247,7 @@ export const API_ENDPOINTS = {
     // Inventory
     INVENTORY: {
         BASE: '/api/inventory',
+        BY_ID: (id: string) => `/api/inventory/${id}`,
         CATEGORIES: '/api/inventory/categories',
     },
     // Announcements

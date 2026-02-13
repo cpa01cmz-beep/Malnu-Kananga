@@ -2,6 +2,7 @@
 
 import type { SchoolEvent, EventRegistration, EventBudget, EventPhoto, EventFeedback } from '../../../types';
 import { request } from '../client';
+import { API_ENDPOINTS } from '../../../constants';
 
 // ============================================
 // SCHOOL EVENTS API
@@ -9,22 +10,22 @@ import { request } from '../client';
 
 export const eventsAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: SchoolEvent[]; error?: string }> {
-    return request<SchoolEvent[]>('/api/school_events');
+    return request<SchoolEvent[]>(API_ENDPOINTS.EVENTS.BASE);
   },
 
   async getById(id: string): Promise<{ success: boolean; message: string; data?: SchoolEvent; error?: string }> {
-    return request<SchoolEvent>(`/api/school_events/${id}`);
+    return request<SchoolEvent>(API_ENDPOINTS.EVENTS.BY_ID(id));
   },
 
   async create(event: Partial<SchoolEvent>): Promise<{ success: boolean; message: string; data?: SchoolEvent; error?: string }> {
-    return request<SchoolEvent>('/api/school_events', {
+    return request<SchoolEvent>(API_ENDPOINTS.EVENTS.BASE, {
       method: 'POST',
       body: JSON.stringify(event),
     });
   },
 
   async update(id: string, event: Partial<SchoolEvent>): Promise<{ success: boolean; message: string; data?: SchoolEvent; error?: string }> {
-    return request<SchoolEvent>(`/api/school_events/${id}`, {
+    return request<SchoolEvent>(API_ENDPOINTS.EVENTS.BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify(event),
     });
@@ -34,14 +35,14 @@ export const eventsAPI = {
     id: string,
     status: 'Upcoming' | 'Ongoing' | 'Completed'
   ): Promise<{ success: boolean; message: string; data?: SchoolEvent; error?: string }> {
-    return request<SchoolEvent>(`/api/school_events/${id}`, {
+    return request<SchoolEvent>(API_ENDPOINTS.EVENTS.BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/school_events/${id}`, {
+    return request<null>(API_ENDPOINTS.EVENTS.BY_ID(id), {
       method: 'DELETE',
     });
   },
@@ -53,15 +54,15 @@ export const eventsAPI = {
 
 export const eventRegistrationsAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: EventRegistration[]; error?: string }> {
-    return request<EventRegistration[]>('/api/event_registrations');
+    return request<EventRegistration[]>(API_ENDPOINTS.EVENTS.REGISTRATIONS);
   },
 
   async getByEventId(eventId: string): Promise<{ success: boolean; message: string; data?: EventRegistration[]; error?: string }> {
-    return request<EventRegistration[]>(`/api/event_registrations?event_id=${eventId}`);
+    return request<EventRegistration[]>(`${API_ENDPOINTS.EVENTS.REGISTRATIONS}?event_id=${eventId}`);
   },
 
   async create(registration: Partial<EventRegistration>): Promise<{ success: boolean; message: string; data?: EventRegistration; error?: string }> {
-    return request<EventRegistration>('/api/event_registrations', {
+    return request<EventRegistration>(API_ENDPOINTS.EVENTS.REGISTRATIONS, {
       method: 'POST',
       body: JSON.stringify(registration),
     });
