@@ -313,6 +313,7 @@ const DataTable = <T extends Record<string, unknown>>({
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
   const { onSuccess, onTap, onDelete } = useHapticFeedback();
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (value: string) => {
     setLocalSearch(value);
@@ -322,6 +323,33 @@ const DataTable = <T extends Record<string, unknown>>({
   const handleFocusSearch = () => {
     document.dispatchEvent(new CustomEvent('datatable:focus-search'));
   };
+
+  // Keyboard shortcut: Ctrl+F to focus search input
+  useEffect(() => {
+    if (!filter?.searchable) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Ctrl+F (or Cmd+F on Mac)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        // Only trigger if the DataTable is in view and not in a modal/dialog
+        const activeElement = document.activeElement;
+        const isInModal = activeElement?.closest('[role="dialog"]') || 
+                         activeElement?.closest('[role="alertdialog"]');
+        
+        if (!isInModal && searchInputRef.current) {
+          e.preventDefault();
+          searchInputRef.current.focus();
+          // Provide haptic feedback on mobile
+          if ('vibrate' in navigator) {
+            navigator.vibrate(DATATABLE_CONFIG.VIBRATION_PATTERNS.TOUCH_LIGHT);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [filter?.searchable]);
 
   const handleSort = (column: Column<T>) => {
     if (!column.sortable || !sort) return;
@@ -608,6 +636,7 @@ const DataTable = <T extends Record<string, unknown>>({
             {filter?.searchable && (
               <div className="w-full sm:w-auto">
                 <SearchInput
+                  ref={searchInputRef}
                   value={localSearch}
                   onChange={(e) => handleSearch(e.target.value)}
                   onFocus={handleFocusSearch}
