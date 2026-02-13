@@ -97,20 +97,52 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 ---
 
 ## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
-**Learning**: High-traffic "Coba Lagi" (Try Again) buttons that reload data were missing keyboard shortcut hints. Users couldn't discover that they can press Ctrl+R to retry loading data after an error. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
 
-**Action**: Add `shortcut="Ctrl+R"` prop to all "Coba Lagi" / retry buttons in high-traffic components. This makes the keyboard shortcut discoverable through tooltip hints.
+**Learning**: Refresh buttons in analytics dashboards (StudentInsights, StudyPlanAnalytics) support Ctrl+R keyboard shortcut but users couldn't discover it without visual hints. Adding `shortcut="Ctrl+R"` prop makes the shortcut visible on hover/focus.
 
-**Components Updated**:
-- StudyPlanGenerator.tsx - Added shortcut="Ctrl+R" to retry button
-- ELibrary.tsx - Added shortcut="Ctrl+R" to retry button  
-- GradeAnalytics.tsx - Added shortcut="Ctrl+R" to retry button
+**Action**: Add shortcut hints to all refresh/reload buttons in analytics components. Use `shortcut="Ctrl+R"` prop which displays a hint tooltip.
 
-**Pattern**: Always audit error state buttons - if they perform data refresh/retry operations, add keyboard shortcut hints. This pattern applies to any button that refetches data after an error state.
+**Components Fixed**:
+- StudentInsights.tsx - Added shortcut="Ctrl+R" to refresh button
+- StudyPlanAnalytics.tsx - Added shortcut="Ctrl+R" to refresh button
+
+---
+
+## 2026-02-13 - Form Input Label Association in FolderNavigation
+
+**Learning**: Native `<input>` and `<textarea>` elements in FolderNavigation's create folder form were missing proper label associations. The heading "Buat Folder Baru" served as the visual label but screen readers couldn't associate it with the inputs.
+
+**Action**: Use `aria-labelledby` to associate form inputs with their heading labels:
+1. Add unique `id` to the heading element (e.g., `id="create-folder-heading"`)
+2. Add `aria-labelledby="create-folder-heading"` to each input that belongs to that form section
+
+**File Fixed**:
+- FolderNavigation.tsx - Added id and aria-labelledby to create folder form inputs
+
+**Pattern**: This pattern is useful when:
+- Using headings as implicit labels for form sections
+- Multiple inputs share the same label context
+- Adding visible labels would break the UI design
+
+Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 input-label relationships.
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
 
 ---
 
 ## 2026-02-13 - Save Button Keyboard Shortcut Discovery
+
 **Learning**: High-traffic save buttons (grades, attendance, announcements) were missing keyboard shortcut hints. Teachers save grades daily, but couldn't discover the efficient Ctrl+S keyboard shortcut. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
 
 **Action**: Add `shortcut="Ctrl+S"` prop to all save/submit buttons in high-traffic data entry components. This makes the keyboard shortcut discoverable through tooltip hints.
