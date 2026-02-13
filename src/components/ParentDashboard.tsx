@@ -540,6 +540,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     <button
                       key={child.studentId}
                       onClick={() => handleSelectChild(child)}
+                      aria-label={`Pilih ${child.studentName} - ${child.className || 'Tanpa Kelas'}`}
                       className={`p-4 rounded-xl border-2 transition-all duration-200 ${
                         selectedChild?.studentId === child.studentId
                           ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
@@ -588,6 +589,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   </div>
                   <button
                     onClick={() => setInsightsEnabled(true)}
+                    aria-label={`Tampilkan wawasan akademik untuk ${selectedChild.studentName}`}
                     className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium text-sm"
                   >
                     Tampilkan Wawasan
@@ -606,6 +608,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setInsightsEnabled(false)}
+                      aria-label="Sembunyikan wawasan akademik"
                       className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
                     >
                       Sembunyikan

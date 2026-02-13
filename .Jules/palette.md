@@ -255,3 +255,24 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 **Pattern**: Always audit action button groups for consistency - if restore and reset have confirmation dialogs, delete should too. This prevents accidental data loss and provides consistent user experience.
 
+---
+
+## 2026-02-13 - Plain Button ARIA Labels in Parent/Teacher Dashboards
+
+**Learning**: High-traffic parent and teacher dashboard components had plain `<button>` elements with visible text but missing explicit `aria-label` attributes. Screen reader users benefit from descriptive aria-labels that provide full context about the action being performed, especially in data-dense dashboards with multiple action buttons.
+
+**Action**: Add `aria-label` to all plain button elements in ParentDashboard and StudyPlanAnalytics:
+- ParentDashboard child selection buttons: `aria-label={`Pilih ${child.studentName} - ${child.className}`}`
+- ParentDashboard "Tampilkan Wawasan" button: `aria-label="Tampilkan wawasan akademik untuk ${selectedChild.studentName}"`
+- ParentDashboard "Sembunyikan" button: `aria-label="Sembunyikan wawasan akademik"`
+- StudyPlanAnalytics "Lihat detail" buttons: `aria-label={`Lihat detail rekomendasi: ${rec.title}`}`
+
+**Files Fixed**:
+- src/components/ParentDashboard.tsx - Added aria-labels to 3 buttons
+- src/components/StudyPlanAnalytics.tsx - Added aria-labels to 2 buttons
+
+**Pattern**: Always add aria-label to plain button elements in high-traffic dashboards, even when they have visible text. The label should provide complete context including:
+- What action will be performed
+- What data/object the action applies to (especially in list/card contexts)
+- This is especially important for parent dashboards where users manage multiple children
+
