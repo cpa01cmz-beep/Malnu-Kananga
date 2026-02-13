@@ -331,6 +331,7 @@ const GradingManagement: React.FC<GradingManagementProps> = ({ onBack, onShowToa
             size="md"
             onClick={handleSave}
             disabled={loading || _isSaving}
+            shortcut="Ctrl+S"
           >
             {loading || _isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_ALL}
           </Button>

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { ELibrary as ELibraryType, MaterialFolder } from '../../types';
 import FolderNavigation from '../FolderNavigation';
 import { HEIGHT_CLASSES } from '../../config/heights';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
+import FilterPill from '../ui/FilterPill';
 import { EmptyState } from '../ui/LoadingState';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
 import { ShareIcon } from '../icons/MaterialIcons';
@@ -64,6 +65,23 @@ export function MaterialManagementView({
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
+
+  // Global keyboard shortcut to clear all filters (Ctrl+Shift+X)
+  const handleGlobalKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') {
+      e.preventDefault();
+      if (getActiveFilterCount() > 0) {
+        onClearFilters();
+      }
+    }
+  }, [getActiveFilterCount, onClearFilters]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [handleGlobalKeyDown]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -141,57 +159,50 @@ export function MaterialManagementView({
 
           {getActiveFilterCount() > 0 && (
             <div className="flex items-center gap-2 mt-4">
-              <Button size="sm" variant="ghost" onClick={onClearFilters}>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={onClearFilters}
+                shortcut="Ctrl+Shift+X"
+              >
                 Hapus Semua Filter
               </Button>
               <div className="flex flex-wrap gap-1">
                 {filters.searchQuery.trim() && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-xs">
-                    Search: {filters.searchQuery.slice(0, 15)}{filters.searchQuery.length > 15 ? '...' : ''}
-                    <button
-                      onClick={() => onFilterChange({ ...filters, searchQuery: '' })}
-                      className="ml-1 hover:text-blue-900 dark:hover:text-blue-100"
-                      aria-label="Clear search"
-                    >
-                      ×
-                    </button>
-                  </span>
+                  <FilterPill
+                    label="pencarian"
+                    value={`Search: ${filters.searchQuery.slice(0, 15)}${filters.searchQuery.length > 15 ? '...' : ''}`}
+                    onClear={() => onFilterChange({ ...filters, searchQuery: '' })}
+                    variant="blue"
+                    shortcut="Delete"
+                  />
                 )}
                 {filters.filterCategory !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded-full text-xs">
-                    {filters.filterCategory}
-                    <button
-                      onClick={() => onFilterChange({ ...filters, filterCategory: 'all' })}
-                      className="ml-1 hover:text-green-900 dark:hover:text-green-100"
-                      aria-label="Clear category filter"
-                    >
-                      ×
-                    </button>
-                  </span>
+                  <FilterPill
+                    label="kategori"
+                    value={filters.filterCategory}
+                    onClear={() => onFilterChange({ ...filters, filterCategory: 'all' })}
+                    variant="green"
+                    shortcut="Delete"
+                  />
                 )}
                 {filters.filterFileType !== 'all' && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full text-xs">
-                    {filters.filterFileType}
-                    <button
-                      onClick={() => onFilterChange({ ...filters, filterFileType: 'all' })}
-                      className="ml-1 hover:text-purple-900 dark:hover:text-purple-100"
-                      aria-label="Clear file type filter"
-                    >
-                      ×
-                    </button>
-                  </span>
+                  <FilterPill
+                    label="tipe file"
+                    value={filters.filterFileType}
+                    onClear={() => onFilterChange({ ...filters, filterFileType: 'all' })}
+                    variant="purple"
+                    shortcut="Delete"
+                  />
                 )}
                 {filters.filterShared !== null && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300 rounded-full text-xs">
-                    {filters.filterShared ? 'Dibagikan' : 'Privat'}
-                    <button
-                      onClick={() => onFilterChange({ ...filters, filterShared: null })}
-                      className="ml-1 hover:text-orange-900 dark:hover:text-orange-100"
-                      aria-label="Clear sharing filter"
-                    >
-                      ×
-                    </button>
-                  </span>
+                  <FilterPill
+                    label="status berbagi"
+                    value={filters.filterShared ? 'Dibagikan' : 'Privat'}
+                    onClear={() => onFilterChange({ ...filters, filterShared: null })}
+                    variant="orange"
+                    shortcut="Delete"
+                  />
                 )}
               </div>
             </div>

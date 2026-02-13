@@ -254,6 +254,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                       <IconButton
                         icon={showPassword ? <EyeOffIcon /> : <EyeIcon />}
                         ariaLabel={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                        tooltip={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                        shortcut="Ctrl+H"
                         size="sm"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
-import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES } from '../constants';
+import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES, APP_CONFIG } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { emailService } from '../services/emailService';
@@ -140,7 +140,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               <p>Dear ${r.fullName},</p>
               <div style="white-space: pre-wrap;">${body}</div>
               <p>Terima kasih,</p>
-              <p><strong>Panitia PPDB MA Malnu Kananga</strong></p>
+              <p><strong>Panitia PPDB ${APP_CONFIG.SCHOOL_NAME}</strong></p>
             </div>`,
             text: body,
             data: {
@@ -519,6 +519,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               <IconButton
                 icon={sort.direction === 'asc' ? '↑' : '↓'}
                 ariaLabel={`Urutkan berdasarkan ${sort.field} dalam urutan ${sort.direction === 'asc' ? 'naik' : 'turun'}`}
+                tooltip={`Urutkan ${sort.direction === 'asc' ? 'menurun' : 'naik'}`}
+                shortcut="Ctrl+U"
                 variant="ghost"
                 size="sm"
                 onClick={() => setSort({...sort, direction: sort.direction === 'asc' ? 'desc' : 'asc'})}
@@ -583,14 +585,15 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                 }`}>
                                                   {reg.score}
                                                  </span>
-                                                <IconButton
-                                                  onClick={() => setShowScoringModal(reg.id)}
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  ariaLabel="Edit skor"
-                                                  tooltip="Edit skor"
-                                                  icon={<PencilIcon />}
-                                                />
+                                                 <IconButton
+                                                   onClick={() => setShowScoringModal(reg.id)}
+                                                   variant="ghost"
+                                                   size="sm"
+                                                   ariaLabel="Edit skor"
+                                                   tooltip="Edit skor"
+                                                   shortcut="Ctrl+E"
+                                                   icon={<PencilIcon />}
+                                                 />
                                               </>
                                             ) : (
                                               <button

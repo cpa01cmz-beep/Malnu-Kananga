@@ -212,15 +212,18 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
               </Button>
             </div>
 
-            <p className="mt-6 text-sm text-neutral-500 dark:text-neutral-400">
-              Jika masalah ini berlanjut, hubungi{' '}
-              <a
-                href={`mailto:${INFO_EMAIL}`}
-                className="text-primary-600 dark:text-primary-400 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 rounded"
-              >
-                {INFO_EMAIL}
-              </a>
-            </p>
+            {INFO_EMAIL && (
+              <p className="mt-6 text-sm text-neutral-500 dark:text-neutral-400">
+                Jika masalah ini berlanjut, hubungi{' '}
+                <a
+                  href={`mailto:${INFO_EMAIL}`}
+                  aria-label={`Hubungi dukungan via email ke ${INFO_EMAIL}`}
+                  className="text-primary-600 dark:text-primary-400 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 rounded"
+                >
+                  {INFO_EMAIL}
+                </a>
+              </p>
+            )}
           </div>
         </Card>
       </div>

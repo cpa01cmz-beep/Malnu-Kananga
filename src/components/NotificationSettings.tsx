@@ -14,7 +14,7 @@ import Tab from './ui/Tab';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { EmptyState } from './ui/LoadingState';
-import { STORAGE_KEYS, COMPONENT_DELAYS } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS, APP_CONFIG } from '../constants';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -100,7 +100,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     const testNotification = createNotification(
       'system',
       'Tes Notifikasi',
-      'Ini adalah notifikasi tes dari MA Malnu Kananga Smart Portal',
+        `Ini adalah notifikasi tes dari ${APP_CONFIG.SCHOOL_NAME} Smart Portal`,
       { type: 'test' }
     );
     

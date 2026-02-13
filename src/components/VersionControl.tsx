@@ -3,7 +3,7 @@ import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { ClockIcon, TrashIcon, EyeIcon } from './icons/MaterialIcons';
 import { MaterialVersion, ELibrary } from '../types';
 import { logger } from '../utils/logger';
-import { CONVERSION } from '../constants';
+import { CONVERSION, API_ENDPOINTS } from '../constants';
 import Button from './ui/Button';
 import FileInput from './ui/FileInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -128,7 +128,7 @@ const VersionControl: React.FC<VersionControlProps> = ({
     setDownloadingVersionId(version.id);
     try {
       // Mock download - replace with actual implementation
-      const downloadUrl = `/api/download/version/${version.id}`;
+      const downloadUrl = API_ENDPOINTS.DOWNLOAD.VERSION(version.id);
       window.open(downloadUrl, '_blank');
       onShowToast(`Mengunduh versi ${version.version}...`, 'success');
     } catch (err) {
@@ -266,10 +266,10 @@ const deleteVersion = (versionId: string) => {
                     </p>
                     
                     <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-1">
-                      <p>📝 {version.changeLog}</p>
-                      <p>👤 {version.createdBy}</p>
-                      <p>📅 {formatDate(version.createdAt)}</p>
-                      <p>📁 {formatFileSize(version.fileSize)} • {version.fileType}</p>
+                      <p><span aria-hidden="true">📝</span> {version.changeLog}</p>
+                      <p><span aria-hidden="true">👤</span> {version.createdBy}</p>
+                      <p><span aria-hidden="true">📅</span> {formatDate(version.createdAt)}</p>
+                      <p><span aria-hidden="true">📁</span> {formatFileSize(version.fileSize)} • {version.fileType}</p>
                     </div>
                   </div>
                   

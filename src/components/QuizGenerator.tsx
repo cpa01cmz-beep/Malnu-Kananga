@@ -488,7 +488,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
             )}
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={onCancel}>
+            <Button variant="outline" onClick={onCancel} shortcut="Esc">
               Batal
             </Button>
             {step === 'preview' ? (

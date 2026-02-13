@@ -270,10 +270,13 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
             />
           </div>
           
+          <label htmlFor="template-category-filter" className="sr-only">Filter berdasarkan kategori</label>
           <select
+            id="template-category-filter"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            aria-label="Filter berdasarkan kategori"
           >
             <option value="">Semua Kategori</option>
             {categories.map(category => (
@@ -281,10 +284,13 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
             ))}
           </select>
 
+          <label htmlFor="template-subject-filter" className="sr-only">Filter berdasarkan mata pelajaran</label>
           <select
+            id="template-subject-filter"
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}
             className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            aria-label="Filter berdasarkan mata pelajaran"
           >
             <option value="">Semua Mata Pelajaran</option>
             {subjects.map(subject => (
@@ -292,10 +298,13 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
             ))}
           </select>
 
+          <label htmlFor="template-sort-by" className="sr-only">Urutkan berdasarkan</label>
           <select
+            id="template-sort-by"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'name' | 'usage' | 'created')}
             className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-neutral-50 dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            aria-label="Urutkan berdasarkan"
           >
             <option value="usage">Paling Populer</option>
             <option value="name">Nama (A-Z)</option>

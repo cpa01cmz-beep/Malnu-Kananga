@@ -10,7 +10,7 @@ import Card from '../ui/Card';
 import Heading from '../ui/Heading';
 import Section from '../ui/Section';
 import { getResponsiveGradient, GRADIENT_CLASSES } from '../../config/gradients';
-import { SECTION_TITLES } from '../../constants';
+import { SECTION_TITLES, APP_CONFIG } from '../../constants';
 import { ICON_SIZES } from '../../utils/iconUtils';
 
 interface PPDBSectionProps {
@@ -22,7 +22,7 @@ const PPDBSection: React.FC<PPDBSectionProps> = ({ onRegisterClick }) => {
     <Section
       id="ppdb"
       title={SECTION_TITLES.PPDB}
-      subtitle="Jadilah bagian dari generasi unggul MA Malnu Kananga. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka."
+      subtitle={`Jadilah bagian dari generasi unggul ${APP_CONFIG.SCHOOL_NAME}. Pendaftaran Tahun Ajaran 2025/2026 telah dibuka.`}
       className={getResponsiveGradient('PPDB')}
       badge={
         <Badge variant="primary" size="md" styleType="solid" rounded className="animate-scale-in">

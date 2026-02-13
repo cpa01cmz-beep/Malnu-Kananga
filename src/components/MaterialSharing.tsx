@@ -231,6 +231,8 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
               icon={<XMarkIcon className="w-5 h-5" />}
               variant="ghost"
               ariaLabel="Tutup modal bagikan"
+              tooltip="Tutup"
+              shortcut="Esc"
             />
           </div>
         </div>

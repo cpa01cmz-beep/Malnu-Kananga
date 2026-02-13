@@ -612,6 +612,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
             variant="secondary"
             onClick={onBack}
             disabled={submitting}
+            shortcut="Esc"
           >
             Batal
           </Button>
@@ -620,6 +621,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
             onClick={() => handleSubmit('draft')}
             disabled={submitting}
             isLoading={submitting}
+            shortcut="Ctrl+S"
           >
             Simpan Draft
           </Button>

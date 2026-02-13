@@ -122,7 +122,6 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         external: [...EXTERNAL_DEPS.ROLLUP],
-        // BroCula: Enable aggressive tree-shaking to eliminate unused code
         treeshake: {
           moduleSideEffects: false,
           propertyReadSideEffects: false,

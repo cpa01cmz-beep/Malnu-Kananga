@@ -890,7 +890,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   onClick={handleSubmitGrade}
                   disabled={submitting}
                   className="flex-1"
-                  shortcut="Ctrl+Enter"
+                  shortcut="Ctrl+S"
                 >
                   {submitting ? UI_STRINGS.SAVING : 'Simpan Nilai'}
                 </Button>

@@ -1,6 +1,12 @@
 
 import { VoiceLanguage } from './types';
 
+/**
+ * Storage Key Prefix
+ * Flexy: Never hardcode the storage key prefix! Use this constant instead.
+ */
+export const STORAGE_KEY_PREFIX = 'malnu_' as const;
+
 // Centralized Storage Keys to prevent typo and ensure consistency
 export const STORAGE_KEYS = {
     SITE_CONTENT: 'malnu_site_content',
@@ -544,8 +550,11 @@ export const TIME_MS = {
     // Very short delays for immediate UI updates
     VERY_SHORT: 10,
     SHORT: 50,
+    MODERATE: 100,      // Focus delays, modal transitions
     ANIMATION: 150,
+    MEDIUM: 200,        // Exit animations, auto-close delays
     DEBOUNCE: 300,
+    LONG_UI: 800,       // Long UI delays (search hints, toasts)
     // Standard time units
     ONE_SECOND: 1000,
     FIVE_SECONDS: 5 * 1000,
@@ -1457,7 +1466,7 @@ export const FORGOT_PASSWORD_STRINGS = {
     VALIDATION_ERROR: 'Masukkan email yang valid',
 } as const;
 
-// Header navigation UI strings
+// Header navigation UI strings - Flexy: Use APP_CONFIG for school-specific values
 export const HEADER_NAV_STRINGS = {
     HOME: 'Beranda',
     PROFILE: 'Profil',
@@ -1465,8 +1474,8 @@ export const HEADER_NAV_STRINGS = {
     DOWNLOAD: 'Download',
     LOGIN_EMAIL: 'Login Email',
     LOGO_TEXT: 'M',
-    SCHOOL_NAME: 'Malnu Kananga',
-    NPSN_LABEL: 'NPSN: 69881502',
+    SCHOOL_NAME: APP_CONFIG.SCHOOL_NAME,
+    NPSN_LABEL: `NPSN: ${APP_CONFIG.SCHOOL_NPSN}`,
     AI_EDITOR: 'Editor AI',
     AI_EDITOR_OPEN: 'Buka Editor AI',
     AI_ASK: 'Tanya AI',
@@ -1503,15 +1512,15 @@ export const GRADING_UI_STRINGS = {
     UAS_LABEL: 'UAS',
 } as const;
 
-// Section titles for marketing/landing page sections
+// Section titles for marketing/landing page sections - Flexy: Dynamic school name references
 export const SECTION_TITLES = {
     PROFILE: 'Profil Madrasah',
-    PROFILE_SUBTITLE: 'Mengenal Lebih Dekat MA Malnu Kananga',
+    PROFILE_SUBTITLE: `Mengenal Lebih Dekat ${APP_CONFIG.SCHOOL_NAME}`,
     PROGRAMS: 'Program Unggulan',
     PPDB: 'Bergabunglah Bersama Kami',
     PPDB_SUBTITLE: 'Masa Depan Gemilang Dimulai dari Sini',
     NEWS: 'Berita & Kegiatan Terbaru',
-    NEWS_SUBTITLE: 'Update terkini dari MA Malnu Kananga',
+    NEWS_SUBTITLE: `Update terkini dari ${APP_CONFIG.SCHOOL_NAME}`,
     ACHIEVEMENTS: 'Prestasi Madrasah',
     GALLERY: 'Galeri Kegiatan',
     TESTIMONIALS: 'Testimoni',
@@ -1730,12 +1739,12 @@ export const DEFAULT_CLASS_CONFIG = {
     NEW_STUDENT_NAME: 'Kelas 10',
 } as const;
 
-// Email domain constants
+// Email domain constants - Flexy: Use ENV-driven configuration
 export const EMAIL_DOMAINS = {
-    ADMIN: 'admin@malnu-kananga.sch.id',
-    INFO: 'info@ma-malnukananga.sch.id',
-    TEACHER: 'guru.staff@malnu.sch.id',
-    STUDENT: 'siswa.osis@malnu.sch.id',
+    ADMIN: APP_CONFIG.SCHOOL_EMAIL,
+    INFO: `info@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
+    TEACHER: `guru.staff@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
+    STUDENT: `siswa.osis@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
 } as const;
 
 // Demo user data - Flexy: Demo data should be centralized!
@@ -1810,9 +1819,9 @@ export const DOCUMENT_TYPES = {
     PKH: { key: 'pkh', label: 'PKH' },
 } as const;
 
-// AI Prompts - Centralized prompts for consistency
+// AI Prompts - Centralized prompts for consistency - Flexy: Dynamic school name
 export const AI_PROMPTS = {
-    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk MA Malnu Kananga, sebuah madrasah aliyah di Indonesia. 
+    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk ${APP_CONFIG.SCHOOL_NAME}, sebuah madrasah aliyah di Indonesia.
 Berikan respons yang:
 1. Sopan dan profesional
 2. Menggunakan Bahasa Indonesia yang baik dan benar
@@ -2224,14 +2233,24 @@ export const API_ENDPOINTS = {
         GRADES: '/api/grades',
         GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
+        ATTENDANCE_BY_ID: (id: string) => `/api/attendance/${id}`,
         ASSIGNMENTS: '/api/assignments',
         ASSIGNMENT_BY_ID: (id: string) => `/api/assignments/${id}`,
+        ASSIGNMENT_SUBMISSIONS: '/api/assignment-submissions',
+        ASSIGNMENT_SUBMISSION_BY_ID: (id: string) => `/api/assignment-submissions/${id}`,
     },
     // Events
     EVENTS: {
         BASE: '/api/school_events',
         BY_ID: (id: string) => `/api/school_events/${id}`,
         REGISTRATIONS: '/api/event_registrations',
+        REGISTRATION_BY_ID: (id: string) => `/api/event_registrations/${id}`,
+        BUDGETS: '/api/event_budgets',
+        BUDGET_BY_ID: (id: string) => `/api/event_budgets/${id}`,
+        PHOTOS: '/api/event_photos',
+        PHOTO_BY_ID: (id: string) => `/api/event_photos/${id}`,
+        FEEDBACK: '/api/event_feedback',
+        FEEDBACK_BY_ID: (id: string) => `/api/event_feedback/${id}`,
     },
     // PPDB
     PPDB: {
@@ -2317,6 +2336,25 @@ export const ATTENDANCE_STATUS_LABELS = {
     [ACADEMIC.ATTENDANCE_STATUSES.SICK]: 'Sakit',
     [ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]: 'Izin',
     [ACADEMIC.ATTENDANCE_STATUSES.ABSENT]: 'Alpa',
+} as const;
+
+// Chart Colors for SVG/Data Visualization - Flexy: Never hardcode chart colors!
+export const CHART_COLOR_SCHEMES = {
+    primary: ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe'],
+    success: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'],
+    warning: ['#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7'],
+    error: ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2'],
+    info: ['#06b6d4', '#22d3ee', '#67e8f9', '#a5f3fc', '#cffafe'],
+    mixed: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+} as const;
+
+export const CHART_DEFAULT_COLORS = {
+    primary: '#3b82f6',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+    info: '#06b6d4',
+    neutral: '#e5e7eb',
 } as const;
 
 // SVG Namespaces - Flexy: Never hardcode XML namespaces!
@@ -2607,6 +2645,7 @@ export const PDF_COLORS = {
 export const TEXT_LIMITS = {
     MIN_SEARCH_LENGTH: 2,
     MIN_NAME_LENGTH: 2,
+    MESSAGE_MAX_LENGTH: 2000,
 } as const;
 
 // Password generation constants - Flexy: Never hardcode password generation!
@@ -3530,6 +3569,44 @@ export const LOADING_MESSAGES = {
         GENERATING: 'AI sedang menghasilkan...',
         ANALYZING: 'AI sedang menganalisis...',
     },
+
+    // Dashboard loading messages
+    DASHBOARD_ADMIN: 'Memuat dashboard admin...',
+    DASHBOARD_TEACHER: 'Memuat dashboard guru...',
+    DASHBOARD_PARENT: 'Memuat dashboard wali murid...',
+    DASHBOARD_STUDENT: 'Memuat portal siswa...',
+
+    // Page/Section loading messages
+    PAGE: 'Memuat halaman...',
+    PAGE_RESET_PASSWORD: 'Memuat halaman reset password...',
+    LINKS: 'Memuat tautan...',
+    PROFILE: 'Memuat profil...',
+    PPDB: 'Memuat PPDB...',
+    PROGRAMS: 'Memuat program...',
+    NEWS: 'Memuat berita...',
+    PPDB_FORM: 'Memuat formulir pendaftaran...',
+    DOCUMENTATION: 'Memuat dokumentasi...',
+    EDITOR: 'Memuat editor...',
+    AI_ASSISTANT: 'Memuat asisten AI...',
+
+    // Teacher features
+    GRADE_MANAGEMENT: 'Memuat manajemen nilai...',
+    CLASS_MANAGEMENT: 'Memuat manajemen kelas...',
+    MATERIAL_UPLOAD: 'Memuat upload materi...',
+    INVENTORY: 'Memuat inventaris...',
+    ASSIGNMENT_CREATION: 'Memuat pembuatan tugas...',
+    ASSIGNMENT_GRADING: 'Memuat penilaian tugas...',
+    GRADE_ANALYSIS: 'Memuat analisis nilai...',
+    QUIZ_GENERATOR: 'Memuat generator kuis...',
+    QUIZ_INTEGRATION: 'Memuat integrasi kuis...',
+
+    // Communication
+    MESSAGES: 'Memuat pesan...',
+    GROUPS: 'Memuat grup...',
+    COMMUNICATION_LOG: 'Memuat log komunikasi...',
+
+    // Parent portal
+    PARENT_PORTAL: 'Memuat data portal wali murid...',
 } as const;
 
 // Voice Feature Strings - Flexy: Never hardcode voice UI text!

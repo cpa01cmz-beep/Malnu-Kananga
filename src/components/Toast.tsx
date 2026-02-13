@@ -11,13 +11,40 @@ interface ToastProps {
   isVisible: boolean;
   onClose: () => void;
   duration?: number;
+  /**
+   * Callback when undo action is triggered.
+   * When provided, shows an undo button for destructive actions.
+   * This provides users a safety net to reverse accidental actions.
+   */
+  onUndo?: () => void;
+  /** Text for the undo button (defaults to "Undo") */
+  undoLabel?: string;
+  /**
+   * Whether this is a destructive action toast.
+   * When true and onUndo is provided, the toast will have distinct visual treatment
+   * and longer default duration to give users more time to undo.
+   */
+  isDestructive?: boolean;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onClose, duration = TIMEOUT_CONFIG.TOAST_DEFAULT_DURATION }) => {
+const Toast: React.FC<ToastProps> = ({
+  message,
+  type = 'success',
+  isVisible,
+  onClose,
+  duration = TIMEOUT_CONFIG.TOAST_DEFAULT_DURATION,
+  onUndo,
+  undoLabel = 'Batalkan',
+  isDestructive = false,
+}) => {
+  const effectiveDuration = isDestructive && onUndo
+    ? Math.max(duration, 8000)
+    : duration;
+
   const toastRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(duration);
+  const [remainingTime, setRemainingTime] = useState(effectiveDuration);
   const [progress, setProgress] = useState(100);
   const [showShortcutTooltip, setShowShortcutTooltip] = useState(false);
   const shortcutTooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -25,12 +52,21 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   const startTimeRef = useRef<number>(0);
   const pausedProgressRef = useRef<number>(100);
 
+  const handleUndo = useCallback(() => {
+    onUndo?.();
+    onClose();
+  }, [onUndo, onClose]);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       onClose();
     }
-  }, [onClose]);
+    if (e.key === 'z' && (e.ctrlKey || e.metaKey) && onUndo) {
+      e.preventDefault();
+      handleUndo();
+    }
+  }, [onClose, onUndo, handleUndo]);
 
   const handleMouseEnter = useCallback(() => {
     setIsPaused(true);
@@ -66,11 +102,11 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
   // Progress bar animation - use ref to avoid dependency cycle
   useEffect(() => {
     if (isVisible && !isPaused) {
-      startTimeRef.current = Date.now() - ((100 - progress) / 100) * duration;
+      startTimeRef.current = Date.now() - ((100 - progress) / 100) * effectiveDuration;
 
       const animate = () => {
         const elapsed = Date.now() - startTimeRef.current;
-        const newProgress = Math.max(0, 100 - (elapsed / duration) * 100);
+        const newProgress = Math.max(0, 100 - (elapsed / effectiveDuration) * 100);
         setProgress(newProgress);
 
         if (newProgress > 0) {
@@ -87,11 +123,11 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
       };
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVisible, isPaused, duration]);
+  }, [isVisible, isPaused, effectiveDuration]);
 
   useEffect(() => {
     if (isVisible) {
-      setRemainingTime(duration);
+      setRemainingTime(effectiveDuration);
       setIsPaused(false);
       setProgress(100);
       setShowShortcutTooltip(false);
@@ -104,7 +140,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         previousActiveElementRef.current.focus();
       }
     }
-  }, [isVisible, duration]);
+  }, [isVisible, effectiveDuration]);
 
   // Cleanup tooltip timeout on unmount
   useEffect(() => {
@@ -122,13 +158,16 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     error: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-red-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white feedback-error glass-effect`,
     warning: `${OPACITY_TOKENS.WHITE_95} ${OPACITY_TOKENS.NEUTRAL_800_95} border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-700 text-neutral-900 dark:text-white glass-effect`,
   };
+  const destructiveClasses = isDestructive && onUndo
+    ? 'ring-2 ring-red-500/30 ring-offset-2 dark:ring-offset-neutral-900'
+    : '';
 
   const ariaRole = type === 'error' ? 'alert' : 'status';
   const ariaLive = type === 'error' ? 'assertive' : 'polite';
 
   const visibilityClasses = isVisible
-    ? "translate-x-0 opacity-100 animate-slide-in-right"
-    : "translate-x-full opacity-0 pointer-events-none";
+    ? "translate-x-0 opacity-100 animate-slide-in-right motion-reduce:animate-none"
+    : "translate-x-full opacity-0 pointer-events-none toast-exit motion-reduce:animate-none";
 
   const icons = {
       success: (
@@ -164,7 +203,7 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
     <div
       ref={toastRef}
       tabIndex={-1}
-      className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses}`}
+      className={`${baseClasses} ${typeClasses[type]} ${visibilityClasses} ${destructiveClasses}`}
       role={ariaRole}
       aria-live={ariaLive}
       aria-atomic="true"
@@ -176,6 +215,15 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'success', isVisible, onC
         {icons[type]}
       </div>
       <span className="font-medium text-base leading-snug flex-grow">{message}</span>
+      {onUndo && (
+        <button
+          onClick={handleUndo}
+          className="px-3 py-1.5 text-sm font-medium text-primary-700 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/40 hover:bg-primary-200 dark:hover:bg-primary-800/50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+          aria-label={`${undoLabel} (Ctrl+Z)`}
+        >
+          {undoLabel}
+        </button>
+      )}
       <IconButton
         icon={<CloseIcon />}
         ariaLabel={TOAST_UI_STRINGS.CLOSE}
