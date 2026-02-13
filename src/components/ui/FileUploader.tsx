@@ -143,7 +143,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         return;
       }
 
-      // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onload = (e) => resolve(e.target?.result as string);
       reader.onerror = () => resolve(undefined);
