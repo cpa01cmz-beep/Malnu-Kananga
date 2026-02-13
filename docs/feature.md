@@ -79,14 +79,90 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 ---
 
+### F005: Bulk Operations Manager
+
+**Type**: Administrative Feature
+**Priority**: High
+**Description**: Batch operations for managing large datasets efficiently.
+
+**User Stories**:
+- As an Admin, I want to bulk update student status, so that I can manage enrollments efficiently.
+- As a Teacher, I want to bulk create assignments for multiple classes, so that I save time.
+
+**Implementation**:
+- Add bulk action toolbar to DataTable
+- Support: bulk status update, bulk delete, bulk email
+- Add progress indicator for long operations
+- Add undo capability for 5 seconds after action
+
+---
+
+### F006: Data Export/Import System
+
+**Type**: Data Management
+**Priority**: Medium
+**Description**: Complete backup and restore functionality for school data.
+
+**User Stories**:
+- As a Kepsek, I want to export all school data, so that I have a backup for disaster recovery.
+- As an Admin, I want to import student list from Excel, so that I can migrate from other systems.
+
+**Implementation**:
+- Add export to JSON/CSV for all entities
+- Add import from Excel/CSV with validation
+- Add backup scheduling (daily/weekly)
+- Add encryption for sensitive exports
+
+---
+
+### F007: Advanced Voice Commands
+
+**Type**: Accessibility/Voice
+**Priority**: Medium
+**Description**: Expand voice commands for power users and accessibility.
+
+**User Stories**:
+- As a Teacher with mobility issues, I want to navigate the entire app by voice, so that I can work independently.
+- As a Teacher, I want to create assignments using voice, so that I can work hands-free.
+
+**Implementation**:
+- Add voice command for: create assignment, take attendance, add grade
+- Add voice feedback for all actions
+- Add command history and shortcuts
+- Add custom command macros (e.g., "daily routine")
+
+---
+
+### F008: Multi-Language Support (i18n)
+
+**Type**: Accessibility
+**Priority**: Low
+**Description**: Support multiple languages for international schools.
+
+**User Stories**:
+- As a school in a multilingual region, I want to switch to English, so that we can use the system.
+- As an Admin, I want to set default language per school, so that users see their preferred language.
+
+**Implementation**:
+- Add i18n framework (react-i18next)
+- Create translation files for English
+- Add language switcher in settings
+- Support RTL languages (future)
+
+---
+
 ## Feature Priorities
 
 | Feature | Priority | Effort | Impact |
 |---------|----------|--------|--------|
 | F001: Audit Logging | High | Medium | High |
+| F005: Bulk Operations | High | Low | High |
 | F002: Analytics | Medium | Medium | Medium |
+| F006: Export/Import | Medium | Medium | Medium |
+| F007: Voice Commands | Medium | Medium | Medium |
 | F003: Mobile App | Low | High | High |
 | F004: Grade Predictions | Low | Medium | Medium |
+| F008: i18n | Low | High | Medium |
 
 ---
 
