@@ -2223,14 +2223,24 @@ export const API_ENDPOINTS = {
         GRADES: '/api/grades',
         GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
+        ATTENDANCE_BY_ID: (id: string) => `/api/attendance/${id}`,
         ASSIGNMENTS: '/api/assignments',
         ASSIGNMENT_BY_ID: (id: string) => `/api/assignments/${id}`,
+        ASSIGNMENT_SUBMISSIONS: '/api/assignment-submissions',
+        ASSIGNMENT_SUBMISSION_BY_ID: (id: string) => `/api/assignment-submissions/${id}`,
     },
     // Events
     EVENTS: {
         BASE: '/api/school_events',
         BY_ID: (id: string) => `/api/school_events/${id}`,
         REGISTRATIONS: '/api/event_registrations',
+        REGISTRATION_BY_ID: (id: string) => `/api/event_registrations/${id}`,
+        BUDGETS: '/api/event_budgets',
+        BUDGET_BY_ID: (id: string) => `/api/event_budgets/${id}`,
+        PHOTOS: '/api/event_photos',
+        PHOTO_BY_ID: (id: string) => `/api/event_photos/${id}`,
+        FEEDBACK: '/api/event_feedback',
+        FEEDBACK_BY_ID: (id: string) => `/api/event_feedback/${id}`,
     },
     // PPDB
     PPDB: {
@@ -2316,6 +2326,25 @@ export const ATTENDANCE_STATUS_LABELS = {
     [ACADEMIC.ATTENDANCE_STATUSES.SICK]: 'Sakit',
     [ACADEMIC.ATTENDANCE_STATUSES.PERMITTED]: 'Izin',
     [ACADEMIC.ATTENDANCE_STATUSES.ABSENT]: 'Alpa',
+} as const;
+
+// Chart Colors for SVG/Data Visualization - Flexy: Never hardcode chart colors!
+export const CHART_COLOR_SCHEMES = {
+    primary: ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe'],
+    success: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'],
+    warning: ['#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7'],
+    error: ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2'],
+    info: ['#06b6d4', '#22d3ee', '#67e8f9', '#a5f3fc', '#cffafe'],
+    mixed: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+} as const;
+
+export const CHART_DEFAULT_COLORS = {
+    primary: '#3b82f6',
+    success: '#10b981',
+    warning: '#f59e0b',
+    error: '#ef4444',
+    info: '#06b6d4',
+    neutral: '#e5e7eb',
 } as const;
 
 // SVG Namespaces - Flexy: Never hardcode XML namespaces!

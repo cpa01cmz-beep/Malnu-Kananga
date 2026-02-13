@@ -2,6 +2,7 @@
 
 import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, ConversationCreateRequest, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
 import { request } from '../client';
+import { API_ENDPOINTS } from '../../../constants';
 
 // ============================================
 // PARENTS API
@@ -9,53 +10,53 @@ import { request } from '../client';
 
 export const parentsAPI = {
   async getChildren(): Promise<{ success: boolean; message: string; data?: ParentChild[]; error?: string }> {
-    return request<ParentChild[]>('/api/parent/children');
+    return request<ParentChild[]>(API_ENDPOINTS.MESSAGING.PARENT_CHILDREN);
   },
 
   async getChildGrades(studentId: string): Promise<{ success: boolean; message: string; data?: Grade[]; error?: string }> {
-    return request<Grade[]>(`/api/parent/grades?student_id=${studentId}`);
+    return request<Grade[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/grades?student_id=${studentId}`);
   },
 
   async getChildAttendance(studentId: string): Promise<{ success: boolean; message: string; data?: Attendance[]; error?: string }> {
-    return request<Attendance[]>(`/api/parent/attendance?student_id=${studentId}`);
+    return request<Attendance[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/attendance?student_id=${studentId}`);
   },
 
   async getChildSchedule(studentId: string): Promise<{ success: boolean; message: string; data?: Schedule[]; error?: string }> {
-    return request<Schedule[]>(`/api/parent/schedule?student_id=${studentId}`);
+    return request<Schedule[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/schedule?student_id=${studentId}`);
   },
 
   async getMeetings(studentId: string): Promise<{ success: boolean; message: string; data?: ParentMeeting[]; error?: string }> {
-    return request<ParentMeeting[]>(`/api/parent/meetings?student_id=${studentId}`);
+    return request<ParentMeeting[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/meetings?student_id=${studentId}`);
   },
 
   async getAvailableTeachersForMeetings(studentId: string): Promise<{ success: boolean; message: string; data?: ParentTeacher[]; error?: string }> {
-    return request<ParentTeacher[]>(`/api/parent/meetings/teachers?student_id=${studentId}`);
+    return request<ParentTeacher[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/meetings/teachers?student_id=${studentId}`);
   },
 
   async scheduleMeeting(meetingData: Omit<ParentMeeting, 'id' | 'childName' | 'teacherName' | 'status'>): Promise<{ success: boolean; message: string; data?: ParentMeeting; error?: string }> {
-    return request<ParentMeeting>('/api/parent/meetings', {
+    return request<ParentMeeting>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/meetings`, {
       method: 'POST',
       body: JSON.stringify(meetingData),
     });
   },
 
   async getMessages(studentId: string): Promise<{ success: boolean; message: string; data?: ParentMessage[]; error?: string }> {
-    return request<ParentMessage[]>(`/api/parent/messages?student_id=${studentId}`);
+    return request<ParentMessage[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/messages?student_id=${studentId}`);
   },
 
   async getAvailableTeachers(studentId: string): Promise<{ success: boolean; message: string; data?: ParentTeacher[]; error?: string }> {
-    return request<ParentTeacher[]>(`/api/parent/messages/teachers?student_id=${studentId}`);
+    return request<ParentTeacher[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/messages/teachers?student_id=${studentId}`);
   },
 
   async sendMessage(messageData: Omit<ParentMessage, 'id' | 'timestamp' | 'status'>): Promise<{ success: boolean; message: string; data?: ParentMessage; error?: string }> {
-    return request<ParentMessage>('/api/parent/messages', {
+    return request<ParentMessage>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/messages`, {
       method: 'POST',
       body: JSON.stringify(messageData),
     });
   },
 
   async getPaymentHistory(studentId: string): Promise<{ success: boolean; message: string; data?: ParentPayment[]; error?: string }> {
-    return request<ParentPayment[]>(`/api/parent/payments?student_id=${studentId}`);
+    return request<ParentPayment[]>(`${API_ENDPOINTS.MESSAGING.PARENT_CHILDREN}/payments?student_id=${studentId}`);
   },
 };
 
@@ -72,15 +73,15 @@ export const messagesAPI = {
     if (filter?.archived !== undefined) params.append('archived', String(filter.archived));
 
     const query = params.toString();
-    return request<Conversation[]>(`/api/messages/conversations${query ? `?${query}` : ''}`);
+    return request<Conversation[]>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}${query ? `?${query}` : ''}`);
   },
 
   async getConversation(conversationId: string): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
-    return request<Conversation>(`/api/messages/conversations/${conversationId}`);
+    return request<Conversation>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}`);
   },
 
   async createConversation(data: ConversationCreateRequest): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
-    return request<Conversation>('/api/messages/conversations', {
+    return request<Conversation>(API_ENDPOINTS.MESSAGING.CONVERSATIONS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -88,7 +89,7 @@ export const messagesAPI = {
   },
 
   async updateConversation(conversationId: string, updates: Partial<Conversation>): Promise<{ success: boolean; message: string; data?: Conversation; error?: string }> {
-    return request<Conversation>(`/api/messages/conversations/${conversationId}`, {
+    return request<Conversation>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
@@ -96,13 +97,13 @@ export const messagesAPI = {
   },
 
   async deleteConversation(conversationId: string): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
-    return request<{ success: boolean }>(`/api/messages/conversations/${conversationId}`, {
+    return request<{ success: boolean }>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}`, {
       method: 'DELETE',
     });
   },
 
   async getMessages(conversationId: string, limit = 50, offset = 0): Promise<{ success: boolean; message: string; data?: DirectMessage[]; error?: string }> {
-    return request<DirectMessage[]>(`/api/messages/conversations/${conversationId}/messages?limit=${limit}&offset=${offset}`);
+    return request<DirectMessage[]>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}/messages?limit=${limit}&offset=${offset}`);
   },
 
   async sendMessage(data: MessageSendRequest): Promise<{ success: boolean; message: string; data?: DirectMessage; error?: string }> {
@@ -114,13 +115,13 @@ export const messagesAPI = {
       formData.append('file', data.file);
       if (data.replyTo) formData.append('replyTo', data.replyTo);
 
-      return request<DirectMessage>('/api/messages', {
+      return request<DirectMessage>(API_ENDPOINTS.MESSAGING.MESSAGES, {
         method: 'POST',
         body: formData,
       });
     }
 
-    return request<DirectMessage>('/api/messages', {
+    return request<DirectMessage>(API_ENDPOINTS.MESSAGING.MESSAGES, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -128,7 +129,7 @@ export const messagesAPI = {
   },
 
   async updateMessage(messageId: string, updates: Partial<DirectMessage>): Promise<{ success: boolean; message: string; data?: DirectMessage; error?: string }> {
-    return request<DirectMessage>(`/api/messages/${messageId}`, {
+    return request<DirectMessage>(`${API_ENDPOINTS.MESSAGING.MESSAGES}/${messageId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates),
@@ -136,29 +137,29 @@ export const messagesAPI = {
   },
 
   async deleteMessage(messageId: string): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
-    return request<{ success: boolean }>(`/api/messages/${messageId}`, {
+    return request<{ success: boolean }>(`${API_ENDPOINTS.MESSAGING.MESSAGES}/${messageId}`, {
       method: 'DELETE',
     });
   },
 
   async markMessageAsRead(messageId: string): Promise<{ success: boolean; message: string; data?: MessageReadReceipt; error?: string }> {
-    return request<MessageReadReceipt>(`/api/messages/${messageId}/read`, {
+    return request<MessageReadReceipt>(`${API_ENDPOINTS.MESSAGING.MESSAGES}/${messageId}/read`, {
       method: 'POST',
     });
   },
 
   async markConversationAsRead(conversationId: string): Promise<{ success: boolean; message: string; data?: { success: boolean; unreadCount: number }; error?: string }> {
-    return request<{ success: boolean; unreadCount: number }>(`/api/messages/conversations/${conversationId}/read`, {
+    return request<{ success: boolean; unreadCount: number }>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}/read`, {
       method: 'POST',
     });
   },
 
   async getTypingIndicators(conversationId: string): Promise<{ success: boolean; message: string; data?: TypingIndicator[]; error?: string }> {
-    return request<TypingIndicator[]>(`/api/messages/conversations/${conversationId}/typing`);
+    return request<TypingIndicator[]>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}/typing`);
   },
 
   async sendTypingIndicator(conversationId: string, isTyping: boolean): Promise<{ success: boolean; message: string; data?: { success: boolean }; error?: string }> {
-    return request<{ success: boolean }>(`/api/messages/conversations/${conversationId}/typing`, {
+    return request<{ success: boolean }>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}/typing`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ isTyping }),
@@ -166,6 +167,6 @@ export const messagesAPI = {
   },
 
   async getUnreadCount(): Promise<{ success: boolean; message: string; data?: { total: number; conversations: Array<{ conversationId: string; count: number }> }; error?: string }> {
-    return request<{ total: number; conversations: Array<{ conversationId: string; count: number }> }>('/api/messages/unread-count');
+    return request<{ total: number; conversations: Array<{ conversationId: string; count: number }> }>(`${API_ENDPOINTS.MESSAGING.MESSAGES}/unread-count`);
   },
 };
