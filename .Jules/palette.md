@@ -290,6 +290,36 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 ---
 
+## 2026-02-13 - Retry Button Accessibility Consistency Extended
+
+**Learning**: While AssignmentGrading and UserManagement were fixed previously, additional retry buttons ("Coba Lagi") were found missing accessibility attributes in ClassManagement, QuizGenerator, StudentAssignments, AttendanceView, StudentPortal, StudentTimeline, and MicrophonePermissionHandler. This created an inconsistent user experience where some retry buttons showed keyboard shortcuts while others didn't.
+
+**Action**: Add aria-label and shortcut="Ctrl+R" to all retry buttons in error states across 7 components:
+- ClassManagement.tsx: 2 buttons (lines 272-277, 298-303) - `aria-label="Coba lagi memuat data siswa"`
+- QuizGenerator.tsx: 1 button - `aria-label="Coba lagi memuat materi"`
+- StudentAssignments.tsx: 1 button - `aria-label="Coba lagi memuat tugas"`
+- AttendanceView.tsx: 1 button - `aria-label="Coba lagi memuat data kehadiran"`
+- StudentPortal.tsx: 1 button - `aria-label="Coba lagi memuat portal siswa"`
+- StudentTimeline.tsx: 1 plain button - added `type="button"` and `aria-label="Coba lagi memuat timeline aktivitas"`
+- MicrophonePermissionHandler.tsx: 1 button - `aria-label="Coba lagi meminta izin mikrofon"`
+
+**Files Fixed**:
+- src/components/ClassManagement.tsx
+- src/components/QuizGenerator.tsx
+- src/components/StudentAssignments.tsx
+- src/components/AttendanceView.tsx
+- src/components/student-portal/StudentPortal.tsx
+- src/components/Shared/StudentTimeline.tsx
+- src/components/MicrophonePermissionHandler.tsx
+
+**Pattern**: Always audit retry buttons in error states - if similar components already have keyboard shortcut hints (Ctrl+R), ensure consistency across ALL retry buttons. This applies to:
+- Error state retry buttons
+- Loading failure retry buttons
+- Permission request retry buttons
+- Plain button elements (need type="button" and aria-label)
+
+---
+
 ## 2026-02-13 - Retry Button Accessibility Consistency
 
 **Learning**: Retry buttons in AssignmentGrading and UserManagement components were missing keyboard shortcut hints (Ctrl+R) that were already present in similar components like ELibrary, StudentInsights, and StudyPlanGenerator. The AssignmentGrading retry button was also missing an aria-label, making it inaccessible to screen reader users.
