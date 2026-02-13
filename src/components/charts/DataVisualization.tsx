@@ -1,4 +1,5 @@
 import React from 'react';
+import { CHART_COLOR_SCHEMES, CHART_DEFAULT_COLORS } from '../../constants';
 
 /**
  * Enhanced Data Visualization Components
@@ -54,15 +55,8 @@ export interface ProgressChartProps {
   className?: string;
 }
 
-// Color schemes
-const colorSchemes = {
-  primary: ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe'],
-  success: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'],
-  warning: ['#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7'],
-  error: ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2'],
-  info: ['#06b6d4', '#22d3ee', '#67e8f9', '#a5f3fc', '#cffafe'],
-  mixed: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-};
+// Color schemes - Flexy: Using centralized chart color constants
+const colorSchemes = CHART_COLOR_SCHEMES;
 
 // Line Chart Component
 export const LineChart: React.FC<LineChartProps> = ({
@@ -74,7 +68,7 @@ export const LineChart: React.FC<LineChartProps> = ({
   showLabels = true,
   smooth = true,
   className = '',
-  color = '#3b82f6',
+  color = CHART_DEFAULT_COLORS.primary,
 }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   const minValue = Math.min(...data.map(d => d.value));
@@ -272,7 +266,7 @@ export const AreaChart: React.FC<AreaChartProps> = ({
   showGrid = true,
   gradient = true,
   className = '',
-  color = '#3b82f6',
+  color = CHART_DEFAULT_COLORS.primary,
 }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   const minValue = Math.min(...data.map(d => d.value));
@@ -343,7 +337,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({
   size = 120,
   strokeWidth = 8,
   showLabel = true,
-  color = '#3b82f6',
+  color = CHART_DEFAULT_COLORS.primary,
   className = '',
 }) => {
   const percentage = (value / max) * 100;
@@ -359,7 +353,7 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#e5e7eb"
+          stroke={CHART_DEFAULT_COLORS.neutral}
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -466,7 +460,7 @@ export const MiniChart: React.FC<MiniChartProps> = ({
   type = 'line',
   width = 60,
   height = 30,
-  color = '#3b82f6',
+  color = CHART_DEFAULT_COLORS.primary,
   positive = true,
 }) => {
   const maxValue = Math.max(...data);
