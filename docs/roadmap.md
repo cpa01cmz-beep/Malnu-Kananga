@@ -61,8 +61,8 @@ Build a world-class school management system with AI-powered features, voice int
 |---------|--------|--------|
 | T004: Audit Logging | ✅ Completed | 2026-03-15 |
 | T005: Bulk Operations | ✅ Completed | 2026-03-01 |
-| T006: Enhanced Analytics | ❌ Pending | 2026-03-30 |
-| T007: Export/Import | ❌ Pending | 2026-04-15 |
+| T006: Enhanced Analytics | ✅ Completed | 2026-03-30 |
+| T007: Export/Import | ✅ Completed | 2026-02-13 |
 | Test Coverage 50%+ | 🟡 In Progress | 2026-02-28 |
 
 ### v4.0.0 - Q2 2026

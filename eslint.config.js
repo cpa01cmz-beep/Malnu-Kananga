@@ -66,6 +66,10 @@ export default [
         AbortController: 'readonly',
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly',
+        TextEncoder: 'readonly',
+        TextDecoder: 'readonly',
+        crypto: 'readonly',
+        FileReader: 'readonly',
       },
     },
     plugins: {
