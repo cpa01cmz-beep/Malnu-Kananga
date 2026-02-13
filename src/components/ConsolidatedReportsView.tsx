@@ -132,6 +132,7 @@ const ConsolidatedReportsView: React.FC<ParentReportsViewProps> = ({ onShowToast
               variant="green-solid"
               icon={<DocumentTextIcon />}
               iconPosition="left"
+              aria-label="Unduh laporan perkembangan anak ke dokumen"
             >
               Unduh Laporan
             </Button>
