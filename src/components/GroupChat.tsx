@@ -261,10 +261,11 @@ export function GroupChat({ currentUser }: GroupChatProps) {
         <Modal isOpen={true} onClose={() => setShowNewGroupModal(false)} title="Buat Grup Baru">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="group-type-select" className="block text-sm font-medium text-gray-700 mb-1">
                 Tipe Grup
               </label>
               <Select
+                id="group-type-select"
                 value={groupType}
                 onChange={(e) => {
                   setGroupType(e.target.value as 'class' | 'subject' | 'custom');
@@ -280,10 +281,11 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
             {groupType === 'class' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="class-select" className="block text-sm font-medium text-gray-700 mb-1">
                   Pilih Kelas
                 </label>
                 <Select
+                  id="class-select"
                   value={selectedClass || ''}
                   onChange={(e) => setSelectedClass(e.target.value)}
                   className="w-full"
@@ -300,10 +302,11 @@ export function GroupChat({ currentUser }: GroupChatProps) {
 
             {groupType === 'subject' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="subject-select" className="block text-sm font-medium text-gray-700 mb-1">
                   Pilih Mata Pelajaran
                 </label>
                 <Select
+                  id="subject-select"
                   value={selectedSubject || ''}
                   onChange={(e) => setSelectedSubject(e.target.value)}
                   className="w-full"
@@ -321,10 +324,11 @@ export function GroupChat({ currentUser }: GroupChatProps) {
             {groupType === 'custom' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="group-name-input" className="block text-sm font-medium text-gray-700 mb-1">
                     Nama Grup
                   </label>
                   <Input
+                    id="group-name-input"
                     type="text"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
@@ -334,10 +338,11 @@ export function GroupChat({ currentUser }: GroupChatProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="group-desc-input" className="block text-sm font-medium text-gray-700 mb-1">
                     Deskripsi (Opsional)
                   </label>
                   <Input
+                    id="group-desc-input"
                     type="text"
                     value={groupDescription}
                     onChange={(e) => setGroupDescription(e.target.value)}
