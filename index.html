@@ -13,24 +13,14 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     
-    <!-- Performance: Critical resource hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
-    <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    
-    <!-- BroCula: Preconnect to API endpoint early for faster API calls -->
     <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
     
-    <!-- BroCula: Preload critical font stylesheet with non-blocking loading -->
-    <!-- Using rel="preload" + onload pattern to eliminate render-blocking -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
-    
-    <!-- BroCula: Critical CSS inlined to prevent render-blocking and reduce CLS -->
-    <!-- These styles are essential for initial paint and layout stability -->
     <style>
       /* Critical CSS for above-the-fold content - prevents layout shifts */
       *, *::before, *::after {
@@ -104,38 +94,23 @@
       }
     </style>
 
-    <!-- BroCula: Async CSS Loading - Eliminate render-blocking resources -->
-    <!-- This script converts render-blocking CSS to async loading for better performance -->
     <script>
-      // Convert render-blocking CSS to non-blocking async loading
-      // This improves First Contentful Paint (FCP) and Largest Contentful Paint (LCP)
       (function() {
-        // Mark that we're using async CSS loading
         window.__ASYNC_CSS_LOADED__ = false;
-        
-        // Function to load CSS asynchronously
         function loadCSSAsync() {
           var links = document.querySelectorAll('link[rel="stylesheet"]');
           links.forEach(function(link) {
-            // Skip already async stylesheets or inline critical CSS
             if (link.hasAttribute('data-async')) return;
-            
-            // Create a new link with media="all" to enable it
             link.setAttribute('data-async', 'true');
-            
-            // If it was loaded with media="print" pattern, switch to all
             if (link.media === 'print') {
               link.media = 'all';
             }
           });
           window.__ASYNC_CSS_LOADED__ = true;
         }
-        
-        // Load CSS after critical content is rendered
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', loadCSSAsync);
         } else {
-          // If DOM is already loaded, use requestIdleCallback or setTimeout
           if ('requestIdleCallback' in window) {
             requestIdleCallback(loadCSSAsync, { timeout: 100 });
           } else {
@@ -169,13 +144,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
-    <!-- Preconnect to API endpoint for faster API calls (crossorigin needed for CORS) -->
     <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
-    
-    <!-- DNS Prefetch for API endpoint (lower priority) -->
     <link rel="dns-prefetch" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" />
-    
-    <!-- Note: Vite automatically generates modulepreload links for critical chunks -->
     
     <title>Asisten AI MA Malnu Kananga - Portal Pintar Sekolah</title>
     
@@ -198,7 +168,6 @@
         }
       }
 
-      /* Global Animations */
       @keyframes scaleIn {
         from { transform: scale(0.95); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
@@ -221,7 +190,6 @@
         animation: fadeInUp 0.5s ease-out forwards;
       }
 
-      /* Custom Scrollbar */
       .custom-scrollbar::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -230,14 +198,14 @@
         background: transparent;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: rgba(156, 163, 175, 0.5); /* gray-400 with opacity */
+        background-color: rgba(156, 163, 175, 0.5);
         border-radius: 20px;
       }
       .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(107, 114, 128, 0.8); /* gray-500 */
+        background-color: rgba(107, 114, 128, 0.8);
       }
 
-      /* Fallback basic styles in case Tailwind doesn't load */
+      /* Fallback basic styles */
       body {
         font-family: ui-sans-serif, system-ui, sans-serif;
         line-height: 1.5;
@@ -251,7 +219,6 @@
         min-height: 100vh;
       }
     </style>
-    <!-- Note: Vite handles CSS injection automatically during build -->
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
