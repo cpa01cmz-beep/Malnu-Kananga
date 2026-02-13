@@ -335,7 +335,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   required
                 />
                 </FormGrid>
-                <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" isLoading={isAddingRegistration}>
+                <Button type="submit" variant="warning" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" isLoading={isAddingRegistration} shortcut="Ctrl+S">
                   {isAddingRegistration ? 'Mendaftarkan...' : 'Daftar'}
                 </Button>
               </form>
@@ -405,7 +405,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                   value={newBudget.quantity || ''}
                   onChange={e => setNewBudget({ ...newBudget, quantity: parseInt(e.target.value) })}
                 />
-                <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2" isLoading={isAddingBudget}>
+                <Button type="submit" variant="success" icon={<PlusIcon className="w-4 h-4" />} iconPosition="left" className="md:col-span-2" isLoading={isAddingBudget} shortcut="Ctrl+S">
                   {isAddingBudget ? 'Menambahkan...' : 'Tambah Anggaran'}
                 </Button>
               </form>
@@ -672,7 +672,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 minRows={3}
                 fullWidth
               />
-              <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />} isLoading={isCreating}>
+              <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />} isLoading={isCreating} shortcut="Ctrl+S">
                 {isCreating ? UI_STRINGS.SAVING : 'Simpan Kegiatan'}
               </Button>
             </form>
