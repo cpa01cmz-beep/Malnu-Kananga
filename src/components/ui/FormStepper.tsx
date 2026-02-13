@@ -4,6 +4,7 @@ import FormProgress from './FormProgress';
 import FormFeedback from './FormFeedback';
 import { ChevronLeftIcon, ChevronRightIcon, CheckIcon } from '../icons/MaterialIcons';
 import { logger } from '../../utils/logger';
+import { UI_STRINGS } from '../../constants';
 
 export interface FormStep {
   id: string;
@@ -40,8 +41,8 @@ const FormStepper: React.FC<FormStepperProps> = ({
   onStepSubmit,
   onSubmit,
   onSubmitComplete,
-  submitButtonText = 'Submit',
-  submitButtonLoadingText = 'Submitting...',
+  submitButtonText = UI_STRINGS.SUBMIT,
+  submitButtonLoadingText = UI_STRINGS.SUBMITTING,
   showProgress = true,
   allowSkip = false,
   isLoading = false,
