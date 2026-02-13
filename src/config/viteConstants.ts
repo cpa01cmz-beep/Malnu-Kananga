@@ -16,6 +16,11 @@ const TIME_SECONDS = {
   ONE_YEAR: 365 * 24 * 60 * 60,
 } as const;
 
+// Time constants in milliseconds - Flexy: Local definition for Node.js context
+const TIME_MS = {
+  TEN_SECONDS: 10000,
+} as const;
+
 // PWA Theme and Branding Configuration
 export const PWA_CONFIG = {
   THEME_COLOR: '#10b981', // Emerald green - matches school branding
@@ -74,8 +79,8 @@ export const BUILD_CONFIG = {
 
 // Test Configuration
 export const TEST_CONFIG = {
-  TIMEOUT: 10000, // 10 seconds
-  HOOK_TIMEOUT: 10000, // 10 seconds
+  TIMEOUT: TIME_MS.TEN_SECONDS, // 10 seconds - Flexy: Using modular constant!
+  HOOK_TIMEOUT: TIME_MS.TEN_SECONDS, // 10 seconds - Flexy: Using modular constant!
   POOL_MIN_THREADS: 2,
   POOL_MAX_THREADS: 8,
   ENVIRONMENT: 'jsdom' as const,
