@@ -319,6 +319,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           variant="orange-solid"
           size="md"
           onClick={() => _csvInputRef.current?.click()}
+          aria-label="Impor data nilai dari file CSV"
         >
           Import CSV
         </Button>
