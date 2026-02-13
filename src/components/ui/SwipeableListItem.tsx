@@ -3,7 +3,7 @@
  * List items with swipe-to-delete gesture support
  */
 
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useSwipeToDelete, useLongPress } from '../../utils/gestures';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -27,7 +27,7 @@ interface SwipeableListItemProps {
 const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   children,
   onDelete,
-  actionLabel = 'Delete',
+  actionLabel = 'Hapus',
   actionIcon,
   actionWidth = 80,
   swipeThreshold = 100,
@@ -37,13 +37,20 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   rightActions,
   swipeDirection = 'right',
   confirmBeforeDelete = false,
-  confirmMessage = 'Are you sure you want to delete this item?',
+  confirmMessage = 'Apakah Anda yakin ingin menghapus item ini?',
   confirmDelay = 2000,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmTimer, setConfirmTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const itemRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const { onDelete: hapticDelete } = useHapticFeedback();
+
+  useEffect(() => {
+    if (showConfirm && cancelButtonRef.current) {
+      cancelButtonRef.current.focus();
+    }
+  }, [showConfirm]);
 
   // Swipe-to-delete configuration
   const swipeConfig = {
@@ -212,16 +219,19 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
             </p>
             <div className="flex gap-2">
               <button
+                ref={cancelButtonRef}
                 onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors duration-200"
+                aria-label="Batal menghapus"
+                className="flex-1 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-700 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
               >
-                Cancel
+                Batal
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors duration-200"
+                aria-label="Konfirmasi menghapus"
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2"
               >
-                Delete
+                Hapus
               </button>
             </div>
           </div>
