@@ -1774,10 +1774,11 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
 
               {/* Review Comment */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                <label htmlFor="elibrary-review-comment" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Review (Opsional)
                 </label>
                 <textarea
+                  id="elibrary-review-comment"
                   value={userReview}
                   onChange={(e) => setUserReview(e.target.value)}
                   placeholder="Bagikan pengalaman Anda dengan materi ini..."

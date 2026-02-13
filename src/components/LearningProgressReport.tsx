@@ -408,10 +408,11 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Pengaturan Laporan</h3>
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="report-frequency" className="block text-sm font-medium text-gray-700 mb-2">
                 Frekuensi Laporan
               </label>
               <select
+                id="report-frequency"
                 value={settings.frequency}
                 onChange={(e) => setSettings({
                   ...settings,

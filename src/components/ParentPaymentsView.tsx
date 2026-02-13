@@ -221,6 +221,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value as 'current' | 'all')}
               className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white"
+              aria-label="Filter periode pembayaran"
             >
               <option value="current">Periode Saat Ini</option>
               <option value="all">Semua Periode</option>
