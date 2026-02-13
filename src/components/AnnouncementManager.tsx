@@ -565,6 +565,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
               onClick={handleSave}
               disabled={saving}
               className="flex items-center gap-2"
+              shortcut="Ctrl+S"
             >
               {saving ? (
                 <>

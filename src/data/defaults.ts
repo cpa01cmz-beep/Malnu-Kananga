@@ -81,18 +81,21 @@ export const RELATED_LINKS = [];
 
 // DATA AKUN DUMMY UNTUK PENGUJIAN
 // Digunakan sebagai default jika LocalStorage kosong atau di-reset
+// Flexy: Using generic domain placeholder for multi-tenant compatibility
+const DUMMY_DOMAIN = 'example.sch.id';
+
 export const INITIAL_USERS: User[] = [
     { 
         id: '1', 
         name: 'Ahmad Dahlan', 
-        email: 'admin@malnu.sch.id', 
+        email: `admin@${DUMMY_DOMAIN}`, 
         role: USER_ROLES.ADMIN, 
         status: 'active' 
     },
     { 
         id: '2', 
         name: 'Siti Aminah, S.Pd.', 
-        email: 'guru.staff@malnu.sch.id', 
+        email: `guru.staff@${DUMMY_DOMAIN}`, 
         role: USER_ROLES.TEACHER, 
         extraRole: 'staff', // Guru merangkap Staff Tata Usaha/Sarpras
         status: 'active' 
@@ -100,7 +103,7 @@ export const INITIAL_USERS: User[] = [
     { 
         id: '3', 
         name: 'Budi Santoso', 
-        email: 'siswa.osis@malnu.sch.id', 
+        email: `siswa.osis@${DUMMY_DOMAIN}`, 
         role: USER_ROLES.STUDENT, 
         extraRole: 'osis', // Siswa merangkap Ketua OSIS
         status: 'active' 
@@ -108,7 +111,7 @@ export const INITIAL_USERS: User[] = [
     { 
         id: '4', 
         name: 'Rudi Hartono, M.Pd.', 
-        email: 'guru.biasa@malnu.sch.id', 
+        email: `guru.biasa@${DUMMY_DOMAIN}`, 
         role: USER_ROLES.TEACHER, 
         extraRole: null, 
         status: 'active' 
@@ -116,7 +119,7 @@ export const INITIAL_USERS: User[] = [
     { 
         id: '5', 
         name: 'Dewi Sartika', 
-        email: 'siswa.biasa@malnu.sch.id', 
+        email: `siswa.biasa@${DUMMY_DOMAIN}`, 
         role: USER_ROLES.STUDENT, 
         extraRole: null, 
         status: 'active' 
@@ -124,7 +127,7 @@ export const INITIAL_USERS: User[] = [
     {
         id: '6',
         name: 'Andi Pratama',
-        email: 'andi.osis@malnu.sch.id',
+        email: `andi.osis@${DUMMY_DOMAIN}`,
         role: USER_ROLES.STUDENT,
         extraRole: 'osis', // Siswa merangkap Wakil Ketua OSIS
         status: 'active'
@@ -132,7 +135,7 @@ export const INITIAL_USERS: User[] = [
     {
         id: '7',
         name: 'Nurul Hidayah, S.Kom',
-        email: 'nurul.staff@malnu.sch.id',
+        email: `nurul.staff@${DUMMY_DOMAIN}`,
         role: USER_ROLES.TEACHER,
         extraRole: 'staff', // Guru merangkap Staff IT/Laboran
         status: 'active'
