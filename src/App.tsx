@@ -6,6 +6,7 @@ import Toast, { ToastType } from './components/Toast';
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
 import ErrorBoundary from './components/ui/ErrorBoundary';
+import ScrollToTop from './components/ui/ScrollToTop';
 import { logger } from './utils/logger';
 import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
@@ -507,7 +508,15 @@ const App: React.FC = () => {
         isVisible={toast.isVisible}
         onClose={hideToast}
       />
-      
+
+      <ScrollToTop
+        showThreshold={400}
+        position="bottom-right"
+        size="md"
+        variant="elevated"
+        showProgress={true}
+      />
+
       <Suspense fallback={null}>
         <ThemeSelector
           isOpen={isThemeSelectorOpen}
