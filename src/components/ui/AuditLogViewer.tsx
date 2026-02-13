@@ -240,7 +240,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
           itemsPerPage: filter.limit || 20,
           onPageChange: (page) => setFilter(prev => ({ ...prev, page })),
         }}
-        onRowClick={() => undefined}
+        onRowClick={() => {}}
       />
 
       {onClose && (
