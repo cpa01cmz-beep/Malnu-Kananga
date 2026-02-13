@@ -584,9 +584,9 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                     <div className="flex items-center justify-between mb-2">
                       <p className="font-semibold">{fb.studentName} ({fb.studentClass})</p>
                       <div className="flex gap-1">
-                        <span title="Rating Keseluruhan">⭐ {fb.overallRating}</span>
-                        <span title="Rating Organisasi">🏆 {fb.organizationRating}</span>
-                        <span title="Rating Konten">📝 {fb.contentRating}</span>
+                        <span aria-label={`Rating Keseluruhan: ${fb.overallRating} dari 5`} role="img">⭐ {fb.overallRating}</span>
+                        <span aria-label={`Rating Organisasi: ${fb.organizationRating} dari 5`} role="img">🏆 {fb.organizationRating}</span>
+                        <span aria-label={`Rating Konten: ${fb.contentRating} dari 5`} role="img">📝 {fb.contentRating}</span>
                       </div>
                     </div>
                     {fb.comments && <p className="text-sm text-neutral-600 dark:text-neutral-300 italic">"{fb.comments}"</p>}
