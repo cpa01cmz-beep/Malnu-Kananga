@@ -4,6 +4,19 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - AssignmentGrading Save Button Keyboard Shortcut
+
+**Learning**: The AssignmentGrading component is a high-traffic teacher component where grades are saved frequently, but the "Simpan Nilai" (Save Grade) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to teachers.
+
+**Action**: Add `shortcut="Ctrl+S"` to all save buttons in high-frequency data entry components. This follows the established pattern from GradingManagement and AttendanceManagement.
+
+**File Fixed**:
+- AssignmentGrading.tsx - Added shortcut="Ctrl+S" to Simpan Nilai button
+
+**Pattern**: High-traffic teacher components (grading, attendance, assignments) benefit from keyboard shortcuts to speed up daily workflows. Always audit save buttons in these components.
+
+---
+
 ## 2026-02-12 - Tooltip Button Accessibility Fix
 **Learning**: Icon-only buttons that provide tooltip information must remain focusable for keyboard users. Setting `tabIndex={-1}` on tooltip buttons prevents keyboard users from accessing important contextual information.
 
@@ -174,3 +187,19 @@ Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 inp
 - Save buttons: Ctrl+S (for form submission)
 
 Always audit save/submit buttons in forms - if they persist data, add keyboard shortcut hints.
+
+---
+
+## 2026-02-13 - Native confirm() Replacement with Accessible Dialog
+
+**Learning**: The AnnouncementManager component used native browser `confirm()` for delete confirmation, which is:
+- Not accessible (no screen reader support)
+- Blocking and jarring for users
+- Not stylistically consistent with the app
+
+**Action**: Replace native `confirm()` with the accessible `ConfirmationDialog` component already in the codebase. This pattern should be applied to all delete/destructive actions.
+
+**Files Fixed**:
+- AnnouncementManager.tsx - Replaced confirm() with ConfirmationDialog
+
+**Pattern**: Always audit for native `confirm()`, `alert()`, or `prompt()` usage - replace with accessible UI components.
