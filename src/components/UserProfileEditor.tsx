@@ -20,6 +20,7 @@ import EyeIcon from './icons/EyeIcon';
 import EyeSlashIcon from './icons/EyeSlashIcon';
 import IconButton from './ui/IconButton';
 import AccessDenied from './AccessDenied';
+import { TwoFactorSetup, TwoFactorDisable, TwoFactorStatus } from './ui/TwoFactorAuth';
 
 interface UserProfileEditorProps {
   userId?: string;
@@ -65,7 +66,11 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
   });
 
   const [passwordError, setPasswordError] = useState('');
-
+  
+  // Two-Factor Authentication state
+  const [isTwoFactorModalOpen, setIsTwoFactorModalOpen] = useState(false);
+  const [twoFactorMode, setTwoFactorMode] = useState<'status' | 'setup' | 'disable'>('status');
+  
   const targetUserId = userId || currentUser?.id;
   const isOwnProfile = currentUser?.id === targetUserId;
   const canEditProfile = isOwnProfile || currentUser?.role === USER_ROLES.ADMIN;
@@ -413,6 +418,20 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             </Button>
           )}
 
+          {isOwnProfile && (
+            <Button
+              type="button"
+              variant="secondary"
+              icon={<LockIcon className="w-5 h-5" />}
+              onClick={() => {
+                setTwoFactorMode('status');
+                setIsTwoFactorModalOpen(true);
+              }}
+            >
+              Autentikasi Dua Faktor
+            </Button>
+          )}
+
           {canEditProfile && (
             <Button
               type="submit"
@@ -539,6 +558,52 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             </Button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        isOpen={isTwoFactorModalOpen}
+        onClose={() => setIsTwoFactorModalOpen(false)}
+        title="Autentikasi Dua Faktor"
+        size="md"
+      >
+        {twoFactorMode === 'status' && targetUserId && (
+          <TwoFactorStatus
+            userId={targetUserId}
+            onEnable={() => {
+              setTwoFactorMode('setup');
+            }}
+            onDisable={() => {
+              setTwoFactorMode('disable');
+            }}
+          />
+        )}
+        {twoFactorMode === 'setup' && targetUserId && user && (
+          <TwoFactorSetup
+            userId={targetUserId}
+            userEmail={user.email}
+            onComplete={() => {
+              setIsTwoFactorModalOpen(false);
+              setTwoFactorMode('status');
+              onShowToast?.('Autentikasi dua faktor berhasil diaktifkan', 'success');
+            }}
+            onCancel={() => {
+              setTwoFactorMode('status');
+            }}
+          />
+        )}
+        {twoFactorMode === 'disable' && targetUserId && (
+          <TwoFactorDisable
+            userId={targetUserId}
+            onComplete={() => {
+              setIsTwoFactorModalOpen(false);
+              setTwoFactorMode('status');
+              onShowToast?.('Autentikasi dua faktor dinonaktifkan', 'success');
+            }}
+            onCancel={() => {
+              setTwoFactorMode('status');
+            }}
+          />
+        )}
       </Modal>
     </div>
   );
