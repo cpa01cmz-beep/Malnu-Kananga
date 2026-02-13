@@ -50,15 +50,19 @@
 - Added `BULK_OPERATIONS_CONFIG` to constants.ts for centralized config
 
 ### T006: Implement Advanced Analytics (F002)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: Medium
 **Description**: Enhanced analytics with date ranges and comparisons.
 **Rationale**: F002 - Medium priority for reporting.
 **Actions**:
-- [ ] Add date range picker to GradeAnalytics
-- [ ] Add comparison view (this semester vs last)
-- [ ] Add PDF/CSV export for all reports
-**Notes**: Enhances existing analytics.
+- [x] Add date range picker to GradeAnalytics
+- [x] Add comparison view (this semester vs last)
+- [x] Add PDF/CSV export for all reports
+**Notes**: Enhanced GradeAnalytics with:
+- Date range filtering (start/end date inputs)
+- Semester comparison toggle with previous year data
+- PDF export via pdfExportService
+- CSV export via PapaParse
 
 ### T007: Implement Data Export/Import (F006)
 **Status**: ❌ Pending

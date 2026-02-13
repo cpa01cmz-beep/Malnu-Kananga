@@ -68,7 +68,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
       setFilter(prev => ({ ...prev, ...savedFilters }));
     }
     fetchLogs();
-  }, []);
+  }, [fetchLogs]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -79,7 +79,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
 
   useEffect(() => {
     fetchLogs();
-  }, [filter.action, filter.resource, filter.page]);
+  }, [fetchLogs, filter.action, filter.resource, filter.page]);
 
   const handleFilterChange = (key: keyof AuditLogFilter, value: string) => {
     setFilter(prev => ({ ...prev, [key]: value || undefined, page: 1 }));
