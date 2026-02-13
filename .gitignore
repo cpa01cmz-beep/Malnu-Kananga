@@ -139,3 +139,7 @@ Desktop.ini
 
 # ULW-Loop / Ralph-Loop local files
 .sisyphus/
+
+# Lighthouse reports (keep archive, ignore individual reports)
+lighthouse-reports/*.json
+!lighthouse-reports/archive/
