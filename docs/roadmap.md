@@ -72,6 +72,7 @@ Build a world-class school management system with AI-powered features, voice int
 | T009: Real-time Collab | ✅ Completed | 2026-02-13 |
 | T010: Online Assessment | ❌ Pending | 2026-04-15 |
 | T011: Parent Dashboard | ❌ Pending | 2026-04-30 |
+| T012: Global Search | ✅ Completed | 2026-02-13 |
 
 ### v3.12.0 - Q2 2026
 

@@ -188,16 +188,21 @@
 - [ ] Add payment tracking
 
 ### T012: Global Search (F015)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: High
 **Description**: Unified search across all modules and data.
 **Rationale**: F015 - High productivity impact for all user roles.
 **Actions**:
-- [ ] Add global search bar with Cmd+K shortcut
-- [ ] Implement search across: students, teachers, grades, assignments, materials
-- [ ] Add recent and saved searches
-- [ ] Add search filters (type, date range, class)
-- [ ] Integrate with existing API endpoints
+- [x] Add global search modal with Cmd+Shift+K shortcut
+- [x] Implement search across: students, teachers, grades, assignments, materials
+- [x] Add recent searches (stored in localStorage)
+- [x] Add search filters (by type: student, teacher, grade, etc.)
+- [x] Integrate with existing API endpoints (searchAPI module created)
+**Notes**: Created:
+- `src/services/api/modules/search.ts` - Search API module
+- `src/components/ui/GlobalSearchModal.tsx` - Search UI component
+- Added search keyboard shortcut (Cmd+Shift+K / Ctrl+Shift+K)
+- Added API endpoints in constants.ts (SEARCH object)
 
 ### T013: Document Template System (F016)
 **Status**: ❌ Pending

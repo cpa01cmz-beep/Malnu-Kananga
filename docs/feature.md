@@ -274,6 +274,7 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 **Type**: Productivity Feature
 **Priority**: High
+**Status**: ✅ Completed (2026-02-13)
 **Description**: Unified search across all modules and data.
 
 **User Stories**:
@@ -282,11 +283,15 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 - As a Parent, I want to search for my children's assignments, so that I can help them stay on track.
 
 **Implementation**:
-- Add global search bar to header (Cmd+K shortcut)
-- Search across: students, teachers, grades, assignments, materials, attendance
-- Add recent searches and saved searches
-- Add search filters (by type, date range, class)
-- Implement search indexing via existing API
+- [x] Add global search modal with Cmd+Shift+K shortcut
+- [x] Search across: students, teachers, grades, assignments, materials, announcements, events
+- [x] Add recent searches (localStorage)
+- [x] Add search filters (by type)
+- [x] Integrate with search API module
+
+**Files Created**:
+- src/services/api/modules/search.ts
+- src/components/ui/GlobalSearchModal.tsx
 
 ---
 

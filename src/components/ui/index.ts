@@ -23,6 +23,7 @@ export { default as ConfirmationDialog } from './ConfirmationDialog';
 export { default as Section } from './Section';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as SkipLink } from './SkipLink';
+export { default as GlobalSearchModal } from './GlobalSearchModal';
 
 // Display Components
 export { default as Heading } from './Heading';
