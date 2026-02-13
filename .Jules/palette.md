@@ -106,3 +106,4 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - StudentInsights.tsx - Added shortcut="Ctrl+R" to both refresh buttons (error state "Coba Lagi" and main "Refresh")
 
 **Pattern**: Always add keyboard shortcut hints to frequently-used action buttons (refresh, submit, save) in high-traffic analytics and data components. The shortcut prop provides discoverability without requiring users to read documentation.
+>>>>>>> origin/main
