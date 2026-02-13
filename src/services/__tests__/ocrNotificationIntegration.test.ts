@@ -26,7 +26,6 @@ vi.mock('tesseract.js', () => ({
 if (!File.prototype.arrayBuffer) {
   File.prototype.arrayBuffer = function(this: File): Promise<ArrayBuffer> {
     return new Promise<ArrayBuffer>((resolve) => {
-      // eslint-disable-next-line no-undef
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result as ArrayBuffer);
       reader.readAsArrayBuffer(this);
