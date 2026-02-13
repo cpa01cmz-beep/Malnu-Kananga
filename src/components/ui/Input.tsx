@@ -7,6 +7,7 @@ import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
 import IconButton from './IconButton';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { generateComponentId } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -100,6 +101,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
   const [shakeKey, setShakeKey] = useState(0);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   // Character counter logic
@@ -136,17 +139,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const accessibilityDescribedBy = accessibility?.describedBy;
   const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
 
-  // Keyboard shortcut hint state for clearOnEscape feature
-  const [showEscapeHint, setShowEscapeHint] = useState(false);
-  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   // Show escape hint when input is focused and has value
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (clearOnEscape && value && String(value).length > 0) {
       // Delay showing hint to avoid flickering on quick interactions
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
     onFocus?.(e);
   };

@@ -5,7 +5,7 @@ import { ChartBarIcon } from './icons/ChartBarIcon';
 import { UserIcon } from './icons/UserIcon';
 import { LockIcon } from './icons/LockIcon';
 import { ELibrary, UserRole, UserExtraRole } from '../types';
-import { USER_ROLES } from '../constants';
+import { USER_ROLES, msToDays } from '../constants';
 import { materialPermissionService, MaterialShareAudit as ShareAudit } from '../services/materialPermissionService';
 import { logger } from '../utils/logger';
 import Button from './ui/Button';
@@ -241,7 +241,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
 
   const getExpirationDays = (expiresAt?: string) => {
     if (!expiresAt) return null;
-    const days = Math.ceil((new Date(expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(msToDays(new Date(expiresAt).getTime() - new Date().getTime()));
     return days;
   };
 

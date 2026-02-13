@@ -685,6 +685,11 @@ export const UI_DELAYS = {
     // Flexy Principle: Accessibility timing must be configurable!
     ACCESSIBILITY_ANNOUNCE: 100, // Delay for screen reader announcements to ensure proper DOM update
     SKELETON_DELAY: 200, // Delay before showing skeleton loader (ms)
+    ESCAPE_HINT_DELAY: 400,
+    TOOLTIP_HIDE_MS: 200,
+    SHORTCUT_HINT_DELAY: 400,
+    PASTE_HINT_DELAY: 400,
+    DEFAULT_UI_FEEDBACK: 400
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
@@ -816,6 +821,9 @@ export const CONVERSION = {
     MS_PER_SECOND: 1000,
     MS_PER_MINUTE: 60 * 1000,
     MS_PER_HOUR: 60 * 60 * 1000,
+    MS_PER_DAY: 24 * 60 * 60 * 1000,
+    MS_PER_WEEK: 7 * 24 * 60 * 60 * 1000,
+    MS_PER_YEAR: 365.25 * 24 * 60 * 60 * 1000, // Accounts for leap years
 } as const;
 
 /**
@@ -854,6 +862,46 @@ export function minutesToMs(minutes: number): number {
  */
 export function hoursToMs(hours: number): number {
     return hours * CONVERSION.MS_PER_HOUR;
+}
+
+/**
+ * Convert days to milliseconds
+ * Flexy says: Use this instead of hardcoded `days * 24 * 60 * 60 * 1000`
+ */
+export function daysToMs(days: number): number {
+    return days * CONVERSION.MS_PER_DAY;
+}
+
+/**
+ * Convert milliseconds to days
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60 * 24)`
+ */
+export function msToDays(ms: number): number {
+    return ms / CONVERSION.MS_PER_DAY;
+}
+
+/**
+ * Convert milliseconds to hours
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60)`
+ */
+export function msToHours(ms: number): number {
+    return ms / CONVERSION.MS_PER_HOUR;
+}
+
+/**
+ * Convert milliseconds to minutes
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60)`
+ */
+export function msToMinutes(ms: number): number {
+    return ms / CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert milliseconds to years
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60 * 24 * 365)`
+ */
+export function msToYears(ms: number): number {
+    return ms / CONVERSION.MS_PER_YEAR;
 }
 
 // Validation regex patterns - Centralized to avoid hardcoded regex
@@ -900,6 +948,10 @@ export const ACADEMIC = {
         ASSIGNMENT: 0.3,
         MID_EXAM: 0.3,
         FINAL_EXAM: 0.4,
+    } as const,
+    STUDY_PLAN_CORRELATION_WEIGHTS: {
+        ATTENDANCE: 0.3,
+        GRADE: 0.7,
     } as const,
     GRADE_THRESHOLDS: {
         A: 85,
@@ -2163,15 +2215,21 @@ export const API_ENDPOINTS = {
     // Academic
     ACADEMIC: {
         SUBJECTS: '/api/subjects',
+        SUBJECT_BY_ID: (id: string) => `/api/subjects/${id}`,
         CLASSES: '/api/classes',
+        CLASS_BY_ID: (id: string) => `/api/classes/${id}`,
         SCHEDULES: '/api/schedules',
+        SCHEDULE_BY_ID: (id: string) => `/api/schedules/${id}`,
         GRADES: '/api/grades',
         GRADE_BY_ID: (id: string) => `/api/grades/${id}`,
         ATTENDANCE: '/api/attendance',
+        ASSIGNMENTS: '/api/assignments',
+        ASSIGNMENT_BY_ID: (id: string) => `/api/assignments/${id}`,
     },
     // Events
     EVENTS: {
         BASE: '/api/school_events',
+        BY_ID: (id: string) => `/api/school_events/${id}`,
         REGISTRATIONS: '/api/event_registrations',
     },
     // PPDB
@@ -2189,6 +2247,7 @@ export const API_ENDPOINTS = {
     // Inventory
     INVENTORY: {
         BASE: '/api/inventory',
+        BY_ID: (id: string) => `/api/inventory/${id}`,
         CATEGORIES: '/api/inventory/categories',
     },
     // Announcements
@@ -2264,6 +2323,22 @@ export const XML_NAMESPACES = {
     SVG: 'http://www.w3.org/2000/svg',
     XLINK: 'http://www.w3.org/1999/xlink',
     XML: 'http://www.w3.org/XML/1998/namespace',
+} as const;
+
+// URL Validation - Flexy: Never hardcode URL schemes!
+export const URL_VALIDATION = {
+    SCHEMES: {
+        HTTP: 'http://',
+        HTTPS: 'https://',
+    },
+    PATTERNS: {
+        HTTP_URL: /^https?:\/\//i,
+    },
+    // Helper function to check if URL starts with valid scheme
+    isValidScheme: (url: string): boolean => {
+        return url.startsWith(URL_VALIDATION.SCHEMES.HTTP) || 
+               url.startsWith(URL_VALIDATION.SCHEMES.HTTPS);
+    },
 } as const;
 
 // User Status - Flexy: Never hardcode status strings!

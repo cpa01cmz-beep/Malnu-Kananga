@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState, useCallback, useId } from 'react';
 import { XML_NAMESPACES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
-import { 
-  buildButtonClasses, 
-  BUTTON_SIZE_CLASSES, 
-  BUTTON_ICON_ONLY_SIZES, 
-  BUTTON_BASE_CLASSES, 
-  BUTTON_VARIANT_CLASSES, 
-  BUTTON_INTENT_CLASSES 
+import {
+  buildButtonClasses,
+  BUTTON_SIZE_CLASSES,
+  BUTTON_ICON_ONLY_SIZES,
+  BUTTON_BASE_CLASSES,
+  BUTTON_VARIANT_CLASSES,
+  BUTTON_INTENT_CLASSES
 } from '../../utils/buttonUtils';
 
 // New simplified variants
@@ -34,6 +34,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   /** Reason shown in tooltip when button is disabled */
   disabledReason?: string;
+  /**
+   * Keyboard shortcut to display in tooltip (e.g., "Ctrl+K", "Esc", "Enter")
+   * Improves UX by making keyboard shortcuts discoverable
+   */
+  shortcut?: string;
 }
 
   const getBaseClasses = (prefersReducedMotion: boolean) => {
@@ -63,10 +68,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   className = '',
   disabled,
   disabledReason,
+  shortcut,
   ...props
 }, ref) => {
   const prefersReducedMotion = useReducedMotion();
   const { onTap, onPress } = useHapticFeedback();
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const tooltipId = useId();
+  const hasTooltip = Boolean(shortcut) && !isLoading;
   // Enhanced variant mapping with better UX intent preservation
   const normalizeVariant = (variant: AllButtonVariant): ButtonVariant => {
     // Map legacy solid colors to new intent system with semantic meaning
@@ -131,17 +140,36 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
 
   const computedAriaLabel = iconOnly ? (ariaLabel || (typeof children === 'string' ? children : 'Button')) : ariaLabel;
 
+  const isDisabled = disabled || isLoading;
+
+  const showTooltip = useCallback(() => {
+    if (!isLoading && shortcut) {
+      setIsTooltipVisible(true);
+    }
+  }, [isLoading, shortcut]);
+
+  const hideTooltip = useCallback(() => {
+    setIsTooltipVisible(false);
+  }, []);
+
+  const getAriaLabel = () => {
+    if (computedAriaLabel && shortcut) {
+      return `${computedAriaLabel} (Tekan ${shortcut} saat fokus)`;
+    }
+    return computedAriaLabel;
+  };
+
+  const finalAriaLabel = getAriaLabel();
+
   const ariaProps: Record<string, string | boolean | undefined> = {};
 
-  if (computedAriaLabel) {
-    ariaProps['aria-label'] = computedAriaLabel;
+  if (finalAriaLabel) {
+    ariaProps['aria-label'] = finalAriaLabel;
   }
 
   if (isLoading) {
     ariaProps['aria-busy'] = 'true';
   }
-
-  const isDisabled = disabled || isLoading;
 
   const handlePressStart = () => {
     if (!isDisabled) {
@@ -164,13 +192,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   return (
     <button
       ref={ref}
-      className={classes}
+      className={`${classes} relative`}
       disabled={isDisabled}
       aria-live={isLoading ? 'polite' : undefined}
       aria-disabled={isDisabled}
+      aria-describedby={hasTooltip ? tooltipId : undefined}
       onTouchStart={handlePressStart}
       onMouseDown={handlePressStart}
       onKeyDown={handleKeyDown}
+      onMouseEnter={hasTooltip ? showTooltip : undefined}
+      onMouseLeave={hasTooltip ? hideTooltip : undefined}
+      onFocus={hasTooltip ? showTooltip : undefined}
+      onBlur={hasTooltip ? hideTooltip : undefined}
       {...ariaProps}
       {...props}
     >
@@ -221,6 +254,34 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium bg-neutral-800 dark:bg-neutral-700 text-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
           {disabledReason}
           <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"></span>
+        </span>
+      )}
+
+      {hasTooltip && (
+        <span
+          id={tooltipId}
+          role="tooltip"
+          className={`
+            absolute bottom-full left-1/2 -translate-x-1/2 mb-2
+            px-2.5 py-1.5 text-xs font-medium
+            bg-neutral-800 dark:bg-neutral-700 text-white
+            rounded-md shadow-lg
+            whitespace-nowrap pointer-events-none z-50
+            transition-all duration-200 ease-out
+            ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+          `.replace(/\s+/g, ' ').trim()}
+        >
+          <span className="flex items-center gap-2">
+            <span>Tekan</span>
+            <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500 shadow-sm">
+              {shortcut}
+            </kbd>
+            <span>saat fokus</span>
+          </span>
+          <span
+            className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 rotate-45 bg-neutral-800 dark:bg-neutral-700"
+            aria-hidden="true"
+          />
         </span>
       )}
     </button>

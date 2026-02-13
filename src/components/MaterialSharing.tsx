@@ -9,7 +9,7 @@ import Modal from './ui/Modal';
 import SearchInput from './ui/SearchInput';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { UI_STRINGS } from '../constants';
+import { UI_STRINGS, msToDays } from '../constants';
 
 interface MaterialSharingProps {
   material: ELibrary;
@@ -178,7 +178,7 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
 
   const getExpirationDays = (expiresAt?: string) => {
     if (!expiresAt) return null;
-    const days = Math.ceil((new Date(expiresAt).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(msToDays(new Date(expiresAt).getTime() - new Date().getTime()));
     return days;
   };
 

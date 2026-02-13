@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useCallback, useState, useId, useEffect } from 'react';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { generateComponentId } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 export type SelectSize = 'sm' | 'md' | 'lg';
 export type SelectState = 'default' | 'error' | 'success';
@@ -93,10 +94,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
   const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showTooltip = useCallback(() => {
-    // Delay showing tooltip to avoid flickering on quick interactions
     tooltipTimeoutRef.current = setTimeout(() => {
       setIsTooltipVisible(true);
-    }, 400);
+    }, UI_DELAYS.DEFAULT_UI_FEEDBACK);
   }, []);
 
   const hideTooltip = useCallback(() => {
@@ -112,7 +112,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(({
       // Delay showing hint to avoid flickering on quick interactions
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
     onFocus?.(e);
   }, [clearOnEscape, hasValue, onFocus]);

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, useId } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { UI_DELAYS } from '../../constants';
 
 export type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 export type TooltipSize = 'sm' | 'md' | 'lg';
@@ -86,7 +87,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       } else {
         setIsVisible(false);
         if (!prefersReducedMotion) {
-          setTimeout(() => setIsMounted(false), 200);
+          setTimeout(() => setIsMounted(false), UI_DELAYS.TOOLTIP_HIDE_MS);
         } else {
           setIsMounted(false);
         }
@@ -128,7 +129,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       setIsVisible(false);
       onVisibilityChange?.(false);
       if (!prefersReducedMotion) {
-        setTimeout(() => setIsMounted(false), 200);
+        setTimeout(() => setIsMounted(false), UI_DELAYS.TOOLTIP_HIDE_MS);
       } else {
         setIsMounted(false);
       }

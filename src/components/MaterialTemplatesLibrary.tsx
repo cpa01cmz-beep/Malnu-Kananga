@@ -5,7 +5,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { DownloadIcon } from './icons/MaterialIcons';
 import { MaterialTemplate, Subject } from '../types';
 import { logger } from '../utils/logger';
-import { CONVERSION } from '../constants';
+import { CONVERSION, API_ENDPOINTS } from '../constants';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import FileInput from './ui/FileInput';
@@ -141,7 +141,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
   const downloadTemplate = async (template: MaterialTemplate) => {
     try {
       // Mock API call - replace with actual implementation
-      window.open(`/api/templates/download/${template.id}`, '_blank');
+      window.open(API_ENDPOINTS.DOWNLOAD.TEMPLATE(template.id), '_blank');
       
       // Update usage count
       setTemplates(templates.map(t => 

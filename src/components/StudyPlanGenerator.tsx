@@ -14,7 +14,7 @@ import type {
   AttendanceGradeCorrelation,
   MaterialRecommendation,
 } from '../types';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, ACADEMIC } from '../constants';
 import { logger } from '../utils/logger';
 import { CalendarDaysIcon } from './icons/CalendarDaysIcon';
 import { ClockIcon } from './icons/ClockIcon';
@@ -176,7 +176,8 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
     const totalGrades = gradeArray.reduce((sum, g) => sum + g.score, 0);
     const averageGrade = gradeArray.length > 0 ? totalGrades / gradeArray.length : 75;
 
-    const correlationScore = Math.round((attendancePercentage / 100 * 0.3 + averageGrade / 100 * 0.7) * 100);
+    const { ATTENDANCE: attendanceWeight, GRADE: gradeWeight } = ACADEMIC.STUDY_PLAN_CORRELATION_WEIGHTS;
+    const correlationScore = Math.round((attendancePercentage / 100 * attendanceWeight + averageGrade / 100 * gradeWeight) * 100);
 
     const insights: string[] = [];
     if (attendancePercentage >= 90) {

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { UI_DELAYS } from '../../constants';
 
 export type CopyButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost';
 export type CopyButtonSize = 'sm' | 'md' | 'lg';
@@ -201,7 +202,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       setIsTooltipVisible(true);
       shortcutHintTimeoutRef.current = setTimeout(() => {
         setShowShortcutHint(true);
-      }, 400);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
     }
   }, [buttonState]);
 
