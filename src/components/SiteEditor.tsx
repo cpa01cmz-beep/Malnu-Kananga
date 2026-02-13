@@ -526,14 +526,15 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                  maxRows={5}
               />
 <IconButton
-                 onClick={handleSend}
-                 disabled={isLoading || !input.trim() || !!inputError || !!validationError || !!rateLimitInfo}
-                 ariaLabel={rateLimitInfo ? "Dibatasi rate limit" : "Kirim permintaan"}
-                 size="md"
-                 variant={rateLimitInfo ? "secondary" : "primary"}
-                 className="p-2.5 mb-0.5"
-                 icon={<SendIcon />}
-               />
+                  onClick={handleSend}
+                  disabled={isLoading || !input.trim() || !!inputError || !!validationError || !!rateLimitInfo}
+                  ariaLabel={rateLimitInfo ? "Dibatasi rate limit" : "Kirim permintaan"}
+                  shortcut="Enter"
+                  size="md"
+                  variant={rateLimitInfo ? "secondary" : "primary"}
+                  className="p-2.5 mb-0.5"
+                  icon={<SendIcon />}
+                />
             </div>
             
             {/* Character count and validation */}

@@ -172,6 +172,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           disabled={disabled || isSending || (!message.trim() && !file)}
           aria-label={isSending ? 'Mengirim pesan...' : 'Kirim pesan'}
           aria-busy={isSending}
+          shortcut="Enter"
           className="bg-blue-600 hover:bg-blue-700"
         >
           {isSending ? (
