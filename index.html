@@ -20,8 +20,9 @@
     <!-- Note: API preconnect removed - Lighthouse flagged as unused during initial load
          API calls happen after auth/login, so preconnect doesn't benefit FCP/LCP -->
     
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
+    <!-- Load Google Fonts with display=optional to avoid layout shift - font only used if cached -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" /></noscript>
     <style>
       /* Critical CSS for above-the-fold content - prevents layout shifts */
       *, *::before, *::after {
@@ -43,8 +44,6 @@
         color: #111827;
         background-color: #ffffff;
         min-height: 100vh;
-        /* Prevent layout shift during font loading */
-        font-display: optional;
       }
       
       #root {
@@ -69,8 +68,14 @@
       img {
         max-width: 100%;
         height: auto;
-        /* Reserve space for images before they load */
         background-color: #f3f4f6;
+      }
+      
+      /* Font display strategy: use fallback font immediately, swap when Inter loads */
+      @font-face {
+        font-family: 'Inter';
+        font-display: swap;
+        src: local('Inter'), local('Inter-Regular');
       }
       
       /* Critical layout classes */
