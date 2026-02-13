@@ -571,6 +571,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             onClick={fetchMaterials}
             variant="danger"
             size="sm"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>
