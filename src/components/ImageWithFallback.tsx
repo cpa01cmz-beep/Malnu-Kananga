@@ -7,23 +7,34 @@ interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElemen
   lazy?: boolean;
 }
 
-const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({ 
-  src, 
-  alt, 
-  className, 
+const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
+  src,
+  alt,
+  className,
   fallbackText,
   lazy = true,
-  ...props 
+  width,
+  height,
+  style,
+  ...props
 }) => {
   const [hasError, setHasError] = useState(false);
 
   // Jika src kosong atau terjadi error loading, tampilkan fallback
+  // Preserve aspect ratio to prevent CLS (Cumulative Layout Shift)
   if (!src || hasError) {
     return (
-      <div 
+      <div
         className={`flex flex-col items-center justify-center bg-neutral-200 dark:bg-neutral-700 text-neutral-400 dark:text-neutral-500 ${className}`}
         role="img"
         aria-label={fallbackText || alt || 'Gambar tidak tersedia'}
+        style={{
+          ...style,
+          width: width ? `${width}px` : '100%',
+          height: height ? `${height}px` : 'auto',
+          aspectRatio: width && height ? `${width}/${height}` : '16/9',
+          minHeight: '150px'
+        }}
       >
         <PhotoIcon className="w-12 h-12 mb-2" aria-hidden="true" />
         {fallbackText && <span className="text-xs text-center px-2" aria-hidden="true">{fallbackText}</span>}
@@ -39,6 +50,9 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
       loading={lazy ? "lazy" : "eager"}
       decoding="async"
       onError={() => setHasError(true)}
+      width={width}
+      height={height}
+      style={style}
       {...props}
     />
   );
