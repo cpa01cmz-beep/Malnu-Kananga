@@ -182,8 +182,14 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
         </Button>
       </div>
 
-      <div className="flex space-x-4 border-b">
+      <div className="flex space-x-4 border-b" role="tablist" aria-label="Navigasi laporan progres">
         <button
+          type="button"
+          role="tab"
+          id="tab-latest"
+          aria-selected={currentView === 'latest'}
+          aria-controls="latest-panel"
+          tabIndex={currentView === 'latest' ? 0 : -1}
           onClick={() => setCurrentView('latest')}
           className={`pb-3 px-4 font-medium ${
             currentView === 'latest'
@@ -194,6 +200,12 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
           Laporan Terbaru
         </button>
         <button
+          type="button"
+          role="tab"
+          id="tab-history"
+          aria-selected={currentView === 'history'}
+          aria-controls="history-panel"
+          tabIndex={currentView === 'history' ? 0 : -1}
           onClick={() => setCurrentView('history')}
           className={`pb-3 px-4 font-medium ${
             currentView === 'history'
@@ -204,6 +216,12 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
           Riwayat
         </button>
         <button
+          type="button"
+          role="tab"
+          id="tab-settings"
+          aria-selected={currentView === 'settings'}
+          aria-controls="settings-panel"
+          tabIndex={currentView === 'settings' ? 0 : -1}
           onClick={() => setCurrentView('settings')}
           className={`pb-3 px-4 font-medium ${
             currentView === 'settings'
@@ -216,7 +234,7 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
       </div>
 
       {currentView === 'latest' && (
-        <div className="space-y-6">
+        <div id="latest-panel" role="tabpanel" aria-labelledby="tab-latest" className="space-y-6">
           {report ? (
             <div className="space-y-6">
               <Card>
@@ -331,8 +349,10 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
                   Buat laporan progres untuk melihat analisis AI dari nilai dan kehadiran anak Anda.
                 </p>
                 <button
+                  type="button"
                   onClick={() => handleGenerateReport(false)}
                   disabled={generating}
+                  aria-label={generating ? 'Memproses laporan...' : 'Buat laporan progres pertama'}
                   className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
                 >
                   {generating ? 'Memproses...' : 'Buat Laporan Pertama'}
@@ -344,7 +364,7 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
       )}
 
       {currentView === 'history' && (
-        <div className="space-y-4">
+        <div id="history-panel" role="tabpanel" aria-labelledby="tab-history" className="space-y-4">
           {reports.length > 0 ? (
             reports.map((r) => (
               <Card key={r.id}>
@@ -367,18 +387,21 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => {
                       setReport(r);
                       setCurrentView('latest');
                     }}
+                    aria-label={`Lihat detail laporan ${new Date(r.reportDate).toLocaleDateString('id-ID')}`}
                     className="text-indigo-600 hover:text-indigo-800 font-medium"
                   >
                     Lihat Detail
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDeleteReport(r.id)}
+                    aria-label={`Hapus laporan ${new Date(r.reportDate).toLocaleDateString('id-ID')}`}
                     className="ml-4 text-red-600 hover:text-red-800"
-                    title="Hapus laporan"
                   >
                     <TrashIcon />
                   </button>
@@ -397,7 +420,7 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
       )}
 
       {currentView === 'settings' && settings && (
-        <Card>
+        <Card id="settings-panel" role="tabpanel" aria-labelledby="tab-settings">
           <h3 className="text-lg font-semibold text-gray-900 mb-6">Pengaturan Laporan</h3>
           <div className="space-y-6">
             <div>
@@ -427,6 +450,9 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
                 </div>
               </div>
               <button
+                type="button"
+                aria-pressed={settings.enableNotifications}
+                aria-label={settings.enableNotifications ? 'Nonaktifkan notifikasi laporan' : 'Aktifkan notifikasi laporan'}
                 onClick={() => setSettings({
                   ...settings,
                   enableNotifications: !settings.enableNotifications

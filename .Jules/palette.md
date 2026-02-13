@@ -4,6 +4,32 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - LearningProgressReport Tab Accessibility
+
+**Learning**: The LearningProgressReport component had custom tab navigation that was missing proper ARIA tab patterns. The tab buttons (Laporan Terbaru, Riwayat, Pengaturan) lacked role="tab", aria-selected, aria-controls, and tabIndex attributes. Additionally, action buttons (Buat Laporan, Lihat Detail, Hapus) and toggle buttons (Notifikasi) were missing type="button" and aria-label attributes.
+
+**Action**: Implement full WAI-ARIA tab pattern for custom tab navigation:
+1. Container: role="tablist" with aria-label
+2. Tab buttons: role="tab", aria-selected, aria-controls, tabIndex, id
+3. Tab panels: role="tabpanel", aria-labelledby, id
+4. Action buttons: type="button", aria-label
+5. Toggle buttons: type="button", aria-pressed, aria-label
+
+**File Fixed**:
+- src/components/LearningProgressReport.tsx - Added ARIA tabs pattern to 3 tab buttons, 4 action buttons, and 1 toggle button
+
+**Pattern**: Custom tab-like components built with native button elements must use proper ARIA tab patterns. This ensures screen reader users can navigate between tabs and know which tab is currently selected. Always add:
+- role="tablist" on container
+- role="tab" on buttons
+- aria-selected={boolean} on buttons
+- aria-controls="panel-id" on buttons
+- tabIndex={0 | -1} for keyboard navigation
+- role="tabpanel" on panels
+- aria-labelledby="tab-id" on panels
+- id on both tabs and panels for cross-referencing
+
+---
+
 ## 2026-02-13 - Schedule View Mode Toggle Accessibility
 
 **Learning**: The ParentScheduleView and ScheduleView components had view mode toggle buttons (Daftar/Kalender) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which view mode was currently active. Additionally, the day selector buttons in ScheduleView had the same issue.
