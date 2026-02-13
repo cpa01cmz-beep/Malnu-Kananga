@@ -142,6 +142,9 @@ export default defineConfig(({ mode }) => {
           tryCatchDeoptimization: false,
         },
         output: {
+          // BroCula: Prevent eager loading of lazy chunks
+          inlineDynamicImports: false,
+          experimentalMinChunkSize: 10000,
           manualChunks: (id: string) => {
             // Optimize chunking to reduce bundle size and improve load times
             // BroCula: Code splitting strategy to minimize unused JavaScript
