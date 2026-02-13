@@ -95,11 +95,11 @@ export const ANALYZER_CONFIG = {
 } as const;
 
 // Environment-based school configuration for Node.js context - Flexy: Never hardcode!
-const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || 'Smart Portal';
+const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || 'MA Malnu Kananga';
 
 // PWA Manifest Configuration - Flexy: Dynamic school name from environment
 export const PWA_MANIFEST = {
-  NAME: `${SCHOOL_NAME} Smart Portal`,
+  NAME: `${SCHOOL_NAME}`,
   SHORT_NAME: SCHOOL_NAME.split(' ').slice(0, 2).join(' ') + ' App',
   DESCRIPTION: `Aplikasi Portal Pintar ${SCHOOL_NAME} dengan Asisten AI`,
   ICONS: [
