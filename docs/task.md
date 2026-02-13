@@ -216,6 +216,30 @@
 - [ ] Add letter templates
 - [ ] Add batch generation for class-wide documents
 
+### T014: Two-Factor Authentication (F017)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Add two-factor authentication for enhanced account security.
+**Rationale**: F017 - Protect sensitive student data with 2FA.
+**Actions**:
+- [ ] Add TOTP-based 2FA implementation
+- [ ] Add QR code setup for authenticator apps
+- [ ] Add backup codes for account recovery
+- [ ] Add optional 2FA toggle in user settings
+- [ ] Add admin enforcement option for specific roles
+
+### T015: Scheduled Automation System (F018)
+**Status**: ❌ Pending
+**Priority**: Low
+**Description**: Automated scheduled tasks for routine operations.
+**Rationale**: F018 - Reduce manual administrative work.
+**Actions**:
+- [ ] Add Cloudflare Scheduled Tasks support
+- [ ] Add scheduled backup jobs
+- [ ] Add automated attendance notifications
+- [ ] Add grade calculation reminders
+- [ ] Add academic calendar event triggers
+
 ---
 
 ## Notes
