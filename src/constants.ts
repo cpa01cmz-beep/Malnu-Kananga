@@ -138,6 +138,10 @@ export const STORAGE_KEYS = {
     // Grade History for tracking changes (new)
     GRADE_HISTORY: 'malnu_grade_history',
     
+    // Audit Log for admin actions (new - T004)
+    AUDIT_LOG: 'malnu_audit_log',
+    AUDIT_LOG_FILTERS: 'malnu_audit_log_filters',
+    
     // AI Analysis cache for offline support
     CACHED_AI_ANALYSES: 'malnu_cached_ai_analyses',
     
@@ -2351,6 +2355,13 @@ export const API_ENDPOINTS = {
     WEBSOCKET: {
         CONNECT: '/ws',
         UPDATES: '/api/updates',
+    },
+    // Audit Log (T004)
+    AUDIT: {
+        BASE: '/api/audit',
+        LOGS: '/api/audit/logs',
+        LOG_BY_ID: (id: string) => `/api/audit/logs/${id}`,
+        EXPORT: '/api/audit/export',
     },
     // Download
     DOWNLOAD: {
