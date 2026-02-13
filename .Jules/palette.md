@@ -4,7 +4,19 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-13 - AccessibilitySettings aria-pressed Toggle States
+## 2026-02-13 - EnhancedMaterialSharing Keyboard Shortcuts
+
+**Learning**: The EnhancedMaterialSharing component had action buttons in modal forms that were missing keyboard shortcut hints. The "Bagikan Materi" (Share) and "Batal" (Cancel) buttons didn't have shortcut tooltips, making keyboard actions undiscoverable to users.
+
+**Action**: Add keyboard shortcut hints to modal action buttons following the established pattern:
+- Share button: `shortcut="Ctrl+Enter"` (natural for form submission)
+- Cancel button: `shortcut="Esc"` (standard for closing modals)
+- Toggle buttons: `aria-pressed={boolean}` to indicate current selection
+
+**File Fixed**:
+- src/components/EnhancedMaterialSharing.tsx - Added shortcut hints and aria-pressed to toggle buttons
+
+**Pattern**: Always add shortcut hints to modal action buttons - Ctrl+Enter for submit, Esc for cancel. Also add aria-pressed to custom toggle button groups for screen reader accessibility.
 
 **Learning**: The AccessibilitySettings component (ironically) had accessibility issues - its toggle button groups (Font Size, Line Spacing, Letter Spacing, Contrast Mode) and toggle switches (Readable Width, Reduced Motion) were missing `aria-pressed` attributes. This meant screen reader users couldn't know which option was currently selected.
 
