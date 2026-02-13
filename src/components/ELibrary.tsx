@@ -1281,7 +1281,26 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredMaterials.length > 0 ? (
+        {!loading && materials.length === 0 ? (
+          <div className="col-span-full">
+            <EmptyState
+              message="Perpustakaan masih kosong"
+              subMessage="Belum ada materi pembelajaran yang tersedia. Silakan hubungi guru atau admin untuk mengunggah materi pertama."
+              size="lg"
+              variant="friendly"
+              category="first-time"
+              ariaLabel="Perpustakaan belum memiliki materi"
+              suggestedActions={[
+                {
+                  label: 'Kembali',
+                  onClick: onBack,
+                  variant: 'secondary'
+                }
+              ]}
+              helpText="💡 Tip: Gunakan fitur pencarian suara dengan mengklik tombol mikrofon di atas untuk mencari materi nanti."
+            />
+          </div>
+        ) : filteredMaterials.length > 0 ? (
           filteredMaterials.map((item) => (
             <div
               key={item.id}
