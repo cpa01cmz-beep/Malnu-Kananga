@@ -266,6 +266,8 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
                 size="sm"
                 className="mt-4"
                 onClick={fetchAssignments}
+                aria-label="Coba lagi memuat tugas"
+                shortcut="Ctrl+R"
               >
                 Coba Lagi
               </Button>

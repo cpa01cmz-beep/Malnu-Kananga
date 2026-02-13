@@ -32,16 +32,21 @@
 **Notes**: Requires backend migration.
 
 ### T005: Implement Bulk Operations Manager (F005)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: High
 **Description**: Batch operations for managing large datasets.
 **Rationale**: F005 - High priority for admin efficiency.
 **Actions**:
-- [ ] Add bulk action toolbar to DataTable component
-- [ ] Implement bulk status update
-- [ ] Implement bulk delete with confirmation
-- [ ] Add 5-second undo capability
-**Notes**: UI enhancement, no backend needed.
+- [x] Add bulk action toolbar to DataTable component
+- [x] Implement bulk status update
+- [x] Implement bulk delete with confirmation
+- [x] Add 5-second undo capability (via showUndo/onUndo callbacks)
+**Notes**: UI enhancement complete. Added `bulkActions` prop to DataTable with:
+- `onBulkUpdate`: Callback for bulk status update
+- `onBulkDelete`: Callback for bulk delete with confirmation dialog
+- `showUndo`: Enable undo feature
+- `onUndo`: Callback for undo action
+- Added `BULK_OPERATIONS_CONFIG` to constants.ts for centralized config
 
 ### T006: Implement Advanced Analytics (F002)
 **Status**: ❌ Pending
