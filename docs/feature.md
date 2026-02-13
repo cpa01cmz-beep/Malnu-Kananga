@@ -156,15 +156,53 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 ---
 
+### F009: Test Coverage Expansion
+
+**Type**: Quality Initiative
+**Priority**: High
+**Description**: Increase test coverage from 29.2% to 80%+ for production reliability.
+
+**User Stories**:
+- As a Developer, I want comprehensive tests, so that I can refactor with confidence.
+- As a Stakeholder, I want high test coverage, so that bugs are caught before production.
+
+**Implementation**:
+- Add unit tests for: hooks, utils, remaining services
+- Add integration tests for: API endpoints, auth flow
+- Add component tests for: form components, data display
+- Target: 80% coverage by E2E 2026
+
+---
+
+### F010: Real-time Collaboration
+
+**Type**: Communication Feature
+**Priority**: Medium
+**Description**: Enable real-time collaboration between teachers on shared classes.
+
+**User Stories**:
+- As a Teacher, I want to see when another teacher is viewing the same class, so that we can coordinate.
+- As an Admin, I want live activity feed, so that I can monitor system usage.
+
+**Implementation**:
+- Use existing WebSocket infrastructure
+- Add presence indicators (who's online)
+- Add real-time notifications for: grade changes, attendance updates
+- Add activity dashboard for admin
+
+---
+
 ## Feature Priorities
 
 | Feature | Priority | Effort | Impact |
 |---------|----------|--------|--------|
+| F009: Test Coverage | High | High | High |
 | F001: Audit Logging | High | Medium | High |
 | F005: Bulk Operations | High | Low | High |
 | F002: Analytics | Medium | Medium | Medium |
 | F006: Export/Import | Medium | Medium | Medium |
 | F007: Voice Commands | Medium | Medium | Medium |
+| F010: Real-time Collab | Medium | Medium | Medium |
 | F003: Mobile App | Low | High | High |
 | F004: Grade Predictions | Low | Medium | Medium |
 | F008: i18n | Low | High | Medium |
