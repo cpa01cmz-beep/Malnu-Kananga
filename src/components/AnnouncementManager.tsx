@@ -355,6 +355,10 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                 ? 'Coba ubah filter atau kata kunci pencarian'
                 : 'Belum ada pengumuman yang dibuat'
             }
+            action={{
+              label: 'Muat Ulang',
+              onClick: loadAnnouncements
+            }}
           />
         ) : (
           <div className="space-y-4">
