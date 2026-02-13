@@ -11,6 +11,7 @@ import { useTheme } from './hooks/useTheme';
 import { HEIGHTS } from './config/heights';
 import { initializeMonitoring, setMonitoringUser } from './utils/initializeMonitoring';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
+import { usePerformanceMonitoring } from './hooks/usePerformanceMonitoring';
 import type { Command } from './components/ui/CommandPalette';
 
 // Lazy load non-critical components to reduce initial bundle size
@@ -87,8 +88,9 @@ const App: React.FC = () => {
   // Initialize Advanced Theme System using useTheme hook for proper sync
   const { isReady: themeReady } = useTheme();
 
+  usePerformanceMonitoring();
+
   useEffect(() => {
-    // Initialize all monitoring services on app mount
     initializeMonitoring();
   }, []);
 

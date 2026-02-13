@@ -300,12 +300,17 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
             />
           </div>
           <div className="flex items-end gap-2">
-            <SearchInput
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari siswa..."
-              className="flex-1 min-w-[200px]"
-            />
+            <div>
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                Cari Siswa
+              </label>
+              <SearchInput
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Cari siswa..."
+                className="flex-1 min-w-[200px]"
+              />
+            </div>
             <Button
               onClick={handleSaveAttendance}
               disabled={!hasUnsavedChanges || isSaving || !isOnline}
