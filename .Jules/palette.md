@@ -35,3 +35,17 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - Add `focus-visible` styles for keyboard navigation visibility
 
 **Key Pattern**: This applies to ANY custom tab-like components, not just UI library components. Always verify custom navigation uses proper ARIA semantics.
+
+---
+
+## 2026-02-13 - Send Button Keyboard Shortcut Discovery
+**Learning**: High-traffic message input components (ChatWindow, SiteEditor, MessageInput) use the Enter key to send messages, but the keyboard shortcut was not visible to users. Users who rely on keyboard hints or are new to the application couldn't discover this efficient input method.
+
+**Action**: Add `shortcut="Enter"` prop to all send buttons in message input components. The Button/IconButton components already support the shortcut prop which displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable.
+
+**Components Updated**:
+- ChatWindow.tsx - AI chat send button
+- SiteEditor.tsx - Site editor send button  
+- MessageInput.tsx - Messaging send button
+
+**Pattern**: Always audit input components with keyboard shortcuts - if they handle Enter/Ctrl+Enter for submission, add shortcut hints to make them discoverable.
