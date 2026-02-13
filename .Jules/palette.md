@@ -97,3 +97,13 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 ---
 
 ## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
+**Learning**: High-traffic "Coba Lagi" (Try Again) buttons that reload data were missing keyboard shortcut hints. Users couldn't discover that they can press Ctrl+R to retry loading data after an error. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
+
+**Action**: Add `shortcut="Ctrl+R"` prop to all "Coba Lagi" / retry buttons in high-traffic components. This makes the keyboard shortcut discoverable through tooltip hints.
+
+**Components Updated**:
+- StudyPlanGenerator.tsx - Added shortcut="Ctrl+R" to retry button
+- ELibrary.tsx - Added shortcut="Ctrl+R" to retry button  
+- GradeAnalytics.tsx - Added shortcut="Ctrl+R" to retry button
+
+**Pattern**: Always audit error state buttons - if they perform data refresh/retry operations, add keyboard shortcut hints. This pattern applies to any button that refetches data after an error state.
