@@ -1366,6 +1366,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
               onClick={() => setFilterSubject(subject)}
               variant={filterSubject === subject ? 'primary' : 'ghost'}
               size="sm"
+              aria-pressed={filterSubject === subject}
               className={`whitespace-nowrap ${filterSubject === subject ? '' : 'text-neutral-600 dark:text-neutral-300'}`}
             >
               {getSubjectWithCount(subject)}
