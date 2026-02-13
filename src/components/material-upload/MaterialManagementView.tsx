@@ -174,6 +174,7 @@ export function MaterialManagementView({
                 size="sm"
                 variant={filters.filterShared === true ? 'green-solid' : 'ghost'}
                 onClick={() => onFilterChange({ ...filters, filterShared: filters.filterShared === true ? null : true })}
+                aria-pressed={filters.filterShared === true}
                 className="flex-1"
               >
                 Dibagikan
@@ -182,6 +183,7 @@ export function MaterialManagementView({
                 size="sm"
                 variant={filters.filterShared === false ? 'blue-solid' : 'ghost'}
                 onClick={() => onFilterChange({ ...filters, filterShared: filters.filterShared === false ? null : false })}
+                aria-pressed={filters.filterShared === false}
                 className="flex-1"
               >
                 Privat
