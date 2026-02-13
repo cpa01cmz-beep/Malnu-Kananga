@@ -7,6 +7,7 @@ import Button from './Button';
 import Card from './Card';
 import { auditService } from '../../services/auditService';
 import type { AuditLogEntry, AuditLogFilter, AuditLogExportOptions } from '../../services/api';
+import { logger } from '../../utils/logger';
 
 const DEBOUNCE_DELAY = 500;
 
@@ -56,7 +57,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
       setLogs(result);
     } catch (err) {
       setError('Gagal memuat log audit');
-      console.error(err);
+      logger.error('Failed to fetch audit logs', err);
     } finally {
       setLoading(false);
     }
@@ -101,7 +102,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
         URL.revokeObjectURL(url);
       }
     } catch (err) {
-      console.error('Export failed:', err);
+      logger.error('Audit log export failed', err);
     } finally {
       setExporting(false);
     }
@@ -239,7 +240,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
           itemsPerPage: filter.limit || 20,
           onPageChange: (page) => setFilter(prev => ({ ...prev, page })),
         }}
-        onRowClick={(log) => console.log('Clicked log:', log)}
+        onRowClick={() => undefined}
       />
 
       {onClose && (
