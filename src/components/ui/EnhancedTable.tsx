@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { MagnifyingGlassIcon, FunnelIcon, ChevronLeftIcon, ChevronRightIcon } from '../icons/MaterialIcons';
 import { Table, Thead, Tbody, Th, Tr, Td, TableSize, TableVariant } from './Table';
+import { DISPLAY_LIMITS } from '../../constants';
 
 export interface EnhancedTableColumn<T> {
   key: keyof T;
@@ -54,7 +55,7 @@ function EnhancedTable<T extends Record<string, string | number | boolean>>({
   filterable = true,
   sortable = true,
   paginated = true,
-  pageSize = 10,
+  pageSize = DISPLAY_LIMITS.TABLE_ROWS,
   loading = false,
   emptyMessage = 'Tidak ada data tersedia',
   onRowClick,

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { TIME_MS } from '../../constants';
 
 export type TransitionType = 
   | 'fade' 
@@ -71,7 +72,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({
         if (hapticFeedback && window.innerWidth <= 768) {
           onTap();
         }
-      }, delay + 50);
+      }, delay + TIME_MS.SHORT);
       
       return () => clearTimeout(timer);
     } else if (!isLoaded && shouldRender) {

@@ -2,7 +2,7 @@
 
 import type { ParentChild, Grade, Attendance, Schedule, ParentMeeting, ParentTeacher, ParentMessage, ParentPayment, Conversation, ConversationFilter, ConversationCreateRequest, MessageSendRequest, DirectMessage, MessageReadReceipt, TypingIndicator } from '../../../types';
 import { request } from '../client';
-import { API_ENDPOINTS } from '../../../constants';
+import { API_ENDPOINTS, PAGINATION_DEFAULTS } from '../../../constants';
 
 // ============================================
 // PARENTS API
@@ -102,7 +102,7 @@ export const messagesAPI = {
     });
   },
 
-  async getMessages(conversationId: string, limit = 50, offset = 0): Promise<{ success: boolean; message: string; data?: DirectMessage[]; error?: string }> {
+  async getMessages(conversationId: string, limit: number = PAGINATION_DEFAULTS.MESSAGES, offset = 0): Promise<{ success: boolean; message: string; data?: DirectMessage[]; error?: string }> {
     return request<DirectMessage[]>(`${API_ENDPOINTS.MESSAGING.CONVERSATIONS}/${conversationId}/messages?limit=${limit}&offset=${offset}`);
   },
 
