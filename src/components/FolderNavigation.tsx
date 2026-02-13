@@ -9,6 +9,7 @@ import { logger } from '../utils/logger';
 import Button from './ui/Button';
 import SmallActionButton from './ui/SmallActionButton';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import { SidebarSkeleton } from './ui/Skeleton';
 
 interface FolderNavigationProps {
   selectedFolderId?: string;
@@ -290,10 +291,17 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded mb-2"></div>
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded mb-2"></div>
-        <div className="h-6 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between mb-3">
+          <div className="h-4 w-16 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+          <div className="h-6 w-6 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+        </div>
+        <div className="flex items-center gap-2 p-2 rounded-lg">
+          <div className="h-8 w-8 bg-neutral-200 dark:bg-neutral-700 rounded-lg animate-pulse"></div>
+          <div className="h-4 flex-1 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+          <div className="h-4 w-8 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
+        </div>
+        <SidebarSkeleton items={4} />
       </div>
     );
   }

@@ -1552,6 +1552,341 @@ async function handleCRUD(request, env, corsHeaders, table, _options = {}) {
   }
 }
 
+// Audit log handler
+async function handleAuditLogs(request, env, corsHeaders) {
+  try {
+    // For GET requests, optionally require auth; for POST, always require auth
+    const method = request.method;
+    
+    if (method === 'GET') {
+      // Read-only - allow with optional auth
+      const payload = await authenticate(request, env);
+      if (!payload) {
+        return new Response(JSON.stringify(response.unauthorized()), {
+          status: HTTP_STATUS_CODES.UNAUTHORIZED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    } else if (method === 'POST') {
+      // Writing - require auth
+      const payload = await authenticate(request, env);
+      if (!payload) {
+        return new Response(JSON.stringify(response.unauthorized()), {
+          status: HTTP_STATUS_CODES.UNAUTHORIZED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/').filter(Boolean);
+    const id = pathParts[pathParts.length - 1];
+    const isLogById = pathParts.length === 4 && pathParts[2] === 'logs' && id !== 'logs';
+
+    switch (method) {
+      case 'GET': {
+        if (isLogById && id) {
+          // GET /api/audit/logs/:id
+          const item = await env.DB.prepare('SELECT * FROM audit_log WHERE id = ?').bind(id).first();
+          if (!item) {
+            return new Response(JSON.stringify(response.error(ERROR_MESSAGES.NOT_FOUND, HTTP_STATUS_CODES.NOT_FOUND)), {
+              status: HTTP_STATUS_CODES.NOT_FOUND,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+          return new Response(JSON.stringify(response.success(item)), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        } else {
+          // GET /api/audit/logs with filters
+          let query = 'SELECT * FROM audit_log';
+          const params = [];
+          const conditions = [];
+          
+          const startDate = url.searchParams.get('start_date');
+          const endDate = url.searchParams.get('end_date');
+          const userId = url.searchParams.get('user_id');
+          const userRole = url.searchParams.get('user_role');
+          const action = url.searchParams.get('action');
+          const resource = url.searchParams.get('resource');
+          const page = parseInt(url.searchParams.get('page') || '1');
+          const limit = parseInt(url.searchParams.get('limit') || '50');
+          
+          if (startDate) {
+            conditions.push('created_at >= ?');
+            params.push(startDate);
+          }
+          if (endDate) {
+            conditions.push('created_at <= ?');
+            params.push(endDate);
+          }
+          if (userId) {
+            conditions.push('user_id = ?');
+            params.push(userId);
+          }
+          if (userRole) {
+            conditions.push('user_id IN (SELECT id FROM users WHERE role = ?)');
+            params.push(userRole);
+          }
+          if (action) {
+            conditions.push('action = ?');
+            params.push(action);
+          }
+          if (resource) {
+            conditions.push('table_name = ?');
+            params.push(resource);
+          }
+          
+          if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+          }
+          
+          query += ' ORDER BY created_at DESC';
+          
+          const offset = (page - 1) * limit;
+          query += ' LIMIT ? OFFSET ?';
+          params.push(limit, offset);
+          
+          const { results } = await env.DB.prepare(query).bind(...params).all();
+          
+          // Get total count
+          let countQuery = 'SELECT COUNT(*) as total FROM audit_log';
+          if (conditions.length > 0) {
+            countQuery += ' WHERE ' + conditions.join(' AND ');
+          }
+          const countResult = await env.DB.prepare(countQuery).bind(...params.slice(0, -2)).first();
+          
+          return new Response(JSON.stringify({
+            success: true,
+            message: 'Audit logs retrieved successfully',
+            data: results,
+            pagination: {
+              page,
+              limit,
+              total: countResult?.total || 0
+            }
+          }), {
+            status: HTTP_STATUS_CODES.OK,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+      }
+      
+      case 'POST': {
+        // POST /api/audit/logs - Create new log entry
+        const body = await request.json();
+        const newItemId = generateId();
+        
+        const newItem = {
+          id: newItemId,
+          user_id: body.userId || null,
+          action: body.action || 'read',
+          table_name: body.resource || 'other',
+          record_id: body.resourceId || null,
+          old_value: body.oldValue ? JSON.stringify(body.oldValue) : null,
+          new_value: body.newValue ? JSON.stringify(body.newValue) : null,
+          ip_address: request.headers.get('CF-Connecting-IP') || null,
+          user_agent: request.headers.get('User-Agent') || null
+        };
+
+        const columns = Object.keys(newItem).join(', ');
+        const placeholders = Object.keys(newItem).map(() => '?').join(', ');
+        const values = Object.values(newItem);
+
+        await env.DB.prepare(`INSERT INTO audit_log (${columns}) VALUES (${placeholders})`).bind(...values).run();
+
+        return new Response(JSON.stringify(response.success(newItem, 'Audit log created')), {
+          status: HTTP_STATUS_CODES.CREATED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      
+      default:
+        return new Response(JSON.stringify(response.error('Method not allowed', HTTP_STATUS_CODES.METHOD_NOT_ALLOWED)), {
+          status: HTTP_STATUS_CODES.METHOD_NOT_ALLOWED,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+  } catch (error) {
+    logger.error('Audit log error:', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// Audit stats handler
+async function handleAuditStats(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const startDate = url.searchParams.get('start_date');
+    const endDate = url.searchParams.get('end_date');
+    
+    let whereClause = '';
+    const params = [];
+    
+    if (startDate || endDate) {
+      const conditions = [];
+      if (startDate) {
+        conditions.push('created_at >= ?');
+        params.push(startDate);
+      }
+      if (endDate) {
+        conditions.push('created_at <= ?');
+        params.push(endDate);
+      }
+      whereClause = ' WHERE ' + conditions.join(' AND ');
+    }
+
+    // Total count
+    const totalResult = await env.DB.prepare(`SELECT COUNT(*) as total FROM audit_log${whereClause}`).bind(...params).first();
+    
+    // By action
+    const actionResult = await env.DB.prepare(`SELECT action, COUNT(*) as count FROM audit_log${whereClause} GROUP BY action`).bind(...params).all();
+    
+    // By resource/table
+    const resourceResult = await env.DB.prepare(`SELECT table_name as resource, COUNT(*) as count FROM audit_log${whereClause} GROUP BY table_name`).bind(...params).all();
+    
+    // By user
+    const userResult = await env.DB.prepare(`
+      SELECT u.name as userName, COUNT(*) as count 
+      FROM audit_log al 
+      LEFT JOIN users u ON al.user_id = u.id 
+      ${whereClause ? whereClause.replace('WHERE', 'WHERE al.user_id IS NOT NULL AND') : 'WHERE al.user_id IS NOT NULL'}
+      GROUP BY al.user_id 
+      ORDER BY count DESC 
+      LIMIT 10
+    `).bind(...params).all();
+
+    return new Response(JSON.stringify({
+      success: true,
+      message: 'Audit stats retrieved successfully',
+      data: {
+        totalEntries: totalResult?.total || 0,
+        entriesByAction: actionResult.results?.reduce((acc, row) => {
+          acc[row.action] = row.count;
+          return acc;
+        }, {}) || {},
+        entriesByResource: resourceResult.results?.reduce((acc, row) => {
+          acc[row.resource] = row.count;
+          return acc;
+        }, {}) || {},
+        entriesByUser: userResult.results || []
+      }
+    }), {
+      status: HTTP_STATUS_CODES.OK,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Audit stats error:', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+// Audit export handler
+async function handleAuditExport(request, env, corsHeaders) {
+  try {
+    const payload = await authenticate(request, env);
+    if (!payload) {
+      return new Response(JSON.stringify(response.unauthorized()), {
+        status: HTTP_STATUS_CODES.UNAUTHORIZED,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const url = new URL(request.url);
+    const format = url.searchParams.get('format') || 'json';
+    const startDate = url.searchParams.get('start_date');
+    const endDate = url.searchParams.get('end_date');
+    
+    let query = 'SELECT * FROM audit_log';
+    const params = [];
+    const conditions = [];
+    
+    if (startDate) {
+      conditions.push('created_at >= ?');
+      params.push(startDate);
+    }
+    if (endDate) {
+      conditions.push('created_at <= ?');
+      params.push(endDate);
+    }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+    
+    query += ' ORDER BY created_at DESC LIMIT 1000';
+    
+    const { results } = await env.DB.prepare(query).bind(...params).all();
+    
+    if (format === 'json') {
+      return new Response(JSON.stringify({
+        success: true,
+        data: JSON.stringify(results, null, 2)
+      }), {
+        status: HTTP_STATUS_CODES.OK,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } else if (format === 'csv') {
+      if (!results || results.length === 0) {
+        return new Response('No data to export', {
+          status: HTTP_STATUS_CODES.OK,
+          headers: { ...corsHeaders, 'Content-Type': 'text/csv' }
+        });
+      }
+      
+      const headers = ['id', 'user_id', 'action', 'table_name', 'record_id', 'old_value', 'new_value', 'ip_address', 'created_at'];
+      const csvRows = [headers.join(',')];
+      
+      for (const row of results) {
+        const values = headers.map(h => {
+          const val = row[h];
+          if (val === null || val === undefined) return '';
+          if (typeof val === 'string' && (val.includes(',') || val.includes('"') || val.includes('\n'))) {
+            return `"${val.replace(/"/g, '""')}"`;
+          }
+          return val;
+        });
+        csvRows.push(values.join(','));
+      }
+      
+      return new Response(csvRows.join('\n'), {
+        status: HTTP_STATUS_CODES.OK,
+        headers: { 
+          ...corsHeaders, 
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="audit_export_${new Date().toISOString().split('T')[0]}.csv"`
+        }
+      });
+    }
+    
+    return new Response(JSON.stringify(response.error('Unsupported format', HTTP_STATUS_CODES.BAD_REQUEST)), {
+      status: HTTP_STATUS_CODES.BAD_REQUEST,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    logger.error('Audit export error:', error);
+    return new Response(JSON.stringify(response.error(ERROR_MESSAGES.SERVER_ERROR, HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR)), {
+      status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
 async function handleChat(request, env, corsHeaders) {
   try {
     const { message } = await request.json();
@@ -4104,6 +4439,10 @@ async function handlePaymentHistory(request, env, corsHeaders) {
       '/api/payments/callback': handlePaymentCallback,
       '/api/payments/*/cancel': handleCancelPayment,
       '/api/payments/history': handlePaymentHistory,
+      '/api/audit/logs': handleAuditLogs,
+      '/api/audit/logs/*': handleAuditLogs,
+      '/api/audit/stats': handleAuditStats,
+      '/api/audit/export': handleAuditExport,
     };
 
     for (const [path, handler] of Object.entries(routes)) {
