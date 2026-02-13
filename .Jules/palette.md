@@ -447,3 +447,20 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 **Pattern**: Always audit reusable UI components for accessibility - fixing one component benefits multiple pages. LoadingState is used in error states throughout the app, so this single fix improves accessibility across the entire application.
 
+---
+
+## 2026-02-13 - TwoFactorAuth Cancel Button Accessibility
+
+**Learning**: The TwoFactorAuth component had a plain `<button>` element without `type="button"` attribute and without `aria-label`. This is a common oversight in UI components where the cancel button doesn't submit forms but lacks proper type and accessibility attributes.
+
+**Action**: Add `type="button"` and `aria-label` to all plain button elements in UI components:
+- TwoFactorAuth.tsx: Added `type="button"` and `aria-label="Batalkan pengaturan autentikasi dua faktor"`
+
+**File Fixed**:
+- src/components/ui/TwoFactorAuth.tsx - Added accessibility to cancel button
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission
+2. `aria-label` - Provides screen reader context
+3. This applies to any inline button elements in JSX, not just Button components
+
