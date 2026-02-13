@@ -27,7 +27,7 @@ function asyncCssPlugin(): Plugin {
           if (match.includes('preload') || match.includes('media=')) {
             return match
           }
-          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'" />\n    <noscript><link rel="stylesheet" href="${href}" /></noscript>`
+          return `<link rel="stylesheet" href="${href}" media="print" onload="this.media='all'" />\n    <noscript><link rel="stylesheet" href="${href}" /></noscript>`
         }
       )
     },
