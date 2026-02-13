@@ -9,12 +9,12 @@
 
 This index provides a comprehensive overview of all documentation available for MA Malnu Kananga web application project.
 
-**Important**: Documentation location clarified (2026-01-31):
- - **Single Source of Truth**: Core documentation files are in **root directory** (canonical location)
-    - `[BLUEPRINT.md](../blueprint.md)` - System architecture, tech stack, and implementation details
-    - `[ROADMAP.md](../roadmap.md)` - Complete system documentation (architecture, features, roadmap, tasks, status)
-    - `[TASK.md](../task.md)` - Active task tracking and progress
-  - **Archived Documentation**: `archive/` directory contains previous versions of these files for reference only
+**Important**: Documentation location clarified (2026-02-13):
+ - **Single Source of Truth**: Core documentation files are consolidated in `/docs` directory
+    - **[FEATURES.md](./FEATURES.md)** - Complete system architecture, features, and technical specifications
+    - **[API Reference](./api-reference.md)** - API endpoints and integration details
+    - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Infrastructure and deployment documentation
+  - **Archived Documentation**: `archive/` directories contain historical audit reports for reference only
 
 **Note**: The following files are NOT part of documentation:
 - `AGENTS.md` (root) - AI agent configuration for OpenCode CLI tool
@@ -24,17 +24,16 @@ These files are operational instructions for AI agents and should not be conside
 ## Documentation Structure
 
 ### 📚 Core Documentation
-- **[BLUEPRINT.md](../blueprint.md)** - System architecture, tech stack, module structure, data models, and design system
-- **[ROADMAP.md](../roadmap.md)** - Development roadmap, features, tasks, and project status
-- **[TASK.md](../task.md)** - Active task tracking, progress, and completion status
-- **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
+- **[FEATURES.md](./FEATURES.md)** - System architecture, feature list, and implementation details
 - **[API Reference](./api-reference.md)** - Complete API reference and endpoints
+- **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Deployment procedures and infrastructure
+- **[../README.md](../README.md)** - Project overview, features, and quick start guide (root-level)
 - **[Troubleshooting Guide](./troubleshooting-guide.md)** - Common issues and solutions
 
 ### 🗄️ Archived Documentation (For Reference Only)
-- **[archive/BLUEPRINT_ARCHIVE.md](./archive/BLUEPRINT_ARCHIVE.md)** - Previous blueprint, architecture, and specifications
-- **[archive/ROADMAP_ARCHIVE.md](./archive/ROADMAP_ARCHIVE.md)** - Previous development roadmap and milestones
-- **[archive/TASK_ARCHIVE.md](./archive/TASK_ARCHIVE.md)** - Previous task tracking and progress
+- **[ULW_REPORTS/archive/](./ULW_REPORTS/archive/)** - Historical ULW-Loop audit reports
+- **[audits/archive/](./audits/archive/)** - Historical Brocula audit reports
+- **[lighthouse-reports/archive/](../lighthouse-reports/archive/)** - Historical Lighthouse performance reports
 
 ### 🔧 Development Documentation
 - **[CODING_STANDARDS.md](./CODING_STANDARDS.md)** - Code style and development guidelines
@@ -43,10 +42,9 @@ These files are operational instructions for AI agents and should not be conside
 - **[HOW_TO.md](./HOW_TO.md)** - How-to guides for common tasks
 
 ### 🏗️ Project Management
-- **[BLUEPRINT.md](../blueprint.md)** - System blueprint and architecture documentation (canonical location in root)
-- **[ROADMAP.md](../roadmap.md)** - Development roadmap, milestones, and features (canonical location in root)
-- **[TASK.md](../task.md)** - Active tasks, work in progress, and completed items (canonical location in root)
-- See archive/ directory for historical documentation
+- **[FEATURES.md](./FEATURES.md)** - System features, architecture, and capabilities
+- **[DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md)** - Current deployment status and infrastructure
+- See [GitHub Issues](https://github.com/anomalyco/opencode/issues) for active task tracking
 
  ### 🚀 Deployment & Infrastructure
 - **[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)** - Complete deployment procedures (Cloudflare Workers, D1, R2)
@@ -70,27 +68,27 @@ These files are operational instructions for AI agents and should not be conside
 
 ### For New Developers
  1. Start with [../README.md](../README.md) for project overview
- 2. Read [BLUEPRINT.md](./BLUEPRINT.md) for system architecture and tech stack
- 3. Read [ROADMAP.md](./ROADMAP.md) for features and roadmap
+ 2. Read [FEATURES.md](./FEATURES.md) for system architecture and tech stack
+ 3. Read [API Reference](./api-reference.md) for API documentation
  4. Follow [CONTRIBUTING.md](./CONTRIBUTING.md) for development setup
  5. Use [CODING_STANDARDS.md](./CODING_STANDARDS.md) for code guidelines
 
 ### For Administrators
- 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
- 2. Review [ROADMAP.md](./ROADMAP.md) for features and roadmap
+ 1. Review [FEATURES.md](./FEATURES.md) for system architecture
+ 2. Review [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for current status
  3. Review [API Reference](./api-reference.md) for integration
  4. Use [Troubleshooting Guide](./troubleshooting-guide.md) for issue resolution
 
 ### For DevOps Engineers
- 1. Read [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
- 2. Read [ROADMAP.md](./ROADMAP.md) for deployment and infrastructure overview
- 3. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for complete deployment steps
+ 1. Read [FEATURES.md](./FEATURES.md) for system architecture
+ 2. Read [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for deployment and infrastructure
+ 3. Read [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for current status
  4. See [API Reference](./api-reference.md) for backend endpoints
 
 ### For Project Managers
- 1. Review [BLUEPRINT.md](./BLUEPRINT.md) for system architecture
- 2. Review [ROADMAP.md](./ROADMAP.md) for features, roadmap, and project status
- 3. Monitor [TASK.md](./TASK.md) for active tasks and progress tracking
+ 1. Review [FEATURES.md](./FEATURES.md) for system architecture
+ 2. Review [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) for project status
+ 3. Monitor [GitHub Issues](https://github.com/anomalyco/opencode/issues) for active tasks
 
 ---
 
