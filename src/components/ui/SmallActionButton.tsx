@@ -19,6 +19,11 @@ interface SmallActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   showSuccess?: boolean;
   /** Duration to show success state in milliseconds */
   successDuration?: number;
+  /**
+   * Keyboard shortcut to display in tooltip (e.g., "Ctrl+K", "Esc", "Enter")
+   * Improves UX by making keyboard shortcuts discoverable
+   */
+  shortcut?: string;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed text-sm px-3 py-1.5 min-h-[44px] mobile-touch-target focus-visible-enhanced";
@@ -45,6 +50,7 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
   tooltipPosition = 'bottom',
   showSuccess = false,
   successDuration = 2000,
+  shortcut,
   className = '',
   disabled,
   ...props
@@ -84,7 +90,9 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
     }
   }, [isSuccessVisible, isLoading]);
 
-  const hideTooltip = useCallback(() => setIsTooltipVisible(false), []);
+  const hideTooltip = useCallback(() => {
+    setIsTooltipVisible(false);
+  }, []);
 
   const classes = `
     ${baseClasses}
@@ -184,7 +192,14 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
             ${isTooltipVisible || isSuccessVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
-          {tooltipText}
+          <span className="flex items-center gap-2">
+            <span>{tooltipText}</span>
+            {shortcut && (
+              <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500 shadow-sm">
+                {shortcut}
+              </kbd>
+            )}
+          </span>
           <span
             className={`
               absolute w-2 h-2 rotate-45
