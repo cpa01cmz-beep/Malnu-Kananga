@@ -217,7 +217,13 @@ const CalendarView: React.FC<CalendarViewProps> = ({
                   );
                 })}
                 {events.length > 3 && (
-                  <div className="text-xs text-neutral-500">+{events.length - 3} lagi</div>
+                  <div 
+                    className="text-xs text-neutral-500"
+                    aria-label={`${events.length - 3} event lagi`}
+                    role="status"
+                  >
+                    +{events.length - 3} lagi
+                  </div>
                 )}
                 </div>
               </div>
