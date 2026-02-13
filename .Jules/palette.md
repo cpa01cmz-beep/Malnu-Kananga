@@ -67,3 +67,42 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - MaterialSharing.tsx - Added label with id="expiration-date" and htmlFor
 
 **Pattern**: Audit all native form inputs (not wrapped in UI components) for proper label association.
+
+---
+
+## 2026-02-13 - Export Button Aria-Label Completion
+**Learning**: High-traffic export buttons in analytics and reporting components (GradeAnalytics, StudyPlanAnalytics, SchoolInventory) were missing explicit aria-label props despite having visible text. Screen reader users benefit from descriptive labels that clarify the full action context.
+
+**Action**: Always add aria-label to export/action buttons in analytics components, even when they have visible text. The label should describe the complete action including what is being exported (e.g., "Ekspor laporan analitik nilai ke file" instead of just "Export Laporan").
+
+**Components Fixed**:
+- GradeAnalytics.tsx - Added aria-label to Export Laporan button
+- StudyPlanAnalytics.tsx - Added aria-label to Ekspor button
+- SchoolInventory.tsx - Added aria-label to Export Laporan button
+
+**Pattern**: Export buttons in analytics dashboards are high-risk for accessibility oversight because they have visible text. Always audit with pattern: if button has onClick + export/download, verify aria-label exists.
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
+
+---
+
+## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
+**Learning**: Refresh buttons in analytics components (StudyPlanAnalytics, StudentInsights) were missing keyboard shortcut hints. Teachers frequently refresh analytics data to see latest information, but the Ctrl+R shortcut was not visible to users.
+
+**Action**: Add `shortcut="Ctrl+R"` to all refresh/reload buttons in analytics components. The Button component already supports the shortcut prop which displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable.
+
+**Components Updated**:
+- StudyPlanAnalytics.tsx - Added shortcut="Ctrl+R" to "Perbarui" (refresh) button
+- StudentInsights.tsx - Added shortcut="Ctrl+R" to both refresh buttons (error state "Coba Lagi" and main "Refresh")
+
+**Pattern**: Always add keyboard shortcut hints to frequently-used action buttons (refresh, submit, save) in high-traffic analytics and data components. The shortcut prop provides discoverability without requiring users to read documentation.

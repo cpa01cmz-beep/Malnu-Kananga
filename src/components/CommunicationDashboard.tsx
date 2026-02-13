@@ -150,6 +150,7 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
                 variant="outline"
                 size="sm"
                 disabled={exporting || exportFormat !== 'pdf'}
+                aria-label="Ekspor komunikasi ke file PDF"
               >
                 {exporting && exportFormat === 'pdf' ? 'Mengekspor...' : 'Ekspor PDF'}
               </Button>
@@ -158,6 +159,7 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
                 variant="outline"
                 size="sm"
                 disabled={exporting || exportFormat !== 'csv'}
+                aria-label="Ekspor komunikasi ke file CSV"
               >
                 {exporting && exportFormat === 'csv' ? 'Mengekspor...' : 'Ekspor CSV'}
               </Button>
