@@ -119,8 +119,10 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
   const [showShortcutHint, setShowShortcutHint] = useState(false);
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
+  const announcementId = useId();
   const resetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { onSuccess, onError } = useHapticFeedback();
@@ -132,6 +134,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
 
   const showSuccessFeedback = useCallback(() => {
     setButtonState('copied');
+    setScreenReaderAnnouncement(`${successMessage} Text telah disalin ke clipboard`);
     
     if (resetTimeoutRef.current) {
       clearTimeout(resetTimeoutRef.current);
@@ -139,12 +142,14 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     
     resetTimeoutRef.current = setTimeout(() => {
       setButtonState('idle');
+      setScreenReaderAnnouncement('');
     }, resetDelay);
-  }, [resetDelay]);
+  }, [resetDelay, successMessage]);
 
   const showErrorFeedback = useCallback(() => {
     setButtonState('error');
     setIsShaking(true);
+    setScreenReaderAnnouncement(`${errorMessage} Gagal menyalin teks. Silakan coba lagi.`);
     
     if (resetTimeoutRef.current) {
       clearTimeout(resetTimeoutRef.current);
@@ -156,8 +161,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     
     resetTimeoutRef.current = setTimeout(() => {
       setButtonState('idle');
+      setScreenReaderAnnouncement('');
     }, resetDelay);
-  }, [resetDelay]);
+  }, [resetDelay, errorMessage]);
 
   const handleCopy = useCallback(async () => {
     if (disabled || buttonState !== 'idle') return;
@@ -378,6 +384,17 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
         </div>
       )}
+
+      {/* Screen reader announcement - Micro UX Delight: Accessibility enhancement */}
+      <span
+        id={announcementId}
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {screenReaderAnnouncement}
+      </span>
     </button>
   );
 };
