@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from './Button';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 /**
  * Comprehensive Empty State Components
@@ -23,6 +24,12 @@ interface EmptyStateProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'default' | 'minimal' | 'illustrated';
+  /** Enable entrance animation on mount */
+  animate?: boolean;
+  /** ARIA live region priority for screen readers */
+  ariaLive?: 'polite' | 'assertive';
+  /** Unique ID for accessibility */
+  id?: string;
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({
@@ -35,7 +42,22 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   className = '',
   size = 'md',
   variant = 'default',
+  animate = true,
+  ariaLive = 'polite',
+  id,
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  const emptyStateId = id || `empty-state-${Math.random().toString(36).substr(2, 9)}`;
+
+  useEffect(() => {
+    if (animate && !prefersReducedMotion) {
+      const timer = setTimeout(() => setIsVisible(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsVisible(true);
+    }
+  }, [animate, prefersReducedMotion]);
   const sizeClasses = {
     sm: 'p-6 max-w-sm',
     md: 'p-8 max-w-md',
@@ -70,11 +92,23 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     xl: 'text-xl',
   };
 
+  const animationClasses = animate && !prefersReducedMotion
+    ? `transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`
+    : '';
+
   return (
-    <div className={`flex flex-col items-center justify-center ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}>
+    <div
+      id={emptyStateId}
+      className={`flex flex-col items-center justify-center ${sizeClasses[size]} ${variantClasses[variant]} ${animationClasses} ${className}`}
+      role="status"
+      aria-live={ariaLive}
+      aria-atomic="true"
+    >
       {/* Icon or Illustration */}
       {illustration || icon ? (
-        <div className="mb-6">
+        <div
+          className={`mb-6 ${animate && !prefersReducedMotion ? `transition-all duration-700 ease-out delay-100 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}` : ''}`}
+        >
           {illustration || (
             <div className={`${iconSizes[size]} text-neutral-400 dark:text-neutral-600 mx-auto`}>
               {icon}
@@ -84,20 +118,26 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
       ) : null}
 
       {/* Title */}
-      <h3 className={`${titleSizes[size]} text-neutral-900 dark:text-neutral-100 mb-3`}>
+      <h3
+        className={`${titleSizes[size]} text-neutral-900 dark:text-neutral-100 mb-3 ${animate && !prefersReducedMotion ? `transition-all duration-700 ease-out delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}` : ''}`}
+      >
         {title}
       </h3>
 
       {/* Description */}
       {description && (
-        <p className={`${descriptionSizes[size]} text-neutral-600 dark:text-neutral-400 mb-8 max-w-sm`}>
+        <p
+          className={`${descriptionSizes[size]} text-neutral-600 dark:text-neutral-400 mb-8 max-w-sm ${animate && !prefersReducedMotion ? `transition-all duration-700 ease-out delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}` : ''}`}
+        >
           {description}
         </p>
       )}
 
       {/* Actions */}
       {(primaryAction || secondaryAction) && (
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div
+          className={`flex flex-col sm:flex-row gap-3 ${animate && !prefersReducedMotion ? `transition-all duration-700 ease-out delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}` : ''}`}
+        >
           {primaryAction && (
             <Button
               onClick={primaryAction.onClick}
@@ -118,6 +158,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           )}
         </div>
       )}
+
+      {/* Screen reader only announcement */}
+      <span className="sr-only">
+        {title}{description ? `. ${description}` : ''}
+      </span>
     </div>
   );
 };

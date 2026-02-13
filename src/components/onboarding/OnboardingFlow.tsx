@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Button from '../ui/Button';
+import { APP_CONFIG } from '../../constants';
 
 /**
  * User Onboarding Flow Components
@@ -386,7 +387,7 @@ export const WelcomeTour: React.FC<{
   const tourSteps = [
     {
       id: 'welcome',
-      title: `Welcome to MA Malnu Kananga, ${userName}!`,
+      title: `Welcome to ${APP_CONFIG.SCHOOL_NAME}, ${userName}`,
       content: (
         <div className="space-y-4">
           <p className="text-neutral-600 dark:text-neutral-400">
@@ -449,7 +450,7 @@ export const WelcomeTour: React.FC<{
       content: (
         <div className="space-y-4">
           <p className="text-neutral-600 dark:text-neutral-400">
-            Congratulations! You've completed the welcome tour. You're now ready to explore all the features of MA Malnu Kananga.
+            Congratulations! You've completed the welcome tour. You're now ready to explore all the features of ${APP_CONFIG.SCHOOL_NAME}.
           </p>
           <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
             <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">Next Steps:</h4>

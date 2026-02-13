@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 
-import { TIME_MS } from '../constants';
+import { TIME_MS, UI_ACCESSIBILITY } from '../constants';
 
 export interface FocusScopeOptions {
   restoreFocus?: boolean;
@@ -121,7 +121,7 @@ export const useFocusScope = (options: FocusScopeOptions = {}) => {
       // Small delay to ensure DOM is ready
       const timer = setTimeout(() => {
         focusFirst();
-      }, 50);
+      }, TIME_MS.SHORT);
       return () => clearTimeout(timer);
     }
 
@@ -238,7 +238,7 @@ export const focusManager = {
     announcement.setAttribute('aria-live', priority);
     announcement.setAttribute('aria-atomic', 'true');
     announcement.style.position = 'absolute';
-    announcement.style.left = '-10000px';
+    announcement.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
     announcement.style.width = '1px';
     announcement.style.height = '1px';
     announcement.style.overflow = 'hidden';

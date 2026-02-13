@@ -1,5 +1,3 @@
-// initializeMonitoring.ts - Initialize all monitoring services
-
 import { errorMonitoringService } from '../services/errorMonitoringService';
 import { performanceMonitor } from '../services/performanceMonitor';
 import { healthMetricsService } from '../utils/healthMetrics';
@@ -9,22 +7,16 @@ import {
   getPerformanceMonitoringConfig,
 } from '../config/monitoringConfig';
 
-/**
- * Initialize all monitoring services
- * Call this in main.tsx or App.tsx
- */
-export const initializeMonitoring = (): void => {
+export const initializeMonitoring = async (): Promise<void> => {
   const env = import.meta.env.MODE || 'development';
   const isProduction = env === 'production';
 
-  // Set error monitoring service in logger for automatic error integration
   logger.setErrorMonitoringService(errorMonitoringService);
 
   try {
-    // Initialize error monitoring
     const errorConfig = getErrorMonitoringConfig();
     if (errorConfig.dsn) {
-      errorMonitoringService.init(errorConfig);
+      await errorMonitoringService.init(errorConfig);
     } else {
       logger.info('Error monitoring disabled (no DSN configured)');
     }
@@ -33,7 +25,6 @@ export const initializeMonitoring = (): void => {
   }
 
   try {
-    // Initialize performance monitoring
     const perfConfig = getPerformanceMonitoringConfig();
     performanceMonitor.init({
       threshold: perfConfig.slowRequestThreshold,
@@ -47,7 +38,6 @@ export const initializeMonitoring = (): void => {
   }
 
   try {
-    // Initialize health metrics
     healthMetricsService.init();
   } catch (error) {
     logger.error('Failed to initialize health metrics', error);
@@ -59,70 +49,55 @@ export const initializeMonitoring = (): void => {
   });
 };
 
-/**
- * Set user context for all monitoring services
- */
-export const setMonitoringUser = (user: {
+export const setMonitoringUser = async (user: {
   id: string;
   email: string;
   role: string;
   extraRole?: string | null;
-}): void => {
+}): Promise<void> => {
   try {
-    errorMonitoringService.setUser(user);
+    await errorMonitoringService.setUser(user);
     logger.info('User context set for monitoring', { userId: user.id, role: user.role });
   } catch (error) {
     logger.error('Failed to set monitoring user context', error);
   }
 };
 
-/**
- * Clear user context from all monitoring services
- */
-export const clearMonitoringUser = (): void => {
+export const clearMonitoringUser = async (): Promise<void> => {
   try {
-    errorMonitoringService.clearUser();
+    await errorMonitoringService.clearUser();
     logger.info('User context cleared from monitoring');
   } catch (error) {
     logger.error('Failed to clear monitoring user context', error);
   }
 };
 
-/**
- * Capture exception in all monitoring services
- */
-export const captureMonitoringError = (
+export const captureMonitoringError = async (
   error: Error,
   context?: {
     tags?: Record<string, string>;
     extra?: Record<string, unknown>;
   }
-): void => {
+): Promise<void> => {
   try {
-    errorMonitoringService.captureException(error, context);
+    await errorMonitoringService.captureException(error, context);
   } catch (e) {
     logger.error('Failed to capture error in monitoring', e);
   }
 };
 
-/**
- * Add breadcrumb for tracking user actions
- */
-export const addMonitoringBreadcrumb = (
+export const addMonitoringBreadcrumb = async (
   category: string,
   message: string,
   data?: Record<string, unknown>
-): void => {
+): Promise<void> => {
   try {
-    errorMonitoringService.addBreadcrumb(category, message, data);
+    await errorMonitoringService.addBreadcrumb(category, message, data);
   } catch (error) {
     logger.error('Failed to add monitoring breadcrumb', error);
   }
 };
 
-/**
- * Start performance transaction
- */
 export const startMonitoringTransaction = (
   name: string,
   operation: string = 'custom'
@@ -134,9 +109,6 @@ export const startMonitoringTransaction = (
   }
 };
 
-/**
- * End performance transaction
- */
 export const endMonitoringTransaction = (name: string, status?: string): void => {
   try {
     errorMonitoringService.endTransaction(name, status);

@@ -226,6 +226,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
               variant="success"
               size="sm"
               className="mt-3"
+              aria-label="Ekspor laporan kehadiran ke PDF"
             >
               📄 Export PDF
             </Button>

@@ -11,6 +11,7 @@ import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { APP_CONFIG } from '../constants';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -140,7 +141,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
       const testNotification = createNotification(
         'system',
         'Tes Notifikasi Terpadu',
-        'Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu MA Malnu Kananga',
+        `Ini adalah notifikasi tes dari Pusat Notifikasi Terpadu ${APP_CONFIG.SCHOOL_NAME}`,
         { type: 'test', source: 'notification-center' }
       );
 
