@@ -192,6 +192,64 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 ---
 
+### F011: Online Assessment System
+
+**Type**: Academic Feature
+**Priority**: Medium
+**Description**: Timed online examinations with anti-cheat features.
+
+**User Stories**:
+- As a Teacher, I want to create timed online quizzes, so that I can assess student knowledge fairly.
+- As a Student, I want to take exams online, so that I can complete assessments remotely.
+- As an Admin, I want anti-cheat monitoring, so that exam integrity is maintained.
+
+**Implementation**:
+- Add timed quiz/exam functionality
+- Add question randomization
+- Add anti-tab-switch detection
+- Add auto-submit on time expiry
+- Add exam attempt logging
+
+---
+
+### F012: Digital Student Portfolio
+
+**Type**: Academic Feature
+**Priority**: Low
+**Description**: Students showcase their work and achievements.
+
+**User Stories**:
+- As a Student, I want to upload my work samples, so that I can build a portfolio.
+- As a Teacher, I want to review student portfolios, so that I can provide feedback.
+- As a Parent, I want to see my child's work, so that I can support their learning.
+
+**Implementation**:
+- Add portfolio upload feature
+- Add work categorization (subject, type, date)
+- Add teacher feedback on portfolio items
+- Add sharing settings (private/public/parent-only)
+
+---
+
+### F013: Enhanced Parent Dashboard
+
+**Type**: Parent Feature
+**Priority**: Medium
+**Description**: Comprehensive parent portal for monitoring children.
+
+**User Stories**:
+- As a Parent, I want to see all my children's progress in one view, so that I can coordinate support.
+- As a Parent, I want to schedule parent-teacher meetings, so that I can discuss my child's progress.
+- As a Parent, I want to receive AI-powered suggestions, so that I can help my child improve.
+
+**Implementation**:
+- Add multi-child dashboard view
+- Add meeting scheduler with teachers
+- Add AI recommendations for parent actions
+- Add payment tracking for all children
+
+---
+
 ## Feature Priorities
 
 | Feature | Priority | Effort | Impact |
@@ -203,9 +261,12 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 | F006: Export/Import | Medium | Medium | Medium |
 | F007: Voice Commands | Medium | Medium | Medium |
 | F010: Real-time Collab | Medium | Medium | Medium |
+| F011: Online Assessment | Medium | Medium | High |
+| F013: Parent Dashboard | Medium | Medium | Medium |
 | F003: Mobile App | Low | High | High |
 | F004: Grade Predictions | Low | Medium | Medium |
 | F008: i18n | Low | High | Medium |
+| F012: Student Portfolio | Low | Medium | Medium |
 
 ---
 

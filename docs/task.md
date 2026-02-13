@@ -162,6 +162,33 @@
 
 ---
 
+## P3 - Creative Features (From Phase 3)
+
+### T010: Online Assessment System (F011)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Timed online examinations with anti-cheat features.
+**Rationale**: F011 - Enable remote assessment capabilities.
+**Actions**:
+- [ ] Add exam/quiz timing functionality
+- [ ] Add question randomization
+- [ ] Add anti-tab-switch detection
+- [ ] Add auto-submit on expiry
+- [ ] Add exam attempt audit log
+
+### T011: Enhanced Parent Dashboard (F013)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Comprehensive parent portal for monitoring children.
+**Rationale**: F013 - Improve parent engagement.
+**Actions**:
+- [ ] Add multi-child dashboard view
+- [ ] Add meeting scheduler
+- [ ] Add AI recommendations
+- [ ] Add payment tracking
+
+---
+
 ## Notes
 
 - Since average score > 90, creative phase was triggered
