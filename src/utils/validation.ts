@@ -160,8 +160,8 @@ export function announceValidation(message: string, _type: 'error' | 'success' |
   announcement.setAttribute('aria-live', 'polite');
   announcement.style.position = 'absolute';
   announcement.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
-  announcement.style.width = '1px';
-  announcement.style.height = '1px';
+  announcement.style.width = UI_ACCESSIBILITY.OFFSCREEN_WIDTH;
+  announcement.style.height = UI_ACCESSIBILITY.OFFSCREEN_HEIGHT;
   announcement.style.overflow = 'hidden';
   
   announcement.textContent = message;

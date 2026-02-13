@@ -7,7 +7,7 @@ import { FILE_ERROR_MESSAGES, CSV_MESSAGES, EXPORT_MESSAGES, AI_MESSAGES } from 
 import { createToastHandler } from '../../utils/teacherErrorHandler';
 import { validateCSVImport, sanitizeGradeInput, validateGradeInput, type GradeInput } from '../../utils/teacherValidation';
 import type { QueuedGradeUpdate, OCRReviewData } from './useGradingData';
-import { FILE_SIZE_LIMITS } from '../../constants';
+import { FILE_SIZE_LIMITS, UI_DELAYS } from '../../constants';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 
@@ -104,7 +104,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
 
       shakeTimeoutRef.current = setTimeout(() => {
         setShakeButton(null);
-      }, 500);
+      }, UI_DELAYS.BUTTON_SHAKE);
     }
   };
 
