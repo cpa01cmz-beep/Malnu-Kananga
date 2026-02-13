@@ -17,7 +17,7 @@ import ErrorMessage from './ui/ErrorMessage';
 import AccessDenied from './AccessDenied';
 import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
-import { ACADEMIC, ATTENDANCE_STATUS_LABELS } from '../constants';
+import { ACADEMIC, ATTENDANCE_STATUS_LABELS, RETRY_CONFIG, API_ENDPOINTS } from '../constants';
 
 interface ClassStudent {
   id: string;
@@ -160,7 +160,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           entity: 'attendance',
           entityId: `${id}_${today}`,
           data: attendanceData,
-          endpoint: '/api/attendance',
+          endpoint: API_ENDPOINTS.ACADEMIC.ATTENDANCE,
           method: 'POST',
         });
 
@@ -181,8 +181,8 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
       const result = await executeWithRetry({
         operation: updateOperation,
         config: {
-          maxRetries: 3,
-          retryDelay: 1000
+          maxRetries: RETRY_CONFIG.MAX_ATTEMPTS,
+          retryDelay: RETRY_CONFIG.DEFAULT_INITIAL_DELAY
         }
       });
       
@@ -228,7 +228,7 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           entity: 'attendance',
           entityId: `${id}_${today}`,
           data: attendanceData,
-          endpoint: '/api/attendance',
+          endpoint: API_ENDPOINTS.ACADEMIC.ATTENDANCE,
           method: 'POST',
         });
 
