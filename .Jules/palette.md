@@ -67,3 +67,17 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - MaterialSharing.tsx - Added label with id="expiration-date" and htmlFor
 
 **Pattern**: Audit all native form inputs (not wrapped in UI components) for proper label association.
+
+---
+
+## 2026-02-13 - Export Button Aria-Label Completion
+**Learning**: High-traffic export buttons in analytics and reporting components (GradeAnalytics, StudyPlanAnalytics, SchoolInventory) were missing explicit aria-label props despite having visible text. Screen reader users benefit from descriptive labels that clarify the full action context.
+
+**Action**: Always add aria-label to export/action buttons in analytics components, even when they have visible text. The label should describe the complete action including what is being exported (e.g., "Ekspor laporan analitik nilai ke file" instead of just "Export Laporan").
+
+**Components Fixed**:
+- GradeAnalytics.tsx - Added aria-label to Export Laporan button
+- StudyPlanAnalytics.tsx - Added aria-label to Ekspor button
+- SchoolInventory.tsx - Added aria-label to Export Laporan button
+
+**Pattern**: Export buttons in analytics dashboards are high-risk for accessibility oversight because they have visible text. Always audit with pattern: if button has onClick + export/download, verify aria-label exists.
