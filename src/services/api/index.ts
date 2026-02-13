@@ -34,8 +34,10 @@ import {
   type PaymentStatus,
   type PaymentStatusResponse,
 } from './modules';
+import { auditAPI } from './modules/audit';
+import type { AuditLogEntry, AuditLogFilter, AuditLogExportOptions, AuditLogStats } from './modules/audit';
 
-export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse };
+export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse, AuditLogEntry, AuditLogFilter, AuditLogExportOptions, AuditLogStats };
 
 export const apiService = {
   auth: authAPI,
@@ -63,6 +65,7 @@ export const apiService = {
   messages: messagesAPI,
   chat: chatAPI,
   payments: paymentsAPI,
+  audit: auditAPI,
   getAuthToken,
   getRefreshToken,
   parseJwtPayload,
@@ -101,4 +104,5 @@ export {
   messagesAPI,
   chatAPI,
   paymentsAPI,
+  auditAPI,
 };
