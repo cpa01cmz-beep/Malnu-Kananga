@@ -630,6 +630,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
             onClick={() => handleSubmit('publish')}
             disabled={submitting}
             isLoading={submitting}
+            shortcut="Ctrl+Enter"
           >
             Publikasikan Tugas
           </Button>
