@@ -121,6 +121,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
           <div className="grid grid-cols-1 gap-3">
             {PAYMENT_METHODS.map((method) => (
               <button
+                type="button"
                 key={method.id}
                 onClick={() => handleMethodSelect(method)}
                 disabled={selectedMethod !== null}
