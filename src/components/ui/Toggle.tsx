@@ -1,6 +1,7 @@
-import React, { forwardRef, useState, useCallback } from 'react'
+import React, { forwardRef, useState, useCallback, useRef, useEffect } from 'react'
 import { useReducedMotion } from '../../hooks/useReducedMotion'
 import { idGenerators } from '../../utils/idGenerator'
+import { UI_DELAYS } from '../../constants'
 
 // Haptic feedback utility
 const triggerHapticFeedback = (type: 'light' | 'medium' = 'light') => {
@@ -19,6 +20,10 @@ export interface ToggleProps extends Omit<React.ComponentPropsWithoutRef<'input'
   toggleSize?: 'sm' | 'md' | 'lg'
   color?: 'primary' | 'blue' | 'green' | 'red' | 'purple' | 'orange'
   labelPosition?: 'left' | 'right'
+  /** Show tooltip with state and keyboard shortcut hint */
+  showTooltip?: boolean
+  /** Custom tooltip text (defaults to state description) */
+  tooltipText?: string
 }
 
 const sizeClasses = {
@@ -53,6 +58,8 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
       toggleSize = 'md',
       color = 'primary',
       labelPosition = 'right',
+      showTooltip = true,
+      tooltipText,
       className = '',
       disabled,
       checked,
@@ -74,6 +81,49 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
     const colorClass = colorClasses[color]
     const prefersReducedMotion = useReducedMotion()
     const [isPressed, setIsPressed] = useState(false)
+    const [isTooltipVisible, setIsTooltipVisible] = useState(false)
+    const [showShortcutHint, setShowShortcutHint] = useState(false)
+    const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    const isChecked = checked ?? defaultChecked ?? false
+
+    const getTooltipText = () => {
+      if (tooltipText) return tooltipText
+      return isChecked ? 'Matikan' : 'Nyalakan'
+    }
+
+    const handleShowTooltip = useCallback(() => {
+      if (disabled) return
+      setIsTooltipVisible(true)
+      if (showTooltip) {
+        shortcutHintTimeoutRef.current = setTimeout(() => {
+          setShowShortcutHint(true)
+        }, UI_DELAYS.SHORTCUT_HINT_DELAY)
+      }
+    }, [disabled, showTooltip])
+
+    const handleHideTooltip = useCallback(() => {
+      setIsTooltipVisible(false)
+      setShowShortcutHint(false)
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current)
+        shortcutHintTimeoutRef.current = null
+      }
+    }, [])
+
+    useEffect(() => {
+      const tooltipTimeout = tooltipTimeoutRef.current
+      const shortcutTimeout = shortcutHintTimeoutRef.current
+      return () => {
+        if (tooltipTimeout) {
+          clearTimeout(tooltipTimeout)
+        }
+        if (shortcutTimeout) {
+          clearTimeout(shortcutTimeout)
+        }
+      }
+    }, [])
 
     const handlePressStart = useCallback(() => {
       if (!disabled) {
@@ -156,8 +206,42 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             ${disabled ? 'cursor-not-allowed' : ''}
             ${className}
           `}
+          onMouseEnter={handleShowTooltip}
+          onMouseLeave={handleHideTooltip}
+          onFocus={handleShowTooltip}
+          onBlur={handleHideTooltip}
         >
           {content}
+          {showTooltip && isTooltipVisible && (
+            <div
+              className={`
+                absolute -top-10 left-1/2 -translate-x-1/2
+                px-2.5 py-1.5
+                bg-neutral-800 dark:bg-neutral-700
+                text-white text-[10px] font-medium
+                rounded-md shadow-lg
+                whitespace-nowrap
+                pointer-events-none
+                z-50
+                ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
+                ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+              `}
+              role="tooltip"
+            >
+              <span className="flex items-center gap-1.5">
+                <span>{getTooltipText()}</span>
+                {showShortcutHint && (
+                  <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                    Space
+                  </kbd>
+                )}
+              </span>
+              <span
+                className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"
+                aria-hidden="true"
+              />
+            </div>
+          )}
         </label>
       )
     }
@@ -171,6 +255,10 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             ${disabled ? 'cursor-not-allowed' : ''}
             ${className}
           `}
+          onMouseEnter={handleShowTooltip}
+          onMouseLeave={handleHideTooltip}
+          onFocus={handleShowTooltip}
+          onBlur={handleHideTooltip}
         >
           <div className="flex flex-col">
             {label && (
@@ -188,7 +276,39 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
               </span>
             )}
           </div>
-          {content}
+          <div className="relative">
+            {content}
+            {showTooltip && isTooltipVisible && (
+              <div
+                className={`
+                  absolute -top-10 left-1/2 -translate-x-1/2
+                  px-2.5 py-1.5
+                  bg-neutral-800 dark:bg-neutral-700
+                  text-white text-[10px] font-medium
+                  rounded-md shadow-lg
+                  whitespace-nowrap
+                  pointer-events-none
+                  z-50
+                  ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
+                  ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+                `}
+                role="tooltip"
+              >
+                <span className="flex items-center gap-1.5">
+                  <span>{getTooltipText()}</span>
+                  {showShortcutHint && (
+                    <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                      Space
+                    </kbd>
+                  )}
+                </span>
+                <span
+                  className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"
+                  aria-hidden="true"
+                />
+              </div>
+            )}
+          </div>
         </label>
       )
     }
@@ -202,6 +322,10 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           ${disabled ? 'cursor-not-allowed' : ''}
           ${className}
         `}
+        onMouseEnter={handleShowTooltip}
+        onMouseLeave={handleHideTooltip}
+        onFocus={handleShowTooltip}
+        onBlur={handleHideTooltip}
       >
         <div className="flex flex-col">
             {label && (
@@ -219,7 +343,39 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             </span>
           )}
         </div>
-        {content}
+        <div className="relative">
+          {content}
+          {showTooltip && isTooltipVisible && (
+            <div
+              className={`
+                absolute -top-10 left-1/2 -translate-x-1/2
+                px-2.5 py-1.5
+                bg-neutral-800 dark:bg-neutral-700
+                text-white text-[10px] font-medium
+                rounded-md shadow-lg
+                whitespace-nowrap
+                pointer-events-none
+                z-50
+                ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
+                ${isTooltipVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
+              `}
+              role="tooltip"
+            >
+              <span className="flex items-center gap-1.5">
+                <span>{getTooltipText()}</span>
+                {showShortcutHint && (
+                  <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                    Space
+                  </kbd>
+                )}
+              </span>
+              <span
+                className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"
+                aria-hidden="true"
+              />
+            </div>
+          )}
+        </div>
       </label>
     )
   }
