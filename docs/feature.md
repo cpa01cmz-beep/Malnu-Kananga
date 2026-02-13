@@ -192,10 +192,131 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 ---
 
+### F011: Online Assessment System
+
+**Type**: Academic Feature
+**Priority**: Medium
+**Description**: Timed online examinations with anti-cheat features.
+
+**User Stories**:
+- As a Teacher, I want to create timed online quizzes, so that I can assess student knowledge fairly.
+- As a Student, I want to take exams online, so that I can complete assessments remotely.
+- As an Admin, I want anti-cheat monitoring, so that exam integrity is maintained.
+
+**Implementation**:
+- Add timed quiz/exam functionality
+- Add question randomization
+- Add anti-tab-switch detection
+- Add auto-submit on time expiry
+- Add exam attempt logging
+
+---
+
+### F012: Digital Student Portfolio
+
+**Type**: Academic Feature
+**Priority**: Low
+**Description**: Students showcase their work and achievements.
+
+**User Stories**:
+- As a Student, I want to upload my work samples, so that I can build a portfolio.
+- As a Teacher, I want to review student portfolios, so that I can provide feedback.
+- As a Parent, I want to see my child's work, so that I can support their learning.
+
+**Implementation**:
+- Add portfolio upload feature
+- Add work categorization (subject, type, date)
+- Add teacher feedback on portfolio items
+- Add sharing settings (private/public/parent-only)
+
+---
+
+### F013: Enhanced Parent Dashboard
+
+**Type**: Parent Feature
+**Priority**: Medium
+**Description**: Comprehensive parent portal for monitoring children.
+
+**User Stories**:
+- As a Parent, I want to see all my children's progress in one view, so that I can coordinate support.
+- As a Parent, I want to schedule parent-teacher meetings, so that I can discuss my child's progress.
+- As a Parent, I want to receive AI-powered suggestions, so that I can help my child improve.
+
+**Implementation**:
+- Add multi-child dashboard view
+- Add meeting scheduler with teachers
+- Add AI recommendations for parent actions
+- Add payment tracking for all children
+
+---
+
+### F014: Gamification System
+
+**Type**: Student Engagement
+**Priority**: Medium
+**Description**: Points, badges, and leaderboards to motivate student engagement.
+
+**User Stories**:
+- As a Student, I want to earn points for completing assignments, so that I stay motivated.
+- As a Student, I want to collect badges for achievements, so that I can showcase my progress.
+- As a Teacher, I want to see leaderboards by class, so that I can encourage healthy competition.
+
+**Implementation**:
+- Add points system for: assignments, attendance, quizzes, participation
+- Add badges: streak badges, completion badges, top performer
+- Add class and school-wide leaderboards
+- Add rewards catalog (virtual rewards, privileges)
+- Integrate with existing grade/attendance systems
+
+---
+
+### F015: Global Search
+
+**Type**: Productivity Feature
+**Priority**: High
+**Description**: Unified search across all modules and data.
+
+**User Stories**:
+- As a Teacher, I want to search across all students and classes, so that I can quickly find information.
+- As an Admin, I want to search all records globally, so that I don't need to navigate multiple pages.
+- As a Parent, I want to search for my children's assignments, so that I can help them stay on track.
+
+**Implementation**:
+- Add global search bar to header (Cmd+K shortcut)
+- Search across: students, teachers, grades, assignments, materials, attendance
+- Add recent searches and saved searches
+- Add search filters (by type, date range, class)
+- Implement search indexing via existing API
+
+---
+
+### F016: Document Template System
+
+**Type**: Administrative Feature
+**Priority**: Medium
+**Description**: Generate standardized school documents from templates.
+
+**User Stories**:
+- As an Admin, I want to generate student certificates, so that I can automate award ceremonies.
+- As a Teacher, I want to generate progress report letters, so that parents get consistent updates.
+- As a Kepsek, I want to generate official school letters, so that administrative work is faster.
+
+**Implementation**:
+- Create template system (handlebars/mustache-style)
+- Add templates: certificates, report cards, letters, ID cards
+- Add dynamic fields: student name, grades, attendance, dates
+- Add PDF generation with school branding
+- Add batch generation for class-wide documents
+
+---
+
 ## Feature Priorities
 
 | Feature | Priority | Effort | Impact |
 |---------|----------|--------|--------|
+| F014: Gamification | Medium | Medium | High |
+| F015: Global Search | High | Medium | High |
+| F016: Doc Templates | Medium | Medium | Medium |
 | F009: Test Coverage | High | High | High |
 | F001: Audit Logging | High | Medium | High |
 | F005: Bulk Operations | High | Low | High |
@@ -206,6 +327,10 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 | F003: Mobile App | Low | High | High |
 | F004: Grade Predictions | Low | Medium | Medium |
 | F008: i18n | Low | High | Medium |
+| F011: Online Assessment | Medium | High | High |
+| F012: Student Portfolio | Low | Medium | Medium |
+| F013: Parent Dashboard | Medium | Medium | Medium |
+| F012: Student Portfolio | Low | Medium | Medium |
 
 ---
 
