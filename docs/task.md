@@ -277,15 +277,21 @@
 - [ ] Add export to PDF
 
 ### T018: Custom Role-Based Permissions (F021)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: High
 **Description**: Granular permission system with custom roles.
 **Rationale**: F021 - Fine-tune security for different staff.
 **Actions**:
-- [ ] Add role builder UI
-- [ ] Add permission matrix
-- [ ] Add role templates
-- [ ] Add permission inheritance
+- [x] Add role builder UI (RoleManager component)
+- [x] Add permission matrix (matrix tab in RoleManager)
+- [x] Add role templates (5 predefined templates)
+- [x] Add permission inheritance (inherit from other custom roles)
+**Notes**: Implemented:
+- Created `src/services/customRoleService.ts` with full CRUD for custom roles
+- Created `src/components/ui/RoleManager.tsx` with Role/Templates/Matrix tabs
+- Added 5 role templates: Class Teacher, Subject Teacher, Librarian, Finance Staff, Counselor
+- Custom roles support permission inheritance from other roles
+- Role assignments stored in localStorage for user-specific custom roles
 
 ### T019: Student Progress Dashboard (F022)
 **Status**: ✅ Completed
@@ -341,3 +347,12 @@
   - Uses QRCode library for authenticator setup
 - TypeScript and lint checks pass
 - Production build successful
+
+## Session Notes (2026-02-13 - Current)
+
+- T018 (Custom Role-Based Permissions): COMPLETED
+  - Created: src/services/customRoleService.ts (custom role CRUD, templates, inheritance)
+  - Created: src/components/ui/RoleManager.tsx (Role/Templates/Matrix UI tabs)
+  - Added storage keys: CUSTOM_ROLES, ROLE_TEMPLATES, CUSTOM_ROLE_ASSIGNMENTS
+  - Added 5 role templates: Class Teacher, Subject Teacher, Librarian, Finance Staff, Counselor
+  - Features: permission inheritance, permission matrix view, role templates
