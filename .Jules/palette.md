@@ -255,3 +255,20 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 - NotificationSettings.tsx - Added shortcut="Ctrl+S" to Simpan Pengaturan button
 
 **Pattern**: Settings panels where admins frequently save preferences benefit from keyboard shortcuts to speed up workflow. Always audit save buttons in settings/configuration components.
+
+---
+
+## 2026-02-13 - LearningProgressReport Button Component Upgrade
+
+**Learning**: The LearningProgressReport component used native `<button>` elements instead of the UI Button component for its "Buat Laporan Baru" and "Simpan Pengaturan" buttons. This prevented users from discovering efficient keyboard shortcuts (Ctrl+S for save) through tooltip hints.
+
+**Action**: Replace native `<button>` elements with the Button component which supports:
+- `shortcut` prop for keyboard shortcut discovery via tooltip
+- `ariaLabel` for screen reader accessibility
+- `isLoading` prop for proper loading state management
+
+**Files Fixed**:
+- LearningProgressReport.tsx - Replaced 2 native buttons with Button component
+
+**Pattern**: Always audit form and settings buttons - if they persist data, use the Button component with shortcut hints for discoverable keyboard shortcuts.
+

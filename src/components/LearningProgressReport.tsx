@@ -7,6 +7,7 @@ import { ArrowPathIcon } from './icons/ArrowPathIcon';
 import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
 import Card from './ui/Card';
+import Button from './ui/Button';
 import Badge from './ui/Badge';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import type { ParentChild, Grade, Attendance } from '../types';
@@ -170,23 +171,15 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
               : 'Belum ada laporan'}
           </p>
         </div>
-        <button
+        <Button
           onClick={() => handleGenerateReport(true)}
-          disabled={generating}
-          className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          isLoading={generating}
+          variant="primary"
+          ariaLabel="Buat laporan progres belajar baru"
         >
-          {generating ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              <span>Membuat...</span>
-            </>
-          ) : (
-            <>
-              <ArrowPathIcon className="w-4 h-4" />
-              <span>Buat Laporan Baru</span>
-            </>
-          )}
-        </button>
+          <ArrowPathIcon className="w-4 h-4" />
+          Buat Laporan Baru
+        </Button>
       </div>
 
       <div className="flex space-x-4 border-b">
@@ -485,12 +478,14 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
             </div>
 
             <div className="flex justify-end">
-              <button
+              <Button
                 onClick={handleSaveSettings}
-                className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+                variant="primary"
+                shortcut="Ctrl+S"
+                ariaLabel="Simpan pengaturan laporan progres"
               >
                 Simpan Pengaturan
-              </button>
+              </Button>
             </div>
           </div>
         </Card>
