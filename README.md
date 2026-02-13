@@ -257,7 +257,7 @@ See `.opencode/README.md` for detailed usage instructions.
 - **Runtime**: Serverless (Cloudflare Workers)
 - **Database**: Cloudflare D1 (SQLite)
 - **Storage**: Cloudflare R2 (S3-compatible)
-- **Deployment**: Wrangler 4.59.2
+- **Deployment**: Wrangler 4.65.0
 
 ### AI & ML
 - **LLM**: Google Gemini API (@google/genai 1.41.0)
