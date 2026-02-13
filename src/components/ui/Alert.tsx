@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import IconButton from './IconButton';
 import InformationCircleIcon from '../icons/InformationCircleIcon';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { TIME_MS } from '../../constants';
+import { TIME_MS, UI_DELAYS } from '../../constants';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'neutral';
 export type AlertSize = 'sm' | 'md' | 'lg';
@@ -153,7 +153,21 @@ const Alert: React.FC<AlertProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const alertRef = useRef<HTMLDivElement>(null);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  const handleClose = useCallback(() => {
+    if (prefersReducedMotion) {
+      onClose?.();
+    } else {
+      setIsExiting(true);
+      setTimeout(() => {
+        onClose?.();
+      }, 200);
+    }
+  }, [prefersReducedMotion, onClose]);
 
   // Trigger entrance animation on mount
   useEffect(() => {
@@ -185,17 +199,47 @@ const Alert: React.FC<AlertProps> = ({
     }
   }, [autoDismiss, prefersReducedMotion, onClose]);
 
-  const handleClose = () => {
-    if (prefersReducedMotion) {
-      onClose?.();
-    } else {
-      setIsExiting(true);
-      // Wait for exit animation to complete before calling onClose
-      setTimeout(() => {
-        onClose?.();
-      }, 200);
+  useEffect(() => {
+    if (!showCloseButton || !onClose) return;
+
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const focusedElement = document.activeElement;
+        const alertElement = alertRef.current;
+        
+        if (alertElement && (alertElement.contains(focusedElement) || focusedElement === alertElement)) {
+          e.preventDefault();
+          handleClose();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => document.removeEventListener('keydown', handleEscapeKey);
+  }, [showCloseButton, onClose, handleClose]);
+
+  useEffect(() => {
+    return () => {
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showEscapeHintTooltip = useCallback(() => {
+    if (showCloseButton && onClose) {
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
     }
-  };
+  }, [showCloseButton, onClose]);
+
+  const hideEscapeHintTooltip = useCallback(() => {
+    setShowEscapeHint(false);
+    if (escapeHintTimeoutRef.current) {
+      clearTimeout(escapeHintTimeoutRef.current);
+    }
+  }, []);
 
   const variantStyle = variantClasses[variant];
   const sizeStyle = sizeClasses[size];
@@ -256,10 +300,14 @@ const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
+      ref={alertRef}
+      tabIndex={-1}
       className={alertClasses}
       role="alert"
       aria-live="polite"
       aria-labelledby={title ? 'alert-title' : undefined}
+      onMouseEnter={showEscapeHintTooltip}
+      onMouseLeave={hideEscapeHintTooltip}
     >
       <div className={`flex ${centered ? 'justify-center' : 'items-start gap-3'}`}>
         {iconToRender && (
@@ -286,18 +334,48 @@ const Alert: React.FC<AlertProps> = ({
           </div>
         </div>
         {showCloseButton && onClose && (
-          <IconButton
-            icon={
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            }
-            ariaLabel="Close alert"
-            size="sm"
-            onClick={handleClose}
-            className={animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-fade-in' : ''}
-            style={{ animationDelay: '200ms' }}
-          />
+          <div className="relative">
+            <IconButton
+              icon={
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              }
+              ariaLabel="Tutup notifikasi (Tekan Escape)"
+              size="sm"
+              onClick={handleClose}
+              onFocus={showEscapeHintTooltip}
+              onBlur={hideEscapeHintTooltip}
+              className={animate !== 'none' && isVisible && !prefersReducedMotion ? 'animate-fade-in' : ''}
+              style={{ animationDelay: '200ms' }}
+            />
+            {showEscapeHint && (
+              <div
+                className={`
+                  absolute -top-9 left-1/2 -translate-x-1/2
+                  px-2.5 py-1
+                  bg-neutral-800 dark:bg-neutral-700
+                  text-white text-[10px] font-medium
+                  rounded-md shadow-md
+                  whitespace-nowrap
+                  transition-all duration-200 ease-out
+                  pointer-events-none
+                  z-50
+                  ${showEscapeHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+                `.replace(/\s+/g, ' ').trim()}
+                role="tooltip"
+                aria-hidden={!showEscapeHint}
+              >
+                <span className="flex items-center gap-1">
+                  <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                    Esc
+                  </kbd>
+                  <span>tutup</span>
+                </span>
+                <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
