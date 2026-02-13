@@ -144,7 +144,7 @@ class ParentProgressReportService {
       // Get all keys matching the pattern
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key?.startsWith('malnu_parent_progress_reports_')) {
+        if (key?.startsWith(STORAGE_KEYS.PARENT_PROGRESS_REPORTS(''))) {
           const cached = localStorage.getItem(key);
           if (cached) {
             const reports: ProgressReport[] = JSON.parse(cached);
