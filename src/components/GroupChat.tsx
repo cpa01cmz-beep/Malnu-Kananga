@@ -30,6 +30,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
   const [selectedClass, setSelectedClass] = useState<string>();
   const [selectedSubject, setSelectedSubject] = useState<string>();
   const [creatingGroup, setCreatingGroup] = useState(false);
+  const [isUpdatingGroup, setIsUpdatingGroup] = useState(false);
 
   const loadClasses = useCallback(async () => {
     try {
@@ -525,14 +526,20 @@ export function GroupChat({ currentUser }: GroupChatProps) {
             <div className="flex space-x-3">
               <Button
                 onClick={() => setShowManageGroupModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                variant="outline"
+                shortcut="Esc"
               >
                 Tutup
               </Button>
               {isCurrentUserAdmin && (
                 <Button
+                  variant="primary"
+                  isLoading={isUpdatingGroup}
+                  shortcut="Ctrl+S"
+                  disabled={isUpdatingGroup}
                   onClick={async () => {
                     try {
+                      setIsUpdatingGroup(true);
                       await apiService.messages.updateConversation(
                         selectedConversation.id,
                         {
@@ -544,11 +551,12 @@ export function GroupChat({ currentUser }: GroupChatProps) {
                     } catch (err) {
                       logger.error('Failed to update group:', err);
                       logger.warn('Gagal mengupdate grup');
+                    } finally {
+                      setIsUpdatingGroup(false);
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Simpan
+                  {isUpdatingGroup ? 'Menyimpan...' : 'Simpan'}
                 </Button>
               )}
             </div>
