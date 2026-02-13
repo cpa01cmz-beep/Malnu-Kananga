@@ -279,7 +279,7 @@ describe('Input Component', () => {
       
       expect(input).toHaveAttribute('aria-required', 'true');
       expect(input).toHaveAttribute('aria-invalid', 'false');
-      expect(screen.getByText('*', { selector: '[aria-label="wajib diisi"]' })).toBeInTheDocument();
+      expect(screen.getByText('*', { selector: '[aria-hidden="true"]' })).toBeInTheDocument();
     });
 
     it('updates ARIA attributes on validation error', async () => {

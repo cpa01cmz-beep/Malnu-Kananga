@@ -303,7 +303,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
             />
           )}
           {props.required && (
-            <span className="text-red-500 ml-1" aria-label="wajib diisi">
+            <span className="text-red-500 ml-1" aria-hidden="true">
               *
             </span>
           )}
