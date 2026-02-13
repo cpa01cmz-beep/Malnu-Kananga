@@ -93,3 +93,20 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
 
 **Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
+
+---
+
+## 2026-02-13 - Message Input Character Count UX
+**Learning**: The MessageInput component used a native textarea without character count visibility. Users couldn't see how close they were to any message length limit, which is especially important for longer messages in a school communication system.
+
+**Action**: Use the UI Textarea component instead of native textarea. The UI Textarea automatically displays character count and progress bar when maxLength is provided. This provides:
+- Visual indicator of current/max characters
+- Color-coded warnings (amber at 80%, red at 100%)
+- Accessible aria-labels with character count status
+- Progress bar showing usage
+
+**Files Changed**:
+- constants.ts - Added MESSAGE_MAX_LENGTH: 2000 to TEXT_LIMITS
+- MessageInput.tsx - Replaced native textarea with UI Textarea + maxLength
+
+**Pattern**: When adding any input that might have length limits, always use UI components that provide character count feedback. It's a low-effort, high-impact UX enhancement that helps users understand their input limits.
