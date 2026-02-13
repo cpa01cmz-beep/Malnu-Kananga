@@ -455,7 +455,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <AlertCircleIcon className="w-12 h-12 text-red-500" />
         <div className="text-gray-500">{error}</div>
-        <Button onClick={fetchAssignments}>Coba Lagi</Button>
+        <Button onClick={fetchAssignments} aria-label="Coba lagi memuat tugas" shortcut="Ctrl+R">Coba Lagi</Button>
       </div>
     );
   }
