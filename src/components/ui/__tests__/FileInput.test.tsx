@@ -116,10 +116,11 @@ describe('FileInput Component', () => {
 
   it('has proper ARIA attributes for accessibility', () => {
     const { container } = render(
-      <FileInput 
+      <FileInput
         helperText="Max 10MB"
         errorText="Invalid type"
         aria-label="Upload document"
+        allowPaste={false}
       />
     );
     const input = container.querySelector('input[type="file"]');
@@ -369,11 +370,146 @@ describe('FileInput Component', () => {
     it('does not show paste hint when disabled', async () => {
       const { container } = render(<FileInput disabled />);
       const input = container.querySelector('input[type="file"]') as HTMLInputElement;
-      
+
       input.focus();
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Clear on Escape Feature', () => {
+    it('clears file when Escape is pressed with clearOnEscape enabled', async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+      const handleClear = vi.fn();
+      const { container } = render(
+        <FileInput onChange={handleChange} onClear={handleClear} clearOnEscape />
+      );
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      expect(input.files).toHaveLength(1);
+
+      input.focus();
+      await user.keyboard('{Escape}');
+
+      expect(handleChange).toHaveBeenCalledTimes(2);
+      expect(handleClear).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows escape hint tooltip when focused with a file selected', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<FileInput clearOnEscape allowPaste={false} />);
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      input.focus();
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const tooltips = screen.getAllByRole('tooltip');
+      const escapeTooltip = tooltips.find(t => t.textContent?.includes('ESC'));
+      expect(escapeTooltip).toBeInTheDocument();
+      expect(escapeTooltip).toHaveTextContent(/clear file/i);
+    });
+
+    it('does not show escape hint when clearOnEscape is disabled', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<FileInput clearOnEscape={false} />);
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      input.focus();
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const tooltips = screen.queryAllByRole('tooltip');
+      const escapeTooltip = tooltips.find(t => t.textContent?.includes('clear'));
+      expect(escapeTooltip).toBeUndefined();
+    });
+
+    it('does not clear file when Escape is pressed without clearOnEscape', async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+      const { container } = render(<FileInput onChange={handleChange} clearOnEscape={false} />);
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      expect(input.files).toHaveLength(1);
+
+      input.focus();
+      await user.keyboard('{Escape}');
+
+      expect(handleChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not show escape hint when no file is selected', async () => {
+      const { container } = render(<FileInput clearOnEscape />);
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+
+      input.focus();
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const tooltips = screen.queryAllByRole('tooltip');
+      const escapeTooltip = tooltips.find(t => t.textContent?.includes('clear'));
+      expect(escapeTooltip).toBeUndefined();
+    });
+
+    it('includes escape shortcut in aria-label when clearOnEscape is true', () => {
+      const { container } = render(<FileInput clearOnEscape allowPaste={false} aria-label="Upload file" />);
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+
+      const ariaLabel = input.getAttribute('aria-label');
+      expect(ariaLabel).toBe('Upload file (Press Esc to clear)');
+    });
+
+    it('does not include escape shortcut in aria-label when clearOnEscape is false', () => {
+      const { container } = render(<FileInput clearOnEscape={false} allowPaste={false} aria-label="Upload file" />);
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+
+      const ariaLabel = input.getAttribute('aria-label');
+      expect(ariaLabel).toBe('Upload file');
+    });
+
+    it('hides escape hint when disabled', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<FileInput clearOnEscape disabled />);
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      input.focus();
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const tooltips = screen.queryAllByRole('tooltip');
+      const escapeTooltip = tooltips.find(t => t.textContent?.includes('clear'));
+      expect(escapeTooltip).toBeUndefined();
+    });
+
+    it('announces clear action to screen readers when Escape is pressed', async () => {
+      const user = userEvent.setup();
+      const { container } = render(<FileInput clearOnEscape />);
+
+      const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      await user.upload(input, file);
+      input.focus();
+      await user.keyboard('{Escape}');
+
+      const announcement = screen.getByRole('status');
+      expect(announcement).toBeInTheDocument();
     });
   });
 });
