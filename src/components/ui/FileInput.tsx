@@ -17,6 +17,10 @@ interface FileInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement
   /** Callback when files are pasted from clipboard */
   // eslint-disable-next-line no-undef
   onFilesPasted?: (files: FileList) => void;
+  /** Enable Escape key to clear selected file */
+  clearOnEscape?: boolean;
+  /** Callback when file is cleared via Escape key */
+  onClear?: () => void;
 }
 
 const baseClasses = "flex items-center border rounded-xl transition-all duration-200 ease-out font-medium focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed appearance-none bg-white dark:bg-neutral-700 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:cursor-pointer file:transition-all file:duration-200 file:ease-out file:hover:scale-[1.02] file:active:scale-95 file:focus:outline-none file:focus:ring-2 file:focus:ring-offset-2";
@@ -85,10 +89,15 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   value,
   allowPaste = true,
   onFilesPasted,
+  clearOnEscape = false,
+  onClear,
   onChange,
+  onKeyDown,
   disabled,
   ...props
 }, ref) => {
+  const ariaLabelProp = props['aria-label' as keyof typeof props] as string | undefined;
+  const { 'aria-label': _, ...restProps } = props as Record<string, unknown>;
   const internalRef = useRef<HTMLInputElement>(null);
   const fileInputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,8 +110,10 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   // State for paste support and UI feedback
   const [isPasteSupported, setIsPasteSupported] = useState(false);
   const [showPasteHint, setShowPasteHint] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
   const [announcement, setAnnouncement] = useState<string>('');
   const pasteHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const keyboardShortcut = getKeyboardShortcutLabel();
 
   // Check if clipboard paste is supported
@@ -117,6 +128,9 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
     return () => {
       if (pasteHintTimeoutRef.current) {
         clearTimeout(pasteHintTimeoutRef.current);
+      }
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
       }
     };
   }, []);
@@ -214,15 +228,74 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
     }
   };
 
-  // Hide paste hint on blur
+  // Show escape hint when focused with a file selected
+  const handleContainerFocus = () => {
+    if (clearOnEscape && !disabled && fileInputRef.current?.files && fileInputRef.current.files.length > 0) {
+      escapeHintTimeoutRef.current = setTimeout(() => {
+        setShowEscapeHint(true);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
+    }
+  };
+
+  // Hide hints on blur
   const handleBlur = (e: React.FocusEvent) => {
     // Only hide if focus moved outside the container
     // eslint-disable-next-line no-undef
     if (!containerRef.current?.contains(e.relatedTarget as Node)) {
       setShowPasteHint(false);
+      setShowEscapeHint(false);
       if (pasteHintTimeoutRef.current) {
         clearTimeout(pasteHintTimeoutRef.current);
       }
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+    }
+  };
+
+  // Handle keydown for Escape key to clear file
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (clearOnEscape && e.key === 'Escape' && fileInputRef.current?.files && fileInputRef.current.files.length > 0) {
+      e.preventDefault();
+      
+      // Clear the file input
+      fileInputRef.current.value = '';
+      
+      // Trigger onChange with empty value
+      if (onChange) {
+        const syntheticEvent = {
+          target: fileInputRef.current,
+          currentTarget: fileInputRef.current,
+          preventDefault: () => {},
+          stopPropagation: () => {},
+          nativeEvent: e.nativeEvent,
+          bubbles: true,
+          cancelable: true,
+          type: 'change',
+          timeStamp: Date.now(),
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+        
+        onChange(syntheticEvent);
+      }
+      
+      // Call onClear callback if provided
+      if (onClear) {
+        onClear();
+      }
+      
+      // Hide escape hint
+      setShowEscapeHint(false);
+      if (escapeHintTimeoutRef.current) {
+        clearTimeout(escapeHintTimeoutRef.current);
+      }
+      
+      // Announce to screen reader
+      announceToScreenReader('File cleared');
+    }
+    
+    // Call original onKeyDown if provided
+    if (onKeyDown) {
+      onKeyDown(e);
     }
   };
 
@@ -238,10 +311,11 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   `.replace(/\s+/g, ' ').trim();
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className={`${fullWidth ? 'w-full' : ''} space-y-1.5 relative`}
       onBlur={handleBlur}
+      onFocus={handleContainerFocus}
     >
       {label && (
         <label
@@ -261,14 +335,22 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
           className={inputClasses}
           aria-describedby={describedBy}
           aria-invalid={state === 'error'}
-          aria-label={allowPaste && isPasteSupported ? `${props['aria-label'] || label || 'File input'} (Press ${keyboardShortcut} to paste)` : props['aria-label']}
+          aria-label={(() => {
+            const baseLabel = ariaLabelProp || label || 'File input';
+            const hints: string[] = [];
+            if (allowPaste && isPasteSupported) hints.push(`Press ${keyboardShortcut} to paste`);
+            if (clearOnEscape) hints.push('Press Esc to clear');
+            return hints.length > 0 ? `${baseLabel} (${hints.join(', ')})` : baseLabel;
+          })()}
           value={value || undefined}
           onFocus={handleFocus}
           disabled={disabled}
           onChange={onChange}
-          {...props}
+          onKeyDown={handleKeyDown}
+          {...restProps}
         />
 
+        {/* Keyboard shortcut hint for paste - Micro UX Delight */}
         {allowPaste && isPasteSupported && showPasteHint && !disabled && (
           <div
             className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-1 duration-200"
@@ -281,9 +363,29 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
               </kbd>
               <span>to paste file</span>
             </span>
-            <span 
-              className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" 
-              aria-hidden="true" 
+            <span
+              className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"
+              aria-hidden="true"
+            />
+          </div>
+        )}
+
+        {/* Keyboard shortcut hint for clearOnEscape - Micro UX Delight */}
+        {clearOnEscape && showEscapeHint && !disabled && (
+          <div
+            className="absolute -top-10 right-0 px-3 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs font-medium rounded-lg shadow-lg whitespace-nowrap pointer-events-none z-10 animate-in fade-in slide-in-from-bottom-1 duration-200"
+            role="tooltip"
+            aria-hidden="false"
+          >
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold border border-neutral-500">
+                ESC
+              </kbd>
+              <span>to clear file</span>
+            </span>
+            <span
+              className="absolute top-full right-6 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700"
+              aria-hidden="true"
             />
           </div>
         )}
