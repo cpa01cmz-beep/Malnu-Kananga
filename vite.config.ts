@@ -34,7 +34,9 @@ function asyncCssPlugin(): Plugin {
   }
 }
 
-// https://vitejs.dev/config/
+  // https://vitejs.dev/config/
+// BroCula: Enhanced chunking strategy to minimize unused JavaScript on initial load
+// Key principle: Heavy libraries and dashboard components should ONLY load when needed
 export default defineConfig(({ mode }) => {
   // Set NODE_ENV explicitly for production mode
   if (mode === 'production' && !process.env.NODE_ENV) {
