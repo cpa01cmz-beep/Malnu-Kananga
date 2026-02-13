@@ -40,6 +40,7 @@ export { default as DataTable } from './DataTable';
 export { default as Tab } from './Tab';
 import Toast from '../Toast';
 export { Toast };
+export { default as Tooltip } from './Tooltip';
 
 // Navigation Components
 export { default as Pagination } from './Pagination';
