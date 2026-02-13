@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LoadingSpinner from './LoadingSpinner';
-import { UI_STRINGS } from '../../constants';
+import { UI_STRINGS, UI_DELAYS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -37,7 +37,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
   className = '',
   children,
   delay = 0,
-  minDisplay = 500,
+  minDisplay = UI_DELAYS.MIN_LOAD_TIME,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);

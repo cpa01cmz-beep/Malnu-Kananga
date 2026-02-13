@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { BREAKPOINTS, UI_GESTURES } from '../constants';
+import { BREAKPOINTS, UI_GESTURES, VIBRATION_PATTERNS } from '../constants';
 
 export interface SwipeGestureOptions {
   threshold?: number;
@@ -295,12 +295,12 @@ export const useHapticFeedback = () => {
   const triggerHaptic = useCallback((type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error') => {
     if ('vibrate' in navigator) {
       const patterns = {
-        light: [10],
-        medium: [25],
-        heavy: [50],
-        success: [10, 50, 10],
-        warning: [25, 25],
-        error: [50, 25, 50],
+        light: VIBRATION_PATTERNS.LIGHT,
+        medium: VIBRATION_PATTERNS.MEDIUM,
+        heavy: VIBRATION_PATTERNS.HEAVY,
+        success: VIBRATION_PATTERNS.SUCCESS,
+        warning: VIBRATION_PATTERNS.WARNING,
+        error: VIBRATION_PATTERNS.ERROR,
       };
       
       navigator.vibrate(patterns[type]);
