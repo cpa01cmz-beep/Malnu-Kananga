@@ -1463,7 +1463,7 @@ export const FORGOT_PASSWORD_STRINGS = {
     VALIDATION_ERROR: 'Masukkan email yang valid',
 } as const;
 
-// Header navigation UI strings
+// Header navigation UI strings - Flexy: Use APP_CONFIG for school-specific values
 export const HEADER_NAV_STRINGS = {
     HOME: 'Beranda',
     PROFILE: 'Profil',
@@ -1471,8 +1471,8 @@ export const HEADER_NAV_STRINGS = {
     DOWNLOAD: 'Download',
     LOGIN_EMAIL: 'Login Email',
     LOGO_TEXT: 'M',
-    SCHOOL_NAME: 'Malnu Kananga',
-    NPSN_LABEL: 'NPSN: 69881502',
+    SCHOOL_NAME: APP_CONFIG.SCHOOL_NAME,
+    NPSN_LABEL: `NPSN: ${APP_CONFIG.SCHOOL_NPSN}`,
     AI_EDITOR: 'Editor AI',
     AI_EDITOR_OPEN: 'Buka Editor AI',
     AI_ASK: 'Tanya AI',
@@ -1509,15 +1509,15 @@ export const GRADING_UI_STRINGS = {
     UAS_LABEL: 'UAS',
 } as const;
 
-// Section titles for marketing/landing page sections
+// Section titles for marketing/landing page sections - Flexy: Dynamic school name references
 export const SECTION_TITLES = {
     PROFILE: 'Profil Madrasah',
-    PROFILE_SUBTITLE: 'Mengenal Lebih Dekat MA Malnu Kananga',
+    PROFILE_SUBTITLE: `Mengenal Lebih Dekat ${APP_CONFIG.SCHOOL_NAME}`,
     PROGRAMS: 'Program Unggulan',
     PPDB: 'Bergabunglah Bersama Kami',
     PPDB_SUBTITLE: 'Masa Depan Gemilang Dimulai dari Sini',
     NEWS: 'Berita & Kegiatan Terbaru',
-    NEWS_SUBTITLE: 'Update terkini dari MA Malnu Kananga',
+    NEWS_SUBTITLE: `Update terkini dari ${APP_CONFIG.SCHOOL_NAME}`,
     ACHIEVEMENTS: 'Prestasi Madrasah',
     GALLERY: 'Galeri Kegiatan',
     TESTIMONIALS: 'Testimoni',
@@ -1736,12 +1736,12 @@ export const DEFAULT_CLASS_CONFIG = {
     NEW_STUDENT_NAME: 'Kelas 10',
 } as const;
 
-// Email domain constants
+// Email domain constants - Flexy: Use ENV-driven configuration
 export const EMAIL_DOMAINS = {
-    ADMIN: 'admin@malnu-kananga.sch.id',
-    INFO: 'info@ma-malnukananga.sch.id',
-    TEACHER: 'guru.staff@malnu.sch.id',
-    STUDENT: 'siswa.osis@malnu.sch.id',
+    ADMIN: APP_CONFIG.SCHOOL_EMAIL,
+    INFO: `info@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
+    TEACHER: `guru.staff@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
+    STUDENT: `siswa.osis@${APP_CONFIG.SCHOOL_WEBSITE.replace('https://', '')}`,
 } as const;
 
 // Demo user data - Flexy: Demo data should be centralized!
@@ -1816,9 +1816,9 @@ export const DOCUMENT_TYPES = {
     PKH: { key: 'pkh', label: 'PKH' },
 } as const;
 
-// AI Prompts - Centralized prompts for consistency
+// AI Prompts - Centralized prompts for consistency - Flexy: Dynamic school name
 export const AI_PROMPTS = {
-    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk MA Malnu Kananga, sebuah madrasah aliyah di Indonesia. 
+    CHAT_SYSTEM_INSTRUCTION: `Kamu adalah asisten AI untuk ${APP_CONFIG.SCHOOL_NAME}, sebuah madrasah aliyah di Indonesia.
 Berikan respons yang:
 1. Sopan dan profesional
 2. Menggunakan Bahasa Indonesia yang baik dan benar

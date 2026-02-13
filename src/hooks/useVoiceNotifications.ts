@@ -6,7 +6,7 @@ import type {
     SpeechSynthesisVoice
 } from '../types';
 import { logger } from '../utils/logger';
-import { SCHEDULER_INTERVALS } from '../constants';
+import { SCHEDULER_INTERVALS, APP_CONFIG } from '../constants';
 
 interface UseVoiceNotificationsReturn {
     settings: VoiceNotificationSettings;
@@ -92,7 +92,7 @@ export const useVoiceNotifications = (): UseVoiceNotificationsReturn => {
             id: `test-${Date.now()}`,
             type: 'system' as const,
             title: 'Tes Notifikasi Suara',
-            body: 'Ini adalah tes notifikasi suara dari MA Malnu Kananga Smart Portal',
+            body: `Ini adalah tes notifikasi suara dari ${APP_CONFIG.SCHOOL_NAME} Smart Portal`,
             timestamp: new Date().toISOString(),
             read: false,
             priority: 'high' as const,

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
-import { EXTERNAL_URLS, USER_ROLES, USER_STATUS } from '../constants';
+import { EXTERNAL_URLS, USER_ROLES, USER_STATUS, APP_CONFIG } from '../constants';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
@@ -22,7 +22,7 @@ export const INITIAL_PROGRAMS: FeaturedProgram[] = [
 
 export const INITIAL_NEWS: LatestNews[] = [
     {
-        title: 'MA Malnu Kananga Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten',
+        title: `${APP_CONFIG.SCHOOL_NAME} Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten`,
         date: '15 Juli 2024',
         category: 'Prestasi',
         imageUrl: '/images/placeholder.svg'
