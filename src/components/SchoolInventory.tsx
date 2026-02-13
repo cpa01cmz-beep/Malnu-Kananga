@@ -27,6 +27,7 @@ import { inventoryAPI } from '../services/apiService';
 import { useCanAccess } from '../hooks/useCanAccess';
 import AccessDenied from './AccessDenied';
 import { CHART_COLORS } from '../config/chartColors';
+import { msToYears } from '../constants';
 import Input from './ui/Input';
 import { INPUT_MIN_VALUES } from '../constants';
 import Select from './ui/Select';
@@ -118,7 +119,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     if (!item.purchasePrice || !item.purchaseDate) return 0;
     const purchaseDate = new Date(item.purchaseDate);
     const today = new Date();
-    const yearsDiff = (today.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    const yearsDiff = msToYears(today.getTime() - purchaseDate.getTime());
     const rate = (item.depreciationRate || 10) / 100;
     const currentValue = item.purchasePrice * Math.pow(1 - rate, yearsDiff);
     return Math.max(0, Math.round(currentValue * 100) / 100);

@@ -816,6 +816,9 @@ export const CONVERSION = {
     MS_PER_SECOND: 1000,
     MS_PER_MINUTE: 60 * 1000,
     MS_PER_HOUR: 60 * 60 * 1000,
+    MS_PER_DAY: 24 * 60 * 60 * 1000,
+    MS_PER_WEEK: 7 * 24 * 60 * 60 * 1000,
+    MS_PER_YEAR: 365.25 * 24 * 60 * 60 * 1000, // Accounts for leap years
 } as const;
 
 /**
@@ -854,6 +857,46 @@ export function minutesToMs(minutes: number): number {
  */
 export function hoursToMs(hours: number): number {
     return hours * CONVERSION.MS_PER_HOUR;
+}
+
+/**
+ * Convert days to milliseconds
+ * Flexy says: Use this instead of hardcoded `days * 24 * 60 * 60 * 1000`
+ */
+export function daysToMs(days: number): number {
+    return days * CONVERSION.MS_PER_DAY;
+}
+
+/**
+ * Convert milliseconds to days
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60 * 24)`
+ */
+export function msToDays(ms: number): number {
+    return ms / CONVERSION.MS_PER_DAY;
+}
+
+/**
+ * Convert milliseconds to hours
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60)`
+ */
+export function msToHours(ms: number): number {
+    return ms / CONVERSION.MS_PER_HOUR;
+}
+
+/**
+ * Convert milliseconds to minutes
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60)`
+ */
+export function msToMinutes(ms: number): number {
+    return ms / CONVERSION.MS_PER_MINUTE;
+}
+
+/**
+ * Convert milliseconds to years
+ * Flexy says: Use this instead of hardcoded `ms / (1000 * 60 * 60 * 24 * 365)`
+ */
+export function msToYears(ms: number): number {
+    return ms / CONVERSION.MS_PER_YEAR;
 }
 
 // Validation regex patterns - Centralized to avoid hardcoded regex
@@ -900,6 +943,10 @@ export const ACADEMIC = {
         ASSIGNMENT: 0.3,
         MID_EXAM: 0.3,
         FINAL_EXAM: 0.4,
+    } as const,
+    STUDY_PLAN_CORRELATION_WEIGHTS: {
+        ATTENDANCE: 0.3,
+        GRADE: 0.7,
     } as const,
     GRADE_THRESHOLDS: {
         A: 85,

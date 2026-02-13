@@ -12,6 +12,7 @@ import { EmptyState } from './ui/LoadingState';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
+import { msToHours, msToMinutes } from '../constants';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -115,10 +116,10 @@ const NotificationHistory: React.FC<NotificationHistoryProps> = ({
   const formatNotificationTime = (timestamp: string) => {
     const date = new Date(timestamp);
     const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    const diffInHours = msToHours(now.getTime() - date.getTime());
 
     if (diffInHours < 1) {
-      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      const diffInMinutes = Math.floor(msToMinutes(now.getTime() - date.getTime()));
       return `${diffInMinutes} menit yang lalu`;
     } else if (diffInHours < 24) {
       return `${Math.floor(diffInHours)} jam yang lalu`;
