@@ -3,6 +3,8 @@
  * Centralized test configuration to ensure consistency across all test files
  */
 
+import { RETRY_CONFIG } from '../constants';
+
 export const TEST_TIMEOUTS = {
     /** Very short timeout for simple operations */
     SHORT: 100,
@@ -32,8 +34,8 @@ export const TEST_DELAYS = {
 } as const;
 
 export const TEST_RETRY_CONFIG = {
-    /** Number of retry attempts for flaky tests */
-    MAX_RETRIES: 3,
+    /** Number of retry attempts for flaky tests - Flexy: Using centralized constant! */
+    MAX_RETRIES: RETRY_CONFIG.MAX_ATTEMPTS,
     /** Delay between retries in ms */
     RETRY_DELAY: 1000,
 } as const;
