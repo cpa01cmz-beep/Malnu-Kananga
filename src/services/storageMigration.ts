@@ -1,5 +1,5 @@
 // storageMigration.ts - Handles migration from old localStorage keys to new STORAGE_KEYS
-import { STORAGE_KEYS, STORAGE_MIGRATION } from '../constants';
+import { STORAGE_KEYS, STORAGE_MIGRATION, LEGACY_STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
 
 interface MigrationMap {
@@ -32,11 +32,11 @@ const MIGRATIONS: MigrationMap[] = [
   { oldKey: 'notification_templates', newKey: STORAGE_KEYS.NOTIFICATION_TEMPLATES },
   { oldKey: 'notification_analytics', newKey: STORAGE_KEYS.NOTIFICATION_ANALYTICS },
   
-  // Category service
-  { oldKey: 'malnu_subjects_cache', newKey: STORAGE_KEYS.SUBJECTS_CACHE },
-  { oldKey: 'malnu_classes_cache', newKey: STORAGE_KEYS.CLASSES_CACHE },
-  { oldKey: 'malnu_category_suggestions', newKey: STORAGE_KEYS.CATEGORY_SUGGESTIONS },
-  { oldKey: 'malnu_material_stats', newKey: STORAGE_KEYS.MATERIAL_STATS },
+    // Category service
+    { oldKey: LEGACY_STORAGE_KEYS.SUBJECTS_CACHE, newKey: STORAGE_KEYS.SUBJECTS_CACHE },
+    { oldKey: LEGACY_STORAGE_KEYS.CLASSES_CACHE, newKey: STORAGE_KEYS.CLASSES_CACHE },
+    { oldKey: LEGACY_STORAGE_KEYS.CATEGORY_SUGGESTIONS, newKey: STORAGE_KEYS.CATEGORY_SUGGESTIONS },
+    { oldKey: LEGACY_STORAGE_KEYS.MATERIAL_STATS, newKey: STORAGE_KEYS.MATERIAL_STATS },
 ];
 
 // Flexy: Using centralized constants instead of hardcoded values

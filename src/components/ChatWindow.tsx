@@ -17,7 +17,7 @@ import IconButton from './ui/IconButton';
 import { useVoiceSynthesis } from '../hooks/useVoiceSynthesis';
 import { useVoiceQueue } from '../hooks/useVoiceQueue';
 import { useFocusTrap } from '../hooks/useFocusTrap';
-import { STORAGE_KEYS, OPACITY_TOKENS } from '../constants';
+import { STORAGE_KEYS, OPACITY_TOKENS, UI_LIMITS } from '../constants';
 import { logger } from '../utils/logger';
 import { HEIGHTS } from '../config/heights';
 
@@ -33,8 +33,8 @@ interface ChatWindowProps {
   onShowToast?: (msg: string, type: ToastType) => void;
 }
 
-const MAX_HISTORY_SIZE = 20;
-const MAX_MESSAGES_SIZE = 100;
+const MAX_HISTORY_SIZE = UI_LIMITS.CHAT_MAX_HISTORY_SIZE;
+const MAX_MESSAGES_SIZE = UI_LIMITS.CHAT_MAX_MESSAGES_SIZE;
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext, onShowToast }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
