@@ -315,7 +315,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         <div
           ref={contentRef}
           className="flex-1 overflow-y-auto overscroll-contain"
-          style={{ maxHeight: 'calc(100vh - 200px)' }}
+          style={{ maxHeight: 'calc(100vh - var(--spacing-12, 3rem))' }}
         >
           <div className={className}>
             {children}
