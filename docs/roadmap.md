@@ -59,8 +59,8 @@ Build a world-class school management system with AI-powered features, voice int
 
 | Feature | Status | Target |
 |---------|--------|--------|
-| T004: Audit Logging | ❌ Pending | 2026-03-15 |
-| T005: Bulk Operations | ❌ Pending | 2026-03-01 |
+| T004: Audit Logging | ✅ Completed | 2026-03-15 |
+| T005: Bulk Operations | ✅ Completed | 2026-03-01 |
 | T006: Enhanced Analytics | ❌ Pending | 2026-03-30 |
 | T007: Export/Import | ❌ Pending | 2026-04-15 |
 | Test Coverage 50%+ | 🟡 In Progress | 2026-02-28 |
@@ -97,5 +97,7 @@ Build a world-class school management system with AI-powered features, voice int
 
 ## Changelog
 
+- **2026-02-13**: T004 Audit Logging completed - added backend API endpoints
+- **2026-02-13**: T005 Bulk Operations marked complete
 - **2026-02-13**: Current review - added 4 new features (F005-F008), updated scores (93.3/100)
 - **2026-02-13**: Initial baseline evaluation, created workflow docs

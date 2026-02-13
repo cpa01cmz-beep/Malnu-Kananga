@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - MessageList Filter Button Accessibility
+
+**Learning**: The MessageList component had filter toggle buttons (Semua, Pribadi, Grup, Belum Dibaca) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which filter was currently active.
+
+**Action**: Add `aria-pressed={boolean}` to all filter toggle buttons:
+- Semua button: `aria-pressed={filterType === 'all'}`
+- Pribadi button: `aria-pressed={filterType === 'direct'}`
+- Grup button: `aria-pressed={filterType === 'group'}`
+- Belum Dibaca button: `aria-pressed={showUnreadOnly}`
+
+**File Fixed**:
+- src/components/MessageList.tsx - Added aria-pressed to 4 filter buttons
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Button groups where only one can be selected (radio-like behavior)
+- Filter buttons in lists and tables
+- Any button that changes appearance based on state
+
+---
+
 ## 2026-02-13 - EnhancedMaterialSharing Keyboard Shortcuts
 
 **Learning**: The EnhancedMaterialSharing component had action buttons in modal forms that were missing keyboard shortcut hints. The "Bagikan Materi" (Share) and "Batal" (Cancel) buttons didn't have shortcut tooltips, making keyboard actions undiscoverable to users.
