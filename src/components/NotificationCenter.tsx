@@ -294,6 +294,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     intent="info"
                     size="sm"
                     className="flex-1"
+                    disabledReason={unreadCount === 0 ? 'Tidak ada notifikasi yang belum dibaca' : undefined}
                   >
                     <CheckCircleIcon className="w-4 h-4" />
                     Tandai Semua Dibaca
@@ -303,6 +304,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     disabled={!permissionGranted || isSendingTestNotification}
                     variant="secondary"
                     size="sm"
+                    disabledReason={!permissionGranted ? 'Izin notifikasi diperlukan untuk mengirim tes' : undefined}
                   >
                     {isSendingTestNotification ? 'Mengirim...' : 'Tes'}
                   </Button>
