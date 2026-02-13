@@ -216,4 +216,96 @@ describe('DataTable', () => {
       expect(mockOnSelectAll).toHaveBeenCalledWith(true);
     });
   });
+
+  describe('Keyboard shortcuts', () => {
+    it('focuses search input when Ctrl+F is pressed', () => {
+      render(
+        <DataTable
+          data={mockData}
+          columns={mockColumns}
+          filter={{
+            searchable: true,
+            onSearch: vi.fn(),
+          }}
+        />
+      );
+
+      const searchInput = screen.getByPlaceholderText(/Cari data/i);
+      
+      // Press Ctrl+F
+      fireEvent.keyDown(document, { key: 'f', ctrlKey: true });
+      
+      // Search input should be focused
+      expect(searchInput).toHaveFocus();
+    });
+
+    it('focuses search input when Cmd+F is pressed (Mac)', () => {
+      render(
+        <DataTable
+          data={mockData}
+          columns={mockColumns}
+          filter={{
+            searchable: true,
+            onSearch: vi.fn(),
+          }}
+        />
+      );
+
+      const searchInput = screen.getByPlaceholderText(/Cari data/i);
+      
+      // Press Cmd+F (Mac shortcut)
+      fireEvent.keyDown(document, { key: 'f', metaKey: true });
+      
+      // Search input should be focused
+      expect(searchInput).toHaveFocus();
+    });
+
+    it('does not focus search when Ctrl+F is pressed inside a modal', () => {
+      // Create a modal container
+      const modalContainer = document.createElement('div');
+      modalContainer.setAttribute('role', 'dialog');
+      document.body.appendChild(modalContainer);
+      
+      // Create an input inside the modal and focus it
+      const modalInput = document.createElement('input');
+      modalContainer.appendChild(modalInput);
+      modalInput.focus();
+
+      render(
+        <DataTable
+          data={mockData}
+          columns={mockColumns}
+          filter={{
+            searchable: true,
+            onSearch: vi.fn(),
+          }}
+        />
+      );
+
+      const searchInput = screen.getByPlaceholderText(/Cari data/i);
+      
+      // Press Ctrl+F while modal is active
+      fireEvent.keyDown(document, { key: 'f', ctrlKey: true });
+      
+      // Search input should NOT be focused (modal input should remain focused)
+      expect(searchInput).not.toHaveFocus();
+      
+      // Cleanup
+      document.body.removeChild(modalContainer);
+    });
+
+    it('does not add keyboard listener when searchable is false', () => {
+      render(
+        <DataTable
+          data={mockData}
+          columns={mockColumns}
+        />
+      );
+
+      // Press Ctrl+F - should not throw error even without search
+      expect(() => {
+        fireEvent.keyDown(document, { key: 'f', ctrlKey: true });
+      }).not.toThrow();
+    });
+  });
 });
