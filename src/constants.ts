@@ -548,6 +548,17 @@ export const OPACITY_TOKENS = {
 // Time constants in milliseconds - use these instead of hardcoded calculations
 // Flexy Principle: NEVER use magic numbers for timeouts!
 export const TIME_MS = {
+    // Flexy: Explicit millisecond constants for test clarity and modularity
+    MS10: 10,
+    MS20: 20,
+    MS50: 50,
+    MS60: 60,
+    MS100: 100,
+    MS150: 150,
+    MS200: 200,
+    MS300: 300,
+    MS500: 500,
+    MS800: 800,
     // Very short delays for immediate UI updates
     VERY_SHORT: 10,
     SHORT: 50,
@@ -1371,6 +1382,7 @@ export const UI_STRINGS = {
     BACK: 'Kembali',
     NEXT: 'Lanjut',
     SUBMIT: 'Kirim',
+    SUBMITTING: 'Mengirim...',
     DONE: 'Selesai',
     CONTINUE: 'Lanjutkan',
     TRY_AGAIN: 'Coba Lagi',

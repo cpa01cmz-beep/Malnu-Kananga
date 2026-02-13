@@ -13,7 +13,13 @@ export const DEFAULT_API_BASE_URL = API_CONFIG.DEFAULT_BASE_URL;
 
 export const API_BASE_URL = env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 
-export const DEFAULT_WS_BASE_URL = API_BASE_URL.replace('https://', 'wss://') + API_CONFIG.WS_PATH;
+// Flexy: Protocol constants to eliminate hardcoded strings
+const PROTOCOL = {
+    HTTPS: 'https://',
+    WSS: 'wss://',
+} as const;
+
+export const DEFAULT_WS_BASE_URL = API_BASE_URL.replace(PROTOCOL.HTTPS, PROTOCOL.WSS) + API_CONFIG.WS_PATH;
 
 // API Endpoints (Legacy - Use services/api instead)
 export const WORKER_CHAT_ENDPOINT = `${API_BASE_URL}${API_ENDPOINTS.AI.CHAT}`;
