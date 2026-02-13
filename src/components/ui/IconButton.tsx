@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
+import { UI_DELAYS } from '../../constants';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -147,7 +148,7 @@ const IconButton: React.FC<IconButtonProps> = ({
     if (shortcut && !isLoading && !isSuccessVisible && !isErrorVisible) {
       shortcutHintTimeoutRef.current = setTimeout(() => {
         setShowShortcutHint(true);
-      }, 400);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
     }
   }, [shortcut, isLoading, isSuccessVisible, isErrorVisible]);
 

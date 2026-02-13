@@ -5,6 +5,7 @@ import { XMarkIcon } from '../icons/MaterialIcons';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import { idGenerators } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 export type SearchInputSize = 'sm' | 'md' | 'lg';
 export type SearchInputState = 'default' | 'error' | 'success';
@@ -151,7 +152,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
       // Delay showing hint to avoid flickering on quick interactions
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
     if (props.onFocus) {
       props.onFocus(e);

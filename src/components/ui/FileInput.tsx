@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useState, useCallback, useEffect } from 'react';
 import { idGenerators } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 export type FileInputSize = 'sm' | 'md' | 'lg';
 export type FileInputState = 'default' | 'error' | 'success';
@@ -209,7 +210,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
     if (allowPaste && isPasteSupported && !disabled) {
       pasteHintTimeoutRef.current = setTimeout(() => {
         setShowPasteHint(true);
-      }, 400);
+      }, UI_DELAYS.PASTE_HINT_DELAY);
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useFocusTrap } from '../../hooks/useFocusTrap';
-import { UI_GESTURES } from '../../constants';
+import { UI_GESTURES, UI_DELAYS } from '../../constants';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'bottom-sheet';
 export type ModalAnimation = 'fade-in' | 'fade-in-up' | 'scale-in' | 'slide-up';
@@ -93,7 +93,7 @@ const Modal: React.FC<ModalProps> = ({
     if (closeOnEscape) {
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
   }, [closeOnEscape]);
 

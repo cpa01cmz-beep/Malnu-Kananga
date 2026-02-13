@@ -4,6 +4,7 @@ import { XMarkIcon } from '../icons/MaterialIcons';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { idGenerators } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 // Micro-UX: Character count indicator with progressive visual feedback
 interface CharacterCountIndicatorProps {
@@ -193,7 +194,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
   const showTooltip = useCallback(() => {
     tooltipTimeoutRef.current = setTimeout(() => {
       setIsTooltipVisible(true);
-    }, 400);
+    }, UI_DELAYS.DEFAULT_UI_FEEDBACK);
   }, []);
 
   const hideTooltip = useCallback(() => {
@@ -208,7 +209,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(({
     if (clearOnEscape && value && String(value).length > 0) {
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
     if (submitOnCtrlEnter && value && String(value).length > 0) {
       submitHintTimeoutRef.current = setTimeout(() => {

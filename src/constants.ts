@@ -685,6 +685,11 @@ export const UI_DELAYS = {
     // Flexy Principle: Accessibility timing must be configurable!
     ACCESSIBILITY_ANNOUNCE: 100, // Delay for screen reader announcements to ensure proper DOM update
     SKELETON_DELAY: 200, // Delay before showing skeleton loader (ms)
+    ESCAPE_HINT_DELAY: 400,
+    TOOLTIP_HIDE_MS: 200,
+    SHORTCUT_HINT_DELAY: 400,
+    PASTE_HINT_DELAY: 400,
+    DEFAULT_UI_FEEDBACK: 400
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
