@@ -1,4 +1,5 @@
 import { logger } from '../utils/logger';
+import { STORAGE_KEYS } from '../constants';
 
 export interface Badge {
   id: string;
@@ -124,7 +125,7 @@ const BADGES: Badge[] = [
   }
 ];
 
-const BADGES_STORAGE_KEY = 'malnu_student_badges';
+const BADGES_STORAGE_KEY = STORAGE_KEYS.STUDENT_BADGES;
 
 export const studentBadgeService = {
   getAllBadges(): Badge[] {
