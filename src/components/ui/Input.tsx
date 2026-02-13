@@ -100,6 +100,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const inputRef = (ref as React.RefObject<HTMLInputElement>) || internalRef;
   const [shakeKey, setShakeKey] = useState(0);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [showEscapeHint, setShowEscapeHint] = useState(false);
+  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   // Character counter logic
@@ -135,10 +137,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   const errorTextId = errorText ? `${inputId}-error` : undefined;
   const accessibilityDescribedBy = accessibility?.describedBy;
   const describedBy = [helperTextId, errorTextId, accessibilityDescribedBy].filter(Boolean).join(' ') || undefined;
-
-  // Keyboard shortcut hint state for clearOnEscape feature
-  const [showEscapeHint, setShowEscapeHint] = useState(false);
-  const escapeHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Show escape hint when input is focused and has value
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
