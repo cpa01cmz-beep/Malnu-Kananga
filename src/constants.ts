@@ -2876,6 +2876,27 @@ export const DATATABLE_CONFIG = {
     } as const,
 } as const;
 
+// Bulk Operations Configuration - Flexy: Never hardcode bulk operation values!
+export const BULK_OPERATIONS_CONFIG = {
+    // Time window for undo in milliseconds (5 seconds)
+    UNDO_TIMEOUT_MS: 5000,
+    // Animation duration for toolbar show/hide
+    TOOLBAR_ANIMATION_MS: 200,
+    // Minimum rows required to show bulk actions
+    MIN_ROWS_FOR_BULK: 1,
+    // Maximum undo stack size
+    MAX_UNDO_STACK: 10,
+    // Confirmation dialog messages
+    MESSAGES: {
+        DELETE_CONFIRM: 'Apakah Anda yakin ingin menghapus {count} item?',
+        DELETE_SUCCESS: '{count} item berhasil dihapus',
+        DELETE_UNDO: 'Item akan dihapus dalam {seconds} detik',
+        UNDO_AVAILABLE: 'Batalkan dalam {seconds} detik',
+        UPDATE_SUCCESS: '{count} item berhasil diperbarui',
+        ACTION_COMPLETED: 'Aksi selesai',
+    } as const,
+} as const;
+
 // Responsive Breakpoints (numeric values for JS comparisons) - Flexy: Never hardcode breakpoint values!
 export const BREAKPOINTS = {
     SM: 640,    // Phone landscape
