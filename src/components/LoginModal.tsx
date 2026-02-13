@@ -136,7 +136,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Login"
+      title={LOGIN_UI_STRINGS.TITLE}
       size="md"
       animation="scale-in"
       closeOnBackdropClick={true}

@@ -2313,6 +2313,22 @@ export const XML_NAMESPACES = {
     XML: 'http://www.w3.org/XML/1998/namespace',
 } as const;
 
+// URL Validation - Flexy: Never hardcode URL schemes!
+export const URL_VALIDATION = {
+    SCHEMES: {
+        HTTP: 'http://',
+        HTTPS: 'https://',
+    },
+    PATTERNS: {
+        HTTP_URL: /^https?:\/\//i,
+    },
+    // Helper function to check if URL starts with valid scheme
+    isValidScheme: (url: string): boolean => {
+        return url.startsWith(URL_VALIDATION.SCHEMES.HTTP) || 
+               url.startsWith(URL_VALIDATION.SCHEMES.HTTPS);
+    },
+} as const;
+
 // User Status - Flexy: Never hardcode status strings!
 export const USER_STATUS = {
     ACTIVE: 'active',
