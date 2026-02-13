@@ -133,6 +133,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
             icon={<ListBulletIcon className="w-5 h-5" />}
             iconPosition="left"
             size="sm"
+            aria-pressed={viewMode === 'list'}
           >
             Daftar
           </Button>
@@ -143,6 +144,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
             icon={<CalendarDaysIcon className="w-5 h-5" />}
             iconPosition="left"
             size="sm"
+            aria-pressed={viewMode === 'month'}
           >
             Kalender
           </Button>

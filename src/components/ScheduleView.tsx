@@ -194,6 +194,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
               iconPosition="left"
               size="sm"
               className={viewMode === 'list' ? 'border-2 border-green-600' : 'border'}
+              aria-pressed={viewMode === 'list'}
             >
               Daftar
             </Button>
@@ -204,6 +205,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
               iconPosition="left"
               size="sm"
               className={viewMode === 'month' ? 'border-2 border-green-600' : 'border'}
+              aria-pressed={viewMode === 'month'}
             >
               Kalender
             </Button>
@@ -216,7 +218,9 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
           {DAYS.map((day) => (
             <button
               key={day}
+              type="button"
               onClick={() => setActiveDay(day)}
+              aria-pressed={activeDay === day}
               className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
                 activeDay === day
                   ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
