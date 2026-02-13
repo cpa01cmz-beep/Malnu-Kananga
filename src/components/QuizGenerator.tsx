@@ -190,7 +190,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
       ) : error ? (
         <Card className="border-red-200 dark:border-red-800">
           <p className="text-red-600 dark:text-red-400">{error}</p>
-          <Button onClick={loadMaterials} className="mt-4">
+          <Button onClick={loadMaterials} className="mt-4" aria-label="Coba lagi memuat materi" shortcut="Ctrl+R">
             Coba Lagi
           </Button>
         </Card>

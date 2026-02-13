@@ -7,9 +7,11 @@ import SearchInput from './SearchInput';
 import Card from './Card';
 import FunnelIcon from '../icons/FunnelIcon';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
+import { PencilIcon } from '../icons/PencilIcon';
+import { TrashIcon } from '../icons/TrashIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS } from '../../constants';
+import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -77,6 +79,15 @@ export interface DataTableProps<T = Record<string, unknown>> {
     addNewLabel?: string;
     onClearFilter?: () => void;
     clearFilterLabel?: string;
+  };
+  /** Bulk operations actions */
+  bulkActions?: {
+    onBulkUpdate?: (selectedKeys: string[]) => void;
+    onBulkDelete?: (selectedKeys: string[]) => Promise<boolean>;
+    updateLabel?: string;
+    deleteLabel?: string;
+    showUndo?: boolean;
+    onUndo?: () => void;
   };
 }
 
@@ -310,6 +321,7 @@ const DataTable = <T extends Record<string, unknown>>({
   cardTitleColumn,
   errorRecovery,
   emptyActions,
+  bulkActions,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
   const { onSuccess, onTap, onDelete } = useHapticFeedback();
@@ -702,7 +714,58 @@ const DataTable = <T extends Record<string, unknown>>({
                   </div>
                 )}
               </div>
-              {selection.selectedRowKeys.length > 0 && (
+              {selection.selectedRowKeys.length > 0 && bulkActions && (
+                <div className="flex items-center gap-2">
+                  {bulkActions.onBulkUpdate && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => bulkActions.onBulkUpdate?.(selection.selectedRowKeys)}
+                      className="touch-manipulation haptic-feedback mobile-touch-target"
+                      icon={<PencilIcon className="w-4 h-4" />}
+                    >
+                      <span className="hidden sm:inline">{bulkActions.updateLabel || 'Perbarui'}</span>
+                    </Button>
+                  )}
+                  {bulkActions.onBulkDelete && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={async () => {
+                        const confirmed = window.confirm(
+                          BULK_OPERATIONS_CONFIG.MESSAGES.DELETE_CONFIRM.replace(
+                            '{count}',
+                            String(selection.selectedRowKeys.length)
+                          )
+                        );
+                        if (confirmed) {
+                          const success = await bulkActions.onBulkDelete?.(selection.selectedRowKeys);
+                          if (success && bulkActions.showUndo && bulkActions.onUndo) {
+                            // Undo will be handled by parent
+                          }
+                        }
+                      }}
+                      className="touch-manipulation haptic-feedback mobile-touch-target"
+                      icon={<TrashIcon className="w-4 h-4" />}
+                    >
+                      <span className="hidden sm:inline">{bulkActions.deleteLabel || 'Hapus'}</span>
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      onDelete();
+                      selection?.onSelectAll(false);
+                    }}
+                    className="touch-manipulation haptic-feedback mobile-touch-target"
+                  >
+                    <span className="hidden sm:inline">Batal</span>
+                    <span className="sm:hidden">Batal</span>
+                  </Button>
+                </div>
+              )}
+              {selection.selectedRowKeys.length > 0 && !bulkActions && (
                 <Button
                   variant="destructive"
                   size="sm"
