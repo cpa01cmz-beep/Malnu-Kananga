@@ -1,6 +1,15 @@
 import { vi } from 'vitest';
 import '@testing-library/jest-dom';
 
+vi.stubEnv('VITE_SCHOOL_NAME', 'MA Malnu Kananga');
+vi.stubEnv('VITE_SCHOOL_NPSN', '69881502');
+vi.stubEnv('VITE_SCHOOL_ADDRESS', 'Jl. tests Address');
+vi.stubEnv('VITE_SCHOOL_PHONE', 'tests Phone');
+vi.stubEnv('VITE_SCHOOL_EMAIL', 'tests@school.com');
+vi.stubEnv('VITE_SCHOOL_WEBSITE', 'https://tests.sch.id');
+vi.stubEnv('VITE_API_BASE_URL', 'https://tests-api.sch.id');
+vi.stubEnv('VITE_ADMIN_EMAIL', 'admin@tests.sch.id');
+
 // Mock window.matchMedia for responsive components
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
