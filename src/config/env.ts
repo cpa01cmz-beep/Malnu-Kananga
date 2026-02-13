@@ -16,6 +16,9 @@ export const ENV = {
     EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || '',
     WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || '',
   },
+  API: {
+    BASE_URL: import.meta.env.VITE_API_BASE_URL || '',
+  },
   EMAIL: {
     ADMIN: import.meta.env.VITE_ADMIN_EMAIL || '',
   },
