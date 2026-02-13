@@ -209,16 +209,18 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                message={error}
                variant="card"
              />
-             <div className="text-center">
-               <Button
-                 onClick={() => window.location.reload()}
-                 variant="red-solid"
-                 size="md"
-                 className="mt-4"
-               >
-                 Coba Lagi
-               </Button>
-             </div>
+              <div className="text-center">
+                <Button
+                  onClick={() => window.location.reload()}
+                  variant="red-solid"
+                  size="md"
+                  className="mt-4"
+                  aria-label="Coba lagi memuat portal siswa"
+                  shortcut="Ctrl+R"
+                >
+                  Coba Lagi
+                </Button>
+              </div>
            </>
          ) : (
            <>

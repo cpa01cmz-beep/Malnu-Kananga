@@ -228,7 +228,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
          {errorState.hasError && (
             <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg text-red-700 dark:text-red-300">
                 {errorState.feedback?.message}
-                <Button onClick={fetchUsers} variant="ghost" size="sm" aria-label="Coba lagi" shortcut="Ctrl+R">
+                <Button onClick={fetchUsers} variant="ghost" size="sm" ariaLabel="Coba lagi" shortcut="Ctrl+R">
                     {USER_GUIDANCE.RETRY}
                 </Button>
             </div>

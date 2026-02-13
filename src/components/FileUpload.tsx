@@ -409,16 +409,16 @@ const FileUpload: React.FC<FileUploadProps> = ({
                    className="mobile-touch-target"
                  />
                  <Button
-                   variant="danger"
-                   size="icon"
-                   onClick={() => handleDelete(file)}
-                   disabled={disabled}
-                   iconOnly
-                   icon={<TrashIcon className="w-4 h-4" />}
-                   aria-label={`Delete ${file.name}`}
-                   title={`Delete file (Press Delete key)`}
-                   className="mobile-touch-target"
-                 />
+                    variant="danger"
+                    size="icon"
+                    onClick={() => handleDelete(file)}
+                    disabled={disabled}
+                    iconOnly
+                    icon={<TrashIcon className="w-4 h-4" />}
+                    aria-label={`Delete ${file.name}`}
+                    shortcut="Delete"
+                    className="mobile-touch-target"
+                  />
               </div>
             </div>
           ))}
