@@ -1,6 +1,12 @@
 
 import { VoiceLanguage } from './types';
 
+/**
+ * Storage Key Prefix
+ * Flexy: Never hardcode the storage key prefix! Use this constant instead.
+ */
+export const STORAGE_KEY_PREFIX = 'malnu_' as const;
+
 // Centralized Storage Keys to prevent typo and ensure consistency
 export const STORAGE_KEYS = {
     SITE_CONTENT: 'malnu_site_content',
