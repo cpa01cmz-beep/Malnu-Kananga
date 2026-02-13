@@ -6,9 +6,7 @@ import { usePushNotifications } from '../../hooks/useUnifiedNotifications';
 import { useOfflineDataService } from '../../services/offlineDataService';
 import { useDashboardVoiceCommands } from '../../hooks/useDashboardVoiceCommands';
 import ScheduleView from '../ScheduleView';
-import AcademicGrades from '../AcademicGrades';
 import AttendanceView from '../AttendanceView';
-import StudentInsights from '../StudentInsights';
 import StudentAssignments from '../StudentAssignments';
 import { GroupChat } from '../GroupChat';
 import VoiceCommandsHelp from '../VoiceCommandsHelp';
@@ -20,6 +18,11 @@ const ELibrary = lazy(() => import('../ELibrary'));
 const OsisEvents = lazy(() => import('../OsisEvents'));
 const StudyPlanGenerator = lazy(() => import('../StudyPlanGenerator'));
 const StudyPlanAnalytics = lazy(() => import('../StudyPlanAnalytics'));
+
+// BroCula: Lazy load chart-heavy components to prevent loading recharts on initial render
+// AcademicGrades and StudentInsights import recharts which adds ~200KB to bundle
+const AcademicGrades = lazy(() => import('../AcademicGrades'));
+const StudentInsights = lazy(() => import('../StudentInsights'));
 import Button from '../ui/Button';
 import ErrorMessage from '../ui/ErrorMessage';
 import { authAPI } from '../../services/apiService';
@@ -243,7 +246,11 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                   <ELibrary onBack={() => setCurrentView('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
                 </Suspense>
               )}
-              {currentView === 'grades' && <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+              {currentView === 'grades' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <AcademicGrades onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+                </Suspense>
+              )}
               {currentView === 'assignments' && <StudentAssignments onBack={() => setCurrentView('home')} onShowToast={onShowToast} studentId={studentData?.id || ''} studentName={studentData?.nis || ''} />}
               {currentView === 'groups' && (
                 <div className="animate-fade-in-up">
@@ -259,7 +266,11 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
                 </div>
               )}
               {currentView === 'attendance' && <AttendanceView onBack={() => setCurrentView('home')} />}
-              {currentView === 'insights' && <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />}
+              {currentView === 'insights' && (
+                <Suspense fallback={<CardSkeleton />}>
+                  <StudentInsights onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
+                </Suspense>
+              )}
               {currentView === 'osis' && (
                 <Suspense fallback={<CardSkeleton />}>
                   <OsisEvents onBack={() => setCurrentView('home')} onShowToast={onShowToast} />
