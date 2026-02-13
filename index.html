@@ -21,6 +21,9 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     
+    <!-- BroCula: Preconnect to API endpoint early for faster API calls -->
+    <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
+    
     <!-- BroCula: Preload critical font stylesheet with non-blocking loading -->
     <!-- Using rel="preload" + onload pattern to eliminate render-blocking -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
