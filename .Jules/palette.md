@@ -288,3 +288,16 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 
 **Pattern**: Always audit form submission buttons - if they handle Enter/Esc for submission/cancellation, add shortcut hints to make them discoverable. Use `isLoading` prop instead of manual text changes for loading states.
 
+---
+
+## 2026-02-13 - VoiceSettings Backup Delete Confirmation
+
+**Learning**: The VoiceSettings component had inconsistent confirmation dialogs - the "Pulihkan" (Restore) and "Reset ke Pengaturan Awal" (Reset) buttons both had confirmation modals, but the "Hapus" (Delete) backup button directly called the delete function without any confirmation. This was a UX inconsistency and potential data loss risk.
+
+**Action**: Add delete confirmation dialog to all destructive actions in VoiceSettings. When adjacent buttons in the same section have confirmation dialogs, the delete action should also have one for consistency and safety.
+
+**File Fixed**:
+- VoiceSettings.tsx - Added showDeleteConfirmation state and Modal component for delete backup confirmation
+
+**Pattern**: Always audit action button groups for consistency - if restore and reset have confirmation dialogs, delete should too. This prevents accidental data loss and provides consistent user experience.
+
