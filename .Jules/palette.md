@@ -224,3 +224,16 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 - AssignmentCreation.tsx - Added shortcut="Esc" to Batal button, shortcut="Ctrl+S" to Simpan Draft button
 
 **Pattern**: Always audit high-traffic form creation components (AssignmentCreation, MaterialSharing, etc.) for missing keyboard shortcut hints on action buttons.
+
+---
+
+## 2026-02-13 - NotificationSettings Save Button Keyboard Shortcut
+
+**Learning**: The NotificationSettings component is a high-traffic admin component where notification preferences are saved frequently, but the "Simpan Pengaturan" (Save Settings) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to admins.
+
+**Action**: Add `shortcut="Ctrl+S"` to all save buttons in settings panels. This follows the established pattern from GradingManagement, AttendanceManagement, and AssignmentCreation.
+
+**File Fixed**:
+- NotificationSettings.tsx - Added shortcut="Ctrl+S" to Simpan Pengaturan button
+
+**Pattern**: Settings panels where admins frequently save preferences benefit from keyboard shortcuts to speed up workflow. Always audit save buttons in settings/configuration components.

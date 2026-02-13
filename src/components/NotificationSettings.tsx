@@ -516,6 +516,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               variant="primary"
               onClick={handleManualSave}
               fullWidth
+              shortcut="Ctrl+S"
             >
               Simpan Pengaturan
             </Button>
