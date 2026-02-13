@@ -54,7 +54,7 @@ Repository remains in pristine condition. No bugs, errors, or warnings detected.
 
 *Note: These are development dependencies. No security impact. Updates can be applied during next maintenance window.*
 
-**Active Branches (36 branches + main):**
+**Active Branches (36 branches + main):
 All branches from Feb 10-12 with active development:
 - `feature/ux-improve-datatable-error-state`
 - `fix/modal-test-updates`
