@@ -161,11 +161,12 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Materi</h2>
           <p className="text-neutral-500 dark:text-neutral-400">Kelola materi pembelajaran dengan folder, berbagi, dan kontrol versi.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="group" aria-label="Pilih tampilan">
           <Button
             onClick={() => setSelectedView('upload')}
             variant={selectedView === 'upload' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'upload'}
           >
             Upload
           </Button>
@@ -173,6 +174,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             onClick={() => setSelectedView('templates')}
             variant={selectedView === 'templates' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'templates'}
           >
             Template
           </Button>
@@ -180,6 +182,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             onClick={() => setSelectedView('management')}
             variant={selectedView === 'management' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'management'}
           >
             Kelola
           </Button>

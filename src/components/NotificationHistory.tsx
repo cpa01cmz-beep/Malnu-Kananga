@@ -207,7 +207,7 @@ case 'announcement':
     >
       {/* Filters */}
       <div className="flex items-center gap-4 mb-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2" role="group" aria-label="Filter notifikasi">
           {[
             { value: 'all', label: 'Semua' },
             { value: 'grade', label: 'Nilai' },
@@ -219,6 +219,7 @@ case 'announcement':
               onClick={() => setFilter(option.value as 'all' | 'grade' | 'system' | 'announcement')}
               variant={filter === option.value ? 'primary' : 'ghost'}
               size="sm"
+              aria-pressed={filter === option.value}
             >
               {option.label}
             </Button>

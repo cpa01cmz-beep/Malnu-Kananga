@@ -292,11 +292,12 @@ const GradingActions: React.FC<GradingActionsProps> = ({
 
   return (
     <div className="flex flex-col md:flex-row gap-3">
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap" role="group" aria-label="Opsi penilaian">
         <Button
           onClick={toggleBatchMode}
           variant={isBatchMode ? 'blue-solid' : 'secondary'}
           className="rounded-full shadow-md"
+          aria-pressed={isBatchMode}
         >
           {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
         </Button>
