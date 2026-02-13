@@ -227,6 +227,24 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 
 ---
 
+## 2026-02-13 - ELibrary Rating Modal Keyboard Shortcuts
+
+**Learning**: The ELibrary rating modal allows students to rate and review materials, but the action buttons (Batal, Kirim Review) were missing keyboard shortcut hints. This follows the pattern from ChatWindow, SiteEditor, and other input components where keyboard shortcuts improve workflow efficiency.
+
+**Action**: Add keyboard shortcut hints to ELibrary rating modal buttons:
+- "Batal" button: shortcut="Esc" (Modal already handles Escape key for closing)
+- "Kirim Review" button: shortcut="Enter" (natural confirmation action)
+
+**File Fixed**:
+- ELibrary.tsx - Added shortcut="Esc" and shortcut="Enter" to rating modal buttons
+
+**Pattern**: Always audit modal confirm/cancel buttons in high-traffic components. Even if the keyboard handler isn't explicitly in the component, showing shortcut hints:
+1. Makes the UI more informative
+2. Indicates intended keyboard support
+3. Follows the established pattern for keyboard accessibility
+
+---
+
 ## 2026-02-13 - NotificationSettings Save Button Keyboard Shortcut
 
 **Learning**: The NotificationSettings component is a high-traffic admin component where notification preferences are saved frequently, but the "Simpan Pengaturan" (Save Settings) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to admins.
@@ -237,3 +255,20 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 - NotificationSettings.tsx - Added shortcut="Ctrl+S" to Simpan Pengaturan button
 
 **Pattern**: Settings panels where admins frequently save preferences benefit from keyboard shortcuts to speed up workflow. Always audit save buttons in settings/configuration components.
+
+---
+
+## 2026-02-13 - LearningProgressReport Button Component Upgrade
+
+**Learning**: The LearningProgressReport component used native `<button>` elements instead of the UI Button component for its "Buat Laporan Baru" and "Simpan Pengaturan" buttons. This prevented users from discovering efficient keyboard shortcuts (Ctrl+S for save) through tooltip hints.
+
+**Action**: Replace native `<button>` elements with the Button component which supports:
+- `shortcut` prop for keyboard shortcut discovery via tooltip
+- `ariaLabel` for screen reader accessibility
+- `isLoading` prop for proper loading state management
+
+**Files Fixed**:
+- LearningProgressReport.tsx - Replaced 2 native buttons with Button component
+
+**Pattern**: Always audit form and settings buttons - if they persist data, use the Button component with shortcut hints for discoverable keyboard shortcuts.
+

@@ -110,10 +110,11 @@ const ParentAttendanceView: React.FC<ParentAttendanceViewProps> = ({ onShowToast
         <>
           {/* Month Filter */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+            <label htmlFor="parent-attendance-month-filter" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               Filter Bulan
             </label>
             <select
+              id="parent-attendance-month-filter"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="w-full sm:w-64 px-4 py-2 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
