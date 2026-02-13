@@ -87,11 +87,14 @@ export const ANALYZER_CONFIG = {
   BROTLI_SIZE: true,
 } as const;
 
-// PWA Manifest Configuration
+// Environment-based school configuration for Node.js context - Flexy: Never hardcode!
+const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || 'MA Malnu Kananga';
+
+// PWA Manifest Configuration - Flexy: Dynamic school name from environment
 export const PWA_MANIFEST = {
-  NAME: 'MA Malnu Kananga Smart Portal',
-  SHORT_NAME: 'MA Malnu App',
-  DESCRIPTION: 'Aplikasi Portal Pintar MA Malnu Kananga dengan Asisten AI',
+  NAME: `${SCHOOL_NAME} Smart Portal`,
+  SHORT_NAME: SCHOOL_NAME.split(' ').slice(0, 2).join(' ') + ' App',
+  DESCRIPTION: `Aplikasi Portal Pintar ${SCHOOL_NAME} dengan Asisten AI`,
   ICONS: [
     {
       src: 'pwa-192x192.svg',
