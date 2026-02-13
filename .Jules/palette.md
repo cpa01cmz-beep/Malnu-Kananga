@@ -190,87 +190,19 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 ---
 
-<<<<---
+<## 2026-02-13 - FolderNavigation Button Keyboard Shortcuts
 
-## 2026-02-13 - Native confirm() Replacement with Accessible Dialog
+**Learning**: The FolderNavigation component handles folder creation and editing with action buttons ("Buat", "Simpan", "Batal") but they were missing keyboard shortcut hints. This follows the pattern from QuizGenerator, QuizPreview, and other high-traffic form components.
 
-**Learning**: The AnnouncementManager component used native browser `confirm()` for delete confirmation, which is:
-- Not accessible (no screen reader support)
-- Blocking and jarring for users
-- Not stylistically consistent with the app
-
-**Action**: Replace native `confirm()` with the accessible `ConfirmationDialog` component already in the codebase. This pattern should be applied to all delete/destructive actions.
-
-**Files Fixed**:
-- AnnouncementManager.tsx - Replaced confirm() with ConfirmationDialog
-
-**Pattern**: Always audit for native `confirm()`, `alert()`, or `prompt()` usage - replace with accessible UI components.
-
----
-
-## 2026-02-13 - AssignmentCreation Button Keyboard Shortcuts
-
-**Learning**: The AssignmentCreation component is a high-traffic form where teachers create and publish assignments daily, but its action buttons were missing keyboard shortcut hints. This follows the pattern established in QuizGenerator, QuizPreview, and other high-traffic form components.
-
-**Action**: Add keyboard shortcut hints to AssignmentCreation action buttons:
-- Batal (Cancel) button: shortcut="Esc"
-- Simpan Draft button: shortcut="Ctrl+S"
-
-This enables keyboard shortcut discovery through tooltip hints, following the established pattern:
-- Cancel buttons: Esc
-- Save buttons: Ctrl+S
-
-**Component Updated**:
-- AssignmentCreation.tsx - Added shortcut="Esc" to Batal button, shortcut="Ctrl+S" to Simpan Draft button
-
-**Pattern**: Always audit high-traffic form creation components (AssignmentCreation, MaterialSharing, etc.) for missing keyboard shortcut hints on action buttons.
-
----
-
-## 2026-02-13 - ELibrary Rating Modal Keyboard Shortcuts
-
-**Learning**: The ELibrary rating modal allows students to rate and review materials, but the action buttons (Batal, Kirim Review) were missing keyboard shortcut hints. This follows the pattern from ChatWindow, SiteEditor, and other input components where keyboard shortcuts improve workflow efficiency.
-
-**Action**: Add keyboard shortcut hints to ELibrary rating modal buttons:
-- "Batal" button: shortcut="Esc" (Modal already handles Escape key for closing)
-- "Kirim Review" button: shortcut="Enter" (natural confirmation action)
+**Action**: Add keyboard shortcut hints to FolderNavigation action buttons:
+- "Buat" (Create) button: shortcut="Ctrl+Enter" (natural for form submission)
+- "Simpan" (Save) button: shortcut="Ctrl+S" (standard save)
+- "Batal" (Cancel) buttons: shortcut="Esc" (standard cancel)
 
 **File Fixed**:
-- ELibrary.tsx - Added shortcut="Esc" and shortcut="Enter" to rating modal buttons
+- FolderNavigation.tsx - Added shortcut hints to 4 action buttons (2 lines each)
 
-**Pattern**: Always audit modal confirm/cancel buttons in high-traffic components. Even if the keyboard handler isn't explicitly in the component, showing shortcut hints:
-1. Makes the UI more informative
-2. Indicates intended keyboard support
-3. Follows the established pattern for keyboard accessibility
-
----
-
-## 2026-02-13 - NotificationSettings Save Button Keyboard Shortcut
-
-**Learning**: The NotificationSettings component is a high-traffic admin component where notification preferences are saved frequently, but the "Simpan Pengaturan" (Save Settings) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to admins.
-
-**Action**: Add `shortcut="Ctrl+S"` to all save buttons in settings panels. This follows the established pattern from GradingManagement, AttendanceManagement, and AssignmentCreation.
-
-**File Fixed**:
-- NotificationSettings.tsx - Added shortcut="Ctrl+S" to Simpan Pengaturan button
-
-**Pattern**: Settings panels where admins frequently save preferences benefit from keyboard shortcuts to speed up workflow. Always audit save buttons in settings/configuration components.
-
----
-
-## 2026-02-13 - LearningProgressReport Button Component Upgrade
-
-**Learning**: The LearningProgressReport component used native `<button>` elements instead of the UI Button component for its "Buat Laporan Baru" and "Simpan Pengaturan" buttons. This prevented users from discovering efficient keyboard shortcuts (Ctrl+S for save) through tooltip hints.
-
-**Action**: Replace native `<button>` elements with the Button component which supports:
-- `shortcut` prop for keyboard shortcut discovery via tooltip
-- `ariaLabel` for screen reader accessibility
-- `isLoading` prop for proper loading state management
-
-**Files Fixed**:
-- LearningProgressReport.tsx - Replaced 2 native buttons with Button component
-
-**Pattern**: Always audit form and settings buttons - if they persist data, use the Button component with shortcut hints for discoverable keyboard shortcuts.
+**Pattern**: Always audit folder/material management forms for missing keyboard shortcut hints on action buttons. Use Ctrl+Enter for create actions in forms that use Enter for newlines.
 
 ---
 
