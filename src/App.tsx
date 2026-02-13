@@ -21,6 +21,7 @@ const LoginModal = lazy(() => import('./components/LoginModal'));
 const ThemeSelector = lazy(() => import('./components/ThemeSelector'));
 const ConfirmationDialog = lazy(() => import('./components/ui/ConfirmationDialog'));
 const CommandPalette = lazy(() => import('./components/ui/CommandPalette').then(m => ({ default: m.CommandPalette })));
+const GlobalSearchModal = lazy(() => import('./components/ui/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
 
 // Lazy load modal/dialog components
 const DocumentationPage = lazy(() => import('./components/DocumentationPage'));
@@ -76,6 +77,7 @@ const App: React.FC = () => {
   const [isSWUpdateConfirmOpen, setIsSWUpdateConfirmOpen] = useState(false);
   const [resetToken, setResetToken] = useState<string | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
 
   // Auth State with Persistence via Hook
   const [authSession, setAuthSession] = useLocalStorage<AuthSession>(STORAGE_KEYS.AUTH_SESSION, {
@@ -337,6 +339,20 @@ const App: React.FC = () => {
         action: () => setIsCommandPaletteOpen(true),
       },
       {
+        key: 'k',
+        shiftKey: true,
+        metaKey: true,
+        description: 'Buka Pencarian Global (Cmd+Shift+K)',
+        action: () => setIsGlobalSearchOpen(true),
+      },
+      {
+        key: 'k',
+        shiftKey: true,
+        ctrlKey: true,
+        description: 'Buka Pencarian Global (Ctrl+Shift+K)',
+        action: () => setIsGlobalSearchOpen(true),
+      },
+      {
         key: 'Escape',
         description: 'Tutup Command Palette',
         action: () => setIsCommandPaletteOpen(false),
@@ -571,6 +587,16 @@ const App: React.FC = () => {
           onClose={() => setIsCommandPaletteOpen(false)}
           commands={commands}
           placeholder="Cari perintah atau navigasi... (ketik ? untuk bantuan)"
+        />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <GlobalSearchModal
+          isOpen={isGlobalSearchOpen}
+          onClose={() => setIsGlobalSearchOpen(false)}
+          onNavigate={(url) => {
+            window.location.href = url;
+          }}
         />
       </Suspense>
       </div>

@@ -141,6 +141,7 @@ export function CommunicationDashboard({ _currentUser }: CommunicationDashboardP
               onClick={() => setShowFilters(!showFilters)}
               variant="ghost"
               size="sm"
+              aria-pressed={showFilters}
             >
               {showFilters ? 'Sembunyikan Filter' : 'Tampilkan Filter'}
             </Button>

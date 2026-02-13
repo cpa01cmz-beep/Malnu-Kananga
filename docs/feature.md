@@ -274,6 +274,7 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 **Type**: Productivity Feature
 **Priority**: High
+**Status**: ✅ Completed (2026-02-13)
 **Description**: Unified search across all modules and data.
 
 **User Stories**:
@@ -282,11 +283,15 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 - As a Parent, I want to search for my children's assignments, so that I can help them stay on track.
 
 **Implementation**:
-- Add global search bar to header (Cmd+K shortcut)
-- Search across: students, teachers, grades, assignments, materials, attendance
-- Add recent searches and saved searches
-- Add search filters (by type, date range, class)
-- Implement search indexing via existing API
+- [x] Add global search modal with Cmd+Shift+K shortcut
+- [x] Search across: students, teachers, grades, assignments, materials, announcements, events
+- [x] Add recent searches (localStorage)
+- [x] Add search filters (by type)
+- [x] Integrate with search API module
+
+**Files Created**:
+- src/services/api/modules/search.ts
+- src/components/ui/GlobalSearchModal.tsx
 
 ---
 
@@ -307,6 +312,44 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 - Add dynamic fields: student name, grades, attendance, dates
 - Add PDF generation with school branding
 - Add batch generation for class-wide documents
+
+---
+
+### F017: Two-Factor Authentication (2FA)
+
+**Type**: Security Feature
+**Priority**: Medium
+**Description**: Add two-factor authentication for enhanced account security.
+
+**User Stories**:
+- As an Admin, I want to require 2FA for all staff accounts, so that sensitive student data is protected.
+- As a Parent, I want to enable 2FA on my account, so that my child's information is secure.
+
+**Implementation**:
+- Add TOTP-based 2FA (Time-based One-Time Password)
+- Add QR code setup for authenticator apps (Google Authenticator, Authy)
+- Add backup codes for account recovery
+- Add optional 2FA toggle in user settings
+- Add admin enforcement option for specific roles
+
+---
+
+### F018: Scheduled Automation System
+
+**Type**: Backend Feature
+**Priority**: Low
+**Description**: Automated scheduled tasks for routine operations.
+
+**User Stories**:
+- As an Admin, I want to schedule automatic data backups, so that I never forget to backup.
+- As a Teacher, I want scheduled attendance reminders, so parents get consistent updates.
+
+**Implementation**:
+- Add Cloudflare Scheduled Tasks (cron) support
+- Add scheduled backup jobs
+- Add automated attendance notifications
+- Add grade calculation reminders
+- Add academic calendar event triggers
 
 ---
 

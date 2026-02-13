@@ -206,6 +206,7 @@ export const STORAGE_KEYS = {
 
     ACCESSIBILITY_SETTINGS: 'malnu_accessibility_settings',
     COMMAND_PALETTE_RECENT: 'malnu_command_palette_recent',
+    GLOBAL_SEARCH_RECENT: 'malnu_global_search_recent',
     SPACING_DENSITY: 'malnu_spacing_density',
 } as const;
 
@@ -585,10 +586,13 @@ export const TIME_MS = {
     ONE_DAY: 24 * 60 * 60 * 1000,
     ONE_WEEK: 7 * 24 * 60 * 60 * 1000,
     THIRTY_DAYS: 30 * 24 * 60 * 60 * 1000,
-    ONE_YEAR: 31557600000, // 365.25 days in milliseconds (accounts for leap years)
-} as const;
+    ONE_YEAR: 31557600000,
+    SEARCH_DEBOUNCE: 300,
+    INPUT_FOCUS_DELAY: 50
+  }
+  // Search-specific timeouts (separate for clarity)
 
-// File size limits in bytes
+  // File size limits in bytes
 export const FILE_SIZE_LIMITS = {
     MATERIAL_DEFAULT: 50 * 1024 * 1024, // 50MB
     MATERIAL_LARGE: 200 * 1024 * 1024,  // 200MB
@@ -2362,6 +2366,15 @@ export const API_ENDPOINTS = {
         LOGS: '/api/audit/logs',
         LOG_BY_ID: (id: string) => `/api/audit/logs/${id}`,
         EXPORT: '/api/audit/export',
+    },
+    // Global Search (F015)
+    SEARCH: {
+        BASE: '/api/search',
+        QUERY: '/api/search/query',
+        RECENT: '/api/search/recent',
+        SAVED: '/api/search/saved',
+        SAVE: '/api/search/save',
+        REMOVE: (id: string) => `/api/search/saved/${id}`,
     },
     // Download
     DOWNLOAD: {

@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - OsisEvents Tab Navigation Accessibility
+
+**Learning**: The OsisEvents component had tab navigation buttons (Pendaftaran, Anggaran, Galeri Foto, Pengumuman, Umpan Balik) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which tab was currently selected.
+
+**Action**: Add `aria-pressed` and `aria-label` to all tab navigation buttons:
+- `aria-pressed={activeTab === tab.id}` - Screen readers announce selected state
+- `aria-label={\`Buka tab ${tab.label}\`}` - Descriptive context for each tab
+- `type="button"` - Proper button semantics
+
+**File Fixed**:
+- src/components/OsisEvents.tsx - Added accessibility to 5 tab navigation buttons
+
+**Pattern**: Toggle button groups in navigation panels MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Tab navigation buttons
+- Sidebar navigation items
+- Filter/toggle buttons in navigation panels
+
+---
+
 ## 2026-02-13 - LearningProgressReport Tab Accessibility
 
 **Learning**: The LearningProgressReport component had custom tab navigation that was missing proper ARIA tab patterns. The tab buttons (Laporan Terbaru, Riwayat, Pengaturan) lacked role="tab", aria-selected, aria-controls, and tabIndex attributes. Additionally, action buttons (Buat Laporan, Lihat Detail, Hapus) and toggle buttons (Notifikasi) were missing type="button" and aria-label attributes.
