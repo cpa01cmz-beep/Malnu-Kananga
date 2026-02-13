@@ -1444,6 +1444,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     size="sm"
                     className="p-1.5"
                     aria-label="Bookmark"
+                    aria-pressed={bookmarks.some(b => b.materialId === item.id)}
                   >
                     <BookmarkIcon className="w-4 h-4" />
                   </Button>
@@ -1454,6 +1455,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     size="sm"
                     className="p-1.5"
                     aria-label="Favorit"
+                    aria-pressed={favorites.has(item.id)}
                   >
                     <StarIcon className="w-4 h-4" />
                   </Button>
