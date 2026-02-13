@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { UI_DELAYS } from '../constants';
+import { UI_DELAYS, UI_ACCESSIBILITY } from '../constants';
 
 export interface AccessibilityOptions {
   announceChanges?: boolean;
@@ -39,9 +39,9 @@ export const useAccessibility = (options: AccessibilityOptions = {}) => {
       announcement.setAttribute('aria-atomic', 'true');
       announcement.setAttribute('class', 'sr-only');
       announcement.style.position = 'absolute';
-      announcement.style.left = '-10000px';
-      announcement.style.width = '1px';
-      announcement.style.height = '1px';
+      announcement.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
+      announcement.style.width = UI_ACCESSIBILITY.OFFSCREEN_WIDTH;
+      announcement.style.height = UI_ACCESSIBILITY.OFFSCREEN_HEIGHT;
       announcement.style.overflow = 'hidden';
       document.body.appendChild(announcement);
       announcementRef.current = announcement;

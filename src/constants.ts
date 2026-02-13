@@ -1126,7 +1126,10 @@ export const ID_GENERATION = {
 // UI Accessibility constants - Flexy: Never hardcode accessibility values!
 export const UI_ACCESSIBILITY = {
     OFFSCREEN_POSITION: '-9999px',
+    OFFSCREEN_WIDTH: '1px',
+    OFFSCREEN_HEIGHT: '1px',
     SCREEN_READER_TIMEOUT: 1000,
+    EMPTY_STATE_DELAY_MS: 50,
 } as const;
 
 // UI Spacing constants - Flexy: Never hardcode spacing values!
