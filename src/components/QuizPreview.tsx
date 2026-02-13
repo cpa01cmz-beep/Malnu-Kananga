@@ -173,7 +173,7 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             Pertanyaan ({editedQuiz.questions.length})
           </h3>
-          <Button size="sm" onClick={() => setShowAddModal(true)}>
+          <Button size="sm" onClick={() => setShowAddModal(true)} shortcut="N">
             <PlusIcon className="w-4 h-4 mr-1" />
             Tambah Pertanyaan
           </Button>
