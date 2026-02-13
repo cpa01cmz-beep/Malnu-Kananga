@@ -81,3 +81,15 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - SchoolInventory.tsx - Added aria-label to Export Laporan button
 
 **Pattern**: Export buttons in analytics dashboards are high-risk for accessibility oversight because they have visible text. Always audit with pattern: if button has onClick + export/download, verify aria-label exists.
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
