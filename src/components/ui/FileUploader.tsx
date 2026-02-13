@@ -8,6 +8,7 @@ import { logger } from '../../utils/logger';
 import { mbToBytes, COMPONENT_TIMEOUTS, CONVERSION, UI_DELAYS } from '../../constants';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
+import ConfirmationDialog from './ConfirmationDialog';
 
 export interface UploadedFile {
   id: string;
@@ -66,6 +67,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [isPasteSupported, setIsPasteSupported] = useState(false);
   const [showPasteHint, setShowPasteHint] = useState(false);
   const [isPastedImage, setIsPastedImage] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    file: UploadedFile | null;
+  }>({ isOpen: false, file: null });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -332,6 +337,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   };
 
   const handleDelete = async (file: UploadedFile) => {
+    setConfirmDialog({
+      isOpen: true,
+      file,
+    });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDialog.file) return;
+    const file = confirmDialog.file;
+    setConfirmDialog({ isOpen: false, file: null });
     try {
       const response = await fileStorageAPI.delete(file.key);
       if (response.success) {
@@ -606,6 +621,15 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           ))}
         </div>
       )}
+
+      <ConfirmationDialog
+        isOpen={confirmDialog.isOpen}
+        title="Hapus File"
+        message={confirmDialog.file ? `Apakah Anda yakin ingin menghapus file "${confirmDialog.file.name}"? Tindakan ini tidak dapat dibatalkan.` : ''}
+        type="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, file: null })}
+      />
     </div>
   );
 };
