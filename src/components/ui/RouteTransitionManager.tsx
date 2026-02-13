@@ -6,7 +6,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import PageTransition, { TransitionType, TransitionEasing } from './PageTransition';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
-import { TIME_MS } from '../../constants';
+import { TIME_MS, ROUTE_TRANSITION_DURATIONS } from '../../constants';
 
 interface RouteTransition {
   from: string;
@@ -128,21 +128,21 @@ export const useRouteTransition = () => {
   // eslint-disable-next-line react-refresh/only-export-components
   export const RouteTransitions = {
     // Page-level transitions
-    forward: { type: 'slide-left' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 300 },
-    backward: { type: 'slide-right' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 300 },
-    modal: { type: 'slide-up-fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 350 },
-    closeModal: { type: 'slide-down-fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 300 },
-  
+    forward: { type: 'slide-left' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.FORWARD },
+    backward: { type: 'slide-right' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.BACKWARD },
+    modal: { type: 'slide-up-fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.MODAL },
+    closeModal: { type: 'slide-down-fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.BACKWARD },
+
   // Content transitions
-  refresh: { type: 'fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 200 },
-  focus: { type: 'scale-fade' as TransitionType, easing: 'elastic' as TransitionEasing, duration: 400 },
-  success: { type: 'bounce' as TransitionType, easing: 'bounce' as TransitionEasing, duration: 500 },
-  error: { type: 'scale' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 300 },
-  
+  refresh: { type: 'fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.REFRESH },
+  focus: { type: 'scale-fade' as TransitionType, easing: 'elastic' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.FOCUS },
+  success: { type: 'bounce' as TransitionType, easing: 'bounce' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.SUCCESS },
+  error: { type: 'scale' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.ERROR },
+
   // Special transitions
-  elegant: { type: 'slide-fade' as TransitionType, easing: 'ease-in-out' as TransitionEasing, duration: 400 },
-  quick: { type: 'fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: 150 },
-  playful: { type: 'elastic' as TransitionType, easing: 'elastic' as TransitionEasing, duration: 500 },
+  elegant: { type: 'slide-fade' as TransitionType, easing: 'ease-in-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.ELEGANT },
+  quick: { type: 'fade' as TransitionType, easing: 'ease-out' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.QUICK },
+  playful: { type: 'elastic' as TransitionType, easing: 'elastic' as TransitionEasing, duration: ROUTE_TRANSITION_DURATIONS.PLAYFUL },
 };
 
 // Component for wrapping route content

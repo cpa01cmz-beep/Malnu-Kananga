@@ -699,7 +699,10 @@ export const UI_DELAYS = {
     SHORTCUT_HINT_DELAY: 400,
     PASTE_HINT_DELAY: 400,
     DEFAULT_UI_FEEDBACK: 400,
-    RESET_DELAY: 200 // Delay before resetting gesture/delete state (ms) - Flexy: Never hardcode UI timeouts!
+    RESET_DELAY: 200, // Delay before resetting gesture/delete state (ms) - Flexy: Never hardcode UI timeouts!
+    BUTTON_SHAKE: 500, // Duration of button shake animation (ms) - Flexy: Never hardcode animation timing!
+    TOOLTIP_SHOW: 500, // Delay before showing tooltip (ms) - Flexy: Never hardcode tooltip timing!
+    MIN_LOAD_TIME: 500, // Minimum loading time before showing content (ms) - Flexy: Never hardcode load timing!
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
@@ -3716,4 +3719,49 @@ export const ANIMATION_CLASSES = {
 
 // ============================================================================
 // End of Flexy Modularity Additions - Run #48
+// ============================================================================
+
+// ============================================================================
+// Flexy Modularity Additions - Run #69
+// ============================================================================
+
+// Route Transition Durations - Flexy: Never hardcode transition timing!
+export const ROUTE_TRANSITION_DURATIONS = {
+    FORWARD: 300,
+    BACKWARD: 300,
+    MODAL: 350,
+    REFRESH: 200,
+    FOCUS: 400,
+    SUCCESS: 500,
+    ERROR: 300,
+    ELEGANT: 400,
+    QUICK: 150,
+    PLAYFUL: 500,
+} as const;
+
+// Extended Vibration Patterns - Flexy: Never hardcode vibration timing!
+export const VIBRATION_PATTERNS = {
+    SWIPE_CLOSE: 25,
+    EMPTY_STATE: 50,
+    LIGHT: [10] as const,
+    MEDIUM: [20] as const,
+    HEAVY: [30] as const,
+    SUCCESS: [10, 50, 10] as const,
+    ERROR: [50, 25, 50] as const,
+    WARNING: [30, 30, 30] as const,
+} as const;
+
+// UI Delay Constants - Flexy: Never hardcode UI delays!
+// Using DELAY_MS.SHORT (50) and DELAY_MS.LONG (500) from existing constants
+export const UI_DELAY_CONSTANTS = {
+    EMPTY_STATE_VISIBILITY: 50, // Uses DELAY_MS.SHORT
+    BUTTON_SHAKE: 500, // Uses DELAY_MS.LONG
+    TOOLTIP_SHOW: 500, // Uses DELAY_MS.LONG
+    MIN_LOAD_TIME: 500, // Uses DELAY_MS.LONG
+    MIN_DISPLAY_TIME: 500, // Uses DELAY_MS.LONG
+    ACTION_FEEDBACK: 500, // Uses DELAY_MS.LONG
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #69
 // ============================================================================

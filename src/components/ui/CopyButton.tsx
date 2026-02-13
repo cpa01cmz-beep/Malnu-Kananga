@@ -157,7 +157,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     
     setTimeout(() => {
       setIsShaking(false);
-    }, 500);
+    }, UI_DELAYS.BUTTON_SHAKE);
     
     resetTimeoutRef.current = setTimeout(() => {
       setButtonState('idle');
