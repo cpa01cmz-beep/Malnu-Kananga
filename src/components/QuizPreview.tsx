@@ -615,7 +615,11 @@ function AddQuestionModal({ onClose, onAdd }: AddQuestionModalProps) {
         <Button variant="outline" onClick={onClose}>
           Batal
         </Button>
-        <Button onClick={handleAdd} disabled={!newQuestion.question.trim()}>
+        <Button
+          onClick={handleAdd}
+          disabled={!newQuestion.question.trim()}
+          disabledReason={!newQuestion.question.trim() ? 'Pertanyaan tidak boleh kosong' : undefined}
+        >
           Tambah Pertanyaan
         </Button>
       </div>
