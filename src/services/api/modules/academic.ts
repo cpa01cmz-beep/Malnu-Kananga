@@ -220,37 +220,37 @@ export const assignmentsAPI = {
 
 export const assignmentSubmissionsAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: AssignmentSubmission[]; error?: string }> {
-    return request<AssignmentSubmission[]>('/api/assignment-submissions');
+    return request<AssignmentSubmission[]>(API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSIONS);
   },
 
   async getById(id: string): Promise<{ success: boolean; message: string; data?: AssignmentSubmission; error?: string }> {
-    return request<AssignmentSubmission>(`/api/assignment-submissions/${id}`);
+    return request<AssignmentSubmission>(API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSION_BY_ID(id));
   },
 
   async getByAssignment(assignmentId: string): Promise<{ success: boolean; message: string; data?: AssignmentSubmission[]; error?: string }> {
-    return request<AssignmentSubmission[]>(`/api/assignment-submissions?assignment_id=${assignmentId}`);
+    return request<AssignmentSubmission[]>(`${API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSIONS}?assignment_id=${assignmentId}`);
   },
 
   async getByStudent(studentId: string): Promise<{ success: boolean; message: string; data?: AssignmentSubmission[]; error?: string }> {
-    return request<AssignmentSubmission[]>(`/api/assignment-submissions?student_id=${studentId}`);
+    return request<AssignmentSubmission[]>(`${API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSIONS}?student_id=${studentId}`);
   },
 
   async create(submission: Partial<AssignmentSubmission>): Promise<{ success: boolean; message: string; data?: AssignmentSubmission; error?: string }> {
-    return request<AssignmentSubmission>('/api/assignment-submissions', {
+    return request<AssignmentSubmission>(API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSIONS, {
       method: 'POST',
       body: JSON.stringify(submission),
     });
   },
 
   async update(id: string, submission: Partial<AssignmentSubmission>): Promise<{ success: boolean; message: string; data?: AssignmentSubmission; error?: string }> {
-    return request<AssignmentSubmission>(`/api/assignment-submissions/${id}`, {
+    return request<AssignmentSubmission>(API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSION_BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify(submission),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/assignment-submissions/${id}`, {
+    return request<null>(API_ENDPOINTS.ACADEMIC.ASSIGNMENT_SUBMISSION_BY_ID(id), {
       method: 'DELETE',
     });
   },
@@ -262,41 +262,41 @@ export const assignmentSubmissionsAPI = {
 
 export const attendanceAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: Attendance[]; error?: string }> {
-    return request<Attendance[]>('/api/attendance');
+    return request<Attendance[]>(API_ENDPOINTS.ACADEMIC.ATTENDANCE);
   },
 
   async getById(id: string): Promise<{ success: boolean; message: string; data?: Attendance; error?: string }> {
-    return request<Attendance>(`/api/attendance/${id}`);
+    return request<Attendance>(API_ENDPOINTS.ACADEMIC.ATTENDANCE_BY_ID(id));
   },
 
   async getByStudent(studentId: string): Promise<{ success: boolean; message: string; data?: Attendance[]; error?: string }> {
-    return request<Attendance[]>(`/api/attendance?student_id=${studentId}`);
+    return request<Attendance[]>(`${API_ENDPOINTS.ACADEMIC.ATTENDANCE}?student_id=${studentId}`);
   },
 
   async getByClass(classId: string): Promise<{ success: boolean; message: string; data?: Attendance[]; error?: string }> {
-    return request<Attendance[]>(`/api/attendance?class_id=${classId}`);
+    return request<Attendance[]>(`${API_ENDPOINTS.ACADEMIC.ATTENDANCE}?class_id=${classId}`);
   },
 
   async getByDate(date: string): Promise<{ success: boolean; message: string; data?: Attendance[]; error?: string }> {
-    return request<Attendance[]>(`/api/attendance?date=${date}`);
+    return request<Attendance[]>(`${API_ENDPOINTS.ACADEMIC.ATTENDANCE}?date=${date}`);
   },
 
   async create(attendance: Partial<Attendance>): Promise<{ success: boolean; message: string; data?: Attendance; error?: string }> {
-    return request<Attendance>('/api/attendance', {
+    return request<Attendance>(API_ENDPOINTS.ACADEMIC.ATTENDANCE, {
       method: 'POST',
       body: JSON.stringify(attendance),
     });
   },
 
   async update(id: string, attendance: Partial<Attendance>): Promise<{ success: boolean; message: string; data?: Attendance; error?: string }> {
-    return request<Attendance>(`/api/attendance/${id}`, {
+    return request<Attendance>(API_ENDPOINTS.ACADEMIC.ATTENDANCE_BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify(attendance),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/attendance/${id}`, {
+    return request<null>(API_ENDPOINTS.ACADEMIC.ATTENDANCE_BY_ID(id), {
       method: 'DELETE',
     });
   },

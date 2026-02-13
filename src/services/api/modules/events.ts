@@ -73,14 +73,14 @@ export const eventRegistrationsAPI = {
     status: 'registered' | 'attended' | 'absent',
     notes?: string
   ): Promise<{ success: boolean; message: string; data?: EventRegistration; error?: string }> {
-    return request<EventRegistration>(`/api/event_registrations/${id}`, {
+    return request<EventRegistration>(API_ENDPOINTS.EVENTS.REGISTRATION_BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify({ attendance_status: status, notes }),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/event_registrations/${id}`, {
+    return request<null>(API_ENDPOINTS.EVENTS.REGISTRATION_BY_ID(id), {
       method: 'DELETE',
     });
   },
@@ -92,36 +92,36 @@ export const eventRegistrationsAPI = {
 
 export const eventBudgetsAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: EventBudget[]; error?: string }> {
-    return request<EventBudget[]>('/api/event_budgets');
+    return request<EventBudget[]>(API_ENDPOINTS.EVENTS.BUDGETS);
   },
 
   async getByEventId(eventId: string): Promise<{ success: boolean; message: string; data?: EventBudget[]; error?: string }> {
-    return request<EventBudget[]>(`/api/event_budgets?event_id=${eventId}`);
+    return request<EventBudget[]>(`${API_ENDPOINTS.EVENTS.BUDGETS}?event_id=${eventId}`);
   },
 
   async create(budget: Partial<EventBudget>): Promise<{ success: boolean; message: string; data?: EventBudget; error?: string }> {
-    return request<EventBudget>('/api/event_budgets', {
+    return request<EventBudget>(API_ENDPOINTS.EVENTS.BUDGETS, {
       method: 'POST',
       body: JSON.stringify(budget),
     });
   },
 
   async update(id: string, budget: Partial<EventBudget>): Promise<{ success: boolean; message: string; data?: EventBudget; error?: string }> {
-    return request<EventBudget>(`/api/event_budgets/${id}`, {
+    return request<EventBudget>(API_ENDPOINTS.EVENTS.BUDGET_BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify(budget),
     });
   },
 
   async approve(id: string): Promise<{ success: boolean; message: string; data?: EventBudget; error?: string }> {
-    return request<EventBudget>(`/api/event_budgets/${id}`, {
+    return request<EventBudget>(API_ENDPOINTS.EVENTS.BUDGET_BY_ID(id), {
       method: 'PUT',
       body: JSON.stringify({ status: 'approved' }),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/event_budgets/${id}`, {
+    return request<null>(API_ENDPOINTS.EVENTS.BUDGET_BY_ID(id), {
       method: 'DELETE',
     });
   },
@@ -133,22 +133,22 @@ export const eventBudgetsAPI = {
 
 export const eventPhotosAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: EventPhoto[]; error?: string }> {
-    return request<EventPhoto[]>('/api/event_photos');
+    return request<EventPhoto[]>(API_ENDPOINTS.EVENTS.PHOTOS);
   },
 
   async getByEventId(eventId: string): Promise<{ success: boolean; message: string; data?: EventPhoto[]; error?: string }> {
-    return request<EventPhoto[]>(`/api/event_photos?event_id=${eventId}`);
+    return request<EventPhoto[]>(`${API_ENDPOINTS.EVENTS.PHOTOS}?event_id=${eventId}`);
   },
 
   async create(photo: Partial<EventPhoto>): Promise<{ success: boolean; message: string; data?: EventPhoto; error?: string }> {
-    return request<EventPhoto>('/api/event_photos', {
+    return request<EventPhoto>(API_ENDPOINTS.EVENTS.PHOTOS, {
       method: 'POST',
       body: JSON.stringify(photo),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/event_photos/${id}`, {
+    return request<null>(API_ENDPOINTS.EVENTS.PHOTO_BY_ID(id), {
       method: 'DELETE',
     });
   },
@@ -160,22 +160,22 @@ export const eventPhotosAPI = {
 
 export const eventFeedbackAPI = {
   async getAll(): Promise<{ success: boolean; message: string; data?: EventFeedback[]; error?: string }> {
-    return request<EventFeedback[]>('/api/event_feedback');
+    return request<EventFeedback[]>(API_ENDPOINTS.EVENTS.FEEDBACK);
   },
 
   async getByEventId(eventId: string): Promise<{ success: boolean; message: string; data?: EventFeedback[]; error?: string }> {
-    return request<EventFeedback[]>(`/api/event_feedback?event_id=${eventId}`);
+    return request<EventFeedback[]>(`${API_ENDPOINTS.EVENTS.FEEDBACK}?event_id=${eventId}`);
   },
 
   async create(feedback: Partial<EventFeedback>): Promise<{ success: boolean; message: string; data?: EventFeedback; error?: string }> {
-    return request<EventFeedback>('/api/event_feedback', {
+    return request<EventFeedback>(API_ENDPOINTS.EVENTS.FEEDBACK, {
       method: 'POST',
       body: JSON.stringify(feedback),
     });
   },
 
   async delete(id: string): Promise<{ success: boolean; message: string; data?: null; error?: string }> {
-    return request<null>(`/api/event_feedback/${id}`, {
+    return request<null>(API_ENDPOINTS.EVENTS.FEEDBACK_BY_ID(id), {
       method: 'DELETE',
     });
   },
