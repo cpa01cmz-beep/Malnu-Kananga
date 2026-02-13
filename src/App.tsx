@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Header from './components/Header';
-import Footer from './components/Footer';
 import Toast, { ToastType } from './components/Toast';
+
+const Footer = lazy(() => import('./components/Footer'));
 import SkipLink, { SkipTarget } from './components/ui/SkipLink';
 import SuspenseLoading from './components/ui/SuspenseLoading';
 import ErrorBoundary from './components/ui/ErrorBoundary';
@@ -451,9 +452,11 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <Footer
-        onDocsClick={() => setIsDocsOpen(true)}
-      />
+      <Suspense fallback={<div style={{ minHeight: '400px' }} />}>
+        <Footer
+          onDocsClick={() => setIsDocsOpen(true)}
+        />
+      </Suspense>
 
       <div
         className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-40 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] max-w-sm ${HEIGHTS.VIEWPORT.MEDIUM} ${HEIGHTS.VIEWPORT_MAX.COMPACT} transition-all duration-300 ease-in-out ${

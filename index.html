@@ -17,8 +17,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <!-- Note: API preconnect removed - Lighthouse flagged as unused during initial load
-         API calls happen after auth/login, so preconnect doesn't benefit FCP/LCP -->
+
+    <!-- Preload critical resources for faster LCP -->
+    <link rel="preload" href="/src/index.tsx" as="script" type="module" crossorigin />
+    <link rel="modulepreload" href="/node_modules/react/index.js" crossorigin />
     
     <!-- Load Google Fonts with display=optional to avoid layout shift - font only used if cached -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
