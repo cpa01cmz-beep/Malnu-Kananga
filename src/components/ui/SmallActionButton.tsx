@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
-import { XML_NAMESPACES } from '../../constants';
+import { XML_NAMESPACES, UI_DELAYS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type SmallActionButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'neutral';
@@ -96,7 +96,7 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
       if (shortcut && !isLoading && !isSuccessVisible) {
         shortcutHintTimeoutRef.current = setTimeout(() => {
           setShowShortcutHint(true);
-        }, 400);
+        }, UI_DELAYS.SHORTCUT_HINT_DELAY);
       }
     }
   }, [isSuccessVisible, isLoading, shortcut]);

@@ -7,6 +7,7 @@ import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
 import IconButton from './IconButton';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { generateComponentId } from '../../utils/idGenerator';
+import { UI_DELAYS } from '../../constants';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -144,7 +145,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       // Delay showing hint to avoid flickering on quick interactions
       escapeHintTimeoutRef.current = setTimeout(() => {
         setShowEscapeHint(true);
-      }, 400);
+      }, UI_DELAYS.ESCAPE_HINT_DELAY);
     }
     onFocus?.(e);
   };

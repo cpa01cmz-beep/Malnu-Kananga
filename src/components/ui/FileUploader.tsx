@@ -5,7 +5,7 @@ import { CloseIcon } from '../icons/CloseIcon';
 import { ArrowDownTrayIcon } from '../icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../../services/apiService';
 import { logger } from '../../utils/logger';
-import { mbToBytes, COMPONENT_TIMEOUTS, CONVERSION } from '../../constants';
+import { mbToBytes, COMPONENT_TIMEOUTS, CONVERSION, UI_DELAYS } from '../../constants';
 import Button from './Button';
 import ProgressBar from './ProgressBar';
 
@@ -310,7 +310,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     if (isPasteSupported && !disabled && !uploading) {
       pasteHintTimeoutRef.current = setTimeout(() => {
         setShowPasteHint(true);
-      }, 400)
+      }, UI_DELAYS.PASTE_HINT_DELAY)
     }
   };
 
