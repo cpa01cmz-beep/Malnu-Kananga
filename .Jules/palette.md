@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - AccessibilitySettings aria-pressed Toggle States
+
+**Learning**: The AccessibilitySettings component (ironically) had accessibility issues - its toggle button groups (Font Size, Line Spacing, Letter Spacing, Contrast Mode) and toggle switches (Readable Width, Reduced Motion) were missing `aria-pressed` attributes. This meant screen reader users couldn't know which option was currently selected.
+
+**Action**: Add `aria-pressed={boolean}` to all toggle buttons in AccessibilitySettings:
+- Font Size buttons: `aria-pressed={settings.fontSize === size}`
+- Line Spacing buttons: `aria-pressed={settings.lineSpacing === spacing}`
+- Letter Spacing buttons: `aria-pressed={settings.letterSpacing === spacing}`
+- Contrast Mode buttons: `aria-pressed={settings.contrastMode === mode}`
+- Readable Width toggle: `aria-pressed={settings.readableWidth}`
+- Reduced Motion toggle: `aria-pressed={settings.reducedMotion}`
+
+**File Fixed**:
+- src/components/ui/AccessibilitySettings.tsx - Added aria-pressed to 6 toggle groups (18 buttons total)
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Button groups where only one can be selected (radio-like behavior)
+- Toggle switches (on/off)
+- Any button that changes appearance based on state
+
+---
+
 ## 2026-02-13 - AssignmentGrading Save Button Keyboard Shortcut
 
 **Learning**: The AssignmentGrading component is a high-traffic teacher component where grades are saved frequently, but the "Simpan Nilai" (Save Grade) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to teachers.
