@@ -117,8 +117,16 @@ export const PWA_MANIFEST = {
 } as const;
 
 // Workbox Configuration
+// BroCula: Exclude lazy-loaded chunks from precaching to reduce initial load
+// Dashboard and heavy vendor chunks will be cached at runtime when needed
 export const WORKBOX_CONFIG = {
-  GLOB_PATTERNS: ['**/*.{js,css,html,ico,png,svg,json}'] as const,
+  GLOB_PATTERNS: [
+    '**/*.{css,html,ico,png,svg,json}',
+    // Only precache main entry and critical vendor chunks from assets/
+    'assets/index-*.js',
+    'assets/vendor-react-*.js',
+    'assets/vendor-router-*.js',
+  ] as const,
   REGISTER_TYPE: 'autoUpdate' as const,
 } as const;
 
