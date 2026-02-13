@@ -162,6 +162,57 @@
 
 ---
 
+## P3 - Creative Features (From Phase 3)
+
+### T010: Online Assessment System (F011)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Timed online examinations with anti-cheat features.
+**Rationale**: F011 - Enable remote assessment capabilities.
+**Actions**:
+- [ ] Add exam/quiz timing functionality
+- [ ] Add question randomization
+- [ ] Add anti-tab-switch detection
+- [ ] Add auto-submit on expiry
+- [ ] Add exam attempt audit log
+
+### T011: Enhanced Parent Dashboard (F013)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Comprehensive parent portal for monitoring children.
+**Rationale**: F013 - Improve parent engagement.
+**Actions**:
+- [ ] Add multi-child dashboard view
+- [ ] Add meeting scheduler
+- [ ] Add AI recommendations
+- [ ] Add payment tracking
+
+### T012: Global Search (F015)
+**Status**: ❌ Pending
+**Priority**: High
+**Description**: Unified search across all modules and data.
+**Rationale**: F015 - High productivity impact for all user roles.
+**Actions**:
+- [ ] Add global search bar with Cmd+K shortcut
+- [ ] Implement search across: students, teachers, grades, assignments, materials
+- [ ] Add recent and saved searches
+- [ ] Add search filters (type, date range, class)
+- [ ] Integrate with existing API endpoints
+
+### T013: Document Template System (F016)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Generate standardized school documents from templates.
+**Rationale**: F016 - Automate administrative document creation.
+**Actions**:
+- [ ] Create template engine (handlebars-style)
+- [ ] Add certificate templates
+- [ ] Add report card templates
+- [ ] Add letter templates
+- [ ] Add batch generation for class-wide documents
+
+---
+
 ## Notes
 
 - Since average score > 90, creative phase was triggered
