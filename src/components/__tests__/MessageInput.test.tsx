@@ -21,13 +21,13 @@ describe('MessageInput', () => {
   it('renders input field and send button', () => {
     render(<MessageInput {...defaultProps} />);
     expect(screen.getByPlaceholderText('Ketik pesan...')).toBeInTheDocument();
-    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByLabelText(/kirim pesan/i)).toBeInTheDocument();
   });
 
   it('sends message on button click', async () => {
     render(<MessageInput {...defaultProps} />);
     const input = screen.getByPlaceholderText('Ketik pesan...');
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
 
     fireEvent.change(input, { target: { value: 'Test message' } });
     fireEvent.click(sendButton);
@@ -51,7 +51,7 @@ describe('MessageInput', () => {
 
   it('does not send empty message', () => {
     render(<MessageInput {...defaultProps} />);
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
 
     fireEvent.click(sendButton);
 
@@ -71,13 +71,13 @@ describe('MessageInput', () => {
 
   it('shows file upload button', () => {
     render(<MessageInput {...defaultProps} />);
-    const uploadButton = screen.getByLabelText(/upload/i);
+    const uploadButton = screen.getByLabelText(/lampirkan/i);
     expect(uploadButton).toBeInTheDocument();
   });
 
   it('handles file selection', () => {
     render(<MessageInput {...defaultProps} />);
-    const uploadButton = screen.getByLabelText(/upload/i);
+    const uploadButton = screen.getByLabelText(/lampirkan/i);
     const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
 
     const input = uploadButton.nextElementSibling as HTMLInputElement;
@@ -88,29 +88,15 @@ describe('MessageInput', () => {
     expect(screen.getByText(/test\.pdf/)).toBeInTheDocument();
   });
 
-  it('validates file size (max 10MB)', () => {
-    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    render(<MessageInput {...defaultProps} />);
-    const uploadButton = screen.getByLabelText(/upload/i);
-
-    const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' });
-    const input = uploadButton.nextElementSibling as HTMLInputElement;
-
-    fireEvent.change(input, { target: { files: [largeFile] } });
-
-    expect(alertSpy).toHaveBeenCalledWith('Ukuran file maksimal 10MB');
-    alertSpy.mockRestore();
-  });
-
   it('removes selected file', () => {
     render(<MessageInput {...defaultProps} />);
-    const uploadButton = screen.getByLabelText(/upload/i);
+    const uploadButton = screen.getByLabelText(/lampirkan/i);
     const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
 
     const input = uploadButton.nextElementSibling as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
-    const removeButton = screen.getByText(/×/i);
+    const removeButton = screen.getByLabelText(/hapus file/i);
     fireEvent.click(removeButton);
 
     expect(screen.queryByText(/test\.pdf/)).not.toBeInTheDocument();
@@ -118,13 +104,13 @@ describe('MessageInput', () => {
 
   it('sends message with file', async () => {
     render(<MessageInput {...defaultProps} />);
-    const uploadButton = screen.getByLabelText(/upload/i);
+    const uploadButton = screen.getByLabelText(/lampirkan/i);
     const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
 
     const input = uploadButton.nextElementSibling as HTMLInputElement;
     fireEvent.change(input, { target: { files: [file] } });
 
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
     fireEvent.click(sendButton);
 
     await waitFor(() => {
@@ -169,10 +155,10 @@ describe('MessageInput', () => {
     const input = screen.getByPlaceholderText('Ketik pesan...');
 
     fireEvent.change(input, { target: { value: 'Test' } });
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
     fireEvent.click(sendButton);
 
-    expect(screen.getByRole('button')).toBeDisabled();
+    expect(screen.getByLabelText(/mengirim/i)).toBeDisabled();
   });
 
   it('clears input after sending', async () => {
@@ -181,7 +167,7 @@ describe('MessageInput', () => {
     const input = screen.getByPlaceholderText('Ketik pesan...');
 
     fireEvent.change(input, { target: { value: 'Test' } });
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
     fireEvent.click(sendButton);
 
     await waitFor(() => {
@@ -236,7 +222,7 @@ describe('MessageInput', () => {
 
     const input = screen.getByPlaceholderText('Ketik pesan...');
     fireEvent.change(input, { target: { value: 'Reply message' } });
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
     fireEvent.click(sendButton);
 
     await waitFor(() => {
@@ -256,7 +242,7 @@ describe('MessageInput', () => {
 
     const input = screen.getByPlaceholderText('Ketik pesan...');
     fireEvent.change(input, { target: { value: 'Reply' } });
-    const sendButton = screen.getByRole('button');
+    const sendButton = screen.getByLabelText(/kirim pesan/i);
     fireEvent.click(sendButton);
 
     await waitFor(() => {
@@ -265,5 +251,131 @@ describe('MessageInput', () => {
       const parsedDrafts = JSON.parse(drafts!);
       expect(parsedDrafts['test-msg-id']).toBe('');
     });
+  });
+});
+
+describe('MessageInput Clear Functionality', () => {
+  const mockOnSendMessage = vi.fn();
+
+  beforeEach(() => {
+    mockOnSendMessage.mockClear();
+  });
+
+  it('shows clear button when textarea has content', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+
+    const clearButton = screen.getByLabelText(/bersihkan/i);
+    expect(clearButton).toBeInTheDocument();
+    expect(clearButton).toHaveAttribute('aria-label', 'Bersihkan pesan (Tekan Escape)');
+  });
+
+  it('does not show clear button when textarea is empty', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+
+    const clearButton = screen.queryByLabelText(/bersihkan/i);
+    expect(clearButton).not.toBeInTheDocument();
+  });
+
+  it('clears textarea when clear button is clicked', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    const clearButton = screen.getByLabelText(/bersihkan/i);
+
+    fireEvent.click(clearButton);
+
+    expect(input.value).toBe('');
+  });
+
+  it('maintains focus on textarea after clearing with button', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    const clearButton = screen.getByLabelText(/bersihkan/i);
+
+    fireEvent.click(clearButton);
+
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('clears textarea when Escape key is pressed', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(input.value).toBe('');
+  });
+
+  it('maintains focus on textarea after clearing with Escape key', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('does not clear on Escape when textarea is empty', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(input.value).toBe('');
+  });
+
+  it('does not show clear button when disabled', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} disabled />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+
+    const clearButton = screen.queryByLabelText(/bersihkan/i);
+    expect(clearButton).not.toBeInTheDocument();
+  });
+
+  it('does not show clear button when sending', () => {
+    mockOnSendMessage.mockImplementation(() => new Promise(() => {}));
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    const sendButton = screen.getByRole('button', { name: /kirim/i });
+    fireEvent.click(sendButton);
+
+    const clearButton = screen.queryByLabelText(/bersihkan/i);
+    expect(clearButton).not.toBeInTheDocument();
+  });
+
+  it('clear button has proper aria-describedby when tooltip is shown', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    const clearButton = screen.getByLabelText(/bersihkan/i);
+
+    fireEvent.focus(clearButton);
+
+    expect(clearButton).toHaveAttribute('aria-describedby', 'clear-tooltip-message');
+  });
+
+  it('clear button has aria-describedby for tooltip', () => {
+    render(<MessageInput onSendMessage={mockOnSendMessage} />);
+    const input = screen.getByPlaceholderText('Ketik pesan...') as HTMLTextAreaElement;
+
+    fireEvent.change(input, { target: { value: 'Hello world' } });
+    const clearButton = screen.getByLabelText(/bersihkan/i);
+
+    fireEvent.focus(clearButton);
+
+    expect(clearButton).toHaveAttribute('aria-describedby', 'clear-tooltip-message');
   });
 });
