@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { UI_DELAYS } from '../../constants';
 
 export type TabColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow' | 'neutral';
 
@@ -58,6 +59,9 @@ const Tab: React.FC<TabProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const prefersReducedMotion = useReducedMotion();
+  const [showKeyboardHint, setShowKeyboardHint] = useState(false);
+  const [activeTabWithHint, setActiveTabWithHint] = useState<string | null>(null);
+  const keyboardHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const containerClasses = orientation === 'horizontal'
     ? `flex gap-2 overflow-x-auto pb-2 ${enableSwipeGestures ? 'snap-x snap-mandatory scroll-smooth' : ''} relative ${className}`
@@ -94,8 +98,32 @@ const Tab: React.FC<TabProps> = ({
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (keyboardHintTimeoutRef.current) {
+        clearTimeout(keyboardHintTimeoutRef.current);
+      }
+    };
   }, [updateIndicator]);
+
+  const showKeyboardShortcutHint = useCallback((tabId: string) => {
+    const tab = options.find(t => t.id === tabId);
+    if (tab?.disabled) return;
+    
+    keyboardHintTimeoutRef.current = setTimeout(() => {
+      setActiveTabWithHint(tabId);
+      setShowKeyboardHint(true);
+    }, UI_DELAYS.SHORTCUT_HINT_DELAY);
+  }, [options]);
+
+  const hideKeyboardShortcutHint = useCallback(() => {
+    setShowKeyboardHint(false);
+    setActiveTabWithHint(null);
+    if (keyboardHintTimeoutRef.current) {
+      clearTimeout(keyboardHintTimeoutRef.current);
+      keyboardHintTimeoutRef.current = null;
+    }
+  }, []);
 
   const getColorClasses = (tabId: string) => {
     const isActive = activeTab === tabId;
@@ -272,6 +300,10 @@ const Tab: React.FC<TabProps> = ({
           className={getButtonClasses(tab.id)}
           onClick={() => !tab.disabled && handleTabChange(tab.id)}
           onKeyDown={(e) => handleKeyDown(e, tab.id)}
+          onMouseEnter={() => !tab.disabled && showKeyboardShortcutHint(tab.id)}
+          onMouseLeave={hideKeyboardShortcutHint}
+          onFocus={() => !tab.disabled && showKeyboardShortcutHint(tab.id)}
+          onBlur={hideKeyboardShortcutHint}
           tabIndex={tab.disabled || activeTab !== tab.id ? -1 : 0}
         >
           {tab.icon && <tab.icon className="w-4 h-4" />}
@@ -279,6 +311,32 @@ const Tab: React.FC<TabProps> = ({
           {tab.badge !== undefined && tab.badge > 0 && (
             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
               {tab.badge > 99 ? '99+' : tab.badge}
+            </span>
+          )}
+          {showKeyboardHint && activeTabWithHint === tab.id && (
+            <span
+              className={`
+                absolute -top-9 left-1/2 -translate-x-1/2
+                px-2.5 py-1
+                bg-neutral-800 dark:bg-neutral-700
+                text-white text-[10px] font-medium
+                rounded-md shadow-md
+                whitespace-nowrap
+                transition-all duration-200 ease-out
+                pointer-events-none
+                z-50
+                ${showKeyboardHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+              `.replace(/\s+/g, ' ').trim()}
+              role="tooltip"
+              aria-hidden={!showKeyboardHint}
+            >
+              <span className="flex items-center gap-1">
+                <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                  {orientation === 'horizontal' ? '← →' : '↑ ↓'}
+                </kbd>
+                <span>navigasi</span>
+              </span>
+              <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
             </span>
           )}
         </button>

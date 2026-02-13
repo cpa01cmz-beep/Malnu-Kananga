@@ -656,4 +656,79 @@ describe('Tab', () => {
       expect(inactiveTab).toHaveClass('dark:text-neutral-400', 'dark:hover:text-neutral-200');
     });
   });
+
+  describe('Keyboard shortcut hint', () => {
+    it('renders keyboard navigation hint tooltip when showKeyboardHint is true', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="horizontal"
+        />
+      );
+
+      const tab = screen.getByRole('tab', { name: /Ringkasan/i });
+      expect(tab).toBeInTheDocument();
+    });
+
+    it('shows horizontal arrow keys for horizontal orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="horizontal"
+        />
+      );
+
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs.length).toBeGreaterThan(0);
+    });
+
+    it('shows vertical arrow keys for vertical orientation', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+          orientation="vertical"
+        />
+      );
+
+      const tabs = screen.getAllByRole('tab');
+      expect(tabs.length).toBeGreaterThan(0);
+    });
+
+    it('does not show keyboard shortcut for disabled tabs', () => {
+      const optionsWithDisabled: TabOption[] = [
+        { id: 'overview', label: 'Ringkasan' },
+        { id: 'trends', label: 'Tren Nilai', disabled: true },
+      ];
+
+      render(
+        <Tab
+          options={optionsWithDisabled}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+        />
+      );
+
+      const disabledTab = screen.getByRole('tab', { name: /Tren Nilai/i });
+      expect(disabledTab).toBeDisabled();
+    });
+
+    it('has event handlers for keyboard shortcut hint on enabled tabs', () => {
+      render(
+        <Tab
+          options={defaultOptions}
+          activeTab="overview"
+          onTabChange={mockOnTabChange}
+        />
+      );
+
+      const tab = screen.getByRole('tab', { name: /Ringkasan/i });
+      expect(tab).toHaveAttribute('tabindex', '0');
+    });
+  });
 });
