@@ -8,6 +8,7 @@ import { BellIcon } from './icons/BellIcon';
 import { BellSlashIcon } from './icons/BellSlashIcon';
 import Card from './ui/Card';
 import Badge from './ui/Badge';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import type { ParentChild, Grade, Attendance } from '../types';
 import { parentProgressReportService, type ProgressReport, type ProgressReportSettings } from '../services/parentProgressReportService';
 import { gradesAPI, attendanceAPI } from '../services/apiService';
@@ -30,6 +31,10 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
   const [generating, setGenerating] = useState(false);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [attendance, setAttendance] = useState<Attendance[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    reportId: string | null;
+  }>({ isOpen: false, reportId: null });
 
   const loadInitialData = useCallback(async () => {
     setLoading(true);
@@ -97,18 +102,23 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
   };
 
   const handleDeleteReport = (reportId: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
-      const success = parentProgressReportService.deleteReport(reportId, child.studentId);
-      if (success) {
-        setReports(parentProgressReportService.getParentReports(parentId));
-        if (report?.id === reportId) {
-          setReport(null);
-        }
-        onShowToast('Laporan berhasil dihapus', 'success');
-      } else {
-        onShowToast('Gagal menghapus laporan', 'error');
+    setConfirmDialog({ isOpen: true, reportId });
+  };
+
+  const confirmDeleteReport = () => {
+    if (!confirmDialog.reportId) return;
+
+    const success = parentProgressReportService.deleteReport(confirmDialog.reportId, child.studentId);
+    if (success) {
+      setReports(parentProgressReportService.getParentReports(parentId));
+      if (report?.id === confirmDialog.reportId) {
+        setReport(null);
       }
+      onShowToast('Laporan berhasil dihapus', 'success');
+    } else {
+      onShowToast('Gagal menghapus laporan', 'error');
     }
+    setConfirmDialog({ isOpen: false, reportId: null });
   };
 
   const handleSaveSettings = () => {
@@ -484,6 +494,16 @@ const LearningProgressReport: React.FC<LearningProgressReportProps> = ({ onShowT
           </div>
         </Card>
       )}
+
+      <ConfirmationDialog
+        isOpen={confirmDialog.isOpen}
+        title="Hapus Laporan Progres"
+        message="Apakah Anda yakin ingin menghapus laporan progres ini? Tindakan ini tidak dapat dibatalkan."
+        type="danger"
+        confirmText="Hapus"
+        onConfirm={confirmDeleteReport}
+        onCancel={() => setConfirmDialog({ isOpen: false, reportId: null })}
+      />
     </div>
   );
 };
