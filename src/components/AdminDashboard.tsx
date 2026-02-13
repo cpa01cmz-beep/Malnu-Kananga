@@ -36,6 +36,7 @@ import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import { RealTimeEventType } from '../services/webSocketService';
 import { WebSocketStatus } from './WebSocketStatus';
+import { useSchoolInsights } from '../hooks/useSchoolInsights';
 
 interface AdminDashboardProps {
     onOpenEditor: () => void;
@@ -49,6 +50,67 @@ type SyncStatus = 'idle' | 'syncing' | 'synced' | 'failed';
 interface PPDBRegistrant {
   status: 'pending' | 'approved' | 'rejected';
 }
+
+const SchoolInsightsContent: React.FC = () => {
+  const { insights, loading, error, refreshInsights } = useSchoolInsights({ enabled: true });
+
+  if (loading) {
+    return (
+      <div className="animate-pulse space-y-3 w-full">
+        <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4"></div>
+        <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-1/2"></div>
+        <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3"></div>
+      </div>
+    );
+  }
+
+  if (error || !insights) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-3">
+          {error || 'Belum ada data insight'}
+        </p>
+        <button
+          onClick={refreshInsights}
+          className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
+        >
+          Muat Ulang
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{insights.overview.totalStudents}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Total Siswa</p>
+        </div>
+        <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{insights.overview.averageGPA.toFixed(1)}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Rata-rata Nilai</p>
+        </div>
+        <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+          <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{insights.overview.averageAttendance.toFixed(1)}%</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Kehadiran</p>
+        </div>
+        <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
+          <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{insights.overview.atRiskStudents}</p>
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">Siswa Berisiko</p>
+        </div>
+      </div>
+
+      {insights.aiAnalysis && (
+        <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
+          <p className="text-sm text-emerald-800 dark:text-emerald-200">
+            <span className="font-semibold">AI Insight:</span> {insights.aiAnalysis}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToast }) => {
   const { user: _user, canAccess } = useCanAccess();
@@ -638,6 +700,28 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </button>
                     )}
                 </div>
+
+                {/* School Insights Section */}
+                {canAccess('academic.grades').canAccess && (
+                  <Card padding="lg" className="mb-8 animate-fade-in-up">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                          <ChartBarIcon className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
+                            Insight Sekolah
+                          </h2>
+                          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            Analytics dan performa sekolah secara keseluruhan
+                          </p>
+                        </div>
+                      </div>
+                      <SchoolInsightsContent />
+                    </div>
+                  </Card>
+                )}
 
                 {/* Activity Feed */}
                 <Card padding="lg" className={`mb-8 animate-fade-in-up`}>

@@ -104,6 +104,7 @@ export const STORAGE_KEYS = {
     // Student Insights (dynamic factory functions)
     STUDENT_INSIGHTS: (studentId: string) => `malnu_student_insights_${studentId}`,
     INSIGHTS_ENABLED: (studentId: string) => `malnu_insights_enabled_${studentId}`,
+    SCHOOL_INSIGHTS: 'malnu_school_insights',
 
     // Study Plans (dynamic factory function)
     STUDY_PLANS: (studentId: string) => `malnu_study_plans_${studentId}`,
