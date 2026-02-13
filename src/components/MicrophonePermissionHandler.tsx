@@ -183,6 +183,8 @@ const MicrophonePermissionHandler: React.FC<MicrophonePermissionHandlerProps> = 
                     setShowInstructions(false);
                     handleRequestPermission();
                   }}
+                  aria-label="Coba lagi meminta izin mikrofon"
+                  shortcut="Ctrl+R"
                 >
                   Coba Lagi
                 </Button>

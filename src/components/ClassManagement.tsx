@@ -272,6 +272,8 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           <Button
             onClick={fetchStudents}
             variant="red-solid"
+            aria-label="Coba lagi memuat data siswa"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>
@@ -298,6 +300,8 @@ const handleAttendanceChange = async (id: string, status: ClassStudent['attendan
           <Button
             onClick={fetchStudents}
             variant="red-solid"
+            aria-label="Coba lagi memuat data siswa"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>

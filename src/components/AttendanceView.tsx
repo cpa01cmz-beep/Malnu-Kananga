@@ -191,6 +191,8 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
             variant="red-solid"
             size="md"
             onClick={fetchAttendance}
+            aria-label="Coba lagi memuat data kehadiran"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>
