@@ -2645,6 +2645,7 @@ export const PDF_COLORS = {
 export const TEXT_LIMITS = {
     MIN_SEARCH_LENGTH: 2,
     MIN_NAME_LENGTH: 2,
+    MESSAGE_MAX_LENGTH: 2000,
 } as const;
 
 // Password generation constants - Flexy: Never hardcode password generation!
