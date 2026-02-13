@@ -4,6 +4,19 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - AssignmentGrading Save Button Keyboard Shortcut
+
+**Learning**: The AssignmentGrading component is a high-traffic teacher component where grades are saved frequently, but the "Simpan Nilai" (Save Grade) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to teachers.
+
+**Action**: Add `shortcut="Ctrl+S"` to all save buttons in high-frequency data entry components. This follows the established pattern from GradingManagement and AttendanceManagement.
+
+**File Fixed**:
+- AssignmentGrading.tsx - Added shortcut="Ctrl+S" to Simpan Nilai button
+
+**Pattern**: High-traffic teacher components (grading, attendance, assignments) benefit from keyboard shortcuts to speed up daily workflows. Always audit save buttons in these components.
+
+---
+
 ## 2026-02-12 - Tooltip Button Accessibility Fix
 **Learning**: Icon-only buttons that provide tooltip information must remain focusable for keyboard users. Setting `tabIndex={-1}` on tooltip buttons prevents keyboard users from accessing important contextual information.
 
@@ -67,3 +80,147 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - MaterialSharing.tsx - Added label with id="expiration-date" and htmlFor
 
 **Pattern**: Audit all native form inputs (not wrapped in UI components) for proper label association.
+
+---
+
+## 2026-02-13 - Export Button Aria-Label Completion
+**Learning**: High-traffic export buttons in analytics and reporting components (GradeAnalytics, StudyPlanAnalytics, SchoolInventory) were missing explicit aria-label props despite having visible text. Screen reader users benefit from descriptive labels that clarify the full action context.
+
+**Action**: Always add aria-label to export/action buttons in analytics components, even when they have visible text. The label should describe the complete action including what is being exported (e.g., "Ekspor laporan analitik nilai ke file" instead of just "Export Laporan").
+
+**Components Fixed**:
+- GradeAnalytics.tsx - Added aria-label to Export Laporan button
+- StudyPlanAnalytics.tsx - Added aria-label to Ekspor button
+- SchoolInventory.tsx - Added aria-label to Export Laporan button
+
+**Pattern**: Export buttons in analytics dashboards are high-risk for accessibility oversight because they have visible text. Always audit with pattern: if button has onClick + export/download, verify aria-label exists.
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
+
+---
+
+## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
+
+**Learning**: Refresh buttons in analytics dashboards (StudentInsights, StudyPlanAnalytics) support Ctrl+R keyboard shortcut but users couldn't discover it without visual hints. Adding `shortcut="Ctrl+R"` prop makes the shortcut visible on hover/focus.
+
+**Action**: Add shortcut hints to all refresh/reload buttons in analytics components. Use `shortcut="Ctrl+R"` prop which displays a hint tooltip.
+
+**Components Fixed**:
+- StudentInsights.tsx - Added shortcut="Ctrl+R" to refresh button
+- StudyPlanAnalytics.tsx - Added shortcut="Ctrl+R" to refresh button
+
+---
+
+## 2026-02-13 - Form Input Label Association in FolderNavigation
+
+**Learning**: Native `<input>` and `<textarea>` elements in FolderNavigation's create folder form were missing proper label associations. The heading "Buat Folder Baru" served as the visual label but screen readers couldn't associate it with the inputs.
+
+**Action**: Use `aria-labelledby` to associate form inputs with their heading labels:
+1. Add unique `id` to the heading element (e.g., `id="create-folder-heading"`)
+2. Add `aria-labelledby="create-folder-heading"` to each input that belongs to that form section
+
+**File Fixed**:
+- FolderNavigation.tsx - Added id and aria-labelledby to create folder form inputs
+
+**Pattern**: This pattern is useful when:
+- Using headings as implicit labels for form sections
+- Multiple inputs share the same label context
+- Adding visible labels would break the UI design
+
+Use `aria-labelledby` for section-level associations, `htmlFor`/`id` for 1:1 input-label relationships.
+
+---
+
+## 2026-02-13 - Quiz Button Keyboard Shortcut Discovery
+
+**Learning**: Quiz creation components (QuizGenerator, QuizPreview) had save and cancel buttons that support keyboard shortcuts (Ctrl+S, Esc) but users couldn't discover them without visual hints. This follows a pattern seen in ChatWindow, SiteEditor, and analytics dashboards.
+
+**Action**: Add `shortcut` prop to all save and cancel buttons in quiz-related components:
+- QuizGenerator.tsx: Cancel (Esc), Save Quiz (Ctrl+S)
+- QuizPreview.tsx: Main Cancel (Esc), Save (Ctrl+S), Question edit Save (Ctrl+S), Question edit Cancel (Esc)
+
+**Pattern**: Always audit form components with keyboard shortcuts - if they handle Ctrl+S for save or Esc for cancel, add shortcut hints to make them discoverable. This applies to:
+- Quiz generators/editors
+- Form wizards
+- Modal dialogs with save/cancel
+- Any component with keyboard-handled actions
+
+---
+
+## 2026-02-13 - Import Button Aria-Label Consistency
+
+**Learning**: The GradingActions component had inconsistent aria-label usage between adjacent action buttons. The "Scan Exam" button had an aria-label but the "Import CSV" button did not, despite both being high-traffic data import actions used by teachers.
+
+**Action**: Always verify aria-label exists on ALL action buttons in a group, not just icon-only buttons. When multiple buttons perform similar actions (import, export, scan), ensure consistent aria-label patterns across all of them.
+
+**File Fixed**:
+- GradingActions.tsx - Added aria-label="Impor data nilai dari file CSV" to Import CSV button
+
+**Pattern**: Buttons with visible text in high-traffic data operations still need explicit aria-labels for consistent screen reader experience. The visible text alone isn't enough when adjacent buttons already have aria-labels - consistency matters for user expectations.
+
+---
+
+## 2026-02-13 - Save Button Keyboard Shortcut Discovery
+
+**Learning**: High-traffic save buttons (grades, attendance, announcements) were missing keyboard shortcut hints. Teachers save grades daily, but couldn't discover the efficient Ctrl+S keyboard shortcut. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
+
+**Action**: Add `shortcut="Ctrl+S"` prop to all save/submit buttons in high-traffic data entry components. This makes the keyboard shortcut discoverable through tooltip hints.
+
+**Components Updated**:
+- GradingManagement.tsx - Added shortcut="Ctrl+S" to save grades button
+- AttendanceManagement.tsx - Added shortcut="Ctrl+S" to save attendance button
+- AnnouncementManager.tsx - Added shortcut="Ctrl+S" to save announcement button
+
+**Pattern**: Follows the established keyboard shortcut pattern:
+- Send buttons: Enter (for message input)
+- Refresh/retry buttons: Ctrl+R (for data reload)
+- Save buttons: Ctrl+S (for form submission)
+
+Always audit save/submit buttons in forms - if they persist data, add keyboard shortcut hints.
+
+---
+
+<<<<---
+
+## 2026-02-13 - Native confirm() Replacement with Accessible Dialog
+
+**Learning**: The AnnouncementManager component used native browser `confirm()` for delete confirmation, which is:
+- Not accessible (no screen reader support)
+- Blocking and jarring for users
+- Not stylistically consistent with the app
+
+**Action**: Replace native `confirm()` with the accessible `ConfirmationDialog` component already in the codebase. This pattern should be applied to all delete/destructive actions.
+
+**Files Fixed**:
+- AnnouncementManager.tsx - Replaced confirm() with ConfirmationDialog
+
+**Pattern**: Always audit for native `confirm()`, `alert()`, or `prompt()` usage - replace with accessible UI components.
+
+---
+
+## 2026-02-13 - AssignmentCreation Button Keyboard Shortcuts
+
+**Learning**: The AssignmentCreation component is a high-traffic form where teachers create and publish assignments daily, but its action buttons were missing keyboard shortcut hints. This follows the pattern established in QuizGenerator, QuizPreview, and other high-traffic form components.
+
+**Action**: Add keyboard shortcut hints to AssignmentCreation action buttons:
+- Batal (Cancel) button: shortcut="Esc"
+- Simpan Draft button: shortcut="Ctrl+S"
+
+This enables keyboard shortcut discovery through tooltip hints, following the established pattern:
+- Cancel buttons: Esc
+- Save buttons: Ctrl+S
+
+**Component Updated**:
+- AssignmentCreation.tsx - Added shortcut="Esc" to Batal button, shortcut="Ctrl+S" to Simpan Draft button
+
+**Pattern**: Always audit high-traffic form creation components (AssignmentCreation, MaterialSharing, etc.) for missing keyboard shortcut hints on action buttons.

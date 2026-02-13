@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { RETRY_CONFIG } from '../constants';
 
 export type ErrorType = 'network' | 'validation' | 'permission' | 'not-found' | 'server' | 'timeout' | 'generic';
 
@@ -42,7 +43,7 @@ export const useErrorRecovery = (error: Error | null, retryAction?: () => void) 
     retryCount,
     handleRetry,
     errorType: error ? getErrorType(error) : 'generic',
-    canRetry: !!retryAction && retryCount < 3,
+    canRetry: !!retryAction && retryCount < RETRY_CONFIG.MAX_ATTEMPTS,
   };
 };
 

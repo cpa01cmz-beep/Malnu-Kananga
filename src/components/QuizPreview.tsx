@@ -78,10 +78,10 @@ export function QuizPreview({ quiz, onSave, onCancel }: QuizPreviewProps) {
             )}
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={onCancel}>
+            <Button variant="outline" onClick={onCancel} shortcut="Esc">
               Batal
             </Button>
-            <Button onClick={handleSave}>
+            <Button onClick={handleSave} shortcut="Ctrl+S">
               Simpan Kuis
             </Button>
           </div>
@@ -237,10 +237,10 @@ function QuestionCard({ question, index, isEditing, onEdit, onSave, onDelete }: 
               {index + 1}
             </span>
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleSave}>
+              <Button size="sm" onClick={handleSave} shortcut="Ctrl+S">
                 Simpan
               </Button>
-              <Button size="sm" variant="outline" onClick={handleCancel}>
+              <Button size="sm" variant="outline" onClick={handleCancel} shortcut="Esc">
                 Batal
               </Button>
             </div>

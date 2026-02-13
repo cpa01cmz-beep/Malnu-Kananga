@@ -19,9 +19,17 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                         <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-3">
                             {APP_CONFIG.SCHOOL_ADDRESS}
                         </p>
-                        <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                            <a href={`mailto:${INFO_EMAIL}`} className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">{INFO_EMAIL}</a>
-                        </p>
+                        {INFO_EMAIL && (
+                            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+                                <a 
+                                    href={`mailto:${INFO_EMAIL}`} 
+                                    aria-label={`Kirim email ke ${INFO_EMAIL}`}
+                                    className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium"
+                                >
+                                    {INFO_EMAIL}
+                                </a>
+                            </p>
+                        )}
                     </div>
 
                     <div>

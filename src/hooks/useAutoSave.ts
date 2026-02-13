@@ -7,7 +7,7 @@ import { useOfflineActionQueue } from '../services/offlineActionQueueService';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { logger } from '../utils/logger';
 import type { ActionType } from '../services/offlineActionQueueService';
-import { DEBOUNCE_DELAYS, SCHEDULER_INTERVALS } from '../constants';
+import { DEBOUNCE_DELAYS, SCHEDULER_INTERVALS, STORAGE_KEY_PREFIX } from '../constants';
 
 export interface AutoSaveConfig<T> {
   /** Debounce delay in milliseconds (default: 2000) */
@@ -135,7 +135,7 @@ export function useAutoSave<T extends object>(
     
     addAction({
       type: actionType,
-      entity: (entityType || storageKey.replace('malnu_', '').replace('_data', '')) as never,
+      entity: (entityType || storageKey.replace(STORAGE_KEY_PREFIX, '').replace('_data', '')) as never,
       entityId,
       data: safeData,
       endpoint,

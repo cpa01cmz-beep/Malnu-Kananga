@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { logger } from '../../utils/logger';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, TIME_MS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -124,7 +124,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       // Focus input after a short delay to ensure modal is rendered
       setTimeout(() => {
         inputRef.current?.focus();
-      }, 50);
+      }, TIME_MS.SHORT);
     }
   }, [isOpen]);
 

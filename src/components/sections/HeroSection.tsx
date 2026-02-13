@@ -4,7 +4,7 @@ import GradientButton from '../ui/GradientButton';
 import Heading from '../ui/Heading';
 import { getResponsiveGradient } from '../../config/gradients';
 import { HEIGHT_CLASSES } from '../../config/heights';
-import { UI_SPACING } from '../../constants';
+import { UI_SPACING, APP_CONFIG } from '../../constants';
 import { ANIMATION_PRESETS } from '../../utils/animationUtils';
 import { buildTypographyClasses, TYPOGRAPHY_PATTERNS } from '../../utils/typographyUtils';
 
@@ -32,7 +32,7 @@ const HeroSection: React.FC = () => {
   responsive: { sm: '6xl', md: '7xl', lg: '8xl' }
 })} ${TYPOGRAPHY_PATTERNS.display.hero} mb-6 sm:mb-8 animate-scale-in bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800 bg-clip-text text-transparent dark:from-primary-400 dark:via-primary-500 dark:to-primary-600 reading-enhanced text-contrast-enhanced`}
         >
-          MA Malnu Kananga
+          {APP_CONFIG.SCHOOL_NAME}
         </Heading>
         <p className={`max-w-3xl mx-auto ${buildTypographyClasses({ 
   size: 'lg', 

@@ -166,8 +166,8 @@ const Toast: React.FC<ToastProps> = ({
   const ariaLive = type === 'error' ? 'assertive' : 'polite';
 
   const visibilityClasses = isVisible
-    ? "translate-x-0 opacity-100 animate-slide-in-right"
-    : "translate-x-full opacity-0 pointer-events-none";
+    ? "translate-x-0 opacity-100 animate-slide-in-right motion-reduce:animate-none"
+    : "translate-x-full opacity-0 pointer-events-none toast-exit motion-reduce:animate-none";
 
   const icons = {
       success: (

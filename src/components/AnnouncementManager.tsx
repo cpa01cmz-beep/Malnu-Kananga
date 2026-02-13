@@ -18,6 +18,7 @@ import Input from './ui/Input';
 import Textarea from './ui/Textarea';
 import Select from './ui/Select';
 import Section from './ui/Section';
+import ConfirmationDialog from './ui/ConfirmationDialog';
 import { PencilIcon } from './icons/PencilIcon';
 import { TrashIcon } from './icons/TrashIcon';
 import EyeIcon from './icons/EyeIcon';
@@ -29,7 +30,6 @@ import {
   VALIDATION_MESSAGES,
   SUCCESS_MESSAGES,
   API_ERROR_MESSAGES,
-  USER_GUIDANCE,
 } from '../utils/errorMessages';
 interface AnnouncementManagerProps {
   onBack: () => void;
@@ -49,6 +49,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
   const [showAnalyticsModal, setShowAnalyticsModal] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [announcementToDelete, setAnnouncementToDelete] = useState<Announcement | null>(null);
 
   const [formData, setFormData] = useState<AnnouncementFormData>({
     title: '',
@@ -206,14 +207,18 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
     }
   };
 
-  // Delete announcement
-  const handleDelete = async (id: string) => {
-    if (!confirm(USER_GUIDANCE.CONFIRM_DELETE)) {
-      return;
-    }
+  const requestDelete = (announcement: Announcement) => {
+    setAnnouncementToDelete(announcement);
+  };
 
+  const confirmDelete = async () => {
+    if (!announcementToDelete) return;
+    
+    const id = announcementToDelete.id;
+    
     if (!isOnline) {
       onShowToast(API_ERROR_MESSAGES.NETWORK_ERROR, 'error');
+      setAnnouncementToDelete(null);
       return;
     }
 
@@ -227,6 +232,8 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
     } catch (error) {
       logger.error('Failed to delete announcement:', error);
       onShowToast(API_ERROR_MESSAGES.OPERATION_FAILED, 'error');
+    } finally {
+      setAnnouncementToDelete(null);
     }
   };
 
@@ -443,7 +450,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             variant="ghost"
                           />
                           <IconButton
-                            onClick={() => handleDelete(announcement.id)}
+                            onClick={() => requestDelete(announcement)}
                             icon={<TrashIcon className="w-5 h-5" />}
                             title="Hapus"
                             ariaLabel="Hapus"
@@ -565,6 +572,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
               onClick={handleSave}
               disabled={saving}
               className="flex items-center gap-2"
+              shortcut="Ctrl+S"
             >
               {saving ? (
                 <>
@@ -651,6 +659,17 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
           </div>
         </Modal>
       )}
+
+      <ConfirmationDialog
+        isOpen={!!announcementToDelete}
+        title="Hapus Pengumuman"
+        message={`Apakah Anda yakin ingin menghapus pengumuman "${announcementToDelete?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+        type="danger"
+        confirmText="Hapus"
+        cancelText="Batal"
+        onConfirm={confirmDelete}
+        onCancel={() => setAnnouncementToDelete(null)}
+      />
     </main>
   );
 };
