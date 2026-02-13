@@ -329,6 +329,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                     <button
                       key={size}
                       onClick={() => updateSetting('fontSize', size)}
+                      aria-pressed={settings.fontSize === size}
                       className={`p-3 rounded-lg border transition-colors duration-200 ${
                         settings.fontSize === size
                           ? 'bg-primary-500 text-white border-primary-500'
@@ -351,6 +352,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                     <button
                       key={spacing}
                       onClick={() => updateSetting('lineSpacing', spacing)}
+                      aria-pressed={settings.lineSpacing === spacing}
                       className={`p-3 rounded-lg border transition-colors duration-200 ${
                         settings.lineSpacing === spacing
                           ? 'bg-primary-500 text-white border-primary-500'
@@ -373,6 +375,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                     <button
                       key={spacing}
                       onClick={() => updateSetting('letterSpacing', spacing)}
+                      aria-pressed={settings.letterSpacing === spacing}
                       className={`p-3 rounded-lg border transition-colors duration-200 ${
                         settings.letterSpacing === spacing
                           ? 'bg-primary-500 text-white border-primary-500'
@@ -401,6 +404,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                     <button
                       key={mode}
                       onClick={() => updateSetting('contrastMode', mode)}
+                      aria-pressed={settings.contrastMode === mode}
                       className={`p-3 rounded-lg border transition-colors duration-200 ${
                         settings.contrastMode === mode
                           ? 'bg-primary-500 text-white border-primary-500'
@@ -442,6 +446,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 </div>
                 <button
                   onClick={() => updateSetting('readableWidth', !settings.readableWidth)}
+                  aria-pressed={settings.readableWidth}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
                     settings.readableWidth ? 'bg-primary-500' : 'bg-neutral-200 dark:bg-neutral-600'
                   }`}
@@ -470,6 +475,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               </div>
               <button
                 onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
+                aria-pressed={settings.reducedMotion}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
                   settings.reducedMotion ? 'bg-primary-500' : 'bg-neutral-200 dark:bg-neutral-600'
                 }`}
