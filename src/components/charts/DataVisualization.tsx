@@ -3,7 +3,7 @@ import { CHART_COLOR_SCHEMES, CHART_DEFAULT_COLORS } from '../../constants';
 
 /**
  * Enhanced Data Visualization Components
- * Comprehensive chart library for the MA Malnu Kananga system
+ * Comprehensive chart library for the school management system
  */
 
 // Base chart interfaces

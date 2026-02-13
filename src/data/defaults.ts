@@ -1,7 +1,7 @@
 
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
-import { EXTERNAL_URLS, USER_ROLES } from '../constants';
+import { EXTERNAL_URLS, USER_ROLES, APP_CONFIG } from '../constants';
 import DocumentTextIcon from '../components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from '../components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from '../components/icons/ClipboardDocumentCheckIcon';
@@ -28,7 +28,7 @@ export const INITIAL_PROGRAMS: FeaturedProgram[] = [
 
 export const INITIAL_NEWS: LatestNews[] = [
     {
-        title: 'MA Malnu Kananga Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten',
+        title: `${APP_CONFIG.SCHOOL_NAME} Raih Juara 1 Lomba Cerdas Cermat Tingkat Kabupaten`,
         date: '15 Juli 2024',
         category: 'Prestasi',
         imageUrl: '/images/placeholder.svg'

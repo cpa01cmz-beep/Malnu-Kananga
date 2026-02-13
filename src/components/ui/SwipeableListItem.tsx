@@ -6,6 +6,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useSwipeToDelete, useLongPress } from '../../utils/gestures';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { TIME_MS, UI_GESTURES } from '../../constants';
 
 interface SwipeableListItemProps {
   children: React.ReactNode;
@@ -38,7 +39,7 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
   swipeDirection = 'right',
   confirmBeforeDelete = false,
   confirmMessage = 'Apakah Anda yakin ingin menghapus item ini?',
-  confirmDelay = 2000,
+  confirmDelay = 2 * TIME_MS.ONE_SECOND,
 }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmTimer, setConfirmTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
@@ -80,7 +81,7 @@ const SwipeableListItem: React.FC<SwipeableListItemProps> = ({
 
   // Long press for delete (as alternative to swipe)
   const longPressConfig = {
-    delay: 500,
+    delay: UI_GESTURES.LONG_PRESS_DELAY,
     onLongPress: () => {
       if (!disabled && onDelete) {
         if (confirmBeforeDelete) {
