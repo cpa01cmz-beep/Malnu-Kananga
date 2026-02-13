@@ -1793,6 +1793,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 onClick={() => setShowRatingModal(false)}
                 variant="secondary"
                 size="sm"
+                shortcut="Esc"
               >
                 Batal
               </Button>
@@ -1801,6 +1802,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 disabled={userRating === 0}
                 variant="success"
                 size="sm"
+                shortcut="Enter"
               >
                 Kirim Review
               </Button>
