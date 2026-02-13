@@ -96,7 +96,7 @@ describe('FileInput Component', () => {
     render(<FileInput label="Document" required />);
     const requiredIndicator = screen.getByText('*');
     expect(requiredIndicator).toBeInTheDocument();
-    expect(requiredIndicator).toHaveAttribute('aria-label', 'wajib diisi');
+    expect(requiredIndicator).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('associates label with input using htmlFor', () => {
