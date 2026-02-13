@@ -376,7 +376,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                 fullWidth
               />
             </div>
-            <Button type="submit" fullWidth isLoading={isSaving}>
+            <Button type="submit" fullWidth isLoading={isSaving} shortcut="Ctrl+S">
               {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE}
             </Button>
           </form>

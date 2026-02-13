@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Button from './Button';
+import { TIME_MS } from '../../constants';
 
 export interface ModalBaseProps {
   isOpen: boolean;
@@ -64,7 +65,7 @@ const BaseModal: React.FC<ModalBaseProps> = ({
           ) as HTMLElement;
           firstFocusable?.focus();
         }
-      }, 100);
+      }, TIME_MS.MODERATE);
     } else {
       document.body.style.overflow = originalOverflow;
     }
