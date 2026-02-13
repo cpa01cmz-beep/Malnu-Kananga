@@ -64,5 +64,8 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as PDFExportButton } from './PDFExportButton';
 export { default as DataExportImportButton } from './DataExportImportButton';
 
+// Security Components
+export { TwoFactorSetup, TwoFactorDisable, TwoFactorStatus } from './TwoFactorAuth';
+
 // Legacy Component (for backward compatibility)
 export { default as FileUpload } from '../FileUpload';
