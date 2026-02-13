@@ -49,3 +49,21 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 - MessageInput.tsx - Messaging send button
 
 **Pattern**: Always audit input components with keyboard shortcuts - if they handle Enter/Ctrl+Enter for submission, add shortcut hints to make them discoverable.
+
+---
+
+## 2026-02-13 - Native Date Input Label Association
+**Learning**: Native `<input type="date">` elements require explicit label association using `htmlFor` and `id` attributes. While some components use the Input UI component (which handles this automatically), direct native inputs in high-traffic forms (AttendanceManagement, AcademicGrades, MaterialSharing, ParentMeetingsView) were missing proper label associations.
+
+**Action**: Always verify date/time inputs have proper label association:
+- Add unique `id` to each date input
+- Add matching `htmlFor` to the label element
+- If using the Input component with `label` prop, it's handled automatically
+
+**Files Fixed**:
+- AcademicGrades.tsx - Added id="goal-end-date" and htmlFor
+- AttendanceManagement.tsx - Added id="attendance-date" and htmlFor  
+- ParentMeetingsView.tsx - Added htmlFor="meeting-date" (id already existed)
+- MaterialSharing.tsx - Added label with id="expiration-date" and htmlFor
+
+**Pattern**: Audit all native form inputs (not wrapped in UI components) for proper label association.

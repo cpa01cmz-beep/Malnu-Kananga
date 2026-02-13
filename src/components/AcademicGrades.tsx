@@ -603,8 +603,9 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Target Tanggal</label>
+                <label htmlFor="goal-end-date" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Target Tanggal</label>
                 <input
+                  id="goal-end-date"
                   type="date"
                   value={newGoal.endDate}
                   onChange={(e) => setNewGoal({ ...newGoal, endDate: e.target.value })}
