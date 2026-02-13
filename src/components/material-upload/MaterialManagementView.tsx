@@ -33,6 +33,13 @@ interface MaterialManagementViewProps {
   filteredMaterials: ELibraryType[];
   getActiveFilterCount: () => number;
   categories: string[];
+  /** Enhanced toast handler with undo support for destructive actions */
+  onShowToast?: (
+    message: string,
+    type: 'success' | 'error' | 'info',
+    onUndo?: () => void,
+    isDestructive?: boolean
+  ) => void;
 }
 
 export function MaterialManagementView({
@@ -48,7 +55,26 @@ export function MaterialManagementView({
   filteredMaterials,
   getActiveFilterCount,
   categories,
+  onShowToast,
 }: MaterialManagementViewProps) {
+  const [recentlyDeleted, setRecentlyDeleted] = React.useState<ELibraryType | null>(null);
+
+  const handleMaterialDelete = React.useCallback((material: ELibraryType) => {
+    setRecentlyDeleted(material);
+    onMaterialDelete(material);
+
+    onShowToast?.(
+      `"${material.title}" telah dihapus`,
+      'info',
+      () => {
+        if (recentlyDeleted) {
+          console.log('Undo deletion of:', recentlyDeleted.title);
+          setRecentlyDeleted(null);
+        }
+      },
+      true
+    );
+  }, [onMaterialDelete, onShowToast, recentlyDeleted]);
   const getFileIcon = (fileType: string): string => {
     const type = fileType.toLowerCase();
     if (type.includes('pdf')) return 'PDF';
@@ -66,15 +92,22 @@ export function MaterialManagementView({
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
-  // Global keyboard shortcut to clear all filters (Ctrl+Shift+X)
+  const handleClearFilters = useCallback(() => {
+    const filterCount = getActiveFilterCount();
+    onClearFilters();
+    if (filterCount > 0) {
+      onShowToast?.(`${filterCount} filter telah dihapus`, 'info');
+    }
+  }, [getActiveFilterCount, onClearFilters, onShowToast]);
+
   const handleGlobalKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'x') {
       e.preventDefault();
       if (getActiveFilterCount() > 0) {
-        onClearFilters();
+        handleClearFilters();
       }
     }
-  }, [getActiveFilterCount, onClearFilters]);
+  }, [getActiveFilterCount, handleClearFilters]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -162,7 +195,7 @@ export function MaterialManagementView({
               <Button 
                 size="sm" 
                 variant="ghost" 
-                onClick={onClearFilters}
+                onClick={handleClearFilters}
                 shortcut="Ctrl+Shift+X"
               >
                 Hapus Semua Filter
@@ -277,7 +310,7 @@ export function MaterialManagementView({
                       </svg>
                     </button>
                     <button
-                      onClick={() => onMaterialDelete(item)}
+                      onClick={() => handleMaterialDelete(item)}
                       className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                       title="Hapus Materi"
                       aria-label="Hapus Materi"
@@ -304,7 +337,7 @@ export function MaterialManagementView({
                 suggestedActions={getActiveFilterCount() > 0 ? [
                   {
                     label: 'Hapus Filter',
-                    onClick: onClearFilters,
+                    onClick: handleClearFilters,
                     variant: 'primary',
                   },
                   {

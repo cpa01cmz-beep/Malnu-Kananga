@@ -275,6 +275,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
           filteredMaterials={filteredMaterials}
           getActiveFilterCount={() => getActiveFilterCount(filters)}
           categories={categories}
+          onShowToast={onShowToast}
         />
       )}
 
