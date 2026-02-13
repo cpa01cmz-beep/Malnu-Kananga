@@ -532,6 +532,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                               onClick={() => generateQRCode(item)}
                               className="text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1.5 rounded-full transition-colors"
                               title="Generate QR Code"
+                              aria-label={`Generate QR Code untuk ${item.itemName}`}
                             >
                               <ArchiveBoxIcon />
                             </button>
