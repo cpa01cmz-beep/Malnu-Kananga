@@ -184,19 +184,30 @@ const App: React.FC = () => {
     setIsThemeSelectorOpen(true);
   };
   
-  // Toast State
-  const [toast, setToast] = useState<{ message: string; type: ToastType; isVisible: boolean }>({
+  // Toast State with undo support for destructive actions
+  const [toast, setToast] = useState<{
+    message: string;
+    type: ToastType;
+    isVisible: boolean;
+    onUndo?: () => void;
+    isDestructive?: boolean;
+  }>({
     message: '',
     type: 'success',
     isVisible: false,
   });
 
-  const showToast = (message: string, type: ToastType = 'success') => {
-    setToast({ message, type, isVisible: true });
+  const showToast = (
+    message: string,
+    type: ToastType = 'success',
+    onUndo?: () => void,
+    isDestructive?: boolean
+  ) => {
+    setToast({ message, type, isVisible: true, onUndo, isDestructive });
   };
 
   const hideToast = () => {
-    setToast((prev: typeof toast) => ({ ...prev, isVisible: false }));
+    setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
   const handleLoginSuccess = (role: UserRole, extraRole: UserExtraRole = null) => {
@@ -509,6 +520,8 @@ const App: React.FC = () => {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={hideToast}
+        onUndo={toast.onUndo}
+        isDestructive={toast.isDestructive}
       />
 
       <ScrollToTop
