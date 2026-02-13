@@ -6,6 +6,7 @@
 import React from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { UI_DIMENSIONS } from '../../constants';
+import { SPACING_CONFIG } from '../../config/spacing-system';
 
 export type SkeletonVariant = 
   | 'text' 
@@ -292,11 +293,11 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
       <div className="flex space-x-4 pt-4">
         <div
           className={`${baseClasses} rounded-lg h-10`}
-          style={{ width: '120px', ...getSkeletonStyle() }}
+          style={{ width: `${SPACING_CONFIG.scale[24]}rem`, ...getSkeletonStyle() }}
         />
         <div
           className={`${baseClasses} rounded-lg h-10`}
-          style={{ width: '80px', ...getSkeletonStyle() }}
+          style={{ width: `${SPACING_CONFIG.scale[20]}rem`, ...getSkeletonStyle() }}
         />
       </div>
     </div>
@@ -309,7 +310,7 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
           <div className="flex items-start space-x-3">
             <div
               className={`${baseClasses} rounded-full mt-1`}
-              style={{ width: '40px', height: '40px', ...getSkeletonStyle() }}
+              style={{ width: `${SPACING_CONFIG.scale[10]}rem`, height: `${SPACING_CONFIG.scale[10]}rem`, ...getSkeletonStyle() }}
             />
             <div className="flex-1 space-y-2">
               <div
@@ -339,7 +340,7 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
       />
       <div
         className={`${baseClasses} rounded-lg`}
-        style={{ width: '100%', height: height || '300px', ...getSkeletonStyle() }}
+        style={{ width: '100%', height: height || `${SPACING_CONFIG.scale[32] * 4}rem`, ...getSkeletonStyle() }}
       />
     </div>
   );
@@ -350,14 +351,14 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
         <div className="flex items-center justify-between">
           <div
             className={`${baseClasses} rounded-lg h-6`}
-            style={{ width: '150px', ...getSkeletonStyle() }}
+            style={{ width: `${SPACING_CONFIG.scale[32]}rem`, ...getSkeletonStyle() }}
           />
           <div className="flex space-x-2">
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={`cal-btn-${i}`}
                 className={`${baseClasses} rounded-lg h-8`}
-                style={{ width: '40px', ...getSkeletonStyle() }}
+                style={{ width: `${SPACING_CONFIG.scale[10]}rem`, ...getSkeletonStyle() }}
               />
             ))}
           </div>
@@ -394,7 +395,7 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
           <div className="flex items-start space-x-3">
             <div
               className={`${baseClasses} rounded-full mt-1`}
-              style={{ width: '32px', height: '32px', ...getSkeletonStyle() }}
+              style={{ width: `${SPACING_CONFIG.scale[8]}rem`, height: `${SPACING_CONFIG.scale[8]}rem`, ...getSkeletonStyle() }}
             />
             <div className="flex-1 space-y-2">
               <div
