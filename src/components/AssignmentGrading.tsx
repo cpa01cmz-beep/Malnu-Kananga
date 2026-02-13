@@ -891,6 +891,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   disabled={submitting}
                   className="flex-1"
                   shortcut="Ctrl+S"
+                  isLoading={submitting}
                 >
                   {submitting ? UI_STRINGS.SAVING : 'Simpan Nilai'}
                 </Button>
@@ -898,6 +899,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   onClick={handleBackToSubmissions}
                   variant="secondary"
                   disabled={submitting}
+                  shortcut="Esc"
                 >
                   Batal
                 </Button>
