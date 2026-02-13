@@ -272,3 +272,19 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 
 **Pattern**: Always audit form and settings buttons - if they persist data, use the Button component with shortcut hints for discoverable keyboard shortcuts.
 
+---
+
+## 2026-02-13 - StudentAssignments Button Keyboard Shortcuts
+
+**Learning**: The StudentAssignments component had submit and cancel buttons that supported keyboard shortcuts (Enter to submit, Esc to cancel) but users couldn't discover them without visual hints. Additionally, the loading state was handled manually via text change rather than using the Button component's built-in `isLoading` prop which provides a proper spinner.
+
+**Action**: Add keyboard shortcut hints and proper loading state to StudentAssignments action buttons:
+- Cancel button: `shortcut="Esc"` (Modal already handles Escape key for closing)
+- Submit button: `shortcut="Enter"` (natural submission action)
+- Submit button: `isLoading={submitting}` (proper spinner instead of text change)
+
+**File Fixed**:
+- StudentAssignments.tsx - Added keyboard shortcuts and isLoading prop to submit buttons
+
+**Pattern**: Always audit form submission buttons - if they handle Enter/Esc for submission/cancellation, add shortcut hints to make them discoverable. Use `isLoading` prop instead of manual text changes for loading states.
+
