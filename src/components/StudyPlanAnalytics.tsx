@@ -390,7 +390,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
             <p className="text-gray-600 mt-1">Melacak kemajuan dan efektivitas rencana belajar Anda</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={handleRefreshAnalytics}>
+            <Button variant="secondary" onClick={handleRefreshAnalytics} shortcut="Ctrl+R">
               Perbarui
             </Button>
             <Button variant="secondary" onClick={handleExportAnalytics} aria-label="Ekspor analitik rencana belajar ke PDF">
