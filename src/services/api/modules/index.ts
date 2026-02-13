@@ -25,3 +25,4 @@ export { chatAPI } from './chat';
 export { paymentsAPI } from './payments';
 export type { CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse } from './payments';
 export { auditAPI, type AuditLogEntry, type AuditLogFilter, type AuditLogExportOptions, type AuditLogStats } from './audit';
+export { searchAPI, type SearchResult, type SearchFilters, type SearchResponse, type SearchResultType, type SavedSearch } from './search';

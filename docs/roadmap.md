@@ -72,6 +72,10 @@ Build a world-class school management system with AI-powered features, voice int
 | T009: Real-time Collab | ✅ Completed | 2026-02-13 |
 | T010: Online Assessment | ❌ Pending | 2026-04-15 |
 | T011: Parent Dashboard | ❌ Pending | 2026-04-30 |
+| T012: Global Search | ✅ Completed | 2026-02-13 |
+| T013: Doc Templates | ❌ Pending | 2026-05-15 |
+| T014: 2FA Security | ❌ Pending | 2026-05-30 |
+| T015: Scheduled Automation | ❌ Pending | 2026-06-15 |
 
 ### v3.12.0 - Q2 2026
 
@@ -107,6 +111,8 @@ Build a world-class school management system with AI-powered features, voice int
 
 ## Changelog
 
+- **2026-02-13**: Creative Phase - Added F017 (2FA Security), F018 (Scheduled Automation)
+- **2026-02-13**: Added T014 (2FA), T015 (Scheduled Automation)
 - **2026-02-13**: Creative Phase - Added F014 (Gamification), F015 (Global Search), F016 (Doc Templates)
 - **2026-02-13**: Creative Phase - Added F011 (Online Assessment), F012 (Student Portfolio), F013 (Parent Dashboard)
 - **2026-02-13**: Added T010 (Online Assessment), T011 (Parent Dashboard)

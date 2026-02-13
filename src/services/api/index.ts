@@ -35,9 +35,11 @@ import {
   type PaymentStatusResponse,
 } from './modules';
 import { auditAPI } from './modules/audit';
+import { searchAPI } from './modules/search';
 import type { AuditLogEntry, AuditLogFilter, AuditLogExportOptions, AuditLogStats } from './modules/audit';
+import type { SearchResult, SearchFilters, SearchResponse, SearchResultType, SavedSearch } from './modules/search';
 
-export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse, AuditLogEntry, AuditLogFilter, AuditLogExportOptions, AuditLogStats };
+export type { LoginResponse, ApiResponse, AuthPayload, RequestOptions, FileUploadResponse, UploadProgress, CreatePaymentRequest, PaymentData, PaymentStatus, PaymentStatusResponse, AuditLogEntry, AuditLogFilter, AuditLogExportOptions, AuditLogStats, SearchResult, SearchFilters, SearchResponse, SearchResultType, SavedSearch };
 
 export const apiService = {
   auth: authAPI,
@@ -66,6 +68,7 @@ export const apiService = {
   chat: chatAPI,
   payments: paymentsAPI,
   audit: auditAPI,
+  search: searchAPI,
   getAuthToken,
   getRefreshToken,
   parseJwtPayload,
@@ -105,4 +108,5 @@ export {
   chatAPI,
   paymentsAPI,
   auditAPI,
+  searchAPI,
 };
