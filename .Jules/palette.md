@@ -290,3 +290,21 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - aria-label for screen reader accessibility
 - shortcut="Ctrl+R" to make the keyboard shortcut discoverable
 
+---
+
+## 2026-02-13 - EnhancedMaterialSharing Toggle Button Accessibility
+
+**Learning**: The EnhancedMaterialSharing component had two toggle button groups (Sharing Mode and Permission) that used visual styling (border color, background) to indicate selected state but were missing `aria-pressed` attributes. This made the selected state invisible to screen reader users.
+
+**Action**: Add `aria-pressed={boolean}` to all native `<button>` elements used as toggle buttons in EnhancedMaterialSharing:
+- Sharing Mode buttons: `aria-pressed={sharingMode === mode}` (users/roles/public)
+- Permission buttons: `aria-pressed={permission === perm}` (view/edit/admin)
+
+**File Fixed**:
+- src/components/EnhancedMaterialSharing.tsx - Added aria-pressed to 2 toggle groups (6 buttons total)
+
+**Pattern**: Any native `<button>` element used as a toggle (where clicking changes its visual appearance to indicate selected/unselected state) MUST have `aria-pressed` attribute. This applies to:
+- Button groups where only one can be selected (radio-like behavior)
+- Toggle buttons that change appearance based on state
+- Any button that shows selected/unselected visual feedback
+
