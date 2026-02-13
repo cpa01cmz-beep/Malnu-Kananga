@@ -284,17 +284,19 @@ case 'announcement':
                           )}
                         </div>
                       </div>
-                      {!notification.read && (
-                        <IconButton
-                          onClick={() => {
-                            unifiedNotificationManager.markAsRead(notification.id);
-                            loadNotificationHistory();
-                          }}
-                          icon={<CheckCircleIcon className="w-4 h-4" />}
-                          variant="ghost"
-                          ariaLabel="Tandai notifikasi sebagai dibaca"
-                        />
-                      )}
+                        {!notification.read && (
+                          <IconButton
+                            onClick={() => {
+                              unifiedNotificationManager.markAsRead(notification.id);
+                              loadNotificationHistory();
+                            }}
+                            icon={<CheckCircleIcon className="w-4 h-4" />}
+                            variant="ghost"
+                            ariaLabel="Tandai notifikasi sebagai dibaca"
+                            tooltip="Tandai sudah dibaca"
+                            shortcut="Ctrl+D"
+                          />
+                        )}
                     </div>
                   </div>
                 </div>
