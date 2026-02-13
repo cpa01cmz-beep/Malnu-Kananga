@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![Test Coverage](https://img.shields.io/badge/coverage-31.4%25-yellow)
 
-**Version**: 3.10.6 | **Last Updated**: 2026-02-12 | **Status**: ✅ Production Ready
+**Version**: 3.10.6 | **Last Updated**: 2026-02-13 | **Status**: ✅ Production Ready
 
 Smart Portal MA Malnu Kananga - Modern school management system with AI integration.
 
@@ -257,10 +257,10 @@ See `.opencode/README.md` for detailed usage instructions.
 - **Runtime**: Serverless (Cloudflare Workers)
 - **Database**: Cloudflare D1 (SQLite)
 - **Storage**: Cloudflare R2 (S3-compatible)
-- **Deployment**: Wrangler 4.65.0
+- **Deployment**: Wrangler 4.59.2
 
 ### AI & ML
-- **LLM**: Google Gemini API (@google/genai 1.41.0)
+- **LLM**: Google Gemini API (@google/genai 1.37.0)
 - **OCR**: Tesseract.js 7.0.0
 
 ### PWA & Testing
@@ -299,5 +299,5 @@ We welcome contributions! Please follow these guidelines:
 
 ---
 
- **Last Updated**: 2026-02-12
+ **Last Updated**: 2026-02-13
 **Maintained By**: Lead Autonomous Engineer & System Guardian
