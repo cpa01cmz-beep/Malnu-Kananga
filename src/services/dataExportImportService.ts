@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS } from '../constants';
 import { logger } from '../utils/logger';
 import { generateId } from '../utils/idGenerator';
 
@@ -66,7 +66,7 @@ export const DATA_EXPORT_IMPORT_KEYS = {
 
 export const IMPORT_LIMITS = {
   MAX_ROWS: 10000,
-  MAX_FILE_SIZE: 50 * 1024 * 1024,
+  MAX_FILE_SIZE: FILE_SIZE_LIMITS.MATERIAL_DEFAULT, // Flexy: Using centralized constant!
 } as const;
 
 const ENTITY_STORAGE_MAP: Record<DataEntityType, string | null> = {
