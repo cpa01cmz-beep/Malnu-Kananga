@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { UI_DELAYS } from '../../constants';
 
 interface HTMLElementExtended extends HTMLElement {
   focus(): void;
@@ -18,6 +19,11 @@ export interface FloatingActionButtonProps {
   badge?: number | string;
   pulse?: boolean;
   className?: string;
+  /**
+   * Keyboard shortcut to display in tooltip (e.g., "/", "N", "Ctrl+K")
+   * Improves UX by making keyboard shortcuts discoverable
+   */
+  shortcut?: string;
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
@@ -32,12 +38,16 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   badge,
   pulse = false,
   className = '',
+  shortcut,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { onPress, onTap } = useHapticFeedback();
+  const hasTooltip = Boolean(tooltip) && !disabled;
 
   const positionClasses = {
     'bottom-right': 'bottom-6 right-6',
@@ -57,6 +67,36 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
     secondary: 'bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-900 dark:text-white shadow-lg hover:shadow-xl border border-neutral-200 dark:border-neutral-700',
     danger: 'bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl',
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showTooltipWithShortcut = useCallback(() => {
+    if (!disabled) {
+      setShowTooltip(true);
+      // Show shortcut hint after a delay if shortcut is provided
+      if (shortcut) {
+        shortcutHintTimeoutRef.current = setTimeout(() => {
+          setShowShortcutHint(true);
+        }, UI_DELAYS.SHORTCUT_HINT_DELAY);
+      }
+    }
+  }, [disabled, shortcut]);
+
+  const hideTooltipWithShortcut = useCallback(() => {
+    setShowTooltip(false);
+    setShowShortcutHint(false);
+    if (shortcutHintTimeoutRef.current) {
+      clearTimeout(shortcutHintTimeoutRef.current);
+      shortcutHintTimeoutRef.current = null;
+    }
+  }, []);
 
   const handleClick = () => {
     if (disabled) return;
@@ -112,10 +152,10 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        onFocus={() => setShowTooltip(true)}
-        onBlur={() => setShowTooltip(false)}
+        onMouseEnter={hasTooltip ? showTooltipWithShortcut : undefined}
+        onMouseLeave={hasTooltip ? hideTooltipWithShortcut : undefined}
+        onFocus={hasTooltip ? showTooltipWithShortcut : undefined}
+        onBlur={hasTooltip ? hideTooltipWithShortcut : undefined}
         onKeyDown={handleKeyDown}
         disabled={disabled}
         className={`
@@ -132,7 +172,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
           backdrop-blur-sm
           ${prefersReducedMotion ? 'transition-none' : ''}
         `}
-        aria-label={label}
+        aria-label={shortcut ? `${label} (Tekan ${shortcut} saat fokus)` : label}
         title={tooltip || label}
         aria-describedby={showTooltip ? 'fab-tooltip' : undefined}
       >
@@ -164,8 +204,47 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
           className={`absolute ${position.includes('bottom') ? 'bottom-full mb-2' : 'top-full mt-2'} ${position.includes('right') ? 'right-0' : 'left-0'} px-3 py-2 bg-neutral-900 dark:bg-neutral-700 text-white text-sm rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 ${prefersReducedMotion ? 'opacity-100' : 'animate-in fade-in slide-in-from-bottom-1 duration-200'}`}
           role="tooltip"
         >
-          {tooltip}
+          <span className="flex items-center gap-2">
+            <span>{tooltip}</span>
+            {shortcut && (
+              <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500 shadow-sm">
+                {shortcut}
+              </kbd>
+            )}
+          </span>
           <span className={`absolute ${position.includes('bottom') ? 'top-full left-1/2 -translate-x-1/2 border-t-4 border-t-neutral-900 dark:border-t-neutral-700' : 'bottom-full left-1/2 -translate-x-1/2 border-b-4 border-b-neutral-900 dark:border-b-neutral-700'} border-l-4 border-r-4 border-l-transparent border-r-transparent w-0 h-0`} />
+        </div>
+      )}
+
+      {/* Keyboard shortcut hint - Micro UX Delight */}
+      {showShortcutHint && shortcut && !disabled && (
+        <div
+          className={`
+            absolute ${position.includes('bottom') ? 'bottom-full mb-10' : 'top-full mt-10'} 
+            ${position.includes('right') ? 'right-0' : 'left-0'}
+            px-2.5 py-1
+            bg-neutral-800 dark:bg-neutral-700
+            text-white text-[10px] font-medium
+            rounded-md shadow-md
+            whitespace-nowrap
+            transition-all duration-200 ease-out
+            pointer-events-none
+            z-50
+            ${showShortcutHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+          `.replace(/\s+/g, ' ').trim()}
+          role="tooltip"
+          aria-hidden={!showShortcutHint}
+        >
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+              {shortcut}
+            </kbd>
+            <span>pintasan</span>
+          </span>
+          <span 
+            className={`absolute ${position.includes('bottom') ? 'top-full' : 'bottom-full'} left-1/2 -translate-x-1/2 border-4 border-transparent ${position.includes('bottom') ? 'border-t-neutral-800 dark:border-t-neutral-700' : 'border-b-neutral-800 dark:border-b-neutral-700'}`} 
+            aria-hidden="true" 
+          />
         </div>
       )}
 
