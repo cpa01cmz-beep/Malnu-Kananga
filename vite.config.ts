@@ -105,6 +105,20 @@ export default defineConfig(({ mode }) => {
                 },
               },
             },
+            {
+              urlPattern: URL_PATTERNS.IMAGES,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: CACHE_CONFIG.IMAGES.NAME,
+                expiration: {
+                  maxEntries: CACHE_CONFIG.IMAGES.MAX_ENTRIES,
+                  maxAgeSeconds: CACHE_CONFIG.IMAGES.MAX_AGE_SECONDS,
+                },
+                cacheableResponse: {
+                  statuses: [...CACHE_CONFIG.IMAGES.STATUSES],
+                },
+              },
+            },
           ],
         },
       }),
