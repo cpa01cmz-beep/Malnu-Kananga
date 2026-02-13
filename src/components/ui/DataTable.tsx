@@ -9,7 +9,7 @@ import FunnelIcon from '../icons/FunnelIcon';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { DATATABLE_CONFIG } from '../../constants';
+import { DATATABLE_CONFIG, LOADING_MESSAGES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -523,7 +523,7 @@ const DataTable = <T extends Record<string, unknown>>({
     return (
       <LoadingOverlay
         isLoading={loading}
-        message={loading ? 'Memuat data...' : undefined}
+        message={loading ? LOADING_MESSAGES.DATA.LOADING : undefined}
         className={HEIGHTS.CONTENT.TABLE}
       >
         {error && (
