@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useCallback, useEffect } from 'react';
 import { idGenerators } from '../../utils/idGenerator';
-import { UI_DELAYS } from '../../constants';
+import { UI_DELAYS, TIME_MS } from '../../constants';
 
 export type FileInputSize = 'sm' | 'md' | 'lg';
 export type FileInputState = 'default' | 'error' | 'success';
@@ -124,7 +124,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(({
   // Announce to screen readers
   const announceToScreenReader = useCallback((message: string) => {
     setAnnouncement(message);
-    setTimeout(() => setAnnouncement(''), 1000);
+    setTimeout(() => setAnnouncement(''), TIME_MS.ONE_SECOND);
   }, []);
 
   // Handle paste events

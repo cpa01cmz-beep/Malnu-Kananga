@@ -12,7 +12,7 @@ import { emailQueueService } from './emailQueueService';
 import { request } from './apiService';
 import { logger } from '../utils/logger';
 import { isNetworkError } from '../utils/networkStatus';
-import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS, DELAY_MS, TEXT_TRUNCATION } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, EMAIL_CONFIG, TIME_MS, API_ENDPOINTS, DELAY_MS, TEXT_TRUNCATION, PAGINATION_DEFAULTS } from '../constants';
 import { communicationLogService } from './communicationLogService';
 
 class EmailService {
@@ -330,7 +330,7 @@ class EmailService {
     }
   }
 
-  getDeliveryHistory(limit: number = 50): EmailDeliveryStatus[] {
+  getDeliveryHistory(limit: number = PAGINATION_DEFAULTS.EMAIL_HISTORY): EmailDeliveryStatus[] {
     const history = this.loadDeliveryHistory();
     return history.slice(-limit).reverse();
   }
