@@ -2,6 +2,7 @@
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
 import { EXTERNAL_URLS, USER_ROLES, APP_CONFIG } from '../constants';
+import { ENV } from '../config/env';
 import DocumentTextIcon from '../components/icons/DocumentTextIcon';
 import BuildingLibraryIcon from '../components/icons/BuildingLibraryIcon';
 import ClipboardDocumentCheckIcon from '../components/icons/ClipboardDocumentCheckIcon';
@@ -50,7 +51,7 @@ export const INITIAL_NEWS: LatestNews[] = [
 export const getRelatedLinks = () => {
     return [
         {
-            name: 'RDM Malnu Kananga',
+            name: `RDM ${APP_CONFIG.SCHOOL_NAME}`,
             href: EXTERNAL_URLS.RDM_PORTAL,
             icon: React.createElement(DocumentTextIcon, { className: "w-8 h-8 sm:w-10 sm:h-10" }),
             colorClass: getColorIconClass('sky')
@@ -81,8 +82,8 @@ export const RELATED_LINKS = [];
 
 // DATA AKUN DUMMY UNTUK PENGUJIAN
 // Digunakan sebagai default jika LocalStorage kosong atau di-reset
-// Flexy: Using generic domain placeholder for multi-tenant compatibility
-const DUMMY_DOMAIN = 'example.sch.id';
+// Flexy: Using ENV-driven domain for multi-tenant compatibility
+const DUMMY_DOMAIN = ENV.SCHOOL.WEBSITE.replace('https://', '') || 'example.sch.id';
 
 export const INITIAL_USERS: User[] = [
     { 
