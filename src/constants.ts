@@ -550,8 +550,11 @@ export const TIME_MS = {
     // Very short delays for immediate UI updates
     VERY_SHORT: 10,
     SHORT: 50,
+    MODERATE: 100,      // Focus delays, modal transitions
     ANIMATION: 150,
+    MEDIUM: 200,        // Exit animations, auto-close delays
     DEBOUNCE: 300,
+    LONG_UI: 800,       // Long UI delays (search hints, toasts)
     // Standard time units
     ONE_SECOND: 1000,
     FIVE_SECONDS: 5 * 1000,

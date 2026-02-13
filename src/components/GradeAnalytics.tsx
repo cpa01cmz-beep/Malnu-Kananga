@@ -395,6 +395,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           <Button
             onClick={analyzeClassGrades}
             variant="blue-solid"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>
