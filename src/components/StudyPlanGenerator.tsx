@@ -465,32 +465,40 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
           </div>
 
           <div className="mb-6">
-            <div className="flex gap-2 flex-wrap">
+            <div 
+              className="flex gap-2 flex-wrap" 
+              role="tablist" 
+              aria-label="Navigasi rencana belajar"
+            >
                {[
-                 { id: 'overview', label: 'Ringkasan', icon: <ChartBarIcon /> },
-                 { id: 'subjects', label: 'Mata Pelajaran', icon: <BookOpenIcon /> },
-                 { id: 'schedule', label: 'Jadwal', icon: <CalendarDaysIcon /> },
-                 { id: 'recommendations', label: 'Rekomendasi', icon: <LightBulbIcon /> },
-                 { id: 'materials', label: 'Materi', icon: <DocumentTextIcon /> },
-               ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id as ActiveTab)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? 'bg-green-500 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                  }`}
-                >
-                  {tab.icon}
-                  {tab.label}
-                </button>
-              ))}
+                  { id: 'overview', label: 'Ringkasan', icon: <ChartBarIcon /> },
+                  { id: 'subjects', label: 'Mata Pelajaran', icon: <BookOpenIcon /> },
+                  { id: 'schedule', label: 'Jadwal', icon: <CalendarDaysIcon /> },
+                  { id: 'recommendations', label: 'Rekomendasi', icon: <LightBulbIcon /> },
+                  { id: 'materials', label: 'Materi', icon: <DocumentTextIcon /> },
+                ].map((tab) => (
+                 <button
+                   key={tab.id}
+                   role="tab"
+                   aria-selected={activeTab === tab.id}
+                   aria-controls={`panel-${tab.id}`}
+                   tabIndex={activeTab === tab.id ? 0 : -1}
+                   onClick={() => setActiveTab(tab.id as ActiveTab)}
+                   className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500/50 focus-visible:ring-offset-2 ${
+                     activeTab === tab.id
+                       ? 'bg-green-500 text-white'
+                       : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                   }`}
+                 >
+                   {tab.icon}
+                   {tab.label}
+                 </button>
+               ))}
             </div>
           </div>
 
           {activeTab === 'overview' && (
-            <div className="space-y-6">
+            <div role="tabpanel" id="panel-overview" aria-labelledby="overview" className="space-y-6">
               <Card>
                 <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Ringkasan Rencana Belajar</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -538,7 +546,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
           )}
 
           {activeTab === 'subjects' && (
-            <div className="space-y-4">
+            <div role="tabpanel" id="panel-subjects" aria-labelledby="subjects" className="space-y-4">
               <Card>
                 <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Fokus Mata Pelajaran</h3>
                 <div className="space-y-4">
@@ -587,6 +595,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 
           {activeTab === 'schedule' && (
             <Card>
+              <div role="tabpanel" id="panel-schedule" aria-labelledby="schedule">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Jadwal Belajar Mingguan</h3>
               <div className="space-y-4">
                 {['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'].map((day) => {
@@ -620,11 +629,13 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
                   );
                 })}
               </div>
+              </div>
             </Card>
           )}
 
           {activeTab === 'recommendations' && (
             <Card>
+              <div role="tabpanel" id="panel-recommendations" aria-labelledby="recommendations">
               <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">Rekomendasi AI</h3>
               <div className="space-y-4">
                 {studyPlan.recommendations.map((rec, index) => (
@@ -651,11 +662,12 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
                   </div>
                 ))}
               </div>
+              </div>
             </Card>
           )}
 
           {activeTab === 'materials' && (
-            <div className="space-y-6">
+            <div role="tabpanel" id="panel-materials" aria-labelledby="materials" className="space-y-6">
               <Card>
                 <div className="flex flex-col md:flex-row items-start justify-between gap-4 mb-6">
                   <div>
