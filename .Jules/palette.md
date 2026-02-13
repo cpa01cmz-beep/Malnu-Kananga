@@ -4,6 +4,19 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - AssignmentGrading Save Button Keyboard Shortcut
+
+**Learning**: The AssignmentGrading component is a high-traffic teacher component where grades are saved frequently, but the "Simpan Nilai" (Save Grade) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to teachers.
+
+**Action**: Add `shortcut="Ctrl+S"` to all save buttons in high-frequency data entry components. This follows the established pattern from GradingManagement and AttendanceManagement.
+
+**File Fixed**:
+- AssignmentGrading.tsx - Added shortcut="Ctrl+S" to Simpan Nilai button
+
+**Pattern**: High-traffic teacher components (grading, attendance, assignments) benefit from keyboard shortcuts to speed up daily workflows. Always audit save buttons in these components.
+
+---
+
 ## 2026-02-12 - Tooltip Button Accessibility Fix
 **Learning**: Icon-only buttons that provide tooltip information must remain focusable for keyboard users. Setting `tabIndex={-1}` on tooltip buttons prevents keyboard users from accessing important contextual information.
 
