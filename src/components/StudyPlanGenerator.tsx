@@ -395,7 +395,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
           userFriendlyMessage={error}
         />
         <div className="text-center mt-4">
-          <Button onClick={fetchData} variant="red-solid">
+          <Button onClick={fetchData} variant="red-solid" shortcut="Ctrl+R">
             Coba Lagi
           </Button>
         </div>

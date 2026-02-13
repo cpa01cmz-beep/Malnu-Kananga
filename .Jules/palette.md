@@ -97,3 +97,32 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 ---
 
 ## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
+**Learning**: High-traffic "Coba Lagi" (Try Again) buttons that reload data were missing keyboard shortcut hints. Users couldn't discover that they can press Ctrl+R to retry loading data after an error. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
+
+**Action**: Add `shortcut="Ctrl+R"` prop to all "Coba Lagi" / retry buttons in high-traffic components. This makes the keyboard shortcut discoverable through tooltip hints.
+
+**Components Updated**:
+- StudyPlanGenerator.tsx - Added shortcut="Ctrl+R" to retry button
+- ELibrary.tsx - Added shortcut="Ctrl+R" to retry button  
+- GradeAnalytics.tsx - Added shortcut="Ctrl+R" to retry button
+
+**Pattern**: Always audit error state buttons - if they perform data refresh/retry operations, add keyboard shortcut hints. This pattern applies to any button that refetches data after an error state.
+
+---
+
+## 2026-02-13 - Save Button Keyboard Shortcut Discovery
+**Learning**: High-traffic save buttons (grades, attendance, announcements) were missing keyboard shortcut hints. Teachers save grades daily, but couldn't discover the efficient Ctrl+S keyboard shortcut. The Button component already supports the `shortcut` prop which displays a tooltip hint on hover/focus.
+
+**Action**: Add `shortcut="Ctrl+S"` prop to all save/submit buttons in high-traffic data entry components. This makes the keyboard shortcut discoverable through tooltip hints.
+
+**Components Updated**:
+- GradingManagement.tsx - Added shortcut="Ctrl+S" to save grades button
+- AttendanceManagement.tsx - Added shortcut="Ctrl+S" to save attendance button
+- AnnouncementManager.tsx - Added shortcut="Ctrl+S" to save announcement button
+
+**Pattern**: Follows the established keyboard shortcut pattern:
+- Send buttons: Enter (for message input)
+- Refresh/retry buttons: Ctrl+R (for data reload)
+- Save buttons: Ctrl+S (for form submission)
+
+Always audit save/submit buttons in forms - if they persist data, add keyboard shortcut hints.

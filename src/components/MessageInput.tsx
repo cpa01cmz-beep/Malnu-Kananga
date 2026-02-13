@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
+import { XMarkIcon } from './icons/MaterialIcons';
+import { useReducedMotion } from '../hooks/useReducedMotion';
 import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, UI_DIMENSIONS } from '../constants';
 import type { User } from '../types';
 import { logger } from '../utils/logger';
@@ -26,7 +28,10 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
   });
   const [file, setFile] = useState<File | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [showClearTooltip, setShowClearTooltip] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (replyTo && message) {
@@ -55,6 +60,11 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
     }
   };
 
+  const handleClear = () => {
+    setMessage('');
+    textareaRef.current?.focus();
+  };
+
   const handleSend = async () => {
     if ((!message.trim() && !file) || isSending || disabled) return;
 
@@ -81,6 +91,10 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+    if (e.key === 'Escape' && message.length > 0) {
+      e.preventDefault();
+      handleClear();
     }
   };
 
@@ -152,8 +166,9 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
           </svg>
         </Button>
 
-        <div className="flex-1">
+        <div className="flex-1 relative">
           <textarea
+            ref={textareaRef}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -161,9 +176,41 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
             disabled={disabled || isSending}
             aria-disabled={disabled || isSending}
             rows={1}
-            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400 dark:disabled:bg-gray-700"
+            className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-blue-400 dark:focus:ring-blue-400 dark:disabled:bg-gray-700"
             style={{ minHeight: UI_DIMENSIONS.TEXTAREA.MIN_HEIGHT, maxHeight: UI_DIMENSIONS.TEXTAREA.MAX_HEIGHT }}
           />
+
+          {message.length > 0 && !disabled && !isSending && (
+            <>
+              <button
+                type="button"
+                onClick={handleClear}
+                onMouseEnter={() => setShowClearTooltip(true)}
+                onMouseLeave={() => setShowClearTooltip(false)}
+                onFocus={() => setShowClearTooltip(true)}
+                onBlur={() => setShowClearTooltip(false)}
+                className={`absolute right-2 top-2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1 active:scale-95 transition-all duration-200 ${prefersReducedMotion ? '' : 'hover:scale-110'}`}
+                aria-label="Bersihkan pesan (Tekan Escape)"
+                aria-describedby={showClearTooltip ? 'clear-tooltip-message' : undefined}
+              >
+                <XMarkIcon className="h-4 w-4" aria-hidden="true" />
+              </button>
+
+              {showClearTooltip && (
+                <div
+                  id="clear-tooltip-message"
+                  role="tooltip"
+                  className={`absolute right-2 top-10 z-20 px-2.5 py-1.5 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded-lg shadow-lg whitespace-nowrap ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-top-1 duration-150'}`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span>Bersihkan</span>
+                    <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500">Esc</kbd>
+                  </span>
+                  <span className="absolute -top-1 right-3 w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45" aria-hidden="true" />
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         <Button

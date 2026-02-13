@@ -443,7 +443,7 @@ describe('validation', () => {
       const element = createElementSpy.mock.results[0].value;
 
       expect(element.style.position).toBe('absolute');
-      expect(element.style.left).toBe('-10000px');
+      expect(element.style.left).toBe('-9999px');
       expect(element.style.width).toBe('1px');
       expect(element.style.height).toBe('1px');
       expect(element.style.overflow).toBe('hidden');
