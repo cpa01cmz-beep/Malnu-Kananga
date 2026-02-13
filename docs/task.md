@@ -240,6 +240,66 @@
 - [ ] Add grade calculation reminders
 - [ ] Add academic calendar event triggers
 
+### T016: Real-time Grade Notifications (F019)
+**Status**: ✅ Completed
+**Priority**: High
+**Description**: Push notifications to parents when student grades change.
+**Rationale**: F019 - Keep parents informed in real-time.
+**Actions**:
+- [x] Add push notification triggers on grade entry
+- [x] Add notification preferences (threshold-based)
+- [x] Add notification history log
+- [x] Integrate with existing notification system
+**Notes**: Implemented in useGradingData.ts:
+- Uses `useEventNotifications` hook for notifyGradeUpdate
+- Calls `unifiedNotificationManager.showNotification` for immediate push notifications
+- Calls `parentGradeNotificationService.processGradeUpdate` for parent notifications
+- Supports threshold-based notifications via ParentGradeNotificationSettings
+
+### T017: AI Lesson Plan Generator (F020)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: AI-powered generation of lesson plans based on curriculum.
+**Rationale**: F020 - Save teacher preparation time.
+**Actions**:
+- [ ] Add lesson plan generation using Gemini API
+- [ ] Add curriculum template system
+- [ ] Add subject-specific templates
+- [ ] Add export to PDF
+
+### T018: Custom Role-Based Permissions (F021)
+**Status**: ❌ Pending
+**Priority**: High
+**Description**: Granular permission system with custom roles.
+**Rationale**: F021 - Fine-tune security for different staff.
+**Actions**:
+- [ ] Add role builder UI
+- [ ] Add permission matrix
+- [ ] Add role templates
+- [ ] Add permission inheritance
+
+### T019: Student Progress Dashboard (F022)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Visual dashboard for students to track their progress.
+**Rationale**: F022 - Student ownership of learning.
+**Actions**:
+- [ ] Add student-facing analytics
+- [ ] Add progress charts
+- [ ] Add goal setting
+- [ ] Add achievement badges
+
+### T020: AI Automated Feedback (F023)
+**Status**: ❌ Pending
+**Priority**: Medium
+**Description**: Automated grading feedback with AI explanations.
+**Rationale**: F023 - Help students learn from mistakes.
+**Actions**:
+- [ ] Add AI feedback generation
+- [ ] Add mistake identification
+- [ ] Add learning resource suggestions
+- [ ] Add feedback history
+
 ---
 
 ## Notes
@@ -247,3 +307,5 @@
 - Since average score > 90, creative phase was triggered
 - Test coverage is primary area for improvement
 - All other metrics are excellent
+- Added 5 new features (T016-T020) in Phase 3
+- T016: Real-time Grade Notifications verified as already implemented (useGradingData.ts)
