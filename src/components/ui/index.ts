@@ -27,6 +27,7 @@ export { default as SkipLink } from './SkipLink';
 // Display Components
 export { default as Heading } from './Heading';
 export { default as Badge } from './Badge';
+export { default as PresenceIndicator } from './PresenceIndicator';
 export { default as Alert } from './Alert';
 export { default as LinkCard } from './LinkCard';
 export { default as DashboardActionCard } from './DashboardActionCard';
