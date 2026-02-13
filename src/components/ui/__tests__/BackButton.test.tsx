@@ -24,6 +24,77 @@ describe('BackButton', () => {
     vi.useRealTimers();
   });
 
+  describe('Keyboard shortcut hint', () => {
+    it('should show keyboard shortcut in aria-label by default', () => {
+      render(<BackButton onClick={mockOnClick} />);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', expect.stringContaining('Tekan'));
+    });
+
+    it('should show keyboard shortcut kbd element in tooltip on hover', async () => {
+      const user = userEvent.setup();
+      render(<BackButton onClick={mockOnClick} tooltip="Go back" />);
+
+      const button = screen.getByRole('button');
+      await user.hover(button);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip');
+        expect(tooltip).toHaveTextContent('Go back');
+        const kbd = tooltip.querySelector('kbd');
+        expect(kbd).toBeInTheDocument();
+      });
+    });
+
+    it('should not show shortcut hint when showShortcutHint is false', () => {
+      render(<BackButton onClick={mockOnClick} showShortcutHint={false} />);
+
+      const button = screen.getByRole('button');
+      expect(button).not.toHaveAttribute('aria-label', expect.stringContaining('Tekan'));
+    });
+
+    it('should not show shortcut kbd when showShortcutHint is false', async () => {
+      const user = userEvent.setup();
+      render(<BackButton onClick={mockOnClick} tooltip="Go back" showShortcutHint={false} />);
+
+      const button = screen.getByRole('button');
+      await user.hover(button);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip');
+        expect(tooltip).toHaveTextContent('Go back');
+        const kbd = tooltip.querySelector('kbd');
+        expect(kbd).not.toBeInTheDocument();
+      });
+    });
+
+    it('should not show shortcut kbd in tooltip during success state', async () => {
+      render(<BackButton onClick={mockOnClick} showSuccess tooltip="Go back" />);
+
+      await waitFor(() => {
+        const tooltip = screen.getByRole('tooltip');
+        expect(tooltip).toHaveTextContent('Berhasil!');
+        const kbd = tooltip.querySelector('kbd');
+        expect(kbd).not.toBeInTheDocument();
+      });
+    });
+
+    it('should not show shortcut kbd when button is disabled', async () => {
+      const user = userEvent.setup();
+      render(<BackButton onClick={mockOnClick} tooltip="Go back" disabled />);
+
+      const button = screen.getByRole('button');
+      await user.hover(button);
+
+      await waitFor(() => {
+        const tooltips = screen.queryAllByRole('tooltip');
+        const mainTooltip = tooltips.find(t => t.textContent?.includes('Go back'));
+        expect(mainTooltip).toBeUndefined();
+      });
+    });
+  });
+
   it('renders with default label and variant', () => {
     render(<BackButton onClick={mockOnClick} />);
     

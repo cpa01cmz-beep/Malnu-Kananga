@@ -29,8 +29,10 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
   const [file, setFile] = useState<File | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [showClearTooltip, setShowClearTooltip] = useState(false);
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -41,6 +43,14 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
       localStorage.setItem(STORAGE_KEYS.MESSAGE_DRAFTS(replyTo.id), JSON.stringify(drafts));
     }
   }, [message, replyTo]);
+
+  useEffect(() => {
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -186,10 +196,34 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
               <button
                 type="button"
                 onClick={handleClear}
-                onMouseEnter={() => setShowClearTooltip(true)}
-                onMouseLeave={() => setShowClearTooltip(false)}
-                onFocus={() => setShowClearTooltip(true)}
-                onBlur={() => setShowClearTooltip(false)}
+                onMouseEnter={() => {
+                  setShowClearTooltip(true);
+                  shortcutHintTimeoutRef.current = setTimeout(() => {
+                    setShowShortcutHint(true);
+                  }, 400);
+                }}
+                onMouseLeave={() => {
+                  setShowClearTooltip(false);
+                  setShowShortcutHint(false);
+                  if (shortcutHintTimeoutRef.current) {
+                    clearTimeout(shortcutHintTimeoutRef.current);
+                    shortcutHintTimeoutRef.current = null;
+                  }
+                }}
+                onFocus={() => {
+                  setShowClearTooltip(true);
+                  shortcutHintTimeoutRef.current = setTimeout(() => {
+                    setShowShortcutHint(true);
+                  }, 400);
+                }}
+                onBlur={() => {
+                  setShowClearTooltip(false);
+                  setShowShortcutHint(false);
+                  if (shortcutHintTimeoutRef.current) {
+                    clearTimeout(shortcutHintTimeoutRef.current);
+                    shortcutHintTimeoutRef.current = null;
+                  }
+                }}
                 className={`absolute right-2 top-2 p-1.5 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-1 active:scale-95 transition-all duration-200 ${prefersReducedMotion ? '' : 'hover:scale-110'}`}
                 aria-label="Bersihkan pesan (Tekan Escape)"
                 aria-describedby={showClearTooltip ? 'clear-tooltip-message' : undefined}
@@ -208,6 +242,19 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
                     <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500">Esc</kbd>
                   </span>
                   <span className="absolute -top-1 right-3 w-2 h-2 bg-neutral-800 dark:bg-neutral-700 rotate-45" aria-hidden="true" />
+                </div>
+              )}
+
+              {showShortcutHint && (
+                <div
+                  role="tooltip"
+                  className={`absolute right-2 top-[4.5rem] z-20 px-2 py-1 bg-neutral-700 dark:bg-neutral-600 text-white text-[10px] rounded shadow-lg whitespace-nowrap ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-top-1 duration-150'}`}
+                >
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1 py-0.5 bg-neutral-500 dark:bg-neutral-500 rounded text-[9px] font-mono border border-neutral-400">Esc</kbd>
+                    <span>shortcut</span>
+                  </span>
+                  <span className="absolute -top-1 right-3 w-1.5 h-1.5 bg-neutral-700 dark:bg-neutral-600 rotate-45" aria-hidden="true" />
                 </div>
               )}
             </>

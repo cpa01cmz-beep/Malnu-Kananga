@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Button from './Button';
 import { ExclamationCircleIcon, InformationCircleIcon } from '../icons/MaterialIcons';
-import { UI_STRINGS } from '../../constants';
+import { UI_STRINGS, UI_DELAYS } from '../../constants';
 
 export type LoadingStateType = 'spinner' | 'skeleton' | 'dots' | 'pulse' | 'progress';
 export type ErrorSeverity = 'info' | 'warning' | 'error' | 'critical';
@@ -23,7 +23,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
   size = 'md',
   overlay = false,
   children,
-  minLoadTime = 500,
+  minLoadTime = UI_DELAYS.MIN_LOAD_TIME,
 }) => {
   const [showLoading, setShowLoading] = useState(false);
   const minLoadTimerRef = useRef<number | null>(null);

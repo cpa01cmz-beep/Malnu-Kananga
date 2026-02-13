@@ -1,16 +1,20 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react';
 import { UserIcon } from './icons/UserIcon';
 import { BrainIcon } from './icons/BrainIcon';
-import ParentScheduleView from './ParentScheduleView';
-import ParentGradesView from './ParentGradesView';
-import ParentAttendanceView from './ParentAttendanceView';
-import ELibrary from './ELibrary';
-import OsisEvents from './OsisEvents';
+
+// BroCula: Lazy load view components to reduce initial bundle size
+// Each view is only loaded when user navigates to that specific section
+const ParentScheduleView = lazy(() => import('./ParentScheduleView'));
+const ParentGradesView = lazy(() => import('./ParentGradesView'));
+const ParentAttendanceView = lazy(() => import('./ParentAttendanceView'));
+const ELibrary = lazy(() => import('./ELibrary'));
+const OsisEvents = lazy(() => import('./OsisEvents'));
+const ConsolidatedReportsView = lazy(() => import('./ConsolidatedReportsView'));
+const ParentMessagingView = lazy(() => import('./ParentMessagingView'));
+const ParentPaymentsView = lazy(() => import('./ParentPaymentsView'));
+const ParentMeetingsView = lazy(() => import('./ParentMeetingsView'));
+
 import { GRADIENT_CLASSES } from '../config/gradients';
-import ConsolidatedReportsView from './ConsolidatedReportsView';
-import ParentMessagingView from './ParentMessagingView';
-import ParentPaymentsView from './ParentPaymentsView';
-import ParentMeetingsView from './ParentMeetingsView';
 import { ToastType } from './Toast';
 import type { ParentChild, Grade } from '../types';
 import { parentsAPI, authAPI, gradesAPI, attendanceAPI, schedulesAPI } from '../services/apiService';
@@ -32,6 +36,7 @@ import VoiceCommandsHelp from './VoiceCommandsHelp';
 import ParentNotificationSettings from './ParentNotificationSettings';
 import NotificationHistory from './NotificationHistory';
 import SuspenseLoading from './ui/SuspenseLoading';
+import { CardSkeleton } from './ui/Skeleton';
 import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import { RealTimeEventType } from '../services/webSocketService';
@@ -796,7 +801,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentScheduleView onShowToast={onShowToast} child={selectedChild} />
+            </Suspense>
           </div>
         )}
 
@@ -816,7 +823,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentGradesView onShowToast={onShowToast} child={selectedChild} />
+            </Suspense>
           </div>
         )}
 
@@ -836,7 +845,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentAttendanceView onShowToast={onShowToast} child={selectedChild} />
+            </Suspense>
           </div>
         )}
 
@@ -856,7 +867,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ELibrary onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ELibrary onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} userId={authAPI.getCurrentUser()?.id || ''} />
+            </Suspense>
           </div>
         )}
 
@@ -876,7 +889,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <OsisEvents onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} />
+            <Suspense fallback={<CardSkeleton />}>
+              <OsisEvents onBack={() => handleViewNavigation('home')} onShowToast={onShowToast} />
+            </Suspense>
           </div>
         )}
 
@@ -896,7 +911,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ConsolidatedReportsView onShowToast={onShowToast} children={children} />
+            </Suspense>
           </div>
         )}
 
@@ -916,7 +933,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentMessagingView onShowToast={onShowToast} children={children} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentMessagingView onShowToast={onShowToast} children={children} />
+            </Suspense>
           </div>
         )}
 
@@ -936,7 +955,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentPaymentsView onShowToast={onShowToast} children={children} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentPaymentsView onShowToast={onShowToast} children={children} />
+            </Suspense>
           </div>
         )}
 
@@ -956,7 +977,9 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 }
               }}
             />
-            <ParentMeetingsView onShowToast={onShowToast} children={children} />
+            <Suspense fallback={<CardSkeleton />}>
+              <ParentMeetingsView onShowToast={onShowToast} children={children} />
+            </Suspense>
           </div>
         )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { UI_DELAYS } from '../../constants';
 
 interface DisabledLinkButtonProps {
   /** Button text content */
@@ -56,7 +57,7 @@ const DisabledLinkButton: React.FC<DisabledLinkButtonProps> = ({
       
       shakeTimeoutRef.current = setTimeout(() => {
         setIsShaking(false);
-      }, 500);
+      }, UI_DELAYS.BUTTON_SHAKE);
     }
   };
 

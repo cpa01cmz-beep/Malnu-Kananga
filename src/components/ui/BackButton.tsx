@@ -7,6 +7,19 @@ import { logger } from '../../utils/logger';
 export type BackButtonVariant = 'primary' | 'green' | 'custom';
 export type BackButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
+/**
+ * Get the appropriate keyboard shortcut label for browser back navigation based on platform
+ */
+const getKeyboardShortcutLabel = (): string => {
+  if (typeof navigator !== 'undefined' && navigator.platform) {
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes('mac') || platform.includes('darwin')) {
+      return '⌘+[';
+    }
+  }
+  return 'Alt+←';
+};
+
 interface BackButtonProps {
   label?: string;
   onClick: () => void | Promise<void>;
@@ -26,6 +39,11 @@ interface BackButtonProps {
   successDuration?: number;
   /** Size variant */
   size?: 'sm' | 'md' | 'lg';
+  /**
+   * Show keyboard shortcut hint in tooltip
+   * Displays Alt+← (Windows/Linux) or ⌘+[ (Mac) to teach users they can use browser back navigation
+   */
+  showShortcutHint?: boolean;
 }
 
 const variantClasses: Record<BackButtonVariant, string> = {
@@ -54,6 +72,7 @@ const BackButton: React.FC<BackButtonProps> = ({
   showSuccess = false,
   successDuration = 2000,
   size = 'md',
+  showShortcutHint = true,
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
@@ -63,18 +82,19 @@ const BackButton: React.FC<BackButtonProps> = ({
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { onTap } = useHapticFeedback();
+  const keyboardShortcut = getKeyboardShortcutLabel();
 
-  const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !disabled;
+  const hasTooltip = (Boolean(tooltip) || (showShortcutHint && !disabled)) && !isLoading && !isSuccessVisible;
   const hasDisabledReason = Boolean(disabledReason) && disabled;
 
   useEffect(() => {
     if (showSuccess) {
       setIsSuccessVisible(true);
-      
+
       if (successTimeoutRef.current) {
         clearTimeout(successTimeoutRef.current);
       }
-      
+
       successTimeoutRef.current = setTimeout(() => {
         setIsSuccessVisible(false);
       }, successDuration);
@@ -132,11 +152,13 @@ const BackButton: React.FC<BackButtonProps> = ({
   const tooltipText = isSuccessVisible ? 'Berhasil!' : (tooltip || label);
 
   const ariaAttr = ariaLabel || `Navigasi kembali ke ${label}`;
-  const computedAriaLabel = isLoading 
-    ? `${ariaAttr} - Memuat` 
-    : isSuccessVisible 
-      ? `${ariaAttr} - Berhasil` 
-      : ariaAttr;
+  const computedAriaLabel = isLoading
+    ? `${ariaAttr} - Memuat`
+    : isSuccessVisible
+      ? `${ariaAttr} - Berhasil`
+      : showShortcutHint
+        ? `${ariaAttr} (Tekan ${keyboardShortcut} saat fokus)`
+        : ariaAttr;
 
   const baseClasses = "font-medium flex items-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 rounded-lg relative group overflow-visible";
   
@@ -261,7 +283,14 @@ const BackButton: React.FC<BackButtonProps> = ({
             ${isTooltipVisible || isSuccessVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `.replace(/\s+/g, ' ').trim()}
         >
-          {tooltipText}
+          <span className="flex items-center gap-2">
+            <span>{tooltipText}</span>
+            {showShortcutHint && !isSuccessVisible && (
+              <kbd className="px-1.5 py-0.5 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-mono border border-neutral-500 shadow-sm">
+                {keyboardShortcut}
+              </kbd>
+            )}
+          </span>
           <span
             className={`
               absolute w-2 h-2 rotate-45
