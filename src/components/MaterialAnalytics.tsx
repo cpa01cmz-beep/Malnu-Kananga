@@ -6,7 +6,7 @@ import { StarIcon } from './icons/MaterialIcons';
 import { ClockIcon, TrendingUpIcon, TrendingDownIcon } from './icons/MaterialIcons';
 import { ELibrary } from '../types';
 import { logger } from '../utils/logger';
-import { TIME_MS } from '../constants';
+import { TIME_MS, msToDays } from '../constants';
 import ProgressBar from './ui/ProgressBar';
 import FormGrid from './ui/FormGrid';
 
@@ -106,7 +106,7 @@ const MaterialAnalyticsComponent: React.FC<MaterialAnalyticsProps> = ({
   };
 
   const getDaysSinceLastAccess = (dateString: string) => {
-    const days = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / (1000 * 60 * 60 * 24));
+    const days = Math.floor(msToDays(new Date().getTime() - new Date(dateString).getTime()));
     return days;
   };
 

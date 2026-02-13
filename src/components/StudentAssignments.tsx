@@ -11,7 +11,7 @@ import Button from './ui/Button';
 import AccessDenied from './AccessDenied';
 import Textarea from './ui/Textarea';
 import FileUpload from './FileUpload';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, msToDays } from '../constants';
 import Badge from './ui/Badge';
 import { EmptyState } from './ui/LoadingState';
 import FormGrid from './ui/FormGrid';
@@ -203,7 +203,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
     const due = new Date(dueDate);
     const now = new Date();
     const diff = due.getTime() - now.getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    const days = Math.ceil(msToDays(diff));
 
     if (days < 0) {
       return { text: 'Telat', days: Math.abs(days), isOverdue: true };
