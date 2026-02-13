@@ -214,15 +214,100 @@ describe('Button', () => {
     it('should be keyboard accessible', () => {
       const handleClick = vi.fn();
       render(<Button onClick={handleClick}>Keyboard Test</Button>);
-      
+
       const button = screen.getByRole('button');
       button.focus();
-      
+
       expect(button).toHaveFocus();
-      
+
       fireEvent.click(button);
-      
+
       expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Keyboard Shortcut', () => {
+    it('should have aria-describedby when shortcut is provided', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-describedby');
+    });
+
+    it('should not have aria-describedby when shortcut is not provided', () => {
+      render(<Button>No Shortcut</Button>);
+
+      const button = screen.getByRole('button');
+      expect(button).not.toHaveAttribute('aria-describedby');
+    });
+
+    it('should include shortcut in aria-label when both ariaLabel and shortcut are provided', () => {
+      render(<Button ariaLabel="Save document" shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Save document (Tekan Ctrl+S saat fokus)');
+    });
+
+    it('should show tooltip on mouse enter', async () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      expect(tooltip).toHaveTextContent('Ctrl+S');
+    });
+
+    it('should show tooltip on focus', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+    });
+
+    it('should hide tooltip on mouse leave', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseLeave(button);
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('opacity-0');
+    });
+
+    it('should hide tooltip on blur', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      fireEvent.blur(button);
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('opacity-0');
+    });
+
+    it('should not show tooltip when loading', () => {
+      render(<Button shortcut="Ctrl+S" isLoading>Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('should render kbd element in tooltip', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      const kbd = screen.getByText('Ctrl+S');
+      expect(kbd.tagName.toLowerCase()).toBe('kbd');
     });
   });
 });
