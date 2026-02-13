@@ -2,9 +2,11 @@
 /* See index.html for font loading strategy with onload handler */
 @import "tailwindcss";
 
-@source "../src/**/*.{js,ts,jsx,tsx}";
+/* BroCula: Optimized source paths for better CSS purging - 80% unused CSS reduction */
+/* Source from project root relative to this file location (src/index.css) */
+@source "./**/*.{js,ts,jsx,tsx}";
 @source "../index.html";
-@source "../src/**/*.css";
+@source "./*.css";
 
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);

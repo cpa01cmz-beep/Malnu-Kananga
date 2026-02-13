@@ -236,14 +236,10 @@ export default defineConfig(({ mode }) => {
           drop_debugger: BUILD_CONFIG.TERSER_DROP_DEBUGGER,
         },
       },
-      // BroCula: Enable CSS code splitting to reduce render-blocking CSS
       cssCodeSplit: true,
-      // BroCula: Improve chunk loading performance
-      assetsInlineLimit: 4096, // 4KB - inline small assets
-      // Prevent eager loading of dashboard chunks - saves 471 KB on initial load
+      assetsInlineLimit: 4096,
       modulePreload: false,
     },
-    // BroCula: Optimize dependency pre-bundling for faster dev builds and better caching
     optimizeDeps: {
       include: [
         'react',
@@ -251,23 +247,18 @@ export default defineConfig(({ mode }) => {
         'react-router-dom',
         '@heroicons/react/24/outline',
         '@heroicons/react/24/solid',
-        // Tesseract.js v7 uses CommonJS - must be pre-bundled for browser compatibility
         'tesseract.js',
       ],
       exclude: [
-        // Large libraries that should be lazy-loaded - reduces initial bundle
         'recharts',
         'jspdf',
         'html2canvas',
         '@google/genai',
         'jspdf-autotable',
       ],
-      // BroCula: Force dependency optimization on build for better chunking
       force: true,
     },
-    // BroCula: CSS configuration for better performance
     css: {
-      // Enable CSS source maps for debugging (set to false in production for smaller builds)
       devSourcemap: mode !== 'production',
     },
   }
