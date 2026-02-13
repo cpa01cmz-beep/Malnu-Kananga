@@ -136,6 +136,69 @@ describe('ProgressBar', () => {
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar).toHaveAttribute('aria-label', 'Progress label');
     });
+
+    it('renders aria-valuetext when provided', () => {
+      render(<ProgressBar value={3} max={10} aria-valuetext="3 of 10 files uploaded" />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-valuetext', '3 of 10 files uploaded');
+    });
+
+    it('links to aria-describedby element', () => {
+      render(
+        <>
+          <span id="progress-description">Uploading important document</span>
+          <ProgressBar value={50} aria-describedby="progress-description" />
+        </>
+      );
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-describedby', 'progress-description');
+    });
+
+    it('sets aria-busy to true when progress is active', () => {
+      render(<ProgressBar value={50} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-busy', 'true');
+    });
+
+    it('sets aria-busy to false when progress is complete', () => {
+      render(<ProgressBar value={100} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-busy', 'false');
+    });
+
+    it('sets aria-busy to false when progress is at 0', () => {
+      render(<ProgressBar value={0} />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).toHaveAttribute('aria-busy', 'false');
+    });
+
+    it('supports indeterminate state', () => {
+      render(<ProgressBar value={0} indeterminate aria-label="Loading" />);
+      const progressBar = screen.getByRole('progressbar');
+      expect(progressBar).not.toHaveAttribute('aria-valuenow');
+      expect(progressBar).toHaveAttribute('data-indeterminate', 'true');
+      expect(progressBar).toHaveAttribute('aria-busy', 'false');
+    });
+
+    it('renders live region when announce is true', () => {
+      render(<ProgressBar value={50} announce />);
+      const liveRegion = screen.getByTestId('progressbar-live-region');
+      expect(liveRegion).toHaveAttribute('aria-live', 'polite');
+      expect(liveRegion).toHaveAttribute('aria-atomic', 'true');
+      expect(liveRegion).toHaveTextContent('50% complete');
+    });
+
+    it('renders custom accessible description in live region', () => {
+      render(<ProgressBar value={3} max={10} announce aria-valuetext="3 of 10 files uploaded" />);
+      const liveRegion = screen.getByTestId('progressbar-live-region');
+      expect(liveRegion).toHaveTextContent('3 of 10 files uploaded');
+    });
+
+    it('renders indeterminate message in live region', () => {
+      render(<ProgressBar value={0} indeterminate announce aria-label="Loading" />);
+      const liveRegion = screen.getByTestId('progressbar-live-region');
+      expect(liveRegion).toHaveTextContent('Progress in progress');
+    });
   });
 
   describe('Variants', () => {
@@ -159,6 +222,13 @@ describe('ProgressBar', () => {
       const fill = progressBar.firstChild as HTMLElement;
       expect(fill.style.backgroundImage).toContain('linear-gradient');
       expect(fill.style.animation).toContain('progress-bar-stripes 1s linear infinite');
+    });
+
+    it('renders indeterminate progress with pulse animation', () => {
+      render(<ProgressBar value={0} indeterminate variant="animated" />);
+      const progressBar = screen.getByRole('progressbar');
+      const fill = progressBar.firstChild as HTMLElement;
+      expect(fill).toHaveClass('animate-pulse');
     });
   });
 
