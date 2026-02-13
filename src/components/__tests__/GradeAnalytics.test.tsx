@@ -480,17 +480,6 @@ describe('GradeAnalytics', () => {
   });
 
   it('exports analytics report', async () => {
-    const mockLocalStorage = {
-      setItem: vi.fn(),
-      getItem: vi.fn(),
-      removeItem: vi.fn(),
-      clear: vi.fn(),
-      length: 0,
-      key: vi.fn()
-    };
-
-   (global as any).localStorage = mockLocalStorage;
-
     (gradesAPI.getAll as ReturnType<typeof vi.fn>).mockResolvedValue({
       success: true,
       data: mockGrades
@@ -512,27 +501,26 @@ describe('GradeAnalytics', () => {
     });
 
     render(
-      <GradeAnalytics 
-        onBack={mockOnBack} 
+      <GradeAnalytics
+        onBack={mockOnBack}
         onShowToast={mockOnShowToast}
       />
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Export Laporan')).toBeInTheDocument();
+      expect(screen.getByText('Export PDF')).toBeInTheDocument();
     });
 
-    const exportButton = screen.getByText('Export Laporan');
+    const exportButton = screen.getByText('Export PDF');
     await act(async () => {
       exportButton.click();
     });
 
     await waitFor(() => {
       expect(mockOnShowToast).toHaveBeenCalledWith(
-        'Laporan analitik berhasil disimpan',
+        'Laporan PDF berhasil diunduh',
         'success'
       );
-      expect(mockLocalStorage.setItem).toHaveBeenCalled();
     });
   });
 
