@@ -130,6 +130,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                   onClick={exportPermissionMatrix}
                   size="sm"
                   variant="success"
+                  aria-label="Ekspor matriks izin ke file"
                 >
                   Export
                 </Button>

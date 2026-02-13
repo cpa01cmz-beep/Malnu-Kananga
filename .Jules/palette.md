@@ -464,3 +464,21 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 2. `aria-label` - Provides screen reader context
 3. This applies to any inline button elements in JSX, not just Button components
 
+---
+
+## 2026-02-13 - PermissionManager Export Button Aria-Label
+
+**Learning**: The PermissionManager component had an "Export" button that was missing an `aria-label`, making it inaccessible to screen reader users. This was inconsistent with other export buttons in the codebase (GradeAnalytics, SchoolInventory, ConsolidatedReportsView, ParentPaymentsView) which all had proper aria-labels.
+
+**Action**: Added `aria-label="Ekspor matriks izin ke file"` to the Export button in PermissionManager. Also updated the test to use the new aria-label for button identification.
+
+**File Fixed**:
+- src/components/admin/PermissionManager.tsx - Added aria-label to Export button
+- src/components/admin/__tests__/PermissionManager.test.tsx - Updated test to use new aria-label
+
+**Pattern**: Export buttons in admin/management dashboards are high-risk for accessibility oversight because they have visible text. Always audit with pattern: if button has onClick + export/download, verify aria-label exists. This is especially important for:
+- Permission management pages
+- Analytics dashboards
+- User management pages
+- Any page with data export functionality
+

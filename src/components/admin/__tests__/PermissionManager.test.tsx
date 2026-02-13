@@ -52,7 +52,7 @@ describe('PermissionManager', () => {
   it('calls export function when export button is clicked', async () => {
     render(<PermissionManager onShowToast={mockOnShowToast} />);
 
-    const exportButton = screen.getByRole('button', { name: 'Export' });
+    const exportButton = screen.getByRole('button', { name: 'Ekspor matriks izin ke file' });
     await userEvent.click(exportButton);
 
     expect(mockOnShowToast).toHaveBeenCalledWith('Permission matrix exported', 'success');
