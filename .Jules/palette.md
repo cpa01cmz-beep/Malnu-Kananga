@@ -190,6 +190,8 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 
 ---
 
+<<<<---
+
 ## 2026-02-13 - Native confirm() Replacement with Accessible Dialog
 
 **Learning**: The AnnouncementManager component used native browser `confirm()` for delete confirmation, which is:
@@ -203,3 +205,35 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - AnnouncementManager.tsx - Replaced confirm() with ConfirmationDialog
 
 **Pattern**: Always audit for native `confirm()`, `alert()`, or `prompt()` usage - replace with accessible UI components.
+
+---
+
+## 2026-02-13 - AssignmentCreation Button Keyboard Shortcuts
+
+**Learning**: The AssignmentCreation component is a high-traffic form where teachers create and publish assignments daily, but its action buttons were missing keyboard shortcut hints. This follows the pattern established in QuizGenerator, QuizPreview, and other high-traffic form components.
+
+**Action**: Add keyboard shortcut hints to AssignmentCreation action buttons:
+- Batal (Cancel) button: shortcut="Esc"
+- Simpan Draft button: shortcut="Ctrl+S"
+
+This enables keyboard shortcut discovery through tooltip hints, following the established pattern:
+- Cancel buttons: Esc
+- Save buttons: Ctrl+S
+
+**Component Updated**:
+- AssignmentCreation.tsx - Added shortcut="Esc" to Batal button, shortcut="Ctrl+S" to Simpan Draft button
+
+**Pattern**: Always audit high-traffic form creation components (AssignmentCreation, MaterialSharing, etc.) for missing keyboard shortcut hints on action buttons.
+
+---
+
+## 2026-02-13 - NotificationSettings Save Button Keyboard Shortcut
+
+**Learning**: The NotificationSettings component is a high-traffic admin component where notification preferences are saved frequently, but the "Simpan Pengaturan" (Save Settings) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to admins.
+
+**Action**: Add `shortcut="Ctrl+S"` to all save buttons in settings panels. This follows the established pattern from GradingManagement, AttendanceManagement, and AssignmentCreation.
+
+**File Fixed**:
+- NotificationSettings.tsx - Added shortcut="Ctrl+S" to Simpan Pengaturan button
+
+**Pattern**: Settings panels where admins frequently save preferences benefit from keyboard shortcuts to speed up workflow. Always audit save buttons in settings/configuration components.
