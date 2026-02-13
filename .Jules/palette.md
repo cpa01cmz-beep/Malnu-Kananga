@@ -4,6 +4,23 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-13 - Toggle Button Aria-Pressed Pattern
+
+**Learning**: Toggle buttons that expand/collapse sections (like filters, statistics panels) need `aria-pressed` to let screen reader users know the current state. Additionally, plain `<button>` elements should explicitly have `type="button"` to avoid unintended form submissions.
+
+**Action**: Add `aria-pressed={boolean}` to all toggle buttons that show/hide content sections:
+- CommunicationDashboard.tsx: Filter toggle button - `aria-pressed={showFilters}`
+- StudentTimeline.tsx: Statistics toggle button - `type="button"` + `aria-pressed={showStats}`
+
+**Pattern**: Always audit toggle buttons that:
+- Show/hide filter panels
+- Expand/collapse statistics sections
+- Toggle any visible content state
+
+The `aria-pressed` attribute tells screen readers whether the toggle is currently "pressed" (active/on) or not.
+
+---
+
 ## 2026-02-13 - LearningProgressReport Tab Accessibility
 
 **Learning**: The LearningProgressReport component had custom tab navigation that was missing proper ARIA tab patterns. The tab buttons (Laporan Terbaru, Riwayat, Pengaturan) lacked role="tab", aria-selected, aria-controls, and tabIndex attributes. Additionally, action buttons (Buat Laporan, Lihat Detail, Hapus) and toggle buttons (Notifikasi) were missing type="button" and aria-label attributes.
