@@ -87,9 +87,9 @@ npm run build
 ## Documentation
 
 ### Core Documentation (Single Source of Truth)
-- **[Blueprint (Architecture)](./blueprint.md)** - Complete system architecture, design principles, and technical specifications
-- **[Roadmap (Strategic Goals)](./roadmap.md)** - Vision, mission, milestones, and feature planning
-- **[Task Tracking](./task.md)** - Active and completed tasks with status
+- **[Features](./docs/FEATURES.md)** - Complete feature list, system architecture, and technical specifications
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation and endpoints
+- **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** - Deployment procedures and infrastructure setup
 
 ### User Guides
 - **[Documentation Index](./docs/README.md)** - Additional documentation guides
