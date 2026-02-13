@@ -29,6 +29,7 @@ export * from './mobile-enhancements';
 export * from './gesture-system';
 export * from './payment-config';
 export * from './quiz-config';
+export * from './exam-config';
 export * from './academic-config';
 export * from './permissions';
 export * from './ocrConfig';

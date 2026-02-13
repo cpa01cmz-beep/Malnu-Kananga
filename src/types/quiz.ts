@@ -24,6 +24,8 @@ export interface QuizQuestion {
   points: number;
   materialReference?: string;
   tags?: string[];
+  /** Exam-specific: Shuffle answer order for this question */
+  shuffleOptions?: boolean;
 }
 
 export interface QuizAutoIntegrationConfig {
@@ -57,6 +59,16 @@ export interface Quiz {
   aiGenerated: boolean;
   aiConfidence?: number;
   autoIntegration?: QuizAutoIntegrationConfig;
+  /** Exam-specific: Enable question randomization */
+  randomizeQuestions?: boolean;
+  /** Exam-specific: Enable answer randomization for multiple choice */
+  randomizeAnswers?: boolean;
+  /** Exam-specific: Enable anti-tab-switch detection */
+  antiTabSwitch?: boolean;
+  /** Exam-specific: Enable auto-submit on timer expiry */
+  autoSubmit?: boolean;
+  /** Exam-specific: Maximum allowed tab switches before warning */
+  maxTabSwitches?: number;
 }
 
 export interface QuizGenerationOptions {
