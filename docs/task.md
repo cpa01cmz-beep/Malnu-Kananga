@@ -77,5 +77,34 @@
 ## Notes
 
 - Since average score > 90, creative phase was triggered
-- Test coverage is primary area for improvement
+- Test coverage is primary area for improvement (currently ~29%, target 80%)
 - All other metrics are excellent
+- Added new tasks T004-T005 for test coverage improvement
+
+---
+
+## New Tasks (Added 2026-02-13)
+
+### T004: Increase Test Coverage to 50%
+**Status**: ❌ Pending
+**Priority**: High
+**Description**: Increase test coverage from 29% to 50%.
+**Rationale**: Current coverage is 29% - need significant improvement.
+**Actions**:
+- [ ] Identify critical untested services
+- [ ] Add tests for: notification services, storage services
+- [ ] Add tests for: hooks (useAuth, usePermissions)
+- [ ] Target: 50% coverage
+**Notes**: Focus on high-impact services first.
+
+### T005: Increase Test Coverage to 80%
+**Status**: ❌ Pending
+**Priority**: High
+**Description**: Increase test coverage from 50% to 80%.
+**Rationale**: Target is 80% for production readiness.
+**Actions**:
+- [ ] Add component tests for all UI components
+- [ ] Add integration tests for API services
+- [ ] Add E2E tests for critical user flows
+- [ ] Target: 80% coverage
+**Notes**: This is a long-term goal - prioritize critical paths first.
