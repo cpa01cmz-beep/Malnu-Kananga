@@ -834,6 +834,13 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                       <Button
                         onClick={() => startVoiceRecording('feedback')}
                         disabled={isVoiceRecording || !voiceRecognition.isSupported}
+                        disabledReason={
+                          isVoiceRecording
+                            ? 'Sedang merekam...'
+                            : !voiceRecognition.isSupported
+                              ? 'Browser tidak mendukung rekaman suara'
+                              : undefined
+                        }
                         variant={isVoiceRecording && voiceTarget === 'feedback' ? 'primary' : 'secondary'}
                         size="sm"
                         className="flex items-center"
@@ -844,6 +851,13 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                       <Button
                         onClick={handleGenerateAIFeedback}
                         disabled={generatingFeedback || !selectedSubmission.submissionText && (!selectedSubmission.attachments || selectedSubmission.attachments.length === 0)}
+                        disabledReason={
+                          generatingFeedback
+                            ? 'AI sedang membuat feedback...'
+                            : !selectedSubmission.submissionText && (!selectedSubmission.attachments || selectedSubmission.attachments.length === 0)
+                              ? 'Tidak ada konten untuk dianalisis'
+                              : undefined
+                        }
                         variant="secondary"
                         size="sm"
                       >
