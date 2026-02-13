@@ -206,6 +206,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('all')}
+              aria-pressed={filterType === 'all'}
               className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'all'
                   ? 'bg-blue-600 text-white'
@@ -217,6 +218,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('direct')}
+              aria-pressed={filterType === 'direct'}
               className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'direct'
                   ? 'bg-blue-600 text-white'
@@ -228,6 +230,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setFilterType('group')}
+              aria-pressed={filterType === 'group'}
               className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 filterType === 'group'
                   ? 'bg-blue-600 text-white'
@@ -239,6 +242,7 @@ export function MessageList({
             <button
               type="button"
               onClick={() => setShowUnreadOnly(!showUnreadOnly)}
+              aria-pressed={showUnreadOnly}
               className={`rounded-lg px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
                 showUnreadOnly
                   ? 'bg-blue-600 text-white'
