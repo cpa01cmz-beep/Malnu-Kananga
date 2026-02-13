@@ -6,6 +6,7 @@
 import React, { useState, useCallback, useRef, createContext, useContext } from 'react';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 import FormFeedback, { FeedbackType } from './FormFeedback';
+import { DEBOUNCE_DELAYS } from '../../constants';
 
 export interface ValidationRule {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,7 +83,7 @@ export const FormValidationProvider: React.FC<FormValidationProviderProps> = ({
     validateOnChange: true,
     validateOnBlur: true,
     validateOnSubmit: true,
-    debounceMs: 300,
+    debounceMs: DEBOUNCE_DELAYS.FIELD_VALIDATION,
     showRealtimeFeedback: true,
     hapticFeedback: true,
     ...config,
