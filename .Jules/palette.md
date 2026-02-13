@@ -227,6 +227,24 @@ This enables keyboard shortcut discovery through tooltip hints, following the es
 
 ---
 
+## 2026-02-13 - ELibrary Rating Modal Keyboard Shortcuts
+
+**Learning**: The ELibrary rating modal allows students to rate and review materials, but the action buttons (Batal, Kirim Review) were missing keyboard shortcut hints. This follows the pattern from ChatWindow, SiteEditor, and other input components where keyboard shortcuts improve workflow efficiency.
+
+**Action**: Add keyboard shortcut hints to ELibrary rating modal buttons:
+- "Batal" button: shortcut="Esc" (Modal already handles Escape key for closing)
+- "Kirim Review" button: shortcut="Enter" (natural confirmation action)
+
+**File Fixed**:
+- ELibrary.tsx - Added shortcut="Esc" and shortcut="Enter" to rating modal buttons
+
+**Pattern**: Always audit modal confirm/cancel buttons in high-traffic components. Even if the keyboard handler isn't explicitly in the component, showing shortcut hints:
+1. Makes the UI more informative
+2. Indicates intended keyboard support
+3. Follows the established pattern for keyboard accessibility
+
+---
+
 ## 2026-02-13 - NotificationSettings Save Button Keyboard Shortcut
 
 **Learning**: The NotificationSettings component is a high-traffic admin component where notification preferences are saved frequently, but the "Simpan Pengaturan" (Save Settings) button was missing the keyboard shortcut hint. This made the efficient Ctrl+S shortcut undiscoverable to admins.
