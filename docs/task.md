@@ -81,30 +81,6 @@
 - Checksum verification using SHA-256
 - Added DataExportImportButton UI component for easy integration
 
-### T008: Test Coverage Expansion (F009)
-**Status**: ❌ Pending
-**Priority**: High
-**Description**: Increase test coverage from 29.2% to 50%+ (interim target).
-**Rationale**: Blueprint identifies 80% target. Current coverage is 29.2% - too low for production reliability.
-**Actions**:
-- [ ] Identify untested critical hooks and utilities
-- [ ] Add tests for: useSchoolData, useAuth, usePermissions hooks
-- [ ] Add tests for: apiService, storageService, permissionService
-- [ ] Add tests for: form components (Form, Input, Select)
-- [ ] Target: 50% coverage (interim)
-**Notes**: Services already have good test coverage. Focus on hooks, utils, and UI components.
-
-### T009: Real-time Collaboration (F010)
-**Status**: ❌ Pending
-**Priority**: Medium
-**Description**: Enable real-time features using existing WebSocket infrastructure.
-**Rationale**: F010 - Enhance communication and monitoring.
-**Actions**:
-- [ ] Add presence indicators (who's online)
-- [ ] Add real-time notifications for grade/attendance changes
-- [ ] Add admin activity dashboard
-**Notes**: Leverage existing WebSocket infrastructure. Minimal new code needed.
-
 ---
 
 ## Completed Tasks
