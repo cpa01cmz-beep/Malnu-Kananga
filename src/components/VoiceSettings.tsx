@@ -56,6 +56,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
   const [hasSettingsBackup, setHasSettingsBackup] = useState(false);
   const [backupDate, setBackupDate] = useState<string | null>(null);
   const [showRestoreConfirmation, setShowRestoreConfirmation] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const loadSettings = useCallback(() => {
     try {
@@ -413,7 +414,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                       Pulihkan
                     </SmallActionButton>
                     <SmallActionButton
-                      onClick={handleDeleteBackup}
+                      onClick={() => setShowDeleteConfirmation(true)}
                       variant="neutral"
                       fullWidth
                     >
@@ -502,6 +503,31 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
             </Button>
             <Button variant="info" onClick={handleRestore} fullWidth>
               Pulihkan
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        title="Hapus Backup Pengaturan Suara?"
+        size="sm"
+        animation="scale-in"
+        closeOnBackdropClick={true}
+        closeOnEscape={true}
+        showCloseButton={false}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            Backup pengaturan suara akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" onClick={() => setShowDeleteConfirmation(false)} fullWidth>
+              Batal
+            </Button>
+            <Button variant="danger" onClick={handleDeleteBackup} fullWidth>
+              Hapus
             </Button>
           </div>
         </div>
