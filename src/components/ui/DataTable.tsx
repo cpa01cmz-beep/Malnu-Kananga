@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Table, Thead, Tbody, Tr, Th, Td } from './Table';
 import Pagination from './Pagination';
 import LoadingOverlay from './LoadingOverlay';
@@ -11,7 +11,7 @@ import { PencilIcon } from '../icons/PencilIcon';
 import { TrashIcon } from '../icons/TrashIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS } from '../../constants';
+import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS, UI_DELAYS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -324,8 +324,47 @@ const DataTable = <T extends Record<string, unknown>>({
   bulkActions,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
+  const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null);
+  const [showRowKeyboardHint, setShowRowKeyboardHint] = useState(false);
+  const rowHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { onSuccess, onTap, onDelete } = useHapticFeedback();
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (rowHintTimeoutRef.current) {
+        clearTimeout(rowHintTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleRowFocus = useCallback((index: number) => {
+    setFocusedRowIndex(index);
+    if (onRowClick) {
+      rowHintTimeoutRef.current = setTimeout(() => {
+        setShowRowKeyboardHint(true);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
+    }
+  }, [onRowClick]);
+
+  const handleRowBlur = useCallback(() => {
+    setFocusedRowIndex(null);
+    setShowRowKeyboardHint(false);
+    if (rowHintTimeoutRef.current) {
+      clearTimeout(rowHintTimeoutRef.current);
+      rowHintTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleRowKeyDown = useCallback((e: React.KeyboardEvent, record: T, index: number) => {
+    if (!onRowClick) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onRowClick(record, index);
+      onTap();
+    }
+  }, [onRowClick, onTap]);
 
   const handleSearch = (value: string) => {
     setLocalSearch(value);
@@ -870,16 +909,22 @@ const DataTable = <T extends Record<string, unknown>>({
             <Tbody>
               {data.map((record, index) => {
                 const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
+                const isFocused = focusedRowIndex === index;
                 return (
                   <Tr
                     key={selection ? selection.getRowKey(record) : index}
                     hoverable
                     selected={isSelected}
                     onClick={() => onRowClick?.(record, index)}
-                    aria-rowindex={index + 2} // +2 for header row and 0-based indexing
+                    onFocus={() => handleRowFocus(index)}
+                    onBlur={handleRowBlur}
+                    onKeyDown={(e) => handleRowKeyDown(e, record, index)}
+                    tabIndex={onRowClick ? 0 : -1}
+                    aria-rowindex={index + 2}
+                    aria-label={onRowClick ? `Baris ${index + 1}. Tekan Enter atau Spasi untuk membuka` : undefined}
                     className={`
                       ${rowClassName?.(record, index) || ''}
-                      ${onRowClick ? 'cursor-pointer' : ''}
+                      ${onRowClick ? 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-inset' : ''}
                     `}
                   >
                     {selection && (
@@ -905,6 +950,19 @@ const DataTable = <T extends Record<string, unknown>>({
                         {getCellValue(column, record, index)}
                       </Td>
                     ))}
+                    {onRowClick && isFocused && showRowKeyboardHint && (
+                      <Td className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <span
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-xs rounded shadow-lg whitespace-nowrap"
+                          role="tooltip"
+                        >
+                          <kbd className="px-1 bg-neutral-600 dark:bg-neutral-600 rounded text-[10px] font-bold">
+                            Enter
+                          </kbd>
+                          <span>buka</span>
+                        </span>
+                      </Td>
+                    )}
                   </Tr>
                 );
               })}
