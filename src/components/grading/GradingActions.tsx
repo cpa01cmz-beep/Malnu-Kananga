@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Papa from 'papaparse';
 import Button from '../ui/Button';
 import { LightBulbIcon } from '../icons/LightBulbIcon';
@@ -8,6 +8,8 @@ import { createToastHandler } from '../../utils/teacherErrorHandler';
 import { validateCSVImport, sanitizeGradeInput, validateGradeInput, type GradeInput } from '../../utils/teacherValidation';
 import type { QueuedGradeUpdate, OCRReviewData } from './useGradingData';
 import { FILE_SIZE_LIMITS } from '../../constants';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export interface GradingActionsProps {
   csvInputRef: React.RefObject<HTMLInputElement>;
@@ -77,6 +79,34 @@ const GradingActions: React.FC<GradingActionsProps> = ({
   onShowToast,
 }) => {
   const _toast = createToastHandler(onShowToast);
+  const { onError } = useHapticFeedback();
+  const prefersReducedMotion = useReducedMotion();
+  const [shakeButton, setShakeButton] = useState<'csv' | 'pdf' | null>(null);
+  const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleDisabledExportClick = (buttonType: 'csv' | 'pdf') => {
+    onError();
+
+    if (!prefersReducedMotion) {
+      setShakeButton(buttonType);
+
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+
+      shakeTimeoutRef.current = setTimeout(() => {
+        setShakeButton(null);
+      }, 500);
+    }
+  };
 
   const toggleBatchMode = () => {
     setIsBatchMode(!isBatchMode);
@@ -315,26 +345,30 @@ const GradingActions: React.FC<GradingActionsProps> = ({
             </>
         )}
 
-        <Button
-          onClick={handlePDFExport}
-          disabled={isExportingPDF || grades.length === 0}
-          variant="green-solid"
-          isLoading={isExportingPDF}
-          aria-label="Ekspor nilai siswa ke file PDF"
-          disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
-        >
-          {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
-        </Button>
+        <div className={shakeButton === 'pdf' ? 'animate-shake' : ''}>
+          <Button
+            onClick={grades.length === 0 ? () => handleDisabledExportClick('pdf') : handlePDFExport}
+            disabled={isExportingPDF || grades.length === 0}
+            variant="green-solid"
+            isLoading={isExportingPDF}
+            aria-label="Ekspor nilai siswa ke file PDF"
+            disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
+          >
+            {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
+          </Button>
+        </div>
 
-        <Button
-          onClick={handleCSVExport}
-          disabled={grades.length === 0}
-          variant="teal-solid"
-          aria-label="Ekspor nilai ke file CSV"
-          disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
-        >
-          Export CSV
-        </Button>
+        <div className={shakeButton === 'csv' ? 'animate-shake' : ''}>
+          <Button
+            onClick={grades.length === 0 ? () => handleDisabledExportClick('csv') : handleCSVExport}
+            disabled={grades.length === 0}
+            variant="teal-solid"
+            aria-label="Ekspor nilai ke file CSV"
+            disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
+          >
+            Export CSV
+          </Button>
+        </div>
 
         {_canCreateContent && (
           <Button
