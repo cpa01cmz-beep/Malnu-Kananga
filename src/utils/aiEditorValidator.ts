@@ -1,6 +1,6 @@
 import type { FeaturedProgram, LatestNews } from '../types';
 import { logger } from './logger';
-import { EXTERNAL_URLS, STORAGE_KEYS, TIME_MS, VALIDATION_LIMITS, AI_EDITOR_LIMITS, RATE_LIMITING, CONVERSION } from '../constants';
+import { EXTERNAL_URLS, STORAGE_KEYS, TIME_MS, VALIDATION_LIMITS, AI_EDITOR_LIMITS, RATE_LIMITING, CONVERSION, URL_VALIDATION } from '../constants';
 
 export interface AICommandValidationResult {
   isValid: boolean;
@@ -708,7 +708,7 @@ function sanitizeImageUrl(value: unknown): string | null {
     return null;
   }
 
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+  if (!URL_VALIDATION.isValidScheme(url)) {
     return null;
   }
 
@@ -719,7 +719,7 @@ function sanitizeImageUrl(value: unknown): string | null {
     .replace(/'/g, '')
     .trim();
 
-  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+  if (!URL_VALIDATION.isValidScheme(url)) {
     return null;
   }
 
