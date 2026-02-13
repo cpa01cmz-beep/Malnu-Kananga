@@ -121,7 +121,7 @@ export const useFocusScope = (options: FocusScopeOptions = {}) => {
       // Small delay to ensure DOM is ready
       const timer = setTimeout(() => {
         focusFirst();
-      }, 50);
+      }, TIME_MS.SHORT);
       return () => clearTimeout(timer);
     }
 

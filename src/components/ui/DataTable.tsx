@@ -9,7 +9,7 @@ import FunnelIcon from '../icons/FunnelIcon';
 import ChevronLeftIcon from '../icons/ChevronLeftIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { DATATABLE_CONFIG } from '../../constants';
+import { DATATABLE_CONFIG, TIME_MS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -109,7 +109,7 @@ const EnhancedEmptyState: React.FC<EmptyStateProps> = ({
 
   useEffect(() => {
     if (!prefersReducedMotion) {
-      const timer = setTimeout(() => setIsVisible(true), 50);
+      const timer = setTimeout(() => setIsVisible(true), TIME_MS.SHORT);
       return () => clearTimeout(timer);
     } else {
       setIsVisible(true);
@@ -120,7 +120,7 @@ const EnhancedEmptyState: React.FC<EmptyStateProps> = ({
     if (hasFilter && !hasSearch) {
       searchHintTimeoutRef.current = setTimeout(() => {
         setShowSearchHint(true);
-      }, 800);
+      }, TIME_MS.LONG_UI);
     }
     return () => {
       if (searchHintTimeoutRef.current) {
