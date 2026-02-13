@@ -8,6 +8,7 @@ vi.stubEnv('VITE_SCHOOL_PHONE', 'tests Phone');
 vi.stubEnv('VITE_SCHOOL_EMAIL', 'tests@school.com');
 vi.stubEnv('VITE_SCHOOL_WEBSITE', 'https://tests.sch.id');
 vi.stubEnv('VITE_API_BASE_URL', 'https://tests-api.sch.id');
+vi.stubEnv('VITE_WS_BASE_URL', 'wss://tests-api.sch.id/ws');
 vi.stubEnv('VITE_ADMIN_EMAIL', 'admin@tests.sch.id');
 
 // Mock window.matchMedia for responsive components
