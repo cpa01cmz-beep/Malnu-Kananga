@@ -65,15 +65,21 @@
 - CSV export via PapaParse
 
 ### T007: Implement Data Export/Import (F006)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: Medium
 **Description**: Backup and restore functionality.
 **Rationale**: F006 - Important for disaster recovery.
 **Actions**:
-- [ ] Add JSON/CSV export for all entities
-- [ ] Add Excel/CSV import with validation
-- [ ] Add backup scheduling
-**Notes**: Requires backend endpoints.
+- [x] Add JSON/CSV export for all entities
+- [x] Add Excel/CSV import with validation
+- [x] Add backup scheduling
+**Notes**: Created comprehensive dataExportImportService.ts with:
+- exportData(): JSON/CSV export for all entity types
+- importData(): JSON/CSV/Excel import with validation
+- Backup scheduling with daily/weekly/monthly options
+- Backup history (keeps last 10 backups)
+- Checksum verification using SHA-256
+- Added DataExportImportButton UI component for easy integration
 
 ---
 

@@ -60,6 +60,7 @@ export { default as ProgressBar } from './ProgressBar';
 export { default as PageHeader } from './PageHeader';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as PDFExportButton } from './PDFExportButton';
+export { default as DataExportImportButton } from './DataExportImportButton';
 
 // Legacy Component (for backward compatibility)
 export { default as FileUpload } from '../FileUpload';
