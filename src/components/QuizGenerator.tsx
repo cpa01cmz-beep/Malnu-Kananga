@@ -492,7 +492,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
               Batal
             </Button>
             {step === 'preview' ? (
-              <Button onClick={handleSaveQuiz} disabled={generating}>
+              <Button onClick={handleSaveQuiz} disabled={generating} shortcut="Ctrl+S">
                 Simpan Kuis
               </Button>
             ) : (
