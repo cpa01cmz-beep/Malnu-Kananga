@@ -187,7 +187,9 @@ export const StudentTimeline: React.FC<StudentTimelineProps> = ({
         <h3 className="text-lg font-semibold text-red-800">Terjadi Kesalahan</h3>
         <p className="mt-2 text-sm text-red-600">{error}</p>
         <button
+          type="button"
           onClick={loadTimeline}
+          aria-label="Coba lagi memuat timeline aktivitas"
           className="mt-4 rounded bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >
           Coba Lagi
