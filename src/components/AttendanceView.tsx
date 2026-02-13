@@ -229,6 +229,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
               size="sm"
               className="mt-3"
               aria-label="Ekspor laporan kehadiran ke PDF"
+              shortcut="Ctrl+E"
             >
               📄 Export PDF
             </Button>
