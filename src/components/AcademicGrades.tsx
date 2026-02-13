@@ -619,6 +619,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                 size="md"
                 onClick={addGoal}
                 fullWidth
+                shortcut="Ctrl+S"
               >
                 Simpan Target
               </Button>
@@ -627,6 +628,7 @@ const AcademicGrades: React.FC<AcademicGradesProps> = ({ onBack, onShowToast }) 
                 size="md"
                 onClick={() => setShowGoalModal(false)}
                 fullWidth
+                shortcut="Esc"
               >
                 Batal
               </Button>
