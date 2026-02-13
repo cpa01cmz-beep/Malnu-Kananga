@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type ProgressBarSize = 'sm' | 'md' | 'lg' | 'xl';
 export type ProgressBarColor = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'purple' | 'indigo' | 'orange' | 'red' | 'blue' | 'green';
@@ -18,10 +19,18 @@ interface ProgressBarProps {
   'aria-valuenow'?: number;
   'aria-valuemin'?: number;
   'aria-valuemax'?: number;
+  /** Custom accessible description of the current value (e.g., "3 of 10 files uploaded") */
+  'aria-valuetext'?: string;
+  /** ID of element describing the progress bar for additional context */
+  'aria-describedby'?: string;
   /** Show tooltip with exact percentage on hover */
   showTooltip?: boolean;
   /** Custom tooltip text. If not provided, shows percentage */
   tooltipText?: string;
+  /** Whether the progress is in an indeterminate state (e.g., when total is unknown) */
+  indeterminate?: boolean;
+  /** Whether to announce progress changes to screen readers via aria-live region */
+  announce?: boolean;
 }
 
 const sizeClasses: Record<ProgressBarSize, string> = {
@@ -80,21 +89,27 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   'aria-valuenow': ariaValueNow,
   'aria-valuemin': ariaValueMin = 0,
   'aria-valuemax': ariaValueMax,
+  'aria-valuetext': ariaValueText,
+  'aria-describedby': ariaDescribedBy,
   showTooltip = true,
   tooltipText,
+  indeterminate = false,
+  announce = false,
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-  const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
+  const prefersReducedMotion = useReducedMotion();
+  const percentage = indeterminate ? 100 : Math.min(Math.max((value / max) * 100, 0), 100);
   const widthClass = fullWidth ? 'w-full' : sizeWidthClasses[size];
   const backgroundSize = '1rem 1rem';
 
   const fillStyle = variant === 'striped' || variant === 'animated' ? {
     backgroundImage: stripedPattern,
     backgroundSize,
-    ...(variant === 'animated' ? { animation: 'progress-bar-stripes 1s linear infinite' } : {}),
+    ...(variant === 'animated' && !prefersReducedMotion ? { animation: 'progress-bar-stripes 1s linear infinite' } : {}),
   } : {};
 
   const ariaValueMaxFinal = ariaValueMax ?? max;
+  const isActive = value > 0 && value < max && !indeterminate;
 
   const handleMouseEnter = useCallback(() => setIsTooltipVisible(true), []);
   const handleMouseLeave = useCallback(() => setIsTooltipVisible(false), []);
@@ -102,16 +117,31 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const handleBlur = useCallback(() => setIsTooltipVisible(false), []);
 
   const displayText = tooltipText || `${Math.round(percentage)}%`;
+  const accessibleDescription = ariaValueText || (indeterminate ? 'Progress in progress' : `${Math.round(percentage)}% complete`);
 
   return (
     <div className={`relative group ${className}`}>
+      {announce && (
+        <span
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+          data-testid="progressbar-live-region"
+        >
+          {accessibleDescription}
+        </span>
+      )}
       <div
         className={`${widthClass} bg-neutral-200 dark:bg-neutral-700 rounded-full ${sizeClasses[size]} overflow-hidden cursor-help`}
         role="progressbar"
         aria-label={ariaLabel || label}
-        aria-valuenow={ariaValueNow ?? value}
+        aria-valuenow={indeterminate ? undefined : (ariaValueNow ?? value)}
         aria-valuemin={ariaValueMin}
         aria-valuemax={ariaValueMaxFinal}
+        aria-valuetext={indeterminate ? undefined : ariaValueText}
+        aria-describedby={ariaDescribedBy}
+        aria-busy={isActive ? 'true' : 'false'}
+        data-indeterminate={indeterminate ? 'true' : 'false'}
         onMouseEnter={showTooltip ? handleMouseEnter : undefined}
         onMouseLeave={showTooltip ? handleMouseLeave : undefined}
         onFocus={showTooltip ? handleFocus : undefined}
@@ -120,16 +150,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       >
         <div
           className={`${colorClasses[color]} ${sizeClasses[size]} rounded-full transition-all duration-300 ${
-            variant === 'animated' ? 'animate-progress-stripes' : ''
-          }`}
+            variant === 'animated' && !prefersReducedMotion ? 'animate-progress-stripes' : ''
+          } ${indeterminate ? 'animate-pulse' : ''}`}
           style={{
-            width: `${percentage}%`,
+            width: indeterminate ? '100%' : `${percentage}%`,
             ...fillStyle,
           }}
         >
           {size === 'xl' && showLabel && (
             <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-neutral-800 dark:text-neutral-100" aria-hidden="true">
-              {label || `${Math.round(percentage)}%`}
+              {label || (indeterminate ? 'Loading...' : `${Math.round(percentage)}%`)}
             </span>
           )}
         </div>
