@@ -97,12 +97,3 @@ Always verify aria-label exists on action buttons, regardless of visible text pr
 ---
 
 ## 2026-02-13 - Refresh Button Keyboard Shortcut Discovery
-**Learning**: Refresh buttons in analytics components (StudyPlanAnalytics, StudentInsights) were missing keyboard shortcut hints. Teachers frequently refresh analytics data to see latest information, but the Ctrl+R shortcut was not visible to users.
-
-**Action**: Add `shortcut="Ctrl+R"` to all refresh/reload buttons in analytics components. The Button component already supports the shortcut prop which displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable.
-
-**Components Updated**:
-- StudyPlanAnalytics.tsx - Added shortcut="Ctrl+R" to "Perbarui" (refresh) button
-- StudentInsights.tsx - Added shortcut="Ctrl+R" to both refresh buttons (error state "Coba Lagi" and main "Refresh")
-
-**Pattern**: Always add keyboard shortcut hints to frequently-used action buttons (refresh, submit, save) in high-traffic analytics and data components. The shortcut prop provides discoverability without requiring users to read documentation.
