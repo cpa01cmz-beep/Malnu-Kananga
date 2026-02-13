@@ -260,7 +260,7 @@ See `.opencode/README.md` for detailed usage instructions.
 - **Deployment**: Wrangler 4.59.2
 
 ### AI & ML
-- **LLM**: Google Gemini API (@google/genai 1.37.0)
+- **LLM**: Google Gemini API (@google/genai 1.41.0)
 - **OCR**: Tesseract.js 7.0.0
 
 ### PWA & Testing
