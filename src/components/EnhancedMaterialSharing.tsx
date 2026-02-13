@@ -468,6 +468,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
                 <button
                   key={mode}
                   onClick={() => setSharingMode(mode)}
+                  aria-pressed={sharingMode === mode}
                   className={`p-4 rounded-lg border-2 transition-colors text-center ${
                     sharingMode === mode
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
@@ -660,6 +661,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
           <Button
             onClick={() => setShowShareModal(false)}
             variant="ghost"
+            shortcut="Esc"
           >
             Batal
           </Button>
@@ -671,6 +673,7 @@ const EnhancedMaterialSharing: React.FC<EnhancedMaterialSharingProps> = ({
               loading
             }
             isLoading={loading}
+            shortcut="Ctrl+Enter"
           >
             {loading ? 'Membagikan...' : 'Bagikan Materi'}
           </Button>
