@@ -368,13 +368,19 @@ const teachersToRevokeList = teachers.filter(t => teacherIds.includes(t.id));
               </label>
 
               {expirationEnabled && (
-                <input
-                  type="date"
-                  value={expirationDate}
-                  onChange={(e) => setExpirationDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="mt-2 w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
+                <div className="mt-2">
+                  <label htmlFor="expiration-date" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                    Tanggal Kedaluwarsa
+                  </label>
+                  <input
+                    id="expiration-date"
+                    type="date"
+                    value={expirationDate}
+                    onChange={(e) => setExpirationDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
               )}
             </div>
           </div>
