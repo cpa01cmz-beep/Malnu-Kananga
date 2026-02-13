@@ -58,7 +58,7 @@ This document provides comprehensive API reference for the MA Malnu Kananga web 
 ---
 
 **Related Documentation**:
-- [BLUEPRINT.md](./BLUEPRINT.md) - System architecture overview
+- [ROADMAP.md](./ROADMAP.md) - System architecture overview
 - [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Deployment and setup
 - [CODING_STANDARDS.md](./CODING_STANDARDS.md) - Development guidelines
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution process
