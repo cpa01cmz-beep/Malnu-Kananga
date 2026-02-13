@@ -4,7 +4,19 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-13 - AccessibilitySettings aria-pressed Toggle States
+## 2026-02-13 - EnhancedMaterialSharing Keyboard Shortcuts
+
+**Learning**: The EnhancedMaterialSharing component had action buttons in modal forms that were missing keyboard shortcut hints. The "Bagikan Materi" (Share) and "Batal" (Cancel) buttons didn't have shortcut tooltips, making keyboard actions undiscoverable to users.
+
+**Action**: Add keyboard shortcut hints to modal action buttons following the established pattern:
+- Share button: `shortcut="Ctrl+Enter"` (natural for form submission)
+- Cancel button: `shortcut="Esc"` (standard for closing modals)
+- Toggle buttons: `aria-pressed={boolean}` to indicate current selection
+
+**File Fixed**:
+- src/components/EnhancedMaterialSharing.tsx - Added shortcut hints and aria-pressed to toggle buttons
+
+**Pattern**: Always add shortcut hints to modal action buttons - Ctrl+Enter for submit, Esc for cancel. Also add aria-pressed to custom toggle button groups for screen reader accessibility.
 
 **Learning**: The AccessibilitySettings component (ironically) had accessibility issues - its toggle button groups (Font Size, Line Spacing, Letter Spacing, Contrast Mode) and toggle switches (Readable Width, Reduced Motion) were missing `aria-pressed` attributes. This meant screen reader users couldn't know which option was currently selected.
 
@@ -275,6 +287,36 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - What action will be performed
 - What data/object the action applies to (especially in list/card contexts)
 - This is especially important for parent dashboards where users manage multiple children
+
+---
+
+## 2026-02-13 - Retry Button Accessibility Consistency Extended
+
+**Learning**: While AssignmentGrading and UserManagement were fixed previously, additional retry buttons ("Coba Lagi") were found missing accessibility attributes in ClassManagement, QuizGenerator, StudentAssignments, AttendanceView, StudentPortal, StudentTimeline, and MicrophonePermissionHandler. This created an inconsistent user experience where some retry buttons showed keyboard shortcuts while others didn't.
+
+**Action**: Add aria-label and shortcut="Ctrl+R" to all retry buttons in error states across 7 components:
+- ClassManagement.tsx: 2 buttons (lines 272-277, 298-303) - `aria-label="Coba lagi memuat data siswa"`
+- QuizGenerator.tsx: 1 button - `aria-label="Coba lagi memuat materi"`
+- StudentAssignments.tsx: 1 button - `aria-label="Coba lagi memuat tugas"`
+- AttendanceView.tsx: 1 button - `aria-label="Coba lagi memuat data kehadiran"`
+- StudentPortal.tsx: 1 button - `aria-label="Coba lagi memuat portal siswa"`
+- StudentTimeline.tsx: 1 plain button - added `type="button"` and `aria-label="Coba lagi memuat timeline aktivitas"`
+- MicrophonePermissionHandler.tsx: 1 button - `aria-label="Coba lagi meminta izin mikrofon"`
+
+**Files Fixed**:
+- src/components/ClassManagement.tsx
+- src/components/QuizGenerator.tsx
+- src/components/StudentAssignments.tsx
+- src/components/AttendanceView.tsx
+- src/components/student-portal/StudentPortal.tsx
+- src/components/Shared/StudentTimeline.tsx
+- src/components/MicrophonePermissionHandler.tsx
+
+**Pattern**: Always audit retry buttons in error states - if similar components already have keyboard shortcut hints (Ctrl+R), ensure consistency across ALL retry buttons. This applies to:
+- Error state retry buttons
+- Loading failure retry buttons
+- Permission request retry buttons
+- Plain button elements (need type="button" and aria-label)
 
 ---
 

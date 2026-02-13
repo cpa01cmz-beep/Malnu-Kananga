@@ -68,7 +68,6 @@ export function MaterialManagementView({
       'info',
       () => {
         if (recentlyDeleted) {
-          console.log('Undo deletion of:', recentlyDeleted.title);
           setRecentlyDeleted(null);
         }
       },
