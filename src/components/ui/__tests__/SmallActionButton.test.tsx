@@ -363,4 +363,75 @@ describe('SmallActionButton', () => {
       expect(handleClick).toHaveBeenCalled();
     });
   });
+
+  describe('Keyboard Shortcut Hint', () => {
+    it('should show shortcut in tooltip when provided', () => {
+      render(<SmallActionButton tooltip="Save" shortcut="Ctrl+S">Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      expect(screen.getByText('Ctrl+S')).toBeInTheDocument();
+    });
+
+    it('should render shortcut as kbd element', () => {
+      render(<SmallActionButton tooltip="Save" shortcut="Ctrl+S">Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      const kbd = screen.getByText('Ctrl+S');
+      expect(kbd.tagName.toLowerCase()).toBe('kbd');
+      expect(kbd).toHaveClass('font-mono', 'rounded');
+    });
+
+    it('should not show shortcut hint when loading', () => {
+      render(
+        <SmallActionButton tooltip="Save" shortcut="Ctrl+S" isLoading>
+          Save
+        </SmallActionButton>
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      expect(screen.queryByText('Ctrl+S')).not.toBeInTheDocument();
+    });
+
+    it('should not show shortcut hint when in success state', () => {
+      render(
+        <SmallActionButton tooltip="Save" shortcut="Ctrl+S" showSuccess>
+          Save
+        </SmallActionButton>
+      );
+
+      const button = screen.getByRole('button');
+      fireEvent.mouseEnter(button);
+
+      expect(screen.queryByText('Ctrl+S')).not.toBeInTheDocument();
+    });
+
+    it('should show shortcut hint on focus', () => {
+      render(<SmallActionButton tooltip="Save" shortcut="Ctrl+S">Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+    });
+
+    it('should hide shortcut hint on blur', () => {
+      render(<SmallActionButton tooltip="Save" shortcut="Ctrl+S">Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      fireEvent.focus(button);
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+
+      fireEvent.blur(button);
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveClass('opacity-0');
+    });
+  });
 });
