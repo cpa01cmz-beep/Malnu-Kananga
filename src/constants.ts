@@ -689,7 +689,8 @@ export const UI_DELAYS = {
     TOOLTIP_HIDE_MS: 200,
     SHORTCUT_HINT_DELAY: 400,
     PASTE_HINT_DELAY: 400,
-    DEFAULT_UI_FEEDBACK: 400
+    DEFAULT_UI_FEEDBACK: 400,
+    RESET_DELAY: 200 // Delay before resetting gesture/delete state (ms) - Flexy: Never hardcode UI timeouts!
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!
