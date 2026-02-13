@@ -1617,14 +1617,42 @@ Note: Tests are located in `__tests__/` directories alongside the code they test
 
 ### Key Services
 
+#### Core Services
 - `apiService.ts` - Main API service with JWT auth
 - `authService.ts` - Authentication service
-- `geminiService.ts` - AI/LLM integration
+- `geminiService.ts` - Core AI/LLM integration
 - `speechRecognitionService.ts` - Voice recognition
 - `speechSynthesisService.ts` - Text-to-speech
-- `pushNotificationHandler.ts` (in src/services/notifications/) - PWA notifications
 - `ocrService.ts` - OCR for PPDB documents
 - `permissionService.ts` - Role-based permissions
+
+#### AI Services (src/services/ai/)
+- `geminiClient.ts` - Shared Gemini API client
+- `geminiChat.ts` - RAG-powered AI chatbot
+- `geminiEditor.ts` - AI site content editor
+- `geminiQuiz.ts` - AI quiz generator
+- `geminiStudy.ts` - AI study plan generator
+- `geminiAnalysis.ts` - AI student insights analyzer
+
+#### Notification Services (src/services/notifications/)
+- `unifiedNotificationManager.ts` - Centralized notification management
+- `pushNotificationHandler.ts` - PWA push notifications
+- `emailNotificationHandler.ts` - Email notifications
+- `voiceNotificationHandler.ts` - Voice notifications
+- `notificationTemplatesHandler.ts` - Notification templates
+- `notificationHistoryHandler.ts` - Notification history
+- `notificationAnalyticsHandler.ts` - Notification analytics
+
+#### Additional Services
+- `emailQueueService.ts` - Email queue management
+- `emailTemplates.ts` - Email template system
+- `communicationLogService.ts` - Parent-teacher communication log
+- `parentProgressReportService.ts` - Parent progress reports
+- `studyPlanMaterialService.ts` - Study plan materials
+- `aiCacheService.ts` - AI response caching
+- `webSocketService.ts` - Real-time WebSocket communication
+- `performanceMonitor.ts` - Performance monitoring
+- `storageMigration.ts` - LocalStorage migration
 
 ### Storage Keys
 
