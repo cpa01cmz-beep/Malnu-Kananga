@@ -266,10 +266,10 @@ const deleteVersion = (versionId: string) => {
                     </p>
                     
                     <div className="text-xs text-neutral-500 dark:text-neutral-400 space-y-1">
-                      <p>📝 {version.changeLog}</p>
-                      <p>👤 {version.createdBy}</p>
-                      <p>📅 {formatDate(version.createdAt)}</p>
-                      <p>📁 {formatFileSize(version.fileSize)} • {version.fileType}</p>
+                      <p><span aria-hidden="true">📝</span> {version.changeLog}</p>
+                      <p><span aria-hidden="true">👤</span> {version.createdBy}</p>
+                      <p><span aria-hidden="true">📅</span> {formatDate(version.createdAt)}</p>
+                      <p><span aria-hidden="true">📁</span> {formatFileSize(version.fileSize)} • {version.fileType}</p>
                     </div>
                   </div>
                   
