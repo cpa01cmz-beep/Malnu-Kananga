@@ -9,15 +9,15 @@
 
 export const ENV = {
   SCHOOL: {
-    NAME: import.meta.env.VITE_SCHOOL_NAME || 'MA Malnu Kananga',
-    NPSN: import.meta.env.VITE_SCHOOL_NPSN || '69881502',
-    ADDRESS: import.meta.env.VITE_SCHOOL_ADDRESS || 'Jalan Desa Kananga Km. 0,5, Kananga, Kec. Menes, Kab. Pandeglang, Banten',
+    NAME: import.meta.env.VITE_SCHOOL_NAME || '',
+    NPSN: import.meta.env.VITE_SCHOOL_NPSN || '',
+    ADDRESS: import.meta.env.VITE_SCHOOL_ADDRESS || '',
     PHONE: import.meta.env.VITE_SCHOOL_PHONE || '',
-    EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || 'info@ma-malnukananga.sch.id',
-    WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || 'https://malnu-kananga.sch.id',
+    EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || '',
+    WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || '',
   },
   EMAIL: {
-    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || 'admin@malnu-kananga.sch.id',
+    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || '',
   },
   EXTERNAL: {
     GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
