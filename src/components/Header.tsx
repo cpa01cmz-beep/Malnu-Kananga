@@ -283,6 +283,7 @@ const Header: React.FC<HeaderProps> = ({
                                            icon={<SparklesIcon aria-hidden="true" />}
                                           iconPosition="left"
                                           title={HEADER_NAV_STRINGS.AI_EDITOR_OPEN}
+                                          ariaLabel={HEADER_NAV_STRINGS.AI_EDITOR}
                                       >
                                          <span className="hidden lg:inline">{HEADER_NAV_STRINGS.AI_EDITOR}</span>
                                      </Button>

@@ -273,6 +273,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                     isLoading={sending}
                     icon={!sending ? <SendIcon /> : undefined}
                     iconPosition="left"
+                    shortcut="Enter"
                   >
                     {sending ? 'Mengirim...' : 'Kirim'}
                   </Button>

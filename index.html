@@ -17,7 +17,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
+    <!-- Note: API preconnect removed - Lighthouse flagged as unused during initial load
+         API calls happen after auth/login, so preconnect doesn't benefit FCP/LCP -->
     
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
@@ -144,8 +145,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
-    <link rel="preconnect" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" crossorigin />
-    <link rel="dns-prefetch" href="https://malnu-kananga-worker.cpa01cmz.workers.dev" />
+    <!-- BroCula: API preconnects removed - Lighthouse flagged as unused
+         API calls occur post-auth, preconnect doesn't help initial paint metrics -->
     
     <title>Asisten AI MA Malnu Kananga - Portal Pintar Sekolah</title>
     

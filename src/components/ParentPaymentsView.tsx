@@ -230,6 +230,7 @@ const ParentPaymentsView: React.FC<ParentPaymentsViewProps> = ({ onShowToast, ch
               size="md"
               onClick={exportPaymentReport}
               icon={<DocumentTextIcon />}
+              aria-label="Unduh laporan pembayaran ke dokumen"
             >
               Unduh Laporan
             </Button>

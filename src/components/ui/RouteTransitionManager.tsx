@@ -6,6 +6,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import PageTransition, { TransitionType, TransitionEasing } from './PageTransition';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
+import { TIME_MS } from '../../constants';
 
 interface RouteTransition {
   from: string;
@@ -91,7 +92,7 @@ export const RouteTransitionProvider: React.FC<RouteTransitionProviderProps> = (
     setTimeout(() => {
       setCurrentPath(path);
       setIsTransitioning(false);
-    }, 100);
+    }, TIME_MS.MODERATE);
   };
 
   const setTransition = (config: Partial<RouteTransition>) => {

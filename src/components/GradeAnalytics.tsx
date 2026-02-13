@@ -395,6 +395,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           <Button
             onClick={analyzeClassGrades}
             variant="blue-solid"
+            shortcut="Ctrl+R"
           >
             Coba Lagi
           </Button>
@@ -436,6 +437,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
         <Button
           onClick={exportAnalyticsReport}
           variant="blue-solid"
+          aria-label="Ekspor laporan analitik nilai ke file"
         >
           Export Laporan
         </Button>

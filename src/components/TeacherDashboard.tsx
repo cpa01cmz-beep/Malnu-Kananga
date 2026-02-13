@@ -28,7 +28,7 @@ import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedTeacherData } from '../services/offlineDataService';
 import { logger } from '../utils/logger';
 import { useNetworkStatus, getOfflineMessage, getSlowConnectionMessage } from '../utils/networkStatus';
-import { USER_ROLES, USER_STATUS, TIME_MS } from '../constants';
+import { USER_ROLES, USER_STATUS, TIME_MS, LOADING_MESSAGES } from '../constants';
 import { classifyError } from '../utils/errorHandler';
 import { STORAGE_KEYS } from '../constants';
 import Card from './ui/Card';
@@ -854,37 +854,37 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         )}
 
         {currentView === 'grading' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat manajemen nilai..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.GRADE_MANAGEMENT} />}>
             <GradingManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'class' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat manajemen kelas..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.CLASS_MANAGEMENT} />}>
             <ClassManagement onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'upload' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat upload materi..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.MATERIAL_UPLOAD} />}>
             <MaterialUpload onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'inventory' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat inventaris..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.INVENTORY} />}>
             <SchoolInventory onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'assignments' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat pembuatan tugas..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.ASSIGNMENT_CREATION} />}>
             <AssignmentCreation onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'assignment-grading' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat penilaian tugas..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.ASSIGNMENT_GRADING} />}>
             <AssignmentGrading onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
         {currentView === 'analytics' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat analisis nilai..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.GRADE_ANALYSIS} />}>
             <GradeAnalytics onBack={() => setCurrentView('home')} onShowToast={handleToast}/>
           </Suspense>
         )}
@@ -1165,12 +1165,12 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
           </div>
         )}
         {currentView === 'quiz-generator' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat generator kuis..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.QUIZ_GENERATOR} />}>
             <QuizGenerator onSuccess={() => { handleToast('Kuis berhasil dibuat!', 'success'); setCurrentView('home'); }} onCancel={() => setCurrentView('home')} />
           </Suspense>
         )}
         {currentView === 'quiz-integration' && (
-          <Suspense fallback={<SuspenseLoading message="Memuat integrasi kuis..." />}>
+          <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.QUIZ_INTEGRATION} />}>
             <QuizIntegrationDashboard onBack={() => setCurrentView('home')} onShowToast={handleToast} />
           </Suspense>
         )}
@@ -1189,7 +1189,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
             </div>
-            <Suspense fallback={<SuspenseLoading message="Memuat pesan..." />}>
+            <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.MESSAGES} />}>
               <DirectMessage
                 currentUser={{
                   id: getCurrentUserId(),
@@ -1218,7 +1218,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grup Diskusi</h2>
             </div>
-            <Suspense fallback={<SuspenseLoading message="Memuat grup..." />}>
+            <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.GROUPS} />}>
               <GroupChat
                 currentUser={{
                   id: getCurrentUserId(),
@@ -1247,7 +1247,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
               </button>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Log Komunikasi</h2>
             </div>
-            <Suspense fallback={<SuspenseLoading message="Memuat log komunikasi..." />}>
+            <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.COMMUNICATION_LOG} />}>
               <CommunicationDashboard
                 _currentUser={{
                   id: getCurrentUserId(),
