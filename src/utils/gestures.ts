@@ -5,7 +5,7 @@
 
 import { useCallback, useRef, useState, useEffect, type ReactNode } from 'react';
 import { useHapticFeedback } from './hapticFeedback';
-import { GESTURE_CONFIG } from '../constants';
+import { GESTURE_CONFIG, UI_DELAYS } from '../constants';
 
 export interface SwipeGestureOptions {
   threshold?: number;
@@ -315,7 +315,7 @@ export const useSwipeToDelete = (options: SwipeToDeleteOptions = {}) => {
     setTimeout(() => {
       setDeleteProgress(0);
       setIsDeleting(false);
-    }, 200);
+    }, UI_DELAYS.RESET_DELAY);
     
     startX.current = null;
     currentX.current = null;
