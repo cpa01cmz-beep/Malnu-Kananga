@@ -259,6 +259,7 @@ const Header: React.FC<HeaderProps> = ({
                             icon={currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
                             ariaLabel="Pilih Tema"
                             tooltip={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : undefined}
+                            shortcut="Ctrl+T"
                             size="lg"
                             onClick={onToggleTheme}
                         />
@@ -312,6 +313,7 @@ const Header: React.FC<HeaderProps> = ({
                                     icon={isMenuOpen ? <CloseIcon /> : <MenuIcon />}
                                     ariaLabel={isMenuOpen ? "Tutup menu" : "Buka menu"}
                                     tooltip={isMenuOpen ? "Tutup menu" : "Buka menu"}
+                                    shortcut="Ctrl+M"
                                     size="lg"
                                     onClick={handleMenuToggle}
                                     onKeyDown={(e) => {

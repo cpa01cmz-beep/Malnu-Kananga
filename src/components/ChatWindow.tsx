@@ -319,6 +319,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     onClick={() => setShowVoiceSettings(!showVoiceSettings)}
                     ariaLabel="Buka pengaturan suara"
                     tooltip={showVoiceSettings ? "Tutup pengaturan suara" : "Pengaturan Suara"}
+                    shortcut="Ctrl+V"
                     size="md"
                     variant={showVoiceSettings ? 'primary' : 'ghost'}
                     className={`p-2 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
@@ -330,6 +331,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     onClick={() => setIsThinkingMode(!isThinkingMode)}
                     ariaLabel={isThinkingMode ? "Matikan Mode Berpikir Dalam" : "Aktifkan Mode Berpikir Dalam"}
                     tooltip={isThinkingMode ? "Mode Berpikir Dalam: Aktif" : "Aktifkan Mode Berpikir Dalam"}
+                    shortcut="Ctrl+B"
                     size="md"
                     variant={isThinkingMode ? 'primary' : 'ghost'}
                     className={`p-2 flex items-center gap-1 ${isThinkingMode ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
@@ -341,6 +343,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                 <IconButton
                   onClick={closeChat}
                   ariaLabel="Tutup obrolan"
+                  tooltip="Tutup obrolan"
+                  shortcut="Esc"
                   size="md"
                   variant="ghost"
                    className={`p-2 ${OPACITY_TOKENS.WHITE_10} ${OPACITY_TOKENS.WHITE_10_HOVER} text-white ${OPACITY_TOKENS.RING_WHITE_50}`}

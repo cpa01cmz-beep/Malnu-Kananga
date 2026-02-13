@@ -11,6 +11,7 @@ import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
 import { DATATABLE_CONFIG } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
+import { useHapticFeedback } from '../../utils/hapticFeedback';
 
 export interface Column<T = Record<string, unknown>> {
   key: string;
@@ -311,6 +312,7 @@ const DataTable = <T extends Record<string, unknown>>({
   emptyActions,
 }: DataTableProps<T>) => {
   const [localSearch, setLocalSearch] = useState(filter?.searchValue || '');
+  const { onSuccess, onTap, onDelete } = useHapticFeedback();
 
   const handleSearch = (value: string) => {
     setLocalSearch(value);
@@ -330,10 +332,22 @@ const DataTable = <T extends Record<string, unknown>>({
   };
 
   const handleSelectAll = (checked: boolean) => {
+    // Provide haptic feedback for bulk selection
+    if (checked) {
+      onSuccess();
+    } else {
+      onDelete();
+    }
     selection?.onSelectAll(checked);
   };
 
   const handleSelect = (key: string, checked: boolean) => {
+    // Provide haptic feedback for individual row selection
+    if (checked) {
+      onTap();
+    } else {
+      onDelete();
+    }
     selection?.onSelect(key, checked);
   };
 
@@ -663,7 +677,10 @@ const DataTable = <T extends Record<string, unknown>>({
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => selection?.onSelectAll(false)}
+                  onClick={() => {
+                    onDelete();
+                    selection?.onSelectAll(false);
+                  }}
                   className="touch-manipulation haptic-feedback mobile-touch-target"
                 >
                   <span className="hidden sm:inline">Hapus Pilihan</span>

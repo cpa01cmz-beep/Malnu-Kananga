@@ -519,6 +519,8 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               <IconButton
                 icon={sort.direction === 'asc' ? '↑' : '↓'}
                 ariaLabel={`Urutkan berdasarkan ${sort.field} dalam urutan ${sort.direction === 'asc' ? 'naik' : 'turun'}`}
+                tooltip={`Urutkan ${sort.direction === 'asc' ? 'menurun' : 'naik'}`}
+                shortcut="Ctrl+U"
                 variant="ghost"
                 size="sm"
                 onClick={() => setSort({...sort, direction: sort.direction === 'asc' ? 'desc' : 'asc'})}
@@ -583,14 +585,15 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                                 }`}>
                                                   {reg.score}
                                                  </span>
-                                                <IconButton
-                                                  onClick={() => setShowScoringModal(reg.id)}
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  ariaLabel="Edit skor"
-                                                  tooltip="Edit skor"
-                                                  icon={<PencilIcon />}
-                                                />
+                                                 <IconButton
+                                                   onClick={() => setShowScoringModal(reg.id)}
+                                                   variant="ghost"
+                                                   size="sm"
+                                                   ariaLabel="Edit skor"
+                                                   tooltip="Edit skor"
+                                                   shortcut="Ctrl+E"
+                                                   icon={<PencilIcon />}
+                                                 />
                                               </>
                                             ) : (
                                               <button

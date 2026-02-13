@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Button from './Button';
-import { PAGINATION_OPTIONS } from '../../constants';
+import { PAGINATION_OPTIONS, UI_DELAYS } from '../../constants';
 
 export type PaginationVariant = 'default' | 'compact' | 'minimal';
 export type PaginationSize = 'sm' | 'md' | 'lg';
@@ -124,6 +124,74 @@ const Pagination: React.FC<PaginationProps> = ({
   ariaLabel = 'Pagination navigation',
 }) => {
   const [itemsPerPageValue, setItemsPerPageValue] = useState(itemsPerPage);
+  const [showPrevShortcut, setShowPrevShortcut] = useState(false);
+  const [showNextShortcut, setShowNextShortcut] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const prevHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nextHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keyboard navigation support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if focus is within the pagination
+      if (!navRef.current?.contains(document.activeElement)) return;
+
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        e.preventDefault();
+        onPageChange(currentPage - 1);
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        e.preventDefault();
+        onPageChange(currentPage + 1);
+      } else if (e.key === 'Home' && currentPage !== 1) {
+        e.preventDefault();
+        onPageChange(1);
+      } else if (e.key === 'End' && currentPage !== totalPages) {
+        e.preventDefault();
+        onPageChange(totalPages);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, totalPages, onPageChange]);
+
+  // Cleanup timeouts
+  useEffect(() => {
+    return () => {
+      if (prevHintTimeoutRef.current) clearTimeout(prevHintTimeoutRef.current);
+      if (nextHintTimeoutRef.current) clearTimeout(nextHintTimeoutRef.current);
+    };
+  }, []);
+
+  const showPrevHint = () => {
+    if (currentPage > 1) {
+      prevHintTimeoutRef.current = setTimeout(() => {
+        setShowPrevShortcut(true);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
+    }
+  };
+
+  const hidePrevHint = () => {
+    setShowPrevShortcut(false);
+    if (prevHintTimeoutRef.current) {
+      clearTimeout(prevHintTimeoutRef.current);
+    }
+  };
+
+  const showNextHint = () => {
+    if (currentPage < totalPages) {
+      nextHintTimeoutRef.current = setTimeout(() => {
+        setShowNextShortcut(true);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
+    }
+  };
+
+  const hideNextHint = () => {
+    setShowNextShortcut(false);
+    if (nextHintTimeoutRef.current) {
+      clearTimeout(nextHintTimeoutRef.current);
+    }
+  };
   
   const sizeClasses = {
     sm: 'text-xs',
@@ -155,6 +223,7 @@ const Pagination: React.FC<PaginationProps> = ({
   
   return (
     <nav
+      ref={navRef}
       className={`${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       role="navigation"
       aria-label={ariaLabel}
@@ -168,15 +237,48 @@ const Pagination: React.FC<PaginationProps> = ({
       <div className="flex items-center space-x-4">
         {variant !== 'minimal' && (
           <div className="flex items-center space-x-2">
-            <Button
-              variant="secondary"
-              disabled={currentPage === 1}
-              onClick={() => onPageChange(currentPage - 1)}
-              iconOnly
-              aria-label="Previous page"
-            >
-              ←
-            </Button>
+            <div className="relative">
+              <Button
+                variant="secondary"
+                disabled={currentPage === 1}
+                onClick={() => onPageChange(currentPage - 1)}
+                iconOnly
+                aria-label="Previous page (Press Left Arrow)"
+                onMouseEnter={showPrevHint}
+                onMouseLeave={hidePrevHint}
+                onFocus={showPrevHint}
+                onBlur={hidePrevHint}
+              >
+                ←
+              </Button>
+              {/* Keyboard shortcut hint - Micro UX Delight */}
+              {showPrevShortcut && currentPage > 1 && (
+                <div
+                  className={`
+                    absolute -top-9 left-1/2 -translate-x-1/2
+                    px-2.5 py-1
+                    bg-neutral-800 dark:bg-neutral-700
+                    text-white text-[10px] font-medium
+                    rounded-md shadow-md
+                    whitespace-nowrap
+                    transition-all duration-200 ease-out
+                    pointer-events-none
+                    z-50
+                    ${showPrevShortcut ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+                  `.replace(/\s+/g, ' ').trim()}
+                  role="tooltip"
+                  aria-hidden={!showPrevShortcut}
+                >
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                      ←
+                    </kbd>
+                    <span>prev</span>
+                  </span>
+                  <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+                </div>
+              )}
+            </div>
             
             <PageNumbers
               currentPage={currentPage}
@@ -185,15 +287,48 @@ const Pagination: React.FC<PaginationProps> = ({
               maxVisiblePages={maxVisiblePages}
             />
             
-            <Button
-              variant="secondary"
-              disabled={currentPage === totalPages}
-              onClick={() => onPageChange(currentPage + 1)}
-              iconOnly
-              aria-label="Next page"
-            >
-              →
-            </Button>
+            <div className="relative">
+              <Button
+                variant="secondary"
+                disabled={currentPage === totalPages}
+                onClick={() => onPageChange(currentPage + 1)}
+                iconOnly
+                aria-label="Next page (Press Right Arrow)"
+                onMouseEnter={showNextHint}
+                onMouseLeave={hideNextHint}
+                onFocus={showNextHint}
+                onBlur={hideNextHint}
+              >
+                →
+              </Button>
+              {/* Keyboard shortcut hint - Micro UX Delight */}
+              {showNextShortcut && currentPage < totalPages && (
+                <div
+                  className={`
+                    absolute -top-9 left-1/2 -translate-x-1/2
+                    px-2.5 py-1
+                    bg-neutral-800 dark:bg-neutral-700
+                    text-white text-[10px] font-medium
+                    rounded-md shadow-md
+                    whitespace-nowrap
+                    transition-all duration-200 ease-out
+                    pointer-events-none
+                    z-50
+                    ${showNextShortcut ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
+                  `.replace(/\s+/g, ' ').trim()}
+                  role="tooltip"
+                  aria-hidden={!showNextShortcut}
+                >
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
+                      →
+                    </kbd>
+                    <span>next</span>
+                  </span>
+                  <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
+                </div>
+              )}
+            </div>
           </div>
         )}
         
