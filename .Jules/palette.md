@@ -22,3 +22,16 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 Always verify aria-label exists on action buttons, regardless of visible text presence. Screen readers benefit from descriptive labels that clarify context beyond just the visible text.
 
 **Pattern Found:** Export buttons are high-risk - users expect clear action descriptions for data operations affecting their work.
+
+---
+
+## 2026-02-13 - StudyPlanGenerator Tab Accessibility Fix
+**Learning**: Custom tab-like components built with native button elements must use proper ARIA tab patterns (role="tablist", role="tab", aria-selected, aria-controls, tabIndex) to be accessible to screen reader users.
+
+**Action**: When building tab-like navigation with button elements, always implement the full WAI-ARIA tab pattern:
+- Container: `role="tablist"` with `aria-label`
+- Tab buttons: `role="tab"`, `aria-selected`, `aria-controls`, `tabIndex`
+- Tab panels: `role="tabpanel"`, `aria-labelledby` pointing to tab button ID
+- Add `focus-visible` styles for keyboard navigation visibility
+
+**Key Pattern**: This applies to ANY custom tab-like components, not just UI library components. Always verify custom navigation uses proper ARIA semantics.
