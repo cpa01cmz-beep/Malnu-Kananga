@@ -276,3 +276,17 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - What data/object the action applies to (especially in list/card contexts)
 - This is especially important for parent dashboards where users manage multiple children
 
+---
+
+## 2026-02-13 - Retry Button Accessibility Consistency
+
+**Learning**: Retry buttons in AssignmentGrading and UserManagement components were missing keyboard shortcut hints (Ctrl+R) that were already present in similar components like ELibrary, StudentInsights, and StudyPlanGenerator. The AssignmentGrading retry button was also missing an aria-label, making it inaccessible to screen reader users.
+
+**Action**: Add both aria-label and shortcut="Ctrl+R" to all retry/refresh buttons in error states:
+- AssignmentGrading.tsx: Added `aria-label="Coba lagi memuat tugas"` and `shortcut="Ctrl+R"`
+- UserManagement.tsx: Added `shortcut="Ctrl+R"` (already had aria-label)
+
+**Pattern**: Audit all retry/refresh buttons in error handling components. If similar components (ELibrary, StudentInsights, StudyPlanGenerator) already have keyboard shortcut hints, ensure consistency across all retry buttons. Always include:
+- aria-label for screen reader accessibility
+- shortcut="Ctrl+R" to make the keyboard shortcut discoverable
+
