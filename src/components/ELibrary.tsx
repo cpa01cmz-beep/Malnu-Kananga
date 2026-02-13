@@ -3,7 +3,7 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { StarIcon, BookmarkIcon, FunnelIcon } from './icons/MaterialIcons';
 import DocumentTextIcon from './icons/DocumentTextIcon';
 import { EmptyState } from './ui/LoadingState';
-import { eLibraryAPI, fileStorageAPI } from '../services/apiService';
+import { eLibraryAPI, fileStorageAPI, authAPI } from '../services/apiService';
 import { ELibrary as ELibraryType, Subject, Bookmark, Review, ReadingProgress, OCRStatus, OCRProcessingState, SearchOptions, PlagiarismFlag, VoiceCommand } from '../types';
 import { useSemanticSearch } from '../hooks/useSemanticSearch';
 import { useVoiceCommands } from '../hooks/useVoiceCommands';
@@ -16,6 +16,7 @@ import { GRADIENT_CLASSES } from '../config/gradients';
 import { STORAGE_KEYS, TIME_MS, CONVERSION } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
+import { generateMaterialRecommendations } from '../services/ai';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import { CardSkeleton } from './ui/Skeleton';
@@ -80,6 +81,16 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     includeOCR: true,
     minConfidence: 50
   });
+
+  const [recommendations, setRecommendations] = useState<Array<{
+    materialId: string;
+    title: string;
+    reason: string;
+    priority: 'high' | 'medium' | 'low';
+    focusArea: string;
+  }>>([]);
+  const [recommendationsLoading, setRecommendationsLoading] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(true);
 
   // Semantic search hook
   const semanticSearchHook = useSemanticSearch(materials, {
@@ -203,6 +214,51 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       semanticSearchHook.clearSearch();
     }
   }, [debouncedSearch, isSemanticMode, semanticSearchHook]);
+
+  useEffect(() => {
+    if (materials.length > 0 && !loading) {
+      const generateRecommendations = async () => {
+        setRecommendationsLoading(true);
+        try {
+          const currentUser = authAPI.getCurrentUser();
+          const studentData = {
+            studentId: currentUser?.id || 'anonymous',
+            studentName: currentUser?.name || 'Siswa',
+            gradeLevel: '10',
+            subjects: subjects.map(s => s.name),
+            recentGrades: [],
+            recentMaterials: Array.from(readingProgress.entries()).map(([id, progress]) => ({
+              id,
+              title: materials.find(m => m.id === id)?.title || '',
+              subject: materials.find(m => m.id === id)?.subjectId || '',
+              accessedAt: progress.lastReadAt
+            })),
+            completedMaterials: Array.from(readingProgress.entries())
+              .filter(([, progress]) => progress.currentPosition >= 0.9)
+              .map(([id]) => id)
+          };
+
+          const availableMaterials = materials.map(m => ({
+            id: m.id,
+            title: m.title,
+            description: m.description,
+            subject: m.subjectId,
+            category: m.category,
+            fileType: m.fileType
+          }));
+
+          const results = await generateMaterialRecommendations(studentData, availableMaterials, 5);
+          setRecommendations(results);
+        } catch (err) {
+          logger.error('Error generating recommendations:', err);
+        } finally {
+          setRecommendationsLoading(false);
+        }
+      };
+
+      generateRecommendations();
+    }
+  }, [materials, loading, subjects, readingProgress]);
 
   const fetchMaterials = async () => {
     setLoading(true);
@@ -826,6 +882,67 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">E-Library & Materi</h2>
           <p className="text-neutral-500 dark:text-neutral-400">Akses modul pembelajaran dan tugas digital.</p>
         </div>
+        {showRecommendations && recommendations.length > 0 && (
+          <div className="w-full mt-4">
+            <div className={`p-4 rounded-xl border ${GRADIENT_CLASSES.AI_SEMANTIC}`}>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-purple-900 dark:text-purple-100 flex items-center gap-2">
+                  <span>🧠</span> Rekomendasi untuk Anda
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowRecommendations(false)}
+                  className="text-purple-700 dark:text-purple-300 text-xs"
+                >
+                  Sembunyikan
+                </Button>
+              </div>
+              {recommendationsLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                  <span className="ml-2 text-purple-800 dark:text-purple-200">Menganalisis...</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {recommendations.slice(0, 3).map((rec) => {
+                    const material = materials.find(m => m.id === rec.materialId);
+                    if (!material) return null;
+                    return (
+                      <button
+                        key={rec.materialId}
+                        onClick={() => {
+                          setSearch(material.title);
+                          setDebouncedSearch(material.title);
+                        }}
+                        className="text-left p-3 bg-white/80 dark:bg-purple-900/50 rounded-lg hover:bg-white dark:hover:bg-purple-900/70 transition-colors"
+                      >
+                        <div className="font-medium text-purple-900 dark:text-purple-100 text-sm line-clamp-1">
+                          {material.title}
+                        </div>
+                        <div className="text-xs text-purple-700 dark:text-purple-300 mt-1 line-clamp-2">
+                          {rec.reason}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            rec.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                            rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                            'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          }`}>
+                            {rec.priority === 'high' ? 'Prioritas Tinggi' : rec.priority === 'medium' ? 'Sedang' : 'Rendah'}
+                          </span>
+                          <span className="text-xs text-purple-600 dark:text-purple-400">
+                            {rec.focusArea}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="flex gap-2 w-full md:w-auto">
           <SearchInput
             placeholder={isSemanticMode ? "Cari dengan AI..." : "Cari materi..."}

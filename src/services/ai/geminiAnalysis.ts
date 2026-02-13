@@ -310,3 +310,136 @@ export async function generateAssignmentFeedback(
     throw new Error(message);
   }
 }
+
+export async function generateMaterialRecommendations(
+  studentData: {
+    studentId: string;
+    studentName: string;
+    gradeLevel: string;
+    subjects: string[];
+    recentGrades: Array<{ subject: string; score: number; grade: string }>;
+    weakSubjects?: string[];
+    strongSubjects?: string[];
+    recentMaterials?: Array<{ id: string; title: string; subject: string; accessedAt: string }>;
+    completedMaterials?: string[];
+  },
+  availableMaterials: Array<{
+    id: string;
+    title: string;
+    description: string;
+    subject: string;
+    category: string;
+    fileType: string;
+  }>,
+  maxRecommendations: number = 5
+): Promise<Array<{
+  materialId: string;
+  title: string;
+  reason: string;
+  priority: 'high' | 'medium' | 'low';
+  focusArea: string;
+}>> {
+  const cacheKey = {
+    operation: 'materialRecommendations',
+    input: JSON.stringify({ studentData, availableMaterials: availableMaterials.map(m => m.id) }),
+    model: AI_MODELS.PRO_THINKING
+  };
+
+  const cachedRecommendations = analysisCache.get<Array<{
+    materialId: string;
+    title: string;
+    reason: string;
+    priority: 'high' | 'medium' | 'low';
+    focusArea: string;
+  }>>(cacheKey);
+
+  if (cachedRecommendations) {
+    logger.debug('Returning cached material recommendations');
+    return cachedRecommendations;
+  }
+
+  const prompt = `
+  Anda adalah asisten pembelajaran yang memberikan rekomendasi materi pembelajaran personal untuk siswa.
+
+  INFORMASI SISWA:
+  - Nama: ${studentData.studentName}
+  - Tingkat Kelas: ${studentData.gradeLevel}
+  - Mata Pelajaran yang Dipelajari: ${studentData.subjects.join(', ')}
+  - Nilai Terbaru: ${JSON.stringify(studentData.recentGrades)}
+  - Mata Pelajaran yang Perlu Perhatian: ${studentData.weakSubjects?.join(', ') || 'Tidak ada'}
+  - Mata Pelajaran Unggul: ${studentData.strongSubjects?.join(', ') || 'Tidak ada'}
+  - Materi yang Sudah Diakses: ${studentData.recentMaterials?.map(m => m.title).join(', ') || 'Belum ada'}
+  - Materi yang Sudah Selesai: ${studentData.completedMaterials?.join(', ') || 'Belum ada'}
+
+  MATERI YANG TERSEDIA:
+  ${JSON.stringify(availableMaterials, null, 2)}
+
+  INSTRUKSI:
+  Berikan ${maxRecommendations} rekomendasi materi yang paling relevan untuk siswa ini.
+  Perhatikan:
+  1. Fokus pada mata pelajaran yang perlu perhatian (jika ada)
+  2. Pilih materi yang belum pernah diakses
+  3. Sesuaikan dengan tingkat kelas siswa
+  4. Berikan alasan yang jelas mengapa materi ini direkomendasikan
+  5. Tentukan prioritas: high (mendesak), medium (berguna), low (opsional)
+
+  FORMAT OUTPUT (JSON):
+  {
+    "recommendations": [
+      {
+        "materialId": "id materi",
+        "title": "judul materi",
+        "reason": "alasan mengapa materi ini direkomendasikan",
+        "priority": "high|medium|low",
+        "focusArea": "area fokus pembelajaran"
+      }
+    ]
+  }
+  `;
+
+  const schema = {
+    type: Type.OBJECT,
+    properties: {
+      recommendations: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            materialId: { type: Type.STRING },
+            title: { type: Type.STRING },
+            reason: { type: Type.STRING },
+            priority: { type: Type.STRING, enum: ['high', 'medium', 'low'] },
+            focusArea: { type: Type.STRING }
+          },
+          required: ['materialId', 'title', 'reason', 'priority', 'focusArea']
+        }
+      }
+    },
+    required: ['recommendations']
+  };
+
+  try {
+    const response = await withCircuitBreaker(async () => {
+      return await (await getAIInstance()).models.generateContent({
+        model: AI_MODELS.PRO_THINKING,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
+        }
+      });
+    });
+
+    const jsonText = (response.text || '').trim();
+    const data = JSON.parse(jsonText);
+
+    analysisCache.set(cacheKey, data.recommendations);
+
+    return data.recommendations;
+  } catch (error) {
+    const classifiedError = handleAIError(error, AIOperationType.ANALYSIS, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.ANALYSIS);
+    throw new Error(message);
+  }
+}

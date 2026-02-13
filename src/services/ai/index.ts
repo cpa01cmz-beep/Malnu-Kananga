@@ -12,7 +12,8 @@ export type { LocalContext } from './geminiChat';
 export {
   analyzeClassPerformance,
   analyzeStudentPerformance,
-  generateAssignmentFeedback
+  generateAssignmentFeedback,
+  generateMaterialRecommendations
 } from './geminiAnalysis';
 
 // Editor exports
