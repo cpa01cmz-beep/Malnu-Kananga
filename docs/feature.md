@@ -353,10 +353,103 @@ Based on Phase 3 Creative evaluation, these features strengthen the existing sys
 
 ---
 
+### F019: Real-time Grade Notifications
+
+**Type**: Notification Feature
+**Priority**: High
+**Description**: Instant push notifications to parents when their child's grades change.
+
+**User Stories**:
+- As a Parent, I want to receive instant push notifications when my child's grade changes, so I can stay informed about their academic progress in real-time.
+- As a Teacher, I want to configure which grade changes trigger notifications, so parents aren't spammed with minor updates.
+
+**Implementation**:
+- Add push notification triggers on grade entry/update
+- Add notification preferences per parent (threshold-based)
+- Add notification history log
+
+---
+
+### F020: AI Lesson Plan Generator
+
+**Type**: AI Feature
+**Priority**: Medium
+**Description**: AI-powered generation of lesson plans based on curriculum standards.
+
+**User Stories**:
+- As a Teacher, I want AI-generated lesson plans based on curriculum standards and student performance data, so I can save time on preparation and ensure comprehensive coverage.
+
+**Implementation**:
+- Add lesson plan generation using Gemini API
+- Add curriculum template system
+- Add subject-specific templates (Math, Science, etc.)
+- Add export to PDF/Google Docs
+
+---
+
+### F021: Custom Role-Based Permissions
+
+**Type**: Security Feature
+**Priority**: High
+**Description**: Granular permission system with custom roles.
+
+**User Stories**:
+- As an Admin, I want to create custom roles with granular permissions, so I can fine-tune security for different staff responsibilities.
+- As a Kepsek, I want to assign specific permissions to Wakasek without giving full admin access.
+
+**Implementation**:
+- Add role builder UI
+- Add permission matrix (read, write, delete, export)
+- Add role templates (customize existing roles)
+- Add permission inheritance
+
+---
+
+### F022: Student Progress Dashboard
+
+**Type**: Student Feature
+**Priority**: Medium
+**Description**: Visual dashboard for students to track their own progress.
+
+**User Stories**:
+- As a Student, I want to track my own progress with visual dashboards showing attendance, grades, and assignments, so I can take ownership of my learning journey.
+
+**Implementation**:
+- Add student-facing analytics
+- Add progress charts (attendance trends, grade history)
+- Add goal setting and tracking
+- Add achievement badges
+
+---
+
+### F023: AI Automated Feedback
+
+**Type**: AI Feature
+**Priority**: Medium
+**Description**: Automated grading feedback with AI explanations.
+
+**User Stories**:
+- As a Teacher, I want automated grading feedback with AI explanations, so students can understand their mistakes and improve.
+- As a Student, I want detailed explanations for graded assignments, so I can learn from my errors.
+
+**Implementation**:
+- Add AI feedback generation for essay/short answer questions
+- Add common mistake identification
+- Add learning resource suggestions based on errors
+- Add feedback history per student
+
+---
+
 ## Feature Priorities
 
 | Feature | Priority | Effort | Impact |
 |---------|----------|--------|--------|
+| F019: Grade Notifications | High | Medium | High |
+| F019: Grade Notifications | High | Medium | High |
+| F020: AI Lesson Plans | Medium | High | High |
+| F021: Custom RBAC | High | Medium | High |
+| F022: Student Dashboard | Medium | Medium | Medium |
+| F023: AI Feedback | Medium | Medium | High |
 | F014: Gamification | Medium | Medium | High |
 | F015: Global Search | High | Medium | High |
 | F016: Doc Templates | Medium | Medium | Medium |
