@@ -407,6 +407,8 @@ describe('attendanceOCRService', () => {
     });
 
     it('should handle invalid date gracefully', async () => {
+      // Test data: Invalid date pattern for OCR validation testing
+      // XX-XX-XXXX is intentionally invalid to test error handling
       const textWithInvalidDate = 'Tanggal: XX-XX-XXXX';
       
       vi.mocked(ocrService.initialize).mockResolvedValue(undefined);
