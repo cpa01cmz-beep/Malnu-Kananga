@@ -3846,10 +3846,58 @@ export const UI_STRINGS = {
   TO: 'ke',
   REVOKE_ACCESS: 'Batasi',
   WELCOME_BACK: 'Selamat Datang Kembali',
+
+  // Footer UI strings (Flexy: Eliminated hardcoded values - Run #116)
+  FOOTER: {
+    EMAIL_ARIA_LABEL: (email: string) => `Kirim email ke ${email}`,
+    HELP_CENTER_ARIA_LABEL: 'Buka pusat bantuan dan dokumentasi',
+    TOOLTIP_HELP_CENTER: 'Buka pusat bantuan dan dokumentasi',
+    COMING_SOON: {
+      DOWNLOAD: 'Area Download akan tersedia segera',
+      PRIVACY_POLICY: 'Kebijakan Privasi akan tersedia segera',
+      CAREERS: 'Informasi Karir akan tersedia segera',
+      SCHOLARSHIPS: 'Informasi Beasiswa akan tersedia segera',
+      FACEBOOK: 'Facebook akan tersedia segera',
+      INSTAGRAM: 'Instagram akan tersedia segera',
+      YOUTUBE: 'YouTube akan tersedia segera',
+    },
+  },
+
+  // Button labels (Flexy: Eliminated hardcoded values - Run #116)
+  BUTTONS: {
+    EXPORT: 'Export',
+    IMPORT: 'Import',
+    BACKUP: 'Backup',
+  },
+
+  // PDF export strings (Flexy: Eliminated hardcoded values - Run #116)
+  PDF: {
+    PRINTED_PREFIX: 'Dicetak: ',
+  },
+
+  // Notification strings (Flexy: Eliminated hardcoded values - Run #116)
+  NOTIFICATIONS: {
+    GRADE_UPDATE_TITLE: (subject: string) => `Nilai Update: ${subject}`,
+  },
 } as const;
 
 // ============================================================================
-// End of Flexy Modularity Additions - Run #104
+// Log Messages - Centralized log strings (Flexy: Never hardcode log messages!)
+// ============================================================================
+export const LOG_MESSAGES = {
+  EMAIL_NOTIFICATIONS: {
+    QUEUED: 'Email notification queued for:',
+    FAILED: 'Failed to send email notification:',
+    CLEANUP: 'Email notification handler cleaned up',
+  },
+  APP: {
+    OFFLINE_READY: 'Aplikasi siap untuk penggunaan offline.',
+    UNHANDLED_REJECTION: 'Unhandled promise rejection:',
+  },
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #116
 // ============================================================================
 
 // ============================================================================
