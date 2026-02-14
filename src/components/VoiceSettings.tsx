@@ -418,7 +418,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                       onClick={() => setShowDeleteConfirmation(true)}
                       variant="neutral"
                       fullWidth
-                      shortcut="Enter"
+                      shortcut="Del"
                     >
                       Hapus
                     </SmallActionButton>
