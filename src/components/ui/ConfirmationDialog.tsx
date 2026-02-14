@@ -92,22 +92,24 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
       <div className="flex gap-3 justify-end mt-6">
          <Button
-          onClick={onCancel}
-          disabled={isLoading}
-          ariaLabel={cancelText}
-          variant="secondary"
-          size="md"
-        >
+           onClick={onCancel}
+           disabled={isLoading}
+           ariaLabel={cancelText}
+           variant="secondary"
+           size="md"
+           shortcut="Esc"
+         >
           {cancelText}
-        </Button>
-         <Button
-          onClick={onConfirm}
-          disabled={isLoading}
-          ariaLabel={confirmText}
-          variant={styles.confirmVariant}
-          size="md"
-          isLoading={isLoading}
-        >
+         </Button>
+          <Button
+           onClick={onConfirm}
+           disabled={isLoading}
+           ariaLabel={confirmText}
+           variant={styles.confirmVariant}
+           size="md"
+           isLoading={isLoading}
+           shortcut="Enter"
+         >
           {confirmText}
         </Button>
       </div>
