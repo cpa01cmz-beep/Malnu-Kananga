@@ -317,7 +317,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
               <h1 className="text-3xl font-bold text-gray-900">Analitik Rencana Belajar</h1>
               <p className="text-gray-600 mt-1">Melacak kemajuan dan efektivitas rencana belajar Anda</p>
             </div>
-            <Button variant="secondary" onClick={onBack}>Kembali</Button>
+            <Button variant="secondary" onClick={onBack} shortcut="Alt+Left">Kembali</Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
@@ -338,7 +338,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
               <h1 className="text-3xl font-bold text-gray-900">Analitik Rencana Belajar</h1>
               <p className="text-gray-600 mt-1">Melacak kemajuan dan efektivitas rencana belajar Anda</p>
             </div>
-            <Button variant="secondary" onClick={onBack}>Kembali</Button>
+            <Button variant="secondary" onClick={onBack} shortcut="Alt+Left">Kembali</Button>
           </div>
           <ErrorMessage message={error} />
         </div>
@@ -355,7 +355,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
               <h1 className="text-3xl font-bold text-gray-900">Analitik Rencana Belajar</h1>
               <p className="text-gray-600 mt-1">Melacak kemajuan dan efektivitas rencana belajar Anda</p>
             </div>
-            <Button variant="secondary" onClick={onBack}>Kembali</Button>
+            <Button variant="secondary" onClick={onBack} shortcut="Alt+Left">Kembali</Button>
           </div>
           <EmptyState
             icon={<svg className="w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -396,7 +396,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
             <Button variant="secondary" onClick={handleExportAnalytics} aria-label="Ekspor analitik rencana belajar ke PDF">
               Ekspor
             </Button>
-            <Button variant="secondary" onClick={onBack}>
+            <Button variant="secondary" onClick={onBack} shortcut="Alt+Left">
               Kembali
             </Button>
           </div>
