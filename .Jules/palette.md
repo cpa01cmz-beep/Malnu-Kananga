@@ -6,7 +6,34 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-14 - TemplateManagement Loading State and Keyboard Shortcut
+## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
+
+**Learning**: The RoleManager component had multiple action buttons (Create Role, Cancel, Save, Use Template) missing keyboard shortcut hints while other components in the codebase consistently use shortcuts. Additionally, the tab navigation was missing proper ARIA attributes for screen reader accessibility.
+
+**Action**: Added keyboard shortcuts and ARIA improvements:
+- Line 162: Added `shortcut="Ctrl+N"` to Create Role button
+- Line 268: Added `shortcut="Esc"` to Cancel button
+- Line 271: Added `shortcut="Ctrl+S"` to Save button
+- Line 298: Added `shortcut="Enter"` to Use Template button
+- Lines 139-152: Added `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, and `type="button"` to tab buttons
+
+**Pattern**: Admin components with CRUD operations should have consistent keyboard shortcuts:
+- Create buttons: `shortcut="Ctrl+N"` (standard convention)
+- Cancel buttons: `shortcut="Esc"` (modal pattern)
+- Save buttons: `shortcut="Ctrl+S"` (save convention)
+- Use/Apply buttons: `shortcut="Enter"` (confirm selection)
+
+Tab navigation should have proper ARIA for screen readers:
+- Container: `role="tablist"`
+- Tab buttons: `role="tab"`, `aria-selected`, `aria-controls`
+- Plain `<button>` elements need `type="button"` to prevent form submission issues
+
+This follows the established pattern from other high-traffic admin components like UserManagement.tsx, SchoolInventory.tsx, and settings components.
+
+**Files Modified**:
+- src/components/ui/RoleManager.tsx - 4 keyboard shortcuts + tab accessibility
+
+**PR**: #2363
 
 **Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
 
