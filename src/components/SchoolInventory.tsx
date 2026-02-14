@@ -336,7 +336,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">
             ← Kembali ke Dashboard
           </Button>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Inventaris (Sarpras)</h2>
@@ -367,7 +367,8 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               onClick={() => setShowAddForm(true)}
               variant="green-solid"
               size="sm"
-              icon={<PlusIcon className="w-4 h-4" />}
+              icon={<PlusIcon className="w-5 h-5" />}
+              shortcut="Ctrl+N"
             >
               Tambah Barang
             </Button>
@@ -476,6 +477,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     variant="blue-solid"
                     icon={<PlusIcon className="w-5 h-5" />}
                     isLoading={isSubmittingItem}
+                    shortcut="Ctrl+Enter"
                   >
                     Simpan Barang
                   </Button>
@@ -484,6 +486,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                     variant="secondary"
                     onClick={() => setShowAddForm(false)}
                     disabled={isSubmittingItem}
+                    shortcut="Esc"
                   >
                     Batal
                   </Button>
@@ -602,6 +605,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   fullWidth
                   icon={<PlusIcon className="w-5 h-5" />}
                   isLoading={isAddingMaintenance}
+                  shortcut="Ctrl+Enter"
                 >
                   Tambah Jadwal
                 </Button>
@@ -701,12 +705,14 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                   <Button
                     onClick={completeAudit}
                     variant="green-solid"
+                    shortcut="Ctrl+Enter"
                   >
                     Selesaikan Audit
                   </Button>
                   <Button
                     onClick={() => setAuditMode(false)}
                     variant="secondary"
+                    shortcut="Esc"
                   >
                     Batal
                   </Button>
@@ -767,6 +773,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               size="sm"
               icon={<ArrowDownTrayIcon />}
               aria-label="Ekspor laporan inventaris ke file"
+              shortcut="Ctrl+S"
             >
               Export Laporan
             </Button>
@@ -893,6 +900,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               }}
               variant="blue-solid"
               fullWidth
+              shortcut="Ctrl+S"
             >
               Unduh
             </Button>
@@ -900,6 +908,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
               onClick={() => setShowQRCode(null)}
               variant="secondary"
               fullWidth
+              shortcut="Esc"
             >
               Tutup
             </Button>
