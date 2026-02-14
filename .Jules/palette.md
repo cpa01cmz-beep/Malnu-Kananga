@@ -70,6 +70,29 @@ The Button component's `shortcut` prop automatically displays a tooltip hint on 
 
 ---
 
+## 2026-02-14 - QuizGenerator Back Button Keyboard Shortcut
+
+**Learning**: The QuizGenerator component's "Kembali" (Back) button at line 485 was missing a keyboard shortcut hint while all other navigation buttons in the same component had shortcuts (Batal with `shortcut="Esc"`, Simpan Kuis with `shortcut="Ctrl+S"`, Lanjut/Buat Kuis with `shortcut="Ctrl+Enter"`). This inconsistency made it harder for keyboard users to discover the Alt+Left shortcut for navigating to the previous step in the wizard.
+
+**Action**: Add `shortcut="Alt+Left"` prop to the "Kembali" button:
+- Line 485: Added `shortcut="Alt+Left"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Alt+Left follows the browser back navigation convention, making it intuitive
+- Completes the consistent keyboard shortcut coverage for all QuizGenerator navigation buttons
+
+**File Fixed**:
+- src/components/QuizGenerator.tsx - Added shortcut prop to the back button (line 485)
+
+**Pattern**: All navigation buttons in wizard components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"` or `shortcut="Ctrl+Enter"`
+- Next/Continue buttons: `shortcut="Ctrl+Enter"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- Complete the set: don't leave one button without a shortcut if others have them
+
+---
+
 ## 2026-02-14 - QuizGenerator Keyboard Shortcut Discoverability
 
 **Learning**: The QuizGenerator component is a multi-step wizard where teachers create AI-generated quizzes. The "Lanjut" / "Buat Kuis" (Next / Create Quiz) button on line 499 was missing a keyboard shortcut hint, even though other buttons in the same component (Batal with `shortcut="Esc"`, Simpan Kuis with `shortcut="Ctrl+S"`) already had shortcuts. This inconsistency meant keyboard users couldn't discover the Ctrl+Enter shortcut for advancing to the next step.
