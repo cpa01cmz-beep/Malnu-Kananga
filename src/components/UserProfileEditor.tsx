@@ -485,6 +485,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.currentPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.currentPassword}
+              tooltip={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, currentPassword: !prev.currentPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
@@ -508,6 +511,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.newPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.newPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.newPassword}
+              tooltip={passwordVisibility.newPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, newPassword: !prev.newPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
@@ -530,6 +536,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.confirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.confirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.confirmPassword}
+              tooltip={passwordVisibility.confirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, confirmPassword: !prev.confirmPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
