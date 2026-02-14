@@ -4,6 +4,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Social Media Icons Accessibility Consistency
+
+**Learning**: The StatusIcons component had three social media icons (FacebookIcon, InstagramIcon, YoutubeIcon) that were missing the `ariaLabel` prop available in other icon components (ArrowPathIcon, AlertCircleIcon, CheckCircleIcon, AlertTriangleIcon). This inconsistency meant social media links in the Footer couldn't provide customizable accessibility labels for screen reader users.
+
+**Action**: Add `ariaLabel` prop support to all social media icon components:
+- FacebookIcon: Added `ariaLabel?: string` prop with default value 'Facebook'
+- InstagramIcon: Added `ariaLabel?: string` prop with default value 'Instagram'
+- YoutubeIcon: Added `ariaLabel?: string` prop with default value 'YouTube'
+- Changed `aria-hidden="true"` to `aria-hidden={!ariaLabel}` to allow icons to be accessible when labels are provided
+- Added `aria-label={ariaLabel}` attribute to each SVG element
+
+**File Fixed**:
+- src/components/icons/StatusIcons.tsx - Added ariaLabel prop support to FacebookIcon, InstagramIcon, and YoutubeIcon
+
+**Pattern**: All icon components should support customizable `ariaLabel` props for accessibility consistency. When icons are used in interactive contexts (links, buttons), they should be able to provide meaningful labels for screen reader users. The pattern is:
+- Accept `ariaLabel?: string` as optional prop
+- Provide sensible default value
+- Use `aria-hidden={!ariaLabel}` to hide from screen readers when no label provided
+- Use `aria-label={ariaLabel}` to announce label when provided
+
+**Related**: This follows the same pattern as other icons in StatusIcons.tsx and ensures consistency with the existing IconProps interface used by other icon components.
+
+---
+
 ## 2026-02-14 - ChatWindow Toggle Buttons Accessibility
 
 **Learning**: The ChatWindow component had two IconButton toggle buttons (Voice Settings and Thinking Mode) that changed visual state based on selection but were missing `aria-pressed` attributes. These buttons use `variant={state ? 'primary' : 'ghost'}` to indicate active/inactive state visually, but screen reader users couldn't know which mode was currently active.
