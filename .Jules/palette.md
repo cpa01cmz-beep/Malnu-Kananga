@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Plain Button Type Attribute for Accessibility
+
+**Learning**: The AICacheManager and GradingList components had plain `<button>` elements missing the `type="button"` attribute. When buttons are nested inside form elements, missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. This is a subtle but critical accessibility issue that can cause user frustration.
+
+**Action**: Added `type="button"` to 5 plain button elements:
+- AICacheManager.tsx Line 130: Added `type="button"` to refresh cache statistics button
+- AICacheManager.tsx Line 137: Added `type="button"` to clear all AI cache entries button
+- AICacheManager.tsx Line 211: Added `type="button"` to expand/collapse section button
+- AICacheManager.tsx Line 271: Added `type="button"` to clear section button
+- GradingList.tsx Line 230: Added `type="button"` to reset student grade button
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic in data tables, lists, and cards where buttons appear near form inputs.
+
+---
+
 ## 2026-02-14 - ParentMeetingsView Keyboard Shortcuts
 
 **Learning**: The ParentMeetingsView component had three action buttons (Jadwalkan Pertemuan, Batal, Jadwalkan) for scheduling parent-teacher meetings that supported keyboard shortcuts but users couldn't discover them without visual hints. This is a high-traffic parent-facing component where efficiency matters.
