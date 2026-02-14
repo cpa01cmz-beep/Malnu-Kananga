@@ -4,6 +4,7 @@ import Button from './Button';
 import LoadingSpinner from './LoadingSpinner';
 import { dataExportImportService, type DataEntityType, type ImportFormat } from '../../services/dataExportImportService';
 import { logger } from '../../utils/logger';
+import { UI_STRINGS } from '../../constants';
 
 interface DataExportImportButtonProps {
   entityType: DataEntityType;
@@ -125,7 +126,7 @@ const DataExportImportButton: React.FC<DataExportImportButtonProps> = ({
           size={size}
         >
           {isExporting ? <LoadingSpinner size="sm" variant="ring" /> : <ArrowDownTrayIcon className="h-4 w-4" />}
-          Export
+          {UI_STRINGS.BUTTONS.EXPORT}
         </Button>
       )}
 
@@ -146,7 +147,7 @@ const DataExportImportButton: React.FC<DataExportImportButtonProps> = ({
             size={size}
           >
             {isImporting ? <LoadingSpinner size="sm" variant="ring" /> : <ArrowUpTrayIcon className="h-4 w-4" />}
-            Import
+            {UI_STRINGS.BUTTONS.IMPORT}
           </Button>
         </>
       )}
@@ -159,7 +160,7 @@ const DataExportImportButton: React.FC<DataExportImportButtonProps> = ({
           size={size}
         >
           {isBackingUp ? <LoadingSpinner size="sm" variant="ring" /> : <CloudArrowDownIcon className="h-4 w-4" />}
-          Backup
+          {UI_STRINGS.BUTTONS.BACKUP}
         </Button>
       )}
     </div>
