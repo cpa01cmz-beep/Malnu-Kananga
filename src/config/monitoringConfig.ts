@@ -5,7 +5,8 @@ import {
   TIME_MS, 
   RETRY_CONFIG, 
   PERFORMANCE_THRESHOLDS,
-  DEVELOPMENT_THRESHOLDS
+  DEVELOPMENT_THRESHOLDS,
+  MONITORING_LIMITS
 } from '../constants';
 
 // ============================================
@@ -80,7 +81,7 @@ export const getPerformanceMonitoringConfig = (): PerformanceMonitoringConfig =>
       ? PERFORMANCE_THRESHOLDS.AVG_RESPONSE_TIME_ALERT_MS 
       : TIME_MS.TEN_SECONDS,
     consecutiveFailuresThreshold: PERFORMANCE_THRESHOLDS.CONSECUTIVE_FAILURES_ALERT,
-    maxMetrics: 1000,
+    maxMetrics: MONITORING_LIMITS.MAX_METRICS,
   };
 };
 

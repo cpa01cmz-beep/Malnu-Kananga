@@ -1,6 +1,7 @@
 /**
- * Enhanced Design Token System for MA Malnu Kananga
+ * Enhanced Design Token System for the school portal
  * Centralized design variables for consistency and maintainability
+ * School name is dynamically loaded from ENV.SCHOOL.NAME
  */
 
 export const DESIGN_TOKENS = {

@@ -606,6 +606,8 @@ export const TIME_MS = {
     LONG_UI: 800,       // Long UI delays (search hints, toasts)
     // Standard time units
     ONE_SECOND: 1000,
+    TWO_SECONDS: 2 * 1000,
+    THREE_SECONDS: 3 * 1000,
     FIVE_SECONDS: 5 * 1000,
     TEN_SECONDS: 10 * 1000,
     THIRTY_SECONDS: 30 * 1000,
@@ -3886,6 +3888,44 @@ export const UI_DELAY_CONSTANTS = {
     MIN_DISPLAY_TIME: 500, // Uses DELAY_MS.LONG
     ACTION_FEEDBACK: 500, // Uses DELAY_MS.LONG
 } as const;
+
+// ============================================================================
+// Flexy Modularity Additions - Run #99 (Current)
+// ============================================================================
+
+// Retry Count Constants - Flexy: Never hardcode retry initialization!
+export const RETRY_COUNT = {
+    INITIAL: 0,
+    DEFAULT: 0,
+    FIRST_ATTEMPT: 0,
+} as const;
+
+// Notification Intervals - Flexy: Never hardcode notification timing!
+export const NOTIFICATION_INTERVALS = {
+    MAJOR_EXAMS_DAYS: 30,
+    REMINDER_DAYS: 7,
+    WEEKLY_DIGEST_DAYS: 7,
+    MONTHLY_REPORT_DAYS: 30,
+} as const;
+
+// Monitoring Limits - Flexy: Never hardcode monitoring thresholds!
+export const MONITORING_LIMITS = {
+    MAX_METRICS: 1000,
+    MAX_EVENTS: 1000,
+    MAX_LOG_ENTRIES: 1000,
+    ALERT_THRESHOLD_PERCENT: 80,
+} as const;
+
+// Audit Limits - Flexy: Never hardcode audit log limits!
+export const AUDIT_LIMITS = {
+    MAX_LOCAL_ENTRIES: 1000,
+    MAX_EXPORT_ENTRIES: 10000,
+    RETENTION_DAYS: 90,
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #99
+// ============================================================================
 
 // ============================================================================
 // End of Flexy Modularity Additions - Run #69

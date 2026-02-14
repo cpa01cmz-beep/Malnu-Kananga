@@ -1,9 +1,9 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, AUDIT_LIMITS } from '../constants';
 import { logger } from '../utils/logger';
 import { generateId } from '../utils/idGenerator';
 import { auditAPI, type AuditLogEntry, type AuditLogFilter, type AuditLogExportOptions, type AuditLogStats } from './api';
 
-const MAX_LOCAL_ENTRIES = 1000;
+const MAX_LOCAL_ENTRIES = AUDIT_LIMITS.MAX_LOCAL_ENTRIES;
 
 class AuditService {
   private storageKey: string = STORAGE_KEYS.AUDIT_LOG;

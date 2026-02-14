@@ -3,7 +3,7 @@
 
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, USER_ROLES } from '../constants';
+import { STORAGE_KEYS, TIME_MS, USER_ROLES, NOTIFICATION_INTERVALS } from '../constants';
 import { gradesAPI } from './apiService';
 import type { PushNotification, OCRValidationEvent, ParentChild, NotificationHistoryItem } from '../types';
 import type { Grade } from '../types';
@@ -918,7 +918,7 @@ class ParentGradeNotificationService {
     const assignmentTypes = ['assignment', 'tugas'];
 
     if (majorExamTypes.some(type => assignmentType.toLowerCase().includes(type))) {
-      return 30; // Major exams are less frequent
+      return NOTIFICATION_INTERVALS.MAJOR_EXAMS_DAYS; // Major exams are less frequent
     } else if (quizTypes.some(type => assignmentType.toLowerCase().includes(type))) {
       return 14; // Quizzes happen roughly bi-weekly
     } else if (homeworkTypes.some(type => assignmentType.toLowerCase().includes(type)) ||

@@ -3,6 +3,8 @@
  * Centralized UI dimensions, spacing defaults, and layout constants
  */
 
+import { TIME_MS } from '../constants';
+
 export const UI_DIMENSIONS = {
     /** Default component width */
     DEFAULT_WIDTH: 400,
@@ -74,9 +76,9 @@ export const TOUCH_TARGET = {
 
 export const TOAST_DIMENSIONS = {
     /** Default toast duration in ms */
-    DEFAULT_DURATION: 3000,
+    DEFAULT_DURATION: TIME_MS.THREE_SECONDS,
     /** Short toast duration */
-    SHORT_DURATION: 2000,
+    SHORT_DURATION: TIME_MS.TWO_SECONDS,
     /** Long toast duration */
-    LONG_DURATION: 5000,
+    LONG_DURATION: TIME_MS.FIVE_SECONDS,
 } as const;

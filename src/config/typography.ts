@@ -1,6 +1,7 @@
 /**
  * Enhanced Typography Utility Classes - Palette 🎨
- * Comprehensive typography system for MA Malnu Kananga
+ * Comprehensive typography system for the school portal
+ * School name is dynamically loaded from ENV.SCHOOL.NAME
  */
 
 // import { DESIGN_SYSTEM } from './designSystem';
