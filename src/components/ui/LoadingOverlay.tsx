@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import LoadingSpinner from './LoadingSpinner';
-import { UI_STRINGS, UI_DELAYS } from '../../constants';
+import { UI_STRINGS, UI_DELAYS, UI_DIMENSIONS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -139,7 +139,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
                 key={i}
                 className="bg-primary-500 rounded-sm"
                 style={{
-                  width: '4px',
+                  width: UI_DIMENSIONS.LOADING.PROGRESS_HEIGHT,
                   height: `${size === 'sm' ? 16 : size === 'md' ? 24 : size === 'lg' ? 32 : 40}px`,
                   ...(prefersReducedMotion ? {} : {
                     animation: `pulse 1.4s ease-in-out infinite`,
