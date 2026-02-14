@@ -4,6 +4,32 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Plain Button Accessibility in Admin and Parent Components
+
+**Learning**: The AdminDashboard and ParentMessagingView components had plain `<button>` elements missing accessibility attributes. AdminDashboard had two buttons ("Muat Ulang" and "Kembali ke Dashboard") missing `aria-label`, while ParentMessagingView had teacher selection buttons missing both `type="button"` and `aria-label`. Without these attributes, screen reader users lack context about button actions, and buttons inside forms may accidentally trigger submissions.
+
+**Action**: Added accessibility attributes to all affected buttons:
+- AdminDashboard.tsx Line 77: Added `aria-label="Muat ulang data insight"` to refresh button
+- AdminDashboard.tsx Line 829: Added `aria-label="Kembali ke dashboard utama"` to back button
+- ParentMessagingView.tsx Line 177: Added `type="button"` and `aria-label={\`Pilih ${teacher.teacherName} - ${teacher.subject} (${teacher.className})\`}` to teacher selection buttons
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text, especially important for:
+   - Buttons in lists (need item-specific context)
+   - Navigation buttons in different views (same text, different destinations)
+   - Action buttons where context matters
+
+This follows the same pattern documented from GradingList.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and MaterialManagementView.tsx fixes.
+
+**Files Modified**:
+- src/components/AdminDashboard.tsx - Added aria-label to 2 buttons
+- src/components/ParentMessagingView.tsx - Added type and aria-label to teacher selection buttons
+
+**PR**: #2330
+
+---
+
 ## 2026-02-14 - GradingList Reset Button Accessibility
 
 **Learning**: The GradingList component had a plain `<button>` element for resetting student grades that was missing `type="button"` and `aria-label` attributes. Without `type="button"`, the button defaults to `type="submit"` when nested inside forms, potentially causing accidental form submissions. Without `aria-label`, screen reader users couldn't get clear context about which student's grade was being reset.
