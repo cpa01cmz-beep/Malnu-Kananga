@@ -6,6 +6,8 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
 ## 2026-02-14 - MaterialManagementView Button Accessibility
 
 **Learning**: The MaterialManagementView component had plain `<button>` elements that were missing `type="button"` attribute. When buttons are nested inside form elements (like MaterialManagementView might be), missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. Additionally, the title button had a `title` attribute but was missing an explicit `aria-label` for screen reader users.
@@ -24,6 +26,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 3. This is especially important for list/card items with action buttons
 
 **Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+---
+
+## 2026-02-14 - Input Component Aria-Label Support
+
+**Learning**: The Input component rendered a visible label only when the `label` prop was provided, but had no support for `aria-label` when used without a visible label. This created an accessibility gap where screen reader users couldn't identify input fields that relied on placeholder text or context for their purpose.
+
+**Action**: Added `ariaLabel` prop and automatic aria-label fallback:
+- Added `ariaLabel?: string` prop to InputProps interface (line 33)
+- Added aria-label attribute that uses `ariaLabel` prop when provided, or falls back to `placeholder` text when no visible label exists (line 285)
+- Fixed pre-existing bug: corrected variable name from `describedByIds` to `describedBy` in accessibilityProps (line 281)
+
+**Files Fixed**:
+- src/components/ui/Input.tsx - Added ariaLabel prop and fallback logic
+
+**Pattern**: Form inputs MUST have an accessible name via one of these methods:
+- Visible `<label>` element (htmlFor/id association)
+- `aria-label` attribute describing the input's purpose
+- `aria-labelledby` pointing to a descriptive element
+- When no visible label is provided, fall back to placeholder text as aria-label
+
+This ensures all input fields are properly announced by screen readers, improving accessibility for users navigating forms without visual cues.
+
+---
 
 ---
 
