@@ -64,6 +64,7 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as PDFExportButton } from './PDFExportButton';
 export { default as DataExportImportButton } from './DataExportImportButton';
 export { default as ScheduledAutomationManager } from './ScheduledAutomationManager';
+export { default as LanguageSwitcher } from './LanguageSwitcher';
 
 // Security Components
 export { TwoFactorSetup, TwoFactorDisable, TwoFactorStatus } from './TwoFactorAuth';
