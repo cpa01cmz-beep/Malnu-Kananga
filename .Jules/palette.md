@@ -6,7 +6,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-14 - ErrorMessage Toggle Button Accessibility
+## 2026-02-14 - TemplateManagement Loading State and Keyboard Shortcut
+
+**Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
+
+**Action**: Changed the test notification button to use `isLoading` prop:
+- Line 285: Changed `disabled={isSendingTestNotification}` + conditional text to `isLoading={isSendingTestNotification}` with static text
+- Line 114: Added `shortcut="Ctrl+N"` to the "Buat Template" button for keyboard discoverability
+
+**Pattern**: 
+- Always use Button's `isLoading` prop for loading states instead of conditional text
+- Use `shortcut` prop on action buttons to show keyboard hints in tooltips
+- The Modal component already handles Escape key to close, so no additional keyboard handling needed
+
+**Why it matters**: 
+- Loading spinner provides clearer visual feedback than text changes
+- `isLoading` properly disables the button and adds `aria-busy` for accessibility
+- Keyboard shortcuts improve power user workflow
+
+**Files Modified**:
+- src/components/TemplateManagement.tsx - Loading state fix and shortcut addition
+
+**PR**: #2362
 
 **Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
 
