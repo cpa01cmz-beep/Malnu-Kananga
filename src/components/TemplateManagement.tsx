@@ -111,6 +111,7 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
         <Button
           onClick={() => setShowCreateModal(true)}
           size="sm"
+          shortcut="Ctrl+N"
         >
           Buat Template
         </Button>
@@ -281,9 +282,9 @@ const TemplateManagement: React.FC<TemplateManagementProps> = ({
               onClick={handleTestNotification}
               variant="success"
               fullWidth
-              disabled={isSendingTestNotification}
+              isLoading={isSendingTestNotification}
             >
-              {isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}
+              Kirim Notifikasi Tes
             </Button>
             <Button
               onClick={() => setShowTestModal(false)}

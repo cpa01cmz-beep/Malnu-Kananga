@@ -6,7 +6,55 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-14 - ErrorMessage Toggle Button Accessibility
+## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
+
+**Learning**: The RoleManager component had multiple action buttons (Create Role, Cancel, Save, Use Template) missing keyboard shortcut hints while other components in the codebase consistently use shortcuts. Additionally, the tab navigation was missing proper ARIA attributes for screen reader accessibility.
+
+**Action**: Added keyboard shortcuts and ARIA improvements:
+- Line 162: Added `shortcut="Ctrl+N"` to Create Role button
+- Line 268: Added `shortcut="Esc"` to Cancel button
+- Line 271: Added `shortcut="Ctrl+S"` to Save button
+- Line 298: Added `shortcut="Enter"` to Use Template button
+- Lines 139-152: Added `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, and `type="button"` to tab buttons
+
+**Pattern**: Admin components with CRUD operations should have consistent keyboard shortcuts:
+- Create buttons: `shortcut="Ctrl+N"` (standard convention)
+- Cancel buttons: `shortcut="Esc"` (modal pattern)
+- Save buttons: `shortcut="Ctrl+S"` (save convention)
+- Use/Apply buttons: `shortcut="Enter"` (confirm selection)
+
+Tab navigation should have proper ARIA for screen readers:
+- Container: `role="tablist"`
+- Tab buttons: `role="tab"`, `aria-selected`, `aria-controls`
+- Plain `<button>` elements need `type="button"` to prevent form submission issues
+
+This follows the established pattern from other high-traffic admin components like UserManagement.tsx, SchoolInventory.tsx, and settings components.
+
+**Files Modified**:
+- src/components/ui/RoleManager.tsx - 4 keyboard shortcuts + tab accessibility
+
+**PR**: #2363
+
+**Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
+
+**Action**: Changed the test notification button to use `isLoading` prop:
+- Line 285: Changed `disabled={isSendingTestNotification}` + conditional text to `isLoading={isSendingTestNotification}` with static text
+- Line 114: Added `shortcut="Ctrl+N"` to the "Buat Template" button for keyboard discoverability
+
+**Pattern**: 
+- Always use Button's `isLoading` prop for loading states instead of conditional text
+- Use `shortcut` prop on action buttons to show keyboard hints in tooltips
+- The Modal component already handles Escape key to close, so no additional keyboard handling needed
+
+**Why it matters**: 
+- Loading spinner provides clearer visual feedback than text changes
+- `isLoading` properly disables the button and adds `aria-busy` for accessibility
+- Keyboard shortcuts improve power user workflow
+
+**Files Modified**:
+- src/components/TemplateManagement.tsx - Loading state fix and shortcut addition
+
+**PR**: #2362
 
 **Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
 

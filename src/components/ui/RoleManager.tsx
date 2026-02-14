@@ -136,10 +136,14 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
       size="xl"
       className="max-h-[90vh] overflow-hidden flex flex-col"
     >
-      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4" role="tablist">
         {(['roles', 'templates', 'matrix', 'security'] as TabType[]).map(tab => (
           <button
             key={tab}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab}
+            aria-controls={`panel-${tab}`}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 text-sm font-medium capitalize ${
               activeTab === tab
@@ -159,7 +163,7 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
               <>
                 <div className="flex justify-between items-center mb-4">
                   <Heading level={3}>Custom Roles</Heading>
-                  <Button onClick={handleCreateRole} variant="primary" size="sm">
+                  <Button onClick={handleCreateRole} variant="primary" size="sm" shortcut="Ctrl+N">
                     Create Role
                   </Button>
                 </div>
@@ -264,10 +268,10 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
                   </div>
 
                   <div className="flex gap-2 justify-end">
-                    <Button variant="secondary" onClick={resetForm}>
+                    <Button variant="secondary" onClick={resetForm} shortcut="Esc">
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleSaveRole}>
+                    <Button variant="primary" onClick={handleSaveRole} shortcut="Ctrl+S">
                       {editingRole ? 'Update' : 'Create'} Role
                     </Button>
                   </div>
@@ -291,7 +295,7 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
                   <p className="text-xs text-gray-500 mb-3">
                     Base: {template.baseRoleId} • {template.permissions.length} permissions
                   </p>
-                  <Button size="sm" variant="secondary" onClick={() => handleCreateFromTemplate(template)}>
+                  <Button size="sm" variant="secondary" onClick={() => handleCreateFromTemplate(template)} shortcut="Enter">
                     Use Template
                   </Button>
                 </Card>
