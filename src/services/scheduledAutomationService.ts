@@ -1,6 +1,37 @@
 import { STORAGE_KEYS, TIME_MS, ID_PREFIXES } from '../constants';
 import { logger } from '../utils/logger';
 import { generateId } from '../utils/idGenerator';
+import { dataExportImportService } from './dataExportImportService';
+
+export interface BackupTaskConfig {
+  entityTypes: string[];
+  format: 'json' | 'csv';
+  keepHistory: number;
+  notifyOnComplete: boolean;
+  recipientEmail?: string;
+}
+
+export interface AttendanceNotificationConfig {
+  time: string; // HH:MM format
+  days: number[]; // 0-6, where 0 is Sunday
+  advanceDays: number;
+  notifyParents: boolean;
+  notifyTeachers: boolean;
+}
+
+export interface GradeReminderConfig {
+  time: string;
+  daysBeforeEnd: number;
+  notifyParents: boolean;
+  notifyStudents: boolean;
+  minimumGrade?: number;
+}
+
+export interface AcademicCalendarConfig {
+  events: string[];
+  advanceNotice: number;
+  notifyRoles: string[];
+}
 
 export type ScheduledTaskType = 
   | 'backup'
@@ -230,19 +261,61 @@ class ScheduledAutomationService {
   }
 
   private async executeBackupTask(task: ScheduledTask): Promise<void> {
-    logger.info(`Executing backup task: ${task.name}`);
+    const config = task.config as unknown as BackupTaskConfig;
+    logger.info(`Executing backup task: ${task.name}`, { config });
+
+    try {
+      const result = await dataExportImportService.executeScheduledBackup();
+      if (result) {
+        logger.info(`Backup completed successfully: ${task.name}`);
+      } else {
+        logger.warn(`Backup returned no result: ${task.name}`);
+      }
+    } catch (error) {
+      logger.error(`Backup task failed: ${task.name}`, error);
+      throw error;
+    }
   }
 
   private async executeAttendanceNotificationTask(task: ScheduledTask): Promise<void> {
-    logger.info(`Executing attendance notification task: ${task.name}`);
+    const config = task.config as unknown as AttendanceNotificationConfig;
+    logger.info(`Executing attendance notification task: ${task.name}`, { config });
+
+    try {
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+
+      if (config.days.includes(dayOfWeek)) {
+        logger.info(`Sending attendance notifications for day: ${dayOfWeek}`);
+      }
+    } catch (error) {
+      logger.error(`Attendance notification task failed: ${task.name}`, error);
+      throw error;
+    }
   }
 
   private async executeGradeReminderTask(task: ScheduledTask): Promise<void> {
-    logger.info(`Executing grade reminder task: ${task.name}`);
+    const config = task.config as unknown as GradeReminderConfig;
+    logger.info(`Executing grade reminder task: ${task.name}`, { config });
+
+    try {
+      logger.info(`Checking for grade reminders`);
+    } catch (error) {
+      logger.error(`Grade reminder task failed: ${task.name}`, error);
+      throw error;
+    }
   }
 
   private async executeAcademicCalendarTask(task: ScheduledTask): Promise<void> {
-    logger.info(`Executing academic calendar task: ${task.name}`);
+    const config = task.config as unknown as AcademicCalendarConfig;
+    logger.info(`Executing academic calendar task: ${task.name}`, { config });
+
+    try {
+      logger.info(`Processing academic calendar events`);
+    } catch (error) {
+      logger.error(`Academic calendar task failed: ${task.name}`, error);
+      throw error;
+    }
   }
 
   startAllEnabled(): void {
