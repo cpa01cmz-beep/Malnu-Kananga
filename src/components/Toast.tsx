@@ -217,6 +217,7 @@ const Toast: React.FC<ToastProps> = ({
       <span className="font-medium text-base leading-snug flex-grow">{message}</span>
       {onUndo && (
         <button
+          type="button"
           onClick={handleUndo}
           className="px-3 py-1.5 text-sm font-medium text-primary-700 dark:text-primary-300 bg-primary-100 dark:bg-primary-900/40 hover:bg-primary-200 dark:hover:bg-primary-800/50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
           aria-label={`${undoLabel} (Ctrl+Z)`}
