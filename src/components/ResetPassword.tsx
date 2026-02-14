@@ -295,6 +295,19 @@ const ResetPassword = () => {
                 <Button
                   type="submit"
                   disabled={formState === 'loading' || !!passwordError || !!confirmPasswordError || !password || !confirmPassword}
+                  disabledReason={
+                    formState === 'loading'
+                      ? 'Sedang memproses reset password...'
+                      : !password
+                        ? 'Masukkan password baru terlebih dahulu'
+                        : !confirmPassword
+                          ? 'Konfirmasi password baru Anda'
+                          : passwordError
+                            ? 'Perbaiki error password terlebih dahulu'
+                            : confirmPasswordError
+                              ? 'Password konfirmasi tidak sesuai'
+                              : undefined
+                  }
                   isLoading={formState === 'loading'}
                   fullWidth
                   className="py-3.5"
