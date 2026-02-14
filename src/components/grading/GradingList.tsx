@@ -228,6 +228,7 @@ const GradingList: React.FC<GradingListProps> = ({
                         </Button>
                       )}
                       <button
+                        type="button"
                         onClick={() => {
                           setResetDialog({
                             isOpen: true,

@@ -104,8 +104,8 @@ export function runStorageMigration(): void {
 export function migrateStudentGoals(studentNIS: string): void {
   if (typeof window === 'undefined' || !studentNIS) return;
   
-  const oldKey = `goals_${studentNIS}`;
-  const OldKeyAlt = `student_goals_${studentNIS}`;
+  const oldKey = `${LEGACY_STORAGE_KEYS.STUDENT_GOALS_PREFIX}${studentNIS}`;
+  const OldKeyAlt = `${LEGACY_STORAGE_KEYS.STUDENT_GOALS_ALT_PREFIX}${studentNIS}`;
   const newKey = STORAGE_KEYS.STUDENT_GOALS(studentNIS);
   
   [oldKey, OldKeyAlt].forEach(oldKey => {
@@ -140,7 +140,7 @@ export function checkForOldKeys(): string[] {
   // Check for dynamic goal keys
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && (key.startsWith('goals_') || key.startsWith('student_goals_')) && 
+    if (key && (key.startsWith(LEGACY_STORAGE_KEYS.STUDENT_GOALS_PREFIX) || key.startsWith(LEGACY_STORAGE_KEYS.STUDENT_GOALS_ALT_PREFIX)) &&
         !key.includes(STORAGE_KEYS.STUDENT_GOALS(''))) {
       oldKeys.push(key);
     }
