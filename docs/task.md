@@ -513,10 +513,9 @@
 - [x] Create translation files for English (en)
 - [x] Add language switcher in user settings
 - [x] Integrate with existing UI_STRINGS system
-- [x] Integrate language switcher into ThemeSelector modal (accessible via Ctrl+Shift+P)
 - [ ] Translate all UI_STRINGS constants to use i18n keys (deferred - requires massive refactor)
 - [ ] Add RTL support for Arabic (future)
-**Notes**: Completed core i18n infrastructure:
+**Notes**: Implemented core i18n infrastructure:
 - Created `src/i18n.ts` with react-i18next configuration
 - Created `src/locales/id.json` (Indonesian - default)
 - Created `src/locales/en.json` (English translations)
@@ -524,9 +523,7 @@
 - Created `src/components/ui/LanguageSwitcher.tsx` component
 - Added `LANGUAGE_PREFERENCE` storage key in constants.ts
 - Integrated i18n in `src/index.tsx` for app initialization
-- Added Language tab to ThemeSelector modal with Bahasa/English options
-- Installed missing i18next/react-i18next dependencies
-- TypeScript, ESLint, and Build all pass (24.16s, 33 chunks)
+- TypeScript, ESLint, and Build all pass
 
 ### T022: Digital Student Portfolio (F025)
 **Status**: ❌ Pending
