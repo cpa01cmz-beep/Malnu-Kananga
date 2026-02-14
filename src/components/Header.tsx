@@ -257,11 +257,12 @@ const Header: React.FC<HeaderProps> = ({
 
                         <IconButton
                             icon={currentTheme?.isDark ? <SunIcon /> : <MoonIcon />}
-                            ariaLabel="Pilih Tema"
+                            ariaLabel={currentTheme?.isDark ? 'Mode Terang' : 'Mode Gelap'}
                             tooltip={currentTheme ? `${currentTheme.displayName} - Klik untuk Ubah Tema` : undefined}
                             shortcut="Ctrl+T"
                             size="lg"
                             onClick={onToggleTheme}
+                            pressed={!!currentTheme?.isDark}
                         />
 
                            {isLoggedIn ? (
@@ -325,6 +326,7 @@ const Header: React.FC<HeaderProps> = ({
                                     }}
                                     aria-expanded={isMenuOpen}
                                     aria-controls="mobile-menu"
+                                    pressed={isMenuOpen}
                                     className="touch-manipulation icon-hover enhanced-contrast"
                                 />
                     </div>
