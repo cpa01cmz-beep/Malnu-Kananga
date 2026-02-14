@@ -259,6 +259,7 @@ setTranscriptBuffer('');
     return (
       <>
         <button
+          type="button"
           disabled
           className={`p-3 mb-1 bg-neutral-300 dark:bg-neutral-600 text-neutral-400 rounded-full cursor-not-allowed transition-colors ${className}`}
           aria-label="Input suara dinonaktifkan"
@@ -282,6 +283,7 @@ setTranscriptBuffer('');
     return (
       <div className="relative">
         <button
+          type="button"
           onClick={() => setShowPermissionHandler(true)}
           className={`
             p-3 mb-1 rounded-full transition-all duration-200 ease-out shadow-sm flex-shrink-0
@@ -325,6 +327,7 @@ setTranscriptBuffer('');
   return (
     <>
       <button
+        type="button"
         onClick={handleClick}
         disabled={!isSupported || disabled}
          className={`
