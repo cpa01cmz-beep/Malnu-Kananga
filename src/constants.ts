@@ -47,6 +47,7 @@ export const STORAGE_KEYS = {
     TWO_FACTOR_ENABLED: (userId: string) => `malnu_2fa_enabled_${userId}`,
     TWO_FACTOR_BACKUP_CODES: (userId: string) => `malnu_2fa_backup_codes_${userId}`,
     TWO_FACTOR_PENDING_SETUP: 'malnu_2fa_pending_setup',
+    TWO_FACTOR_ENFORCEMENT: 'malnu_2fa_enforcement',
     
     // User and push notification data (refactored from hardcoded)
     USER: 'malnu_user',
