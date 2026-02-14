@@ -1204,7 +1204,7 @@ export const UI_SPACING = {
     LG: '1.5',     // 24px
     XL: '2',       // 32px
     XXL: '3',      // 48px
-    XXXL: '4',     // 64px
+    XXXL: '4',     // 1rem = 16px (Tailwind spacing scale)
     
     // Common gap patterns
     GAP_TIGHT: 'gap-2',      // 8px
