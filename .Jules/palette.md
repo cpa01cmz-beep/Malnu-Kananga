@@ -4,10 +4,24 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
-# Palette's UX Journal
+## 2026-02-14 - UserProfileEditor Keyboard Shortcuts
 
-Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+**Learning**: The UserProfileEditor component's action buttons (Kembali, Batal, Simpan Profil) were missing keyboard shortcut hints. This is a high-traffic component used by all user roles (students, teachers, parents, admins) for editing their profile information. Without shortcuts, users couldn't discover efficient keyboard navigation.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in UserProfileEditor.tsx:
+- Line 256: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 405: Added `shortcut="Esc"` to the Batal (Cancel) button - follows modal/form cancel pattern
+- Line 442: Added `shortcut="Ctrl+S"` to the Simpan Profil (Save Profile) button - follows standard save pattern
+
+**File Fixed**:
+- src/components/UserProfileEditor.tsx - Added shortcut props to 3 action buttons
+
+**Pattern**: High-traffic form components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"`
+
+This follows the established pattern from other high-traffic components like GradingManagement.tsx, AttendanceManagement.tsx, and LearningProgressReport.tsx where Ctrl+S is used for save operations.
 
 ---
 
