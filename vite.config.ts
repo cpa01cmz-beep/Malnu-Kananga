@@ -42,42 +42,24 @@ function modulePreloadPlugin(): Plugin {
     transformIndexHtml(html, ctx) {
       const bundle = ctx.bundle || {}
       const jsChunks = Object.keys(bundle).filter(name => name.endsWith('.js'))
-      
+
       const criticalChunks = jsChunks
-        .filter(name => name.includes('vendor-react') || name.includes('index-'))
-        .slice(0, 2)
-      
-      const dashboardChunks = jsChunks
-        .filter(name => 
-          name.includes('dashboard-admin') || 
-          name.includes('dashboard-teacher') || 
-          name.includes('dashboard-parent') || 
-          name.includes('dashboard-student')
-        )
-        .slice(0, 2)
-      
-      const vendorChunks = jsChunks
-        .filter(name => 
-          name.includes('vendor-genai') || 
-          name.includes('vendor-sentry') ||
-          name.includes('vendor-charts')
-        )
-        .slice(0, 2)
-      
-      // BroCula: Optimized to only preload critical chunks
-      // Reducing from 6 to 4 chunks to minimize unused JavaScript on initial load
-      // Dashboard chunks removed from preload - loaded on-demand after auth
-      const allChunks = criticalChunks.concat(vendorChunks)
-      const uniqueChunks = allChunks.filter((item, index) => allChunks.indexOf(item) === index)
-      const chunks = uniqueChunks.slice(0, 4)
-      
+        .filter(name => name.includes('vendor-react'))
+        .slice(0, 1)
+
+      const mainChunk = jsChunks
+        .filter(name => name.match(/index-[a-zA-Z0-9]+\.js$/) && !name.includes('dashboard'))
+        .slice(0, 1)
+
+      const chunks = [...criticalChunks, ...mainChunk].slice(0, 2)
+
       const preloadLinks = chunks
         .map(name => {
           const path = name.startsWith('assets/') ? name.slice(7) : name
           return `<link rel="modulepreload" href="/assets/${path}" crossorigin>`
         })
         .join('\n    ')
-      
+
       if (preloadLinks) {
         return html.replace('<head>', `<head>\n    ${preloadLinks}`)
       }

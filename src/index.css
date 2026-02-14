@@ -2,10 +2,8 @@
 /* See index.html for font loading strategy with onload handler */
 @import "tailwindcss";
 
-/* BroCula: ULW-Loop Run #85 - Optimized source paths for better CSS purging */
-/* Reduced scope to only essential source directories to eliminate unused CSS */
-/* Previous: 278 KiB unused CSS | Target: <100 KiB unused CSS */
-@source "./**/*.{js,ts,jsx,tsx}";
+/* BroCula: ULW-Loop Run #104 - Further optimized source paths for maximum CSS purging */
+/* Target: <50 KiB unused CSS by being more specific about source paths */
 @source "../index.html";
 @source "./*.css";
 @source "./components/**/*.tsx";
@@ -16,6 +14,8 @@
 @source "./hooks/**/*.tsx";
 @source "./contexts/**/*.ts";
 @source "./contexts/**/*.tsx";
+@source "./App.tsx";
+@source "./index.tsx";
 
 @theme {
   --color-primary-50: var(--theme-primary-50, 142 71% 88%);
