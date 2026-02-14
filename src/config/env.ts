@@ -15,12 +15,23 @@ export const ENV = {
     PHONE: import.meta.env.VITE_SCHOOL_PHONE || '',
     EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || '',
     WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || '',
+    CONTACTS: {
+      ADMIN: import.meta.env.VITE_CONTACT_ADMIN || 'admin@malnu.sch.id',
+      GURU: {
+        STAFF: import.meta.env.VITE_CONTACT_GURU_STAFF || 'guru.staff@malnu.sch.id',
+        BIASA: import.meta.env.VITE_CONTACT_GURU_BIASA || 'guru.biasa@malnu.sch.id',
+      },
+      SISWA: {
+        OSIS: import.meta.env.VITE_CONTACT_SISWA_OSIS || 'siswa.osis@malnu.sch.id',
+        BIASA: import.meta.env.VITE_CONTACT_SISWA_BIASA || 'siswa.biasa@malnu.sch.id',
+      },
+    },
   },
   API: {
     BASE_URL: import.meta.env.VITE_API_BASE_URL || '',
   },
   EMAIL: {
-    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || '',
+    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || 'admin@malnu.sch.id',
   },
   EXTERNAL: {
     GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',

@@ -58,10 +58,10 @@ export interface BackupMetadata {
 }
 
 export const DATA_EXPORT_IMPORT_KEYS = {
-  BACKUP_SCHEDULE: 'malnu_backup_schedule',
-  BACKUP_HISTORY: 'malnu_backup_history',
-  EXPORT_CACHE: 'malnu_export_cache',
-  IMPORT_QUEUE: 'malnu_import_queue',
+  BACKUP_SCHEDULE: STORAGE_KEYS.BACKUP_SCHEDULE,
+  BACKUP_HISTORY: STORAGE_KEYS.BACKUP_HISTORY,
+  EXPORT_CACHE: STORAGE_KEYS.EXPORT_CACHE,
+  IMPORT_QUEUE: STORAGE_KEYS.IMPORT_QUEUE,
 } as const;
 
 export const IMPORT_LIMITS = {

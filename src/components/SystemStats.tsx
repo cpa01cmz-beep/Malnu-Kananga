@@ -4,7 +4,7 @@ import { backupVoiceSettings } from '../services/voiceSettingsBackup';
 import { permissionService } from '../services/permissionService';
 import { logger } from '../utils/logger';
 import PermissionGuard from './PermissionGuard';
-import { STORAGE_KEYS, CONVERSION, COMPONENT_TIMEOUTS } from '../constants';
+import { STORAGE_KEYS, STORAGE_KEY_PREFIX, CONVERSION, COMPONENT_TIMEOUTS } from '../constants';
 import { User, UserRole, UserExtraRole } from '../types';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -97,7 +97,7 @@ const SystemStatsContent: React.FC<SystemStatsProps> = ({ onBack, onShowToast })
         logger.info('Voice settings backed up before factory reset');
 
         Object.keys(localStorage).forEach(key => {
-            if (key.startsWith('malnu_')) {
+            if (key.startsWith(STORAGE_KEY_PREFIX)) {
                 localStorage.removeItem(key);
             }
         });
