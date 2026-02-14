@@ -6,6 +6,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - MaterialTemplatesLibrary Plain Button Type Accessibility
+
+**Learning**: The MaterialTemplatesLibrary component had two plain `<button>` elements missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked, potentially causing unintended actions.
+
+**Action**: Added `type="button"` to two plain button elements:
+- Line 371: Added `type="button"` to "Gunakan" (Use Template) button
+- Line 470: Added `type="button"` to "Batal" (Cancel) button in create template modal
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text (already present in both)
+
+This follows the same accessibility pattern documented from AICacheManager.tsx, GradingList.tsx, VoiceInputButton.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic for modals and dialogs that may appear inside forms.
+
+**Files Modified**:
+- src/components/MaterialTemplatesLibrary.tsx - Added type="button" to 2 buttons
+
+---
+
 ## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
 
 **Learning**: The RoleManager component had multiple action buttons (Create Role, Cancel, Save, Use Template) missing keyboard shortcut hints while other components in the codebase consistently use shortcuts. Additionally, the tab navigation was missing proper ARIA attributes for screen reader accessibility.

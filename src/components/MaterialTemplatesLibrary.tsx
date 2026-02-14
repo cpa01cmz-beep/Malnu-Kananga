@@ -369,6 +369,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                 </Button>
                 {onSelectTemplate && (
                   <button
+                    type="button"
                     onClick={() => onSelectTemplate(template)}
                     className="flex-1 flex items-center justify-center gap-2 py-2 bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium"
                   >
@@ -467,6 +468,7 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
 
             <div className="p-6 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-2">
               <button
+                type="button"
                 onClick={() => setShowCreateTemplate(false)}
                 className="px-4 py-2 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
               >
