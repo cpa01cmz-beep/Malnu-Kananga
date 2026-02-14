@@ -4,6 +4,31 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Plain Button Accessibility in OCRPanel and StudyPlanAnalytics
+
+**Learning**: The OCRPanel component's Cancel button and StudyPlanAnalytics component's "Lihat detail" buttons were plain `<button>` elements missing the `type="button"` attribute. When buttons are nested inside form elements or used in modal contexts, missing `type="button"` causes them to default to type="submit", potentially causing accidental form submissions. The OCRPanel Cancel button was also missing an `aria-label` for screen reader accessibility.
+
+**Action**: Added `type="button"` and `aria-label` to all plain button elements in high-traffic components:
+- OCRPanel.tsx (lines 213-220): Added `type="button"` and `aria-label="Batalkan proses OCR dan tutup"`
+- StudyPlanAnalytics.tsx (line 546): Added `type="button"` to "Lihat detail" button
+- StudyPlanAnalytics.tsx (line 776): Added `type="button"` to "Lihat detail" button
+
+**Files Fixed**:
+- src/components/grading/OCRPanel.tsx - Added type and aria-label to Cancel button
+- src/components/StudyPlanAnalytics.tsx - Added type="button" to 2 action buttons
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms or modals
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for:
+   - Modal action buttons (Cancel, Confirm)
+   - Action buttons in analytics cards
+   - Any inline button elements in JSX
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and MaterialManagementView.tsx where plain button accessibility was fixed.
+
+---
+
 ## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
 
 **Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.

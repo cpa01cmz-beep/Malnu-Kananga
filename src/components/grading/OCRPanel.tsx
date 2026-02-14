@@ -211,6 +211,8 @@ const OCRPanel: React.FC<OCRPanelProps> = ({
 
             <div className="flex gap-3 justify-end">
               <button
+                type="button"
+                aria-label="Batalkan proses OCR dan tutup"
                 onClick={cancelOCRReview}
                 className="px-6 py-2 bg-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-400 transition-colors"
               >
