@@ -184,6 +184,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
               variant="green-solid"
               icon={<CalendarDaysIcon />}
               iconPosition="left"
+              shortcut="Ctrl+N"
             >
               Jadwalkan Pertemuan
             </Button>
@@ -283,6 +284,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                   setAgenda('');
                 }}
                 variant="ghost"
+                shortcut="Esc"
               >
                 Batal
               </Button>
@@ -293,6 +295,7 @@ const ParentMeetingsView: React.FC<ParentMeetingsViewProps> = ({ onShowToast, ch
                 isLoading={scheduling}
                 icon={!scheduling ? <CalendarDaysIcon /> : undefined}
                 iconPosition="left"
+                shortcut="Ctrl+Enter"
               >
                 {scheduling ? 'Menjadwalkan...' : 'Jadwalkan'}
               </Button>
