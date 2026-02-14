@@ -16,14 +16,14 @@ export const ENV = {
     EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || '',
     WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || '',
     CONTACTS: {
-      ADMIN: import.meta.env.VITE_CONTACT_ADMIN || 'admin@malnu.sch.id',
+      ADMIN: import.meta.env.VITE_CONTACT_ADMIN || '',
       GURU: {
-        STAFF: import.meta.env.VITE_CONTACT_GURU_STAFF || 'guru.staff@malnu.sch.id',
-        BIASA: import.meta.env.VITE_CONTACT_GURU_BIASA || 'guru.biasa@malnu.sch.id',
+        STAFF: import.meta.env.VITE_CONTACT_GURU_STAFF || '',
+        BIASA: import.meta.env.VITE_CONTACT_GURU_BIASA || '',
       },
       SISWA: {
-        OSIS: import.meta.env.VITE_CONTACT_SISWA_OSIS || 'siswa.osis@malnu.sch.id',
-        BIASA: import.meta.env.VITE_CONTACT_SISWA_BIASA || 'siswa.biasa@malnu.sch.id',
+        OSIS: import.meta.env.VITE_CONTACT_SISWA_OSIS || '',
+        BIASA: import.meta.env.VITE_CONTACT_SISWA_BIASA || '',
       },
     },
   },
@@ -31,7 +31,7 @@ export const ENV = {
     BASE_URL: import.meta.env.VITE_API_BASE_URL || '',
   },
   EMAIL: {
-    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || 'admin@malnu.sch.id',
+    ADMIN: import.meta.env.VITE_ADMIN_EMAIL || '',
   },
   EXTERNAL: {
     GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',

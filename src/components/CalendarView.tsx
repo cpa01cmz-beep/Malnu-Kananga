@@ -148,6 +148,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           size="md"
           variant="default"
           icon={<ChevronLeftIcon />}
+          shortcut="Alt+Left"
         />
         <h3 className="text-lg font-semibold text-neutral-900" id="month-calendar-heading">
           {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
@@ -158,6 +159,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           size="md"
           variant="default"
           icon={<ChevronRightIcon />}
+          shortcut="Alt+Right"
         />
       </div>
 
@@ -242,6 +244,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           size="md"
           variant="default"
           icon={<ChevronLeftIcon />}
+          shortcut="Alt+Left"
         />
         <h3 className="text-lg font-semibold text-neutral-900" id="week-calendar-heading">
           {weekDays[0].toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })} - {' '}
@@ -253,6 +256,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
           size="md"
           variant="default"
           icon={<ChevronRightIcon />}
+          shortcut="Alt+Right"
         />
       </div>
 
@@ -341,6 +345,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             size="md"
             variant="default"
             icon={<ChevronLeftIcon />}
+            shortcut="Alt+Left"
           />
           <h3 className="text-lg font-semibold text-neutral-900" id="day-calendar-heading">
             {currentDate.toLocaleDateString('id-ID', {
@@ -356,6 +361,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({
             size="md"
             variant="default"
             icon={<ChevronRightIcon />}
+            shortcut="Alt+Right"
           />
         </div>
 

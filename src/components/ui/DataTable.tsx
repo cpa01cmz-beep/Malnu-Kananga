@@ -530,7 +530,7 @@ const DataTable = <T extends Record<string, unknown>>({
                         }
                         selection.onSelect(selection.getRowKey(record), e.target.checked);
                       }}
-                      className="w-6 h-6 rounded-lg border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 shrink-0 cursor-pointer touch-manipulation min-w-[44px] min-h-[44px] mobile-touch-target"
+                      className="w-6 h-6 rounded-lg border-neutral-300 dark:border-neutral-600 text-primary-600 focus:ring-primary-500/50 focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-900 shrink-0 cursor-pointer touch-manipulation min-w-11 min-h-11 mobile-touch-target"
                       aria-label={`Pilih ${titleValue}`}
                     />
                     {isSelected && (
@@ -544,7 +544,7 @@ const DataTable = <T extends Record<string, unknown>>({
                   </h3>
                 </div>
                 {onRowClick && (
-                  <div className="flex-shrink-0 p-3 -mr-3 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation mobile-gesture-feedback rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
+                  <div className="flex-shrink-0 p-3 -mr-3 min-w-11 min-h-11 flex items-center justify-center touch-manipulation mobile-gesture-feedback rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200">
                     <ChevronLeftIcon className="w-5 h-5 text-neutral-400 dark:text-neutral-500 rotate-180 transition-transform duration-200" />
                   </div>
                 )}
