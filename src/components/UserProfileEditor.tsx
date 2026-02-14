@@ -439,7 +439,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               icon={<SaveIcon className="w-5 h-5" />}
               isLoading={isSaving}
             >
-              {isSaving ? UI_STRINGS.SAVING : 'Simpan Profil'}
+              {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_PROFILE}
             </Button>
           )}
         </div>
