@@ -78,7 +78,7 @@ describe('DataTable Component', () => {
         />
       );
       
-      expect(screen.getByTestId('loading-overlay')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
     it('should render error state', () => {
@@ -108,8 +108,8 @@ describe('DataTable Component', () => {
         />
       );
       
-      const sortableHeaders = screen.getAllByRole('button', { name: '' });
-      expect(sortableHeaders.length).toBeGreaterThan(0);
+      const sortedHeader = screen.getByRole('columnheader', { name: /name/i });
+      expect(sortedHeader).toHaveAttribute('aria-sort', 'ascending');
     });
 
     it('should call onSortChange when clicking sortable header', async () => {
@@ -245,7 +245,7 @@ describe('DataTable Component', () => {
         />
       );
       
-      expect(screen.getByText(/2 selected/i)).toBeInTheDocument();
+      expect(screen.getByText(/2 dipilih/i)).toBeInTheDocument();
     });
   });
 
@@ -313,7 +313,7 @@ describe('DataTable Component', () => {
         />
       );
       
-      expect(container.querySelector('.text-lg')).toBeInTheDocument();
+      expect(container.querySelector('.text-base')).toBeInTheDocument();
     });
   });
 });
