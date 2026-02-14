@@ -4,50 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-# Palette's UX Journal
+## 2026-02-14 - QuizIntegrationDashboard & SiteEditor Keyboard Shortcuts
 
-Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+**Learning**: The QuizIntegrationDashboard component's "Kembali" (Back) button and the SiteEditor modal's action buttons (Batalkan, Terapkan Perubahan) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. QuizIntegrationDashboard is an admin component for integrating quiz results into grade books, and SiteEditor is an AI-powered content editing interface.
 
----
+**Action**: Added keyboard shortcut hints to improve discoverability:
+- **QuizIntegrationDashboard.tsx** (Line 112): Added `shortcut="Alt+Left"` to the Kembali (Back) button
+- **SiteEditor.tsx** (Line 497): Added `shortcut="Esc"` to the Batalkan (Cancel) button
+- **SiteEditor.tsx** (Line 500): Added `shortcut="Ctrl+Enter"` to the Terapkan Perubahan (Apply Changes) button
 
-## 2026-02-14 - ConfirmationDialog Keyboard Shortcuts
+**Pattern**: Modal dialogs and dashboard navigation should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"` (standard for closing modals)
+- Apply/Submit buttons: `shortcut="Ctrl+Enter"` (form submission pattern)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
 
-**Learning**: The ConfirmationDialog component (used 40+ times throughout the app for delete, reset, and other destructive actions) was missing keyboard shortcut hints on its action buttons. Users couldn't discover the standard Esc and Enter shortcuts without visual hints, limiting keyboard accessibility and power-user efficiency.
+This follows the established pattern from other components like GradeAnalytics.tsx, QuizGenerator.tsx, and AssignmentCreation.tsx where keyboard shortcuts improve power-user efficiency and accessibility.
 
-**Action**: Added keyboard shortcut hints to both action buttons in ConfirmationDialog.tsx:
-- Line 100: Added `shortcut="Esc"` to cancel button - follows standard cancel pattern
-- Line 111: Added `shortcut="Enter"` to confirm button - follows standard confirm pattern
-
-**File Fixed**:
-- src/components/ui/ConfirmationDialog.tsx - Added shortcut props to 2 action buttons
-
-**Pattern**: Confirmation dialogs used throughout the application should have consistent keyboard shortcut hints:
-- Cancel/Close buttons: `shortcut="Esc"`
-- Confirm/Submit buttons: `shortcut="Enter"`
-
-This is a high-impact change because ConfirmationDialog is used in 40+ locations (UserManagement, FolderNavigation, MaterialUpload, AnnouncementManager, GradingManagement, etc.), so adding shortcuts here improves UX across the entire application.
-
-**PR**: #2263
-
----
-
-## 2026-02-14 - GradingActions Export Button Keyboard Shortcuts
-
-**Learning**: The GradingActions component's export buttons (Export PDF, Export CSV) had proper aria-labels for screen readers but were missing keyboard shortcut hints. This inconsistency made it harder for power users to discover efficient keyboard navigation, especially since other grading-related components like GradeAnalytics already had these shortcuts.
-
-**Action**: Added keyboard shortcut hints to both export buttons in GradingActions.tsx:
-- Line 358: Added `shortcut="Ctrl+P"` to the Export PDF button - follows print/export convention
-- Line 370: Added `shortcut="Ctrl+Shift+E"` to the Export CSV button - follows export convention
-
-**Pattern**: Export buttons should consistently use keyboard shortcut hints:
-- Export/PDF buttons: `shortcut="Ctrl+P"` (follows print convention)
-- Export/CSV buttons: `shortcut="Ctrl+Shift+E"` (export convention)
-- Always pair with descriptive `aria-label` attributes for full accessibility
-- Use the Button component's `shortcut` prop to display hints in tooltips on hover/focus
-
-This ensures consistency across the grading workflow (GradingManagement → GradingActions → GradeAnalytics) and improves discoverability for keyboard power users.
-
-**PR**: #2269
+**Files Fixed**:
+- src/components/QuizIntegrationDashboard.tsx - Added shortcut to back button
+- src/components/SiteEditor.tsx - Added shortcuts to modal action buttons
 
 ---
 
@@ -69,7 +45,6 @@ This ensures consistency across the grading workflow (GradingManagement → Grad
 This follows the established pattern from other high-traffic components like QuizGenerator.tsx, StudentInsights.tsx, and AssignmentCreation.tsx where keyboard shortcuts improve power-user efficiency.
 
 **PR**: #2259
->>>>>>> origin/main
 
 ---
 

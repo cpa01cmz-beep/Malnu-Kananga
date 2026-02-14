@@ -494,10 +494,10 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
                 </details>
 
                  <div className="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white dark:bg-neutral-800 py-4 border-t border-neutral-100 dark:border-neutral-700/50">
-                    <Button variant="secondary" onClick={handleCancel}>
+                    <Button variant="secondary" onClick={handleCancel} shortcut="Esc">
                         Batalkan
                     </Button>
-                    <Button variant="success" onClick={handleApply}>
+                    <Button variant="success" onClick={handleApply} shortcut="Ctrl+Enter">
                         Terapkan Perubahan
                     </Button>
                 </div>
