@@ -159,6 +159,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
               <Button
                 onClick={() => setShowNewChatModal(false)}
                 variant="ghost"
+                shortcut="Esc"
               >
                 Batal
               </Button>
@@ -166,6 +167,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
                 onClick={handleNewChat}
                 disabled={!selectedUserId || creatingConversation}
                 className="bg-blue-600 hover:bg-blue-700"
+                shortcut="Ctrl+Enter"
               >
                 {creatingConversation ? (
                   <>
