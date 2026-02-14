@@ -1628,6 +1628,21 @@ export const NOTIFICATION_TEMPLATE_STRINGS = {
     OCR_COMPLETE_TITLE: '🔍 OCR Validation Complete',
 } as const;
 
+// Notification UI strings - Flexy: Never hardcode notification messages!
+export const NOTIFICATION_UI_STRINGS = {
+    NO_UNREAD: 'Tidak ada notifikasi yang belum dibaca',
+    PERMISSION_REQUIRED: 'Izin notifikasi diperlukan untuk mengirim tes',
+    NO_MATCHING_FILTER: 'Tidak ada notifikasi yang cocok dengan filter',
+    NO_NOTIFICATIONS: 'Belum ada notifikasi',
+    PERMISSION_GRANTED: 'Izin notifikasi berhasil diberikan',
+    PERMISSION_DENIED: 'Izin notifikasi ditolak',
+    EMPTY_QUEUE: 'Tidak ada notifikasi suara dalam antrian',
+    NO_FILTER_MATCH: 'Tidak ada notifikasi untuk filter ini',
+    TEST_NOTIFICATION: 'Kirim Notifikasi Tes',
+    MARK_ALL_READ: 'Tandai Semua Dibaca',
+    MARKING: 'Menandai...',
+} as const;
+
 // Animation and timeout constants
 export const TIMEOUT_CONFIG = {
     UI_ANIMATION_DURATION: 300,
@@ -1857,6 +1872,9 @@ export const QUIZ_CONFIG = {
 // Study plan configuration constants
 export const STUDY_PLAN_CONFIG = {
     DEFAULT_DURATION_WEEKS: 4,
+    HOURS_PER_SCHEDULE: 1.5,
+    DEFAULT_WEEKS_TO_SHOW: 8,
+    DAYS_PER_WEEK: 7,
 } as const;
 
 // Parent notification configuration constants
