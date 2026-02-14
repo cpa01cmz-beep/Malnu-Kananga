@@ -4,6 +4,37 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+# Palette's UX Journal
+
+Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+
+---
+
+## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
+
+**Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
+
+**Action**: Added comprehensive keyboard accessibility to material selection cards:
+- `tabIndex={0}` - Makes cards focusable via keyboard navigation
+- `onKeyDown` handler - Supports Enter and Space keys to toggle selection (prevents default to avoid scrolling)
+- `role="button"` - Proper semantic role for interactive cards
+- `aria-pressed={boolean}` - Indicates selection state to screen readers (follows toggle button pattern)
+- `aria-label` - Descriptive label that changes based on selection state: "Pilih materi [title]" or "Hapus pilihan materi [title]"
+
+**Files Fixed**:
+- src/components/QuizGenerator.tsx - Added keyboard accessibility to material selection cards (lines 214-225)
+
+**Pattern**: Interactive cards that act as toggle buttons MUST implement:
+1. **Keyboard Focus**: `tabIndex={0}` to make them focusable
+2. **Keyboard Activation**: `onKeyDown` handler for Enter and Space keys
+3. **Semantic Role**: `role="button"` to indicate interactivity
+4. **State Announcement**: `aria-pressed` to communicate selection state
+5. **Descriptive Label**: `aria-label` that includes both action and item name
+
+**PR**: #2223
+
+---
+
 ## 2026-02-14 - UserProfileEditor Password Visibility Toggle Accessibility
 
 **Learning**: The UserProfileEditor component's password visibility toggle buttons (current password, new password, confirm password) were missing `aria-pressed`, `tooltip`, and `shortcut` attributes. These are toggle buttons that change visual state (eye icon to eye-slash icon), but screen reader users couldn't know if password was currently visible or hidden. Additionally, users couldn't discover the efficient Ctrl+H keyboard shortcut without visual hints.
