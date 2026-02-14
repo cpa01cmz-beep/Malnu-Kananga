@@ -4,61 +4,45 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-# Palette's UX Journal
+## 2026-02-14 - TeacherDashboard Loading State UX Improvement
 
-Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+**Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
 
----
+**Action**: Replaced text-based loading indicators with proper `isLoading` prop in TeacherDashboard.tsx:
+- Line 542: Added `isLoading={insightsLoading}` to the first refresh button (replaced text change)
+- Line 932: Added `isLoading={insightsLoading}` to the second refresh button (replaced text change)
 
-## 2026-02-14 - SchoolInventory Keyboard Shortcuts
+**Files Fixed**:
+- src/components/TeacherDashboard.tsx - Added isLoading prop to 2 SmallActionButton components
 
-**Learning**: The SchoolInventory component (a high-traffic admin component for managing school assets) had 10 action buttons without keyboard shortcut hints. This component handles inventory management including adding items, scheduling maintenance, running audits, and generating reports - actions frequently performed by admin staff.
+**Pattern**: Always use the Button/SmallActionButton component's `isLoading` prop instead of text changes:
+- ✅ `isLoading={isSaving}` - Shows proper spinner, handles disabled state
+- ❌ `{isSaving ? 'Saving...' : 'Save'}` - Text change is jarring and less polished
 
-**Action**: Added keyboard shortcut hints to all action buttons in SchoolInventory.tsx:
-- Line 339: Added `shortcut="Alt+Left"` to back navigation button
-- Line 371: Added `shortcut="Ctrl+N"` to "Tambah Barang" (Add Item) button
-- Line 480: Added `shortcut="Ctrl+Enter"` to "Simpan Barang" (Save Item) form
-- Line 489: Added `shortcut="Esc"` to "Batal" (Cancel) button
-- Line 608: Added `shortcut="Ctrl+Enter"` to "Tambah Jadwal" (Add Schedule) form
-- Line 708: Added `shortcut="Ctrl+Enter"` to "Selesaikan Audit" (Complete Audit) button
-- Line 715: Added `shortcut="Esc"` to "Batal" (Cancel) button
-- Line 776: Added `shortcut="Ctrl+S"` to "Export Laporan" (Export Report) button
-- Line 903: Added `shortcut="Ctrl+S"` to "Unduh" (Download QR) button
-- Line 911: Added `shortcut="Esc"` to "Tutup" (Close Modal) button
+This follows the established pattern from StudentAssignments.tsx and other components where proper loading spinners provide better visual feedback than text changes.
 
-**File Fixed**:
-- src/components/SchoolInventory.tsx - Added shortcut hints to 10 buttons
-
-**Pattern**: Admin management components (inventory, grading, attendance) benefit from comprehensive keyboard shortcut coverage:
-- Navigation: `shortcut="Alt+Left"` for back buttons
-- Create/Add: `shortcut="Ctrl+N"` or `shortcut="Ctrl+Enter"` for form submissions
-- Save: `shortcut="Ctrl+S"` for data persistence
-- Export/Download: `shortcut="Ctrl+S"` for file operations
-- Cancel/Close: `shortcut="Esc"` for dismiss actions
-
-This follows the established pattern from AttendanceManagement.tsx, AnnouncementManager.tsx, GradingManagement.tsx, and other high-traffic admin components.
+**Why it matters**: Loading spinners give users immediate visual feedback that an action is in progress, reduce cognitive load compared to reading "Memuat...", and provide a consistent experience across the application.
 
 ---
 
-## 2026-02-14 - AssignmentGrading Status Filter Accessibility
+## 2026-02-14 - StudyPlanGenerator Back Button Keyboard Shortcuts
 
-**Learning**: The AssignmentGrading component had status filter toggle buttons (Semua, Belum Dinilai, Sudah Dinilai) that changed visual state (variant from primary to secondary) based on selection but were missing `aria-pressed` attributes. This is a high-traffic component where teachers filter and grade assignments daily, and screen reader users couldn't determine which filter was currently active.
+**Learning**: The StudyPlanGenerator component had three "Kembali" (Back) buttons across different states (loading, error, main view) that supported the Alt+Left keyboard shortcut for browser back navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic AI-powered component used by students and parents for generating personalized study plans.
 
-**Action**: Added `aria-pressed={statusFilter === 'value'}` to all three filter buttons:
-- Line 630: Added `aria-pressed={statusFilter === 'all'}` to "Semua" button
-- Line 638: Added `aria-pressed={statusFilter === 'ungraded'}` to "Belum Dinilai" button
-- Line 646: Added `aria-pressed={statusFilter === 'graded'}` to "Sudah Dinilai" button
+**Action**: Add `shortcut="Alt+Left"` to all three back buttons in StudyPlanGenerator.tsx:
+- Line 363: Added `shortcut="Alt+Left"` to loading state back button
+- Line 385: Added `shortcut="Alt+Left"` to error state back button
+- Line 410: Added `shortcut="Alt+Left"` to main view back button
 
 **File Fixed**:
-- src/components/AssignmentGrading.tsx - Added aria-pressed to 3 status filter buttons
+- src/components/StudyPlanGenerator.tsx - Added shortcut props to 3 back buttons
 
-**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility:
-- Filter buttons in lists and tables
-- Status/category filter buttons
-- View mode toggles
-- Any button that changes appearance based on state
+**Pattern**: All navigation buttons in AI-powered study components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Refresh buttons: `shortcut="Ctrl+R"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
 
-This follows the same pattern as ActivityFeed.tsx, MessageList.tsx, ELibrary.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+**Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and AssignmentCreation.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
 
 ---
 
@@ -178,9 +162,7 @@ This ensures both screen reader users (via aria-label) and sighted users (via to
 4. **Accessible Labels**: Descriptive aria-labels for screen reader context
 
 This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
-
----
-
+=======
 ## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
 
 **Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.

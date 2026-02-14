@@ -162,7 +162,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       onClose();
       setIsAnimating(false);
       onAfterClose?.();
-    }, prefersReducedMotion ? 0 : 300);
+    }, prefersReducedMotion ? TIME_MS.ZERO : TIME_MS.MS300);
   }, [onClose, onBeforeClose, onAfterClose, prefersReducedMotion]);
 
   // Backdrop click handling

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { UI_DIMENSIONS } from '../../constants';
+import { UI_DIMENSIONS, DISPLAY_LIMITS } from '../../constants';
 import DataTable from './DataTable';
 import type { Column } from './DataTable';
 import SearchInput from './SearchInput';
@@ -45,7 +45,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<AuditLogFilter>({
     page: 1,
-    limit: 20,
+    limit: DISPLAY_LIMITS.AUDIT_LOGS,
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [exporting, setExporting] = useState(false);

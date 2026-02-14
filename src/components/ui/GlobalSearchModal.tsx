@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { searchAPI, type SearchResult, type SearchFilters, type SearchResultType } from '../../services/api';
-import { STORAGE_KEYS, TIME_MS } from '../../constants';
+import { STORAGE_KEYS, TIME_MS, DISPLAY_LIMITS } from '../../constants';
 import Input from './Input';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
@@ -121,7 +121,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
       if (activeFilters.length > 0) {
         filters.types = activeFilters;
       }
-      filters.limit = 20;
+      filters.limit = DISPLAY_LIMITS.SEARCH_RESULTS;
 
       const response = await searchAPI.search(searchQuery, filters);
       if (response.success && response.data) {
