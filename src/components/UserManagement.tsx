@@ -218,7 +218,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
                     <Button variant="secondary" onClick={() => setIsImportModalOpen(true)} icon={<DocumentTextIcon className="w-5 h-5" />}>
                         <span className="hidden sm:inline">Import CSV</span>
                     </Button>
-                    <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />}>
+                    <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />} shortcut="Ctrl+N">
                         <span className="hidden sm:inline">Tambah</span>
                     </Button>
                 </div>
