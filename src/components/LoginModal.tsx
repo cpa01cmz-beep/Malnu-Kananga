@@ -305,7 +305,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLoginSuccess
                         </div>
                       </Alert>
                     )}
-                   <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth size="lg" className="mobile-touch-target">
+                   <Button type="submit" disabled={formState === 'loading'} isLoading={formState === 'loading'} fullWidth size="lg" className="mobile-touch-target" shortcut="Enter">
                      {formState === 'loading' ? '' : 'Login'}
                    </Button>
 
