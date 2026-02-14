@@ -227,6 +227,8 @@ const Toast: React.FC<ToastProps> = ({
       <IconButton
         icon={<CloseIcon />}
         ariaLabel={TOAST_UI_STRINGS.CLOSE}
+        tooltip={TOAST_UI_STRINGS.CLOSE}
+        shortcut="Esc"
         size="sm"
         onClick={onClose}
       />

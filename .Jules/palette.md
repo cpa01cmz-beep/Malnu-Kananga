@@ -4,6 +4,115 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
+
+**Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
+
+**Action**: Add `shortcut="Enter"` prop to the submit Button component:
+- Line 161: Added `shortcut="Enter"` to the Button component
+- This makes the Enter key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern in the codebase for form submission buttons
+
+**File Fixed**:
+- src/components/ForgotPassword.tsx - Added shortcut prop to the submit button
+
+**Pattern**: Form submission buttons should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Login buttons: `shortcut="Enter"`
+- Save buttons: `shortcut="Ctrl+S"`
+- Cancel/Close buttons: `shortcut="Esc"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as LoginModal.tsx and is part of the authentication flow UX improvements. Consistent keyboard shortcut hints improve accessibility and power-user efficiency across all authentication forms.
+
+**PR**: #2171
+
+---
+
+## 2026-02-14 - Toast Close Button Keyboard Shortcut
+
+**Learning**: The Toast component's close button was using IconButton but was missing the `shortcut` prop, which meant users couldn't discover that they could press "Esc" to close the toast notification. While the component already supported the Escape key (via handleKeyDown), there was no visual indication of this shortcut. The IconButton component has a built-in `shortcut` prop that displays keyboard shortcuts in tooltips, making them discoverable to users.
+
+**Action**: Added `shortcut="Esc"` and `tooltip` props to the Toast's close IconButton:
+- Line 227-234: Added `tooltip={TOAST_UI_STRINGS.CLOSE}` and `shortcut="Esc"` to the IconButton
+- This makes the Escape key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern used in Header.tsx, ChatWindow.tsx, and other components
+
+**File Fixed**:
+- src/components/Toast.tsx - Added shortcut and tooltip props to close IconButton
+
+**Pattern**: IconButton components should consistently show keyboard shortcuts when available:
+- Close/Dismiss actions: `shortcut="Esc"`
+- This helps users discover keyboard shortcuts and improves accessibility
+- Always pair shortcut with tooltip for consistent UX
+
+**Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
+
+---
+
+## 2026-02-14 - StudentQuiz Confirmation Modal Keyboard Shortcuts
+
+**Learning**: The StudentQuiz component's confirmation modal (shown when students click "Kirim Kuis" to submit their quiz) had "Batal" (Cancel) and "Ya, Kirim Kuis" (Yes, Submit Quiz) buttons that supported keyboard shortcuts (Esc to cancel, Enter to submit) but users couldn't discover them without visual hints. This is a critical action point where students make an irreversible decision about submitting their quiz answers.
+
+**Action**: Add keyboard shortcut hints to both confirmation modal buttons:
+- Line 581: Added `shortcut="Esc"` to the "Batal" button - follows the standard cancel pattern
+- Line 584: Added `shortcut="Enter"` to the "Ya, Kirim Kuis" button - makes the primary action discoverable
+- Students can now see keyboard shortcuts via tooltips on hover/focus
+
+**File Fixed**:
+- src/components/StudentQuiz.tsx - Added shortcut props to 2 buttons in confirmation modal
+
+**Pattern**: Confirmation dialogs for irreversible actions should have keyboard shortcut hints on all action buttons:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Confirm/Submit buttons: `shortcut="Enter"` (for primary actions)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- This is especially important for high-stakes actions like quiz submission where users need clarity
+
+---
+
+---
+
+## 2026-02-14 - MaterialManagementView Button Accessibility
+
+**Learning**: The MaterialManagementView component had plain `<button>` elements that were missing `type="button"` attribute. When buttons are nested inside form elements (like MaterialManagementView might be), missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. Additionally, the title button had a `title` attribute but was missing an explicit `aria-label` for screen reader users.
+
+**Action**: Added `type="button"` and `aria-label` to all three plain buttons in the materials list:
+- Title button (line 268): Added `type="button"` and `aria-label={\`Lihat detail ${item.title}\`}`
+- Manage button (line 305): Added `type="button"`
+- Delete button (line 315): Added `type="button"`
+
+**File Fixed**:
+- src/components/material-upload/MaterialManagementView.tsx - Added type and aria-label to 3 buttons
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+---
+
+## 2026-02-14 - Input Component Aria-Label Support
+
+**Learning**: The Input component rendered a visible label only when the `label` prop was provided, but had no support for `aria-label` when used without a visible label. This created an accessibility gap where screen reader users couldn't identify input fields that relied on placeholder text or context for their purpose.
+
+**Action**: Added `ariaLabel` prop and automatic aria-label fallback:
+- Added `ariaLabel?: string` prop to InputProps interface (line 33)
+- Added aria-label attribute that uses `ariaLabel` prop when provided, or falls back to `placeholder` text when no visible label exists (line 285)
+- Fixed pre-existing bug: corrected variable name from `describedByIds` to `describedBy` in accessibilityProps (line 281)
+
+**Files Fixed**:
+- src/components/ui/Input.tsx - Added ariaLabel prop and fallback logic
+
+**Pattern**: Form inputs MUST have an accessible name via one of these methods:
+- Visible `<label>` element (htmlFor/id association)
+- `aria-label` attribute describing the input's purpose
+- `aria-labelledby` pointing to a descriptive element
+- When no visible label is provided, fall back to placeholder text as aria-label
+
+This ensures all input fields are properly announced by screen readers, improving accessibility for users navigating forms without visual cues.
+
 ---
 
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility

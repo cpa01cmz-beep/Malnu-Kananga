@@ -30,6 +30,7 @@ interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, '
     announceErrors?: boolean;
     describedBy?: string;
   };
+  ariaLabel?: string;
   inputMask?: 'nisn' | 'phone' | 'date' | 'year' | 'class' | 'grade';
   customType?: InputType;
   clearOnEscape?: boolean;
@@ -89,6 +90,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
   clearOnEscape = false,
   showClearButton = false,
   showCharacterCount = false,
+  ariaLabel,
   value,
   onChange,
   onBlur,
@@ -276,10 +278,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
 
   // Enhanced accessibility attributes
   const accessibilityProps = {
-    'aria-describedby': describedBy,
+    'aria-describedby': describedBy || undefined,
     'aria-invalid': finalState === 'error',
     'aria-required': props.required,
     'aria-errormessage': finalErrorText ? errorTextId : undefined,
+    'aria-label': ariaLabel || (label ? undefined : props.placeholder),
     ...(validation.state.isValidating && { 'aria-live': 'polite' as const }),
     ...(validation.state.isValidating && { 'aria-busy': true })
   };

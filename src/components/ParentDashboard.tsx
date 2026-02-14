@@ -635,7 +635,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       tooltip="Muat ulang data"
                       shortcut="Ctrl+R"
                     >
-                      {insightsLoading ? UI_STRINGS.LOADING : 'Perbarui'}
+                      {insightsLoading ? UI_STRINGS.LOADING : UI_STRINGS.UPDATE}
                     </SmallActionButton>
                   </div>
                 </div>
@@ -790,7 +790,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                       aria-label="Perbarui rekomendasi"
                       className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
                     >
-                      {recommendationsLoading ? 'Memuat...' : 'Perbarui'}
+                      {recommendationsLoading ? UI_STRINGS.LOADING : UI_STRINGS.UPDATE}
                     </button>
                   </div>
                 </div>
