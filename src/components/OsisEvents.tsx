@@ -346,19 +346,24 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                       <p className="font-semibold">{reg.studentName}</p>
                       <p className="text-sm text-neutral-500">{reg.studentClass} • {reg.registrationDate}</p>
                     </div>
-                    <select
-                      value={reg.attendanceStatus}
-                      onChange={async (e) => {
-                        const status = e.target.value as 'registered' | 'attended' | 'absent';
-                        await eventRegistrationsAPI.updateAttendance(reg.id, status);
-                        setRegistrations(registrations.map(r => r.id === reg.id ? { ...r, attendanceStatus: status } : r));
-                      }}
-                      className="px-2 py-1 border rounded text-sm"
-                    >
-                      <option value="registered">Terdaftar</option>
-                      <option value="attended">Hadir</option>
-                      <option value="absent">Tidak Hadir</option>
-                    </select>
+                    <div>
+                      <label htmlFor={`attendance-${reg.id}`} className="sr-only">Status kehadiran</label>
+                      <select
+                        id={`attendance-${reg.id}`}
+                        aria-label={`Status kehadiran ${reg.studentName}`}
+                        value={reg.attendanceStatus}
+                        onChange={async (e) => {
+                          const status = e.target.value as 'registered' | 'attended' | 'absent';
+                          await eventRegistrationsAPI.updateAttendance(reg.id, status);
+                          setRegistrations(registrations.map(r => r.id === reg.id ? { ...r, attendanceStatus: status } : r));
+                        }}
+                        className="px-2 py-1 border rounded text-sm"
+                      >
+                        <option value="registered">Terdaftar</option>
+                        <option value="attended">Hadir</option>
+                        <option value="absent">Tidak Hadir</option>
+                      </select>
+                    </div>
                   </div>
                 ))}
               </div>
