@@ -482,7 +482,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
         <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div>
             {step !== 'select' && (
-              <Button variant="outline" onClick={handlePreviousStep}>
+              <Button variant="outline" onClick={handlePreviousStep} shortcut="Alt+Left">
                 Kembali
               </Button>
             )}
