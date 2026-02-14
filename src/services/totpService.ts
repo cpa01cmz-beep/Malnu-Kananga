@@ -15,7 +15,7 @@ export interface TwoFactorData {
   createdAt?: string;
 }
 
-const TOTP_ISSUER = ENV.SCHOOL.NAME || 'MA Malnu Kananga';
+const TOTP_ISSUER = ENV.SCHOOL.NAME;
 const BACKUP_CODES_COUNT = 10;
 
 function base32Encode(buffer: ArrayBuffer): string {
