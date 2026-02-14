@@ -8,16 +8,25 @@ const mockAnalysisCache = {
 
 const mockWithCircuitBreaker = vi.fn();
 const mockIdGenerators = {
-  analysis: vi.fn(),
-  feedback: vi.fn()
+  analysis: vi.fn((type: string) => `analysis_${type}_123`),
+  feedback: vi.fn((type: string) => `feedback_${type}_123`)
 };
+
+const mockClassifyError = vi.fn((error: unknown, _context: unknown) => error);
+const mockGetAIErrorMessage = vi.fn((_error: unknown, _operation: string) => 'Maaf, terjadi kesalahan pada sistem AI.');
+const mockHandleAIError = vi.fn((_error: unknown, _operation: string, _model: string) => ({ 
+  type: 'AI_ERROR', 
+  message: 'AI service error',
+  recoverable: false 
+}));
 
 vi.mock('../aiCacheService', () => ({
   analysisCache: mockAnalysisCache
 }));
 
 vi.mock('../../../utils/errorHandler', () => ({
-  withCircuitBreaker: mockWithCircuitBreaker
+  withCircuitBreaker: mockWithCircuitBreaker,
+  classifyError: mockClassifyError
 }));
 
 vi.mock('../../../utils/logger', () => ({
@@ -32,10 +41,32 @@ vi.mock('../../../utils/idGenerator', () => ({
   idGenerators: mockIdGenerators
 }));
 
+vi.mock('../../../utils/aiErrorHandler', () => ({
+  getAIErrorMessage: mockGetAIErrorMessage,
+  handleAIError: mockHandleAIError,
+  AIOperationType: {
+    ANALYSIS: 'analysis',
+    CHAT: 'chat',
+    QUIZ: 'quiz',
+    STUDY: 'study'
+  }
+}));
+
 describe('Gemini Analysis', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
+    
+    // Reset mock implementations to return undefined by default
+    mockAnalysisCache.get.mockReturnValue(undefined);
+    mockAnalysisCache.set.mockReturnValue(undefined);
+    mockWithCircuitBreaker.mockReset();
+    mockIdGenerators.analysis.mockReset();
+    mockIdGenerators.feedback.mockReset();
+    mockClassifyError.mockReset();
+    mockGetAIErrorMessage.mockReset();
+    mockHandleAIError.mockReset();
+    
     // Mock navigator.onLine
     Object.defineProperty(global.navigator, 'onLine', {
       value: true,
