@@ -485,6 +485,7 @@ if (variant === 'inline') {
               <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-700">
                 <button
                   onClick={toggleDetails}
+                  aria-pressed={detailsVisible}
                   className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-200"
                 >
                   {detailsVisible ? 'Hide' : 'Show'} technical details
