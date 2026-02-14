@@ -4,6 +4,95 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
+## 2026-02-14 - NotificationCenter Test Button Keyboard Shortcut
+
+**Learning**: The NotificationCenter component had a "Tes" (Test) button for sending test notifications that was missing a keyboard shortcut hint, while other action buttons in the same component already had shortcuts ("Mark All as Read" - Ctrl+D, "Clear History" - Ctrl+Shift+X). This created inconsistency in the user experience and made the test feature less discoverable for keyboard users.
+
+**Action**: Added `shortcut="Ctrl+T"` to the test notification button in NotificationCenter.tsx (line 309):
+- Follows the existing Button component shortcut pattern
+- Uses Ctrl+T (T for Test) which is intuitive and doesn't conflict with other shortcuts
+- Maintains consistency with other action buttons in the component
+
+**Pattern**: When adding shortcuts to buttons in a component with multiple actions:
+1. Check existing shortcuts to avoid conflicts
+2. Use intuitive letters (T for Test, S for Save, N for New)
+3. Maintain consistency with Ctrl/Cmd modifier for actions
+4. Document in component or follow established conventions
+
+**Why it matters**: Consistent keyboard shortcuts improve accessibility for keyboard users and power users. When some buttons have shortcuts and others don't, it creates a fragmented experience. The NotificationCenter is a frequently-used component, so making all actions keyboard-accessible improves overall UX efficiency.
+
+**PR**: #2335
+
+---
+
+## 2026-02-14 - Duplicate Keyboard Shortcut in VoiceSettings
+
+**Learning**: The VoiceSettings component's Backup & Restore section had two adjacent buttons ("Pulihkan" and "Hapus") both with `shortcut="Enter"`. This creates keyboard confusion - pressing Enter will trigger the first button in DOM order, potentially causing unintended actions (especially dangerous for a "Hapus/Delete" action).
+
+**Action**: Changed the "Hapus" (Delete) button shortcut from "Enter" to "Del" in VoiceSettings.tsx line 421.
+
+**Pattern**: When multiple action buttons are adjacent (especially in dialogs or confirmation contexts), each button should have a unique keyboard shortcut to prevent accidental triggering. For destructive actions like delete, consider:
+- Using different shortcuts (Enter for primary action, Del/Esc for destructive)
+- Or removing shortcuts entirely and requiring explicit clicks for destructive actions
+- Never having two buttons with the same shortcut in the same component/view
+
+**Files Modified**:
+- src/components/VoiceSettings.tsx - Changed Hapus button shortcut from "Enter" to "Del"
+
+**PR**: #2331
+
+---
+
+## 2026-02-14 - Plain Button Accessibility in Admin and Parent Components
+
+**Learning**: The AdminDashboard and ParentMessagingView components had plain `<button>` elements missing accessibility attributes. AdminDashboard had two buttons ("Muat Ulang" and "Kembali ke Dashboard") missing `aria-label`, while ParentMessagingView had teacher selection buttons missing both `type="button"` and `aria-label`. Without these attributes, screen reader users lack context about button actions, and buttons inside forms may accidentally trigger submissions.
+
+**Action**: Added accessibility attributes to all affected buttons:
+- AdminDashboard.tsx Line 77: Added `aria-label="Muat ulang data insight"` to refresh button
+- AdminDashboard.tsx Line 829: Added `aria-label="Kembali ke dashboard utama"` to back button
+- ParentMessagingView.tsx Line 177: Added `type="button"` and `aria-label={\`Pilih ${teacher.teacherName} - ${teacher.subject} (${teacher.className})\`}` to teacher selection buttons
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text, especially important for:
+   - Buttons in lists (need item-specific context)
+   - Navigation buttons in different views (same text, different destinations)
+   - Action buttons where context matters
+
+This follows the same pattern documented from GradingList.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and MaterialManagementView.tsx fixes.
+
+**Files Modified**:
+- src/components/AdminDashboard.tsx - Added aria-label to 2 buttons
+- src/components/ParentMessagingView.tsx - Added type and aria-label to teacher selection buttons
+
+**PR**: #2330
+
+---
+
+## 2026-02-14 - GradingList Reset Button Accessibility
+
+**Learning**: The GradingList component had a plain `<button>` element for resetting student grades that was missing `type="button"` and `aria-label` attributes. Without `type="button"`, the button defaults to `type="submit"` when nested inside forms, potentially causing accidental form submissions. Without `aria-label`, screen reader users couldn't get clear context about which student's grade was being reset.
+
+**Action**: Added accessibility attributes to the reset button in GradingList.tsx:
+- Line 230: Added `type="button"` to prevent accidental form submission
+- Line 238: Added `aria-label={\`Reset nilai ${student.name}\`}` for screen reader context
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+
+This follows the same pattern documented from StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and MaterialManagementView.tsx fixes.
+
+**Files Modified**:
+- src/components/grading/GradingList.tsx - Added type and aria-label to reset button
+
+**PR**: #2327
+>>>>>>> origin/main
+
+---
+
 ## 2026-02-14 - Toast and ParentMessaging Plain Button Type Accessibility
 
 **Learning**: The Toast component's undo button and ParentMessagingView's teacher selection button were missing `type="button"`. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked. This is particularly problematic for Toast since it's a global component that can appear anywhere in the application, including inside forms.
@@ -60,6 +149,7 @@ This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx,
 This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and other components with plain button accessibility fixes.
 
 **Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic in data tables, lists, and cards where buttons appear near form inputs.
+>>>>>>> origin/main
 
 ---
 

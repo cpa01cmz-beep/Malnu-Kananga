@@ -307,6 +307,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     variant="secondary"
                     size="sm"
                     disabledReason={!permissionGranted ? NOTIFICATION_UI_STRINGS.PERMISSION_REQUIRED : undefined}
+                    shortcut="Ctrl+T"
                   >
                     {isSendingTestNotification ? 'Mengirim...' : 'Tes'}
                   </Button>

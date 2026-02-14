@@ -75,6 +75,7 @@ const SchoolInsightsContent: React.FC = () => {
         <button
           type="button"
           onClick={refreshInsights}
+          aria-label="Muat ulang data insight"
           className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
         >
           Muat Ulang
@@ -829,6 +830,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                     <button
                         type="button"
                         onClick={() => setCurrentView('home')}
+                        aria-label="Kembali ke dashboard utama"
                         className="px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
                     >
                         Kembali ke Dashboard
