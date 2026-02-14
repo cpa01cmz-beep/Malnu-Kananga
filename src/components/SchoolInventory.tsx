@@ -532,6 +532,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                         <td className="px-4 py-3">
                           <div className="flex gap-1">
                             <button
+                              type="button"
                               onClick={() => generateQRCode(item)}
                               className="text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1.5 rounded-full transition-colors"
                               title="Generate QR Code"
@@ -540,6 +541,7 @@ const SchoolInventory: React.FC<SchoolInventoryProps> = ({ onBack, onShowToast }
                               <ArchiveBoxIcon />
                             </button>
                             <button
+                              type="button"
                               onClick={() => handleDeleteItem(item.id)}
                               className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-full transition-colors"
                               title="Hapus"
