@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ParentNotificationSettings Frequency Toggle Accessibility
+
+**Learning**: The ParentNotificationSettings component had frequency selection toggle buttons (Langsung, Ringkasan Harian, Ringkasan Mingguan) that changed visual state based on selection (border and background color change) but were missing the `aria-pressed` attribute. Screen reader users couldn't know which notification frequency was currently selected when navigating this component. Additionally, the close button was missing `type="button"` which can cause accidental form submissions.
+
+**Action**: Added accessibility attributes to 4 buttons in ParentNotificationSettings.tsx:
+- Line 131: Added `type="button"` and `aria-label="Tutup pengaturan notifikasi"` to close button
+- Line 227: Added `type="button"`, `aria-pressed={settings.frequency === option.value}`, and `aria-label={\`Frekuensi notifikasi: ${option.label}\`}` to 3 frequency toggle buttons
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses visual state changes (border color, background) to indicate selection
+- Frequency/option selection buttons in settings components
+- Toggle button groups where only one option can be selected
+
+This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through the ParentNotificationSettings page won't know which notification frequency option is currently active, making it difficult to understand the current state and effectively use the settings. The close button missing `type="button"` can also cause accidental form submissions when the component is used inside forms.
+
+---
+
 ## 2026-02-14 - Plain Button Type Attribute for Accessibility
 
 **Learning**: The AICacheManager and GradingList components had plain `<button>` elements missing the `type="button"` attribute. When buttons are nested inside form elements, missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. This is a subtle but critical accessibility issue that can cause user frustration.
