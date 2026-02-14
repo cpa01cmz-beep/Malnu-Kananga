@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { CalendarDaysIcon, ListBulletIcon } from '@heroicons/react/24/outline';
 import { schedulesAPI, subjectsAPI } from '../services/apiService';
 import { Schedule, Subject, ParentMeeting } from '../types';
@@ -39,6 +39,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ onBack, className = 'XII IP
   const [activeDay, setActiveDay] = useState('Senin');
   const [viewMode, setViewMode] = useState<'list' | 'month' | 'week' | 'day'>('list');
   const [selectedEvent, setSelectedEvent] = useState<Schedule | null>(null);
+  const dayButtonsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
   const fetchSchedules = useCallback(async (isRetry = false) => {
     if (isRetry) {
@@ -134,6 +135,38 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
     }
   };
 
+  const handleDayKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, currentDay: string) => {
+    const currentIndex = DAYS.indexOf(currentDay);
+    let nextIndex = -1;
+
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : DAYS.length - 1;
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        nextIndex = currentIndex < DAYS.length - 1 ? currentIndex + 1 : 0;
+        break;
+      case 'Home':
+        e.preventDefault();
+        nextIndex = 0;
+        break;
+      case 'End':
+        e.preventDefault();
+        nextIndex = DAYS.length - 1;
+        break;
+    }
+
+    if (nextIndex !== -1) {
+      const nextDay = DAYS[nextIndex];
+      setActiveDay(nextDay);
+      setTimeout(() => {
+        dayButtonsRef.current[nextIndex]?.focus();
+      }, 0);
+    }
+  };
+
   if (loading) {
     return (
       <div className="animate-fade-in-up">
@@ -214,15 +247,24 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
       />
 
       {viewMode === 'list' && (
-        <div className="flex overflow-x-auto pb-2 mb-4 gap-2 scrollbar-hide">
-          {DAYS.map((day) => (
+        <div
+          className="flex overflow-x-auto pb-2 mb-4 gap-2 scrollbar-hide"
+          role="tablist"
+          aria-label="Pilih hari untuk melihat jadwal (Gunakan tombol panah untuk navigasi)"
+        >
+          {DAYS.map((day, index) => (
             <button
               key={day}
+              ref={(el) => { dayButtonsRef.current[index] = el; }}
               type="button"
-              onClick={() => setActiveDay(day)}
+              role="tab"
+              aria-selected={activeDay === day}
               aria-pressed={activeDay === day}
-              aria-label={`Lihat jadwal hari ${day}`}
-              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
+              aria-label={`Lihat jadwal hari ${day} (Tekan panah kiri/kanan untuk navigasi)`}
+              tabIndex={activeDay === day ? 0 : -1}
+              onClick={() => setActiveDay(day)}
+              onKeyDown={(e) => handleDayKeyDown(e, day)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 focus-visible:ring-offset-2 ${
                 activeDay === day
                   ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
                   : 'bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700'
