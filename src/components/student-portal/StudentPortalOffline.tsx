@@ -77,6 +77,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onToggleValidationDetails}
+                  aria-pressed={showValidationDetails}
                 >
                   {showValidationDetails ? 'Tutup Detail' : 'Lihat Detail'}
                 </Button>
@@ -124,6 +125,7 @@ export const StudentPortalOffline: React.FC<StudentPortalOfflineProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onToggleValidationDetails}
+                  aria-pressed={showValidationDetails}
                 >
                   {showValidationDetails ? 'Tutup Detail' : 'Lihat Detail'}
                 </Button>

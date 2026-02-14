@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentPortalOffline Toggle Button Accessibility
+
+**Learning**: The StudentPortalOffline component had toggle buttons for showing/hiding validation details that changed their text between "Tutup Detail" (Close Details) and "Lihat Detail" (View Details), but were missing the `aria-pressed` attribute. Screen reader users couldn't know if the validation details were currently visible or hidden when toggling this feature.
+
+**Action**: Added `aria-pressed={showValidationDetails}` to both toggle buttons in StudentPortalOffline.tsx:
+- Line 79: Added `aria-pressed={showValidationDetails}` to the warnings toggle button (inside Alert variant="info")
+- Line 127: Added `aria-pressed={showValidationDetails}` to the errors toggle button (inside Alert variant="error")
+
+**Files Fixed**:
+- src/components/student-portal/StudentPortalOffline.tsx - Added aria-pressed to 2 toggle buttons
+
+**Pattern**: Toggle buttons that change text based on state MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Buttons that toggle visibility of content sections
+- Any button where text changes between show/hide states
+- Expand/collapse toggles
+
+This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through the page won't know whether the validation details are currently expanded or collapsed, making it harder to understand the current state of the interface.
+
+---
+
 ## 2026-02-14 - UserManagement Add Button Keyboard Shortcut
 
 **Learning**: The UserManagement component's "Tambah" (Add User) button was missing a keyboard shortcut hint. This is a high-traffic admin component where users frequently add new users. Without shortcuts, power users couldn't discover the efficient `Ctrl+N` keyboard shortcut for creating new users.
