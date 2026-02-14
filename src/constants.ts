@@ -3007,6 +3007,16 @@ export const UI_DIMENSIONS = {
         LINE_HEIGHT_LARGE: '24px',
         HEADER_LINE_WIDTH: '60%',
         SUBHEADER_LINE_WIDTH: '40%',
+        BUTTON_SMALL_WIDTH: '60px',
+    },
+
+    // Table column widths
+    TABLE_COLUMN: {
+        TIMESTAMP: '180px',
+        USER: '150px',
+        ROLE: '100px',
+        ACTION: '100px',
+        RESOURCE: '120px',
     },
 
     // Textarea dimensions
