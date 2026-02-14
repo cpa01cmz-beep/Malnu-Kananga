@@ -4,6 +4,12 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+# Palette's UX Journal
+
+Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+
+---
+
 ## 2026-02-14 - SchoolInventory Keyboard Shortcuts
 
 **Learning**: The SchoolInventory component (a high-traffic admin component for managing school assets) had 10 action buttons without keyboard shortcut hints. This component handles inventory management including adding items, scheduling maintenance, running audits, and generating reports - actions frequently performed by admin staff.
@@ -53,6 +59,50 @@ This follows the established pattern from AttendanceManagement.tsx, Announcement
 - Any button that changes appearance based on state
 
 This follows the same pattern as ActivityFeed.tsx, MessageList.tsx, ELibrary.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+---
+
+## 2026-02-14 - AssignmentCreation Back Button Keyboard Shortcut
+
+**Learning**: The AssignmentCreation component's "Kembali" (Back) button at line 291 was missing a keyboard shortcut hint, while other navigation buttons in the same component (Batal with `shortcut="Esc"`, Simpan Draft with `shortcut="Ctrl+S"`, Publikasikan Tugas with `shortcut="Ctrl+Enter"`) already had shortcuts. This inconsistency made it harder for keyboard users to discover the Alt+Left shortcut for navigating back.
+
+**Action**: Add `shortcut="Alt+Left"` prop to the "Kembali" button:
+- Line 291: Added `shortcut="Alt+Left"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Alt+Left follows the browser back navigation convention, making it intuitive
+- Completes the consistent keyboard shortcut coverage for AssignmentCreation navigation
+
+**File Fixed**:
+- src/components/AssignmentCreation.tsx - Added shortcut prop to the back button (line 291)
+
+**Pattern**: All navigation buttons in form/wizard components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"` or `shortcut="Ctrl+Enter"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- Complete the set: don't leave one button without a shortcut if others have them
+
+**Related**: This follows the same pattern as QuizGenerator.tsx, StudentInsights.tsx, and other wizard components. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
+## 2026-02-14 - MaterialUpload View Toggle Accessibility
+
+**Learning**: The MaterialUpload component had view toggle buttons (Upload, Template, Kelola) that changed visual state based on selection (blue-solid when active, ghost when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't know which view was currently active when switching between upload, template, and management views.
+
+**Action**: Added `aria-pressed={selectedView === 'viewname'}` to all three toggle buttons:
+- Line 169: Added `aria-pressed={selectedView === 'upload'}` to Upload button
+- Line 177: Added `aria-pressed={selectedView === 'templates'}` to Template button
+- Line 185: Added `aria-pressed={selectedView === 'management'}` to Kelola button
+
+**File Fixed**:
+- src/components/material-upload/MaterialUpload.tsx - Added aria-pressed to 3 view toggle buttons
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- View mode toggles (upload/template/management)
+- Tab navigation buttons
+- Filter buttons in any component
+- Any button that changes appearance based on state (primary vs ghost, blue-solid vs ghost)
 
 ---
 
@@ -128,7 +178,9 @@ This ensures both screen reader users (via aria-label) and sighted users (via to
 4. **Accessible Labels**: Descriptive aria-labels for screen reader context
 
 This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
-=======
+
+---
+
 ## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
 
 **Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
