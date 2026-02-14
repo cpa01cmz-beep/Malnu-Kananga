@@ -702,7 +702,9 @@ const DataTable = <T extends Record<string, unknown>>({
                     <span>Menemukan hasil untuk</span>
                     <kbd className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-700 rounded text-[10px] font-mono">{localSearch}</kbd>
                     <button
+                      type="button"
                       onClick={() => handleSearch('')}
+                      aria-label={`Hapus pencarian "${localSearch}"`}
                       className="text-primary-600 hover:text-primary-700 dark:text-primary-400 hover:underline ml-1 touch-manipulation"
                     >
                       Hapus
