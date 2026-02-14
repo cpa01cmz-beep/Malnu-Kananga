@@ -73,6 +73,19 @@ This follows the established pattern from other high-traffic components like Qui
 
 ---
 
+## 2026-02-14 - GradeAnalytics Missing Back Button Shortcut (No Analytics State)
+
+**Learning**: The GradeAnalytics component had TWO "Kembali" (Back) buttons - one in the main analytics view (line 458) and another in the "no analytics available" empty state (line 441). The first had `shortcut="Alt+Left"` but the second was MISSING the shortcut hint, creating an inconsistent user experience. Users viewing the empty state couldn't discover the Alt+Left keyboard shortcut.
+
+**Action**: Added `shortcut="Alt+Left"` to the back button in the no-analytics empty state:
+- Line 441: Added `shortcut="Alt+Left"` to the Button component
+
+**Pattern**: When a component has multiple instances of the same action button in different states/rendering branches, ALL of them MUST have consistent keyboard shortcut hints. Users should be able to discover shortcuts regardless of which state the component is in.
+
+This ensures keyboard users can efficiently navigate back from any view state in the GradeAnalytics component.
+
+---
+
 ## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
 **Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
