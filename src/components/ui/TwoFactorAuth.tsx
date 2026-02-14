@@ -116,7 +116,15 @@ export function TwoFactorSetup({ userId, userEmail, onComplete, onCancel }: TwoF
           </p>
           <div className="flex justify-center mb-6">
             {qrCodeUrl && (
-              <img src={qrCodeUrl} alt="QR Code" className="border rounded-lg" />
+              <img 
+                src={qrCodeUrl} 
+                alt="QR Code" 
+                className="border rounded-lg" 
+                loading="eager"
+                decoding="async"
+                width={200}
+                height={200}
+              />
             )}
           </div>
           <p className="text-sm text-gray-600 mb-4">
