@@ -27,6 +27,14 @@ const updateSW = registerSW({
 
 (window as typeof window & { updatePWA?: () => void }).updatePWA = () => updateSW(true);
 
+// BroCula: Global unhandled promise rejection handler
+// Prevents uncaught promise rejections from appearing in console
+// Routes errors to logger for centralized error tracking
+window.addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
+  logger.error('Unhandled promise rejection:', event.reason);
+});
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");

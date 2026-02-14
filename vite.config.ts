@@ -63,9 +63,12 @@ function modulePreloadPlugin(): Plugin {
         )
         .slice(0, 2)
       
-      const allChunks = criticalChunks.concat(dashboardChunks, vendorChunks)
+      // BroCula: Optimized to only preload critical chunks
+      // Reducing from 6 to 4 chunks to minimize unused JavaScript on initial load
+      // Dashboard chunks removed from preload - loaded on-demand after auth
+      const allChunks = criticalChunks.concat(vendorChunks)
       const uniqueChunks = allChunks.filter((item, index) => allChunks.indexOf(item) === index)
-      const chunks = uniqueChunks.slice(0, 6)
+      const chunks = uniqueChunks.slice(0, 4)
       
       const preloadLinks = chunks
         .map(name => {
