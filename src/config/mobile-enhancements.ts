@@ -3,6 +3,8 @@
  * Advanced mobile-first design patterns and touch optimizations
  */
 
+import { BREAKPOINTS } from '../constants';
+
 export const MOBILE_ENHANCEMENTS = `
 /* Enhanced Mobile Container System */
 .container-mobile {
@@ -740,17 +742,17 @@ export const MOBILE_UTILS = {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   },
   
-  // Viewport utilities
+  // Viewport utilities - Flexy: Using centralized BREAKPOINTS instead of hardcoded values
   isMobile: () => {
-    return window.innerWidth < 768;
+    return window.innerWidth < BREAKPOINTS.MD;
   },
-  
+
   isTablet: () => {
-    return window.innerWidth >= 768 && window.innerWidth < 1024;
+    return window.innerWidth >= BREAKPOINTS.MD && window.innerWidth < BREAKPOINTS.LG;
   },
-  
+
   isDesktop: () => {
-    return window.innerWidth >= 1024;
+    return window.innerWidth >= BREAKPOINTS.LG;
   },
   
   // Safe area utilities

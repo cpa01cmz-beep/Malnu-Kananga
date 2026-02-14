@@ -20,9 +20,11 @@
     <!-- Note: API preconnect removed - Lighthouse flagged as unused during initial load
          API calls happen after auth/login, so preconnect doesn't benefit FCP/LCP -->
     
-    <!-- Load Google Fonts with display=optional to avoid layout shift - font only used if cached -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=optional" /></noscript>
+    <!-- Load Google Fonts with display=swap to avoid invisible text during loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" fetchpriority="high" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
     <style>
       /* Critical CSS for above-the-fold content - prevents layout shifts */
       *, *::before, *::after {
@@ -48,9 +50,12 @@
       
       #root {
         min-height: 100vh;
-        /* Reserve space to prevent layout shift */
+        /* Reserve space to prevent layout shift during React hydration */
         display: flex;
         flex-direction: column;
+        /* Ensure content doesn't shift when fonts load - match Inter metrics */
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        line-height: 1.5;
       }
       
       /* Prevent FOUC (Flash of Unstyled Content) */
@@ -64,11 +69,23 @@
         to { opacity: 1; }
       }
       
-      /* Ensure images don't cause layout shifts */
+      /* Ensure images don't cause layout shifts - reserve space with aspect-ratio */
       img {
         max-width: 100%;
         height: auto;
         background-color: #f3f4f6;
+        /* Prevent layout shift during image load */
+        content-visibility: auto;
+      }
+
+      /* Reserve space for images to prevent CLS */
+      img[width][height] {
+        aspect-ratio: attr(width) / attr(height);
+      }
+
+      /* Prevent layout shift from dynamic content */
+      .layout-stable {
+        contain: layout;
       }
       
       /* Font display strategy: use fallback font immediately, swap when Inter loads */
@@ -228,7 +245,37 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Pre-rendered loading state to prevent CLS during hydration -->
+      <div id="initial-loader" style="
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        color: white;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+      ">
+        <div style="
+          width: 64px;
+          height: 64px;
+          border: 4px solid rgba(255,255,255,0.3);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: initial-spin 1s linear infinite;
+        "></div>
+        <p style="margin-top: 24px; font-size: 18px; font-weight: 500;">Memuat Portal Pintar...</p>
+        <style>
+          @keyframes initial-spin {
+            to { transform: rotate(360deg); }
+          }
+        </style>
+      </div>
+    </div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>

@@ -36,3 +36,22 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+// Hide initial loader after React mounts to prevent layout shift
+const hideInitialLoader = () => {
+  const loader = document.getElementById('initial-loader');
+  if (loader) {
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.3s ease-out';
+    setTimeout(() => {
+      loader.style.display = 'none';
+    }, 300);
+  }
+};
+
+// Hide loader after a short delay to ensure React has rendered
+if (document.readyState === 'complete') {
+  hideInitialLoader();
+} else {
+  window.addEventListener('load', hideInitialLoader);
+}
