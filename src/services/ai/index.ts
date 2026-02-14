@@ -33,6 +33,26 @@ export {
 } from './parentAIRecommendationService';
 export type { ParentRecommendation, ParentChildData, ParentRecommendationsInput } from './parentAIRecommendationService';
 
+// Lesson Plan exports
+export {
+  generateLessonPlan,
+  generateLessonPlanWithTemplate,
+  getSubjectTemplate,
+  getCurriculumTemplate,
+  clearLessonPlanCache,
+  CURRICULUM_TEMPLATES,
+  SUBJECT_TEMPLATES
+} from './geminiLessonPlan';
+export type { 
+  LessonPlan, 
+  LessonPlanInput, 
+  LessonPlanSection, 
+  LessonPlanAssessment, 
+  LessonPlanResource,
+  SubjectTemplate,
+  CurriculumTemplate 
+} from './geminiLessonPlan';
+
 // Re-export types that might be used by external code
 export type { FeaturedProgram, LatestNews, StudyPlan } from '../../types';
 export type { AIFeedback } from '../../types';

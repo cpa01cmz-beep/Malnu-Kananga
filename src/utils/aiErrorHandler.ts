@@ -20,7 +20,8 @@ export enum AIOperationType {
   EDITOR = 'editor',
   QUIZ = 'quiz',
   STUDY_PLAN = 'study_plan',
-  FEEDBACK = 'feedback'
+  FEEDBACK = 'feedback',
+  LESSON_PLAN = 'lesson_plan'
 }
 
 const AI_OPERATION_MESSAGES: Record<AIOperationType, {
@@ -64,6 +65,12 @@ const AI_OPERATION_MESSAGES: Record<AIOperationType, {
     genericError: 'Gagal membuat feedback AI. Silakan coba lagi.',
     retryMessage: 'Pembuatan feedback AI gagal. Silakan coba lagi.',
     fallbackMessage: 'Pembuatan feedback AI tidak tersedia saat ini.'
+  },
+  [AIOperationType.LESSON_PLAN]: {
+    operation: 'generateLessonPlan',
+    genericError: 'Gagal membuat rencana pembelajaran dengan AI. Silakan coba lagi.',
+    retryMessage: 'Pembuatan RPP AI gagal. Silakan coba lagi.',
+    fallbackMessage: 'Pembuatan RPP AI tidak tersedia saat ini.'
   }
 };
 
