@@ -521,6 +521,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
                     variant="secondary"
                     size="md"
                     fullWidth
+                    shortcut="Esc"
                   >
                     Batal
                   </Button>
@@ -529,6 +530,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
                     variant="success"
                     size="md"
                     fullWidth
+                    shortcut="Enter"
                   >
                     Terapkan Hasil
                   </Button>
