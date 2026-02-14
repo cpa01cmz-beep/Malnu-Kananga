@@ -748,6 +748,7 @@ export const UI_DELAYS = {
     BUTTON_SHAKE: 500, // Duration of button shake animation (ms) - Flexy: Never hardcode animation timing!
     TOOLTIP_SHOW: 500, // Delay before showing tooltip (ms) - Flexy: Never hardcode tooltip timing!
     MIN_LOAD_TIME: 500, // Minimum loading time before showing content (ms) - Flexy: Never hardcode load timing!
+    CLEAR_COPY_STATUS: 3000, // Delay before clearing copy status message (ms) - Flexy: Never hardcode UI timeouts!
 } as const;
 
 // UI gesture thresholds - Flexy: Never hardcode gesture values!

@@ -7,7 +7,7 @@ import SmallActionButton from './SmallActionButton';
 import { ArrowPathIcon, AlertTriangleIcon } from '../icons/StatusIcons';
 import { CheckIcon } from '../icons/CheckIcon';
 import DocumentTextIcon from '../icons/DocumentTextIcon';
-import { INFO_EMAIL } from '../../constants';
+import { INFO_EMAIL, UI_DELAYS } from '../../constants';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -120,7 +120,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (result.success) {
       setTimeout(() => {
         this.setState({ copyStatus: null });
-      }, 3000);
+      }, UI_DELAYS.CLEAR_COPY_STATUS);
     }
   };
 
