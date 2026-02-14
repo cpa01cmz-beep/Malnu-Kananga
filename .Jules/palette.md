@@ -4,6 +4,24 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Toast and ParentMessaging Plain Button Type Accessibility
+
+**Learning**: The Toast component's undo button and ParentMessagingView's teacher selection button were missing `type="button"`. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked. This is particularly problematic for Toast since it's a global component that can appear anywhere in the application, including inside forms.
+
+**Action**: Added `type="button"` to two plain button elements:
+- Toast.tsx Line 219: Added `type="button"` to undo button
+- ParentMessagingView.tsx Line 177: Added `type="button"` to teacher selection button
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text (already present in both)
+
+This follows the same pattern documented from AICacheManager.tsx, GradingList.tsx, VoiceInputButton.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly critical for global components like Toast that can appear anywhere.
+
+---
+
 ## 2026-02-14 - ParentNotificationSettings Frequency Toggle Accessibility
 
 **Learning**: The ParentNotificationSettings component had frequency selection toggle buttons (Langsung, Ringkasan Harian, Ringkasan Mingguan) that changed visual state based on selection (border and background color change) but were missing the `aria-pressed` attribute. Screen reader users couldn't know which notification frequency was currently selected when navigating this component. Additionally, the close button was missing `type="button"` which can cause accidental form submissions.
