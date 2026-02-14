@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - QuizGenerator Keyboard Shortcut Discoverability
+
+**Learning**: The QuizGenerator component is a multi-step wizard where teachers create AI-generated quizzes. The "Lanjut" / "Buat Kuis" (Next / Create Quiz) button on line 499 was missing a keyboard shortcut hint, even though other buttons in the same component (Batal with `shortcut="Esc"`, Simpan Kuis with `shortcut="Ctrl+S"`) already had shortcuts. This inconsistency meant keyboard users couldn't discover the Ctrl+Enter shortcut for advancing to the next step.
+
+**Action**: Add `shortcut="Ctrl+Enter"` prop to the "Lanjut" / "Buat Kuis" button:
+- Line 499: Added `shortcut="Ctrl+Enter"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern in the codebase for wizard navigation
+
+**File Fixed**:
+- src/components/QuizGenerator.tsx - Added shortcut prop to the next/create button
+
+**Pattern**: Wizard/form navigation buttons should consistently show keyboard shortcuts to improve discoverability:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"` or `shortcut="Ctrl+Enter"`
+- Next/Continue buttons: `shortcut="Ctrl+Enter"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+**Related**: This follows the same pattern as other form components (FolderNavigation.tsx, EnhancedMaterialSharing.tsx, AssignmentCreation.tsx) where Ctrl+Enter is used for primary actions. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
 ## 2026-02-14 - Social Media Icons Accessibility Consistency
 
 **Learning**: The StatusIcons component had three social media icons (FacebookIcon, InstagramIcon, YoutubeIcon) that were missing the `ariaLabel` prop available in other icon components (ArrowPathIcon, AlertCircleIcon, CheckCircleIcon, AlertTriangleIcon). This inconsistency meant social media links in the Footer couldn't provide customizable accessibility labels for screen reader users.
