@@ -10,6 +10,7 @@ vi.mock('../../services/apiService', () => ({
     getConversations: vi.fn(),
     sendMessage: vi.fn(),
     markAsRead: vi.fn(),
+    createConversation: vi.fn(),
   },
   usersAPI: {
     getAll: vi.fn(),

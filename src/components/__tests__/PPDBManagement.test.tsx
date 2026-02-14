@@ -33,6 +33,14 @@ vi.mock('../../services/unifiedNotificationManager', () => ({
 vi.mock('../../services/ppdbIntegrationService', () => ({
   ppdbIntegrationService: {
     transitionPipelineStatus: vi.fn(() => Promise.resolve()),
+    getAutoCreationConfig: vi.fn(() => ({
+      enabled: true,
+      autoCreateOnApproval: true,
+      requireEnrollmentConfirmation: false,
+      createParentAccount: true,
+      sendWelcomeEmail: true,
+    })),
+    setAutoCreationConfig: vi.fn(),
   },
 }));
 
