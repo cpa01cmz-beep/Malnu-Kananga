@@ -4,6 +4,66 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentAssignments Back Button Keyboard Shortcuts
+
+**Learning**: The StudentAssignments component had three "Kembali" (Back) buttons across different views (assignment list, detail view, submit view) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic student component used for viewing and submitting assignments.
+
+**Action**: Added `shortcut="Alt+Left"` to all three back buttons in StudentAssignments.tsx:
+- Line 251: Added `shortcut="Alt+Left"` to assignment list view back button
+- Line 362: Added `shortcut="Alt+Left"` to assignment detail view back button
+- Line 465: Added `shortcut="Alt+Left"` to assignment submit view back button
+
+**Pattern**: Navigation buttons in student-facing assignment components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from GradeAnalytics.tsx, QuizGenerator.tsx, StudyPlanGenerator.tsx, and other high-traffic components where Alt+Left is used for back navigation.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who prefer keyboard navigation. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important for students who frequently navigate between assignment list, details, and submission views.
+
+---
+
+## 2026-02-14 - StudentInsights Toggle Button Accessibility
+
+**Learning**: The StudentInsights component had a toggle button (showing 🔴/⚫ circles) that switched AI insights on/off, but was missing `aria-pressed` attribute. Screen reader users couldn't know whether AI Insights was currently enabled or disabled when navigating this component.
+
+**Action**: Added `aria-pressed={enabled}` and descriptive `aria-label` to the toggle button:
+- Line 233: Added `aria-pressed={enabled}` and `aria-label={enabled ? 'Nonaktifkan AI Insights' : 'Aktifkan AI Insights'}` to the toggle button
+- Line 115: Added `aria-label="Aktifkan AI Insights"` to the enable button
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses emoji or icon changes to indicate state (🔴/⚫, ✓/✗, etc.)
+- Toggle buttons in settings/preferences components
+- Feature on/off switches
+
+This follows the same pattern as ActivityFeed.tsx pause toggle, ELibrary.tsx filter toggles, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through the StudentInsights page won't know whether AI Insights is currently active or inactive, making it harder to understand the current state and use the toggle effectively.
+
+**PR**: #2299
+
+---
+
+## 2026-02-14 - VoiceInputButton Button Type Accessibility
+
+**Learning**: The VoiceInputButton.tsx component had three plain `<button>` elements missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"`, potentially causing accidental form submissions when the component is used inside forms.
+
+**Action**: Added `type="button"` to three button elements in VoiceInputButton.tsx:
+- Line 261: Added `type="button"` to disabled state button
+- Line 284: Added `type="button"` to permission handler button
+- Line 327: Added `type="button"` to main voice input button
+
+**Pattern**: Plain `<button>` elements (not using the Button component) should always explicitly set `type="button"` to prevent accidental form submissions:
+- Use `type="button"` for action buttons that don't submit forms
+- Use `type="submit"` for form submit buttons
+- Use `type="reset"` for form reset buttons
+
+This follows the same pattern documented from StudyPlanAnalytics.tsx and VoiceNotificationSettings.tsx fixes.
+
+**PR**: #2299
+
+---
+
 ## 2026-02-14 - AssignmentGrading Back Button Keyboard Shortcuts
 
 **Learning**: The AssignmentGrading component had three "Kembali" (Back) buttons across different views (assignment list, submissions list, submission detail) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic teacher component used for grading student assignments.
