@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - VoiceInputButton Button Type Accessibility
+
+**Learning**: The VoiceInputButton.tsx component had three plain `<button>` elements missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"`, potentially causing accidental form submissions when the component is used inside forms.
+
+**Action**: Added `type="button"` to three button elements in VoiceInputButton.tsx:
+- Line 261: Added `type="button"` to disabled state button
+- Line 284: Added `type="button"` to permission handler button
+- Line 327: Added `type="button"` to main voice input button
+
+**Pattern**: Plain `<button>` elements (not using the Button component) should always explicitly set `type="button"` to prevent accidental form submissions:
+- Use `type="button"` for action buttons that don't submit forms
+- Use `type="submit"` for form submit buttons
+- Use `type="reset"` for form reset buttons
+
+This follows the same pattern documented from StudyPlanAnalytics.tsx and VoiceNotificationSettings.tsx fixes.
+
+**PR**: #2299
+
+---
+
 ## 2026-02-14 - AssignmentGrading Back Button Keyboard Shortcuts
 
 **Learning**: The AssignmentGrading component had three "Kembali" (Back) buttons across different views (assignment list, submissions list, submission detail) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic teacher component used for grading student assignments.
