@@ -1,7 +1,9 @@
 /**
- * Online Assessment Configuration - Flexy: Never hardcode exam options!
+ * Online Assessment Configuration
  * Centralized exam-specific configurations for timed assessments
  */
+
+import { STORAGE_KEYS } from '../constants';
 
 export interface ExamSecurityConfig {
     /** Enable anti-tab-switch detection */
@@ -112,7 +114,7 @@ export const EXAM_CONFIG = {
     /** Minimum time before submission allowed in seconds */
     MIN_TIME_BEFORE_SUBMIT: 30,
     /** Storage key prefix for exam attempts */
-    STORAGE_PREFIX: 'malnu_exam_',
+    STORAGE_PREFIX: STORAGE_KEYS.EXAM_PREFIX,
     /** Maximum exam attempts per student */
     MAX_ATTEMPTS: 3,
     /** Enable detailed audit logging */
