@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ParentMeetingsView Keyboard Shortcuts
+
+**Learning**: The ParentMeetingsView component had three action buttons (Jadwalkan Pertemuan, Batal, Jadwalkan) for scheduling parent-teacher meetings that supported keyboard shortcuts but users couldn't discover them without visual hints. This is a high-traffic parent-facing component where efficiency matters.
+
+**Action**: Added keyboard shortcuts to all three action buttons:
+- Line 182: Added `shortcut="Ctrl+N"` to "Jadwalkan Pertemuan" button - opens scheduling form
+- Line 285: Added `shortcut="Esc"` to "Batal" cancel button - closes form
+- Line 296: Added `shortcut="Ctrl+Enter"` to "Jadwalkan" submit button - submits meeting request
+
+**Pattern**: Parent-facing scheduling components should have consistent keyboard shortcuts:
+- Create/New buttons: `shortcut="Ctrl+N"` (standard convention)
+- Cancel buttons: `shortcut="Esc"` (modal pattern)
+- Submit buttons: `shortcut="Ctrl+Enter"` (Enter alone adds newlines in textareas)
+
+This follows the pattern from ParentMessagingView.tsx (has shortcut="Enter"), EnhancedMaterialSharing.tsx, and other high-traffic parent components.
+
+**PR**: #2317
+
+---
+
 ## 2026-02-14 - Back Button Keyboard Shortcuts Consistency
 
 **Learning**: Six components (OsisEvents, AcademicGrades, GradeAnalytics, PPDBManagement, GradingManagement, MaterialUpload) had "Kembali" (Back) buttons that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. Some components had back buttons in loading/error states that were missing the shortcut while main state buttons had them, creating inconsistent user experience.
