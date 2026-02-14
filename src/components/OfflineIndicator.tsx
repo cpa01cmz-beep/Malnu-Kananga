@@ -120,7 +120,7 @@ export function OfflineIndicator({
           role="status"
           aria-live="polite"
           padding="sm"
-          className="flex items-center gap-2 min-w-[120px]"
+          className="flex items-center gap-2 min-w-[7.5rem]"
         >
           {/* Status dot */}
           <div className={`w-3 h-3 rounded-full ${getStatusColor()} animate-pulse`} />
@@ -156,7 +156,7 @@ export function OfflineIndicator({
         {showSyncStatus && syncResult && (
           <Card
             padding="sm"
-            className="min-w-[200px] animate-in slide-in-from-top-2"
+            className="min-w-[12.5rem] animate-in slide-in-from-top-2"
           >
             <div className="text-sm font-medium mb-1">
               {syncResult.success ? 'Sync Complete' : 'Sync Failed'}

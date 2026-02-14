@@ -57,6 +57,12 @@ export const CACHE_CONFIG = {
     MAX_AGE_SECONDS: TIME_SECONDS.ONE_DAY * 30,
     STATUSES: [0, 200] as const,
   },
+  GEMINI_API: {
+    NAME: 'gemini-api-cache',
+    MAX_ENTRIES: 50,
+    MAX_AGE_SECONDS: TIME_SECONDS.ONE_HOUR,
+    STATUSES: [0, 200] as const,
+  },
 } as const;
 
 // URL Patterns for Runtime Caching
@@ -65,6 +71,7 @@ export const URL_PATTERNS = {
   GOOGLE_FONTS_API: /^https:\/\/fonts\.googleapis\.com\/.*/i,
   GOOGLE_FONTS_STATIC: /^https:\/\/fonts\.gstatic\.com\/.*/i,
   IMAGES: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+  GEMINI_API: /^https:\/\/generativelanguage\.googleapis\.com\/.*/i,
 } as const;
 
 // Build Performance Configuration
