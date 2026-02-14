@@ -4,6 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudyPlanGenerator Back Button Keyboard Shortcuts
+
+**Learning**: The StudyPlanGenerator component had three "Kembali" (Back) buttons across different states (loading, error, main view) that supported the Alt+Left keyboard shortcut for browser back navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic AI-powered component used by students and parents for generating personalized study plans.
+
+**Action**: Add `shortcut="Alt+Left"` to all three back buttons in StudyPlanGenerator.tsx:
+- Line 363: Added `shortcut="Alt+Left"` to loading state back button
+- Line 385: Added `shortcut="Alt+Left"` to error state back button
+- Line 410: Added `shortcut="Alt+Left"` to main view back button
+
+**File Fixed**:
+- src/components/StudyPlanGenerator.tsx - Added shortcut props to 3 back buttons
+
+**Pattern**: All navigation buttons in AI-powered study components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Refresh buttons: `shortcut="Ctrl+R"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+**Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and AssignmentCreation.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
 ## 2026-02-14 - AssignmentCreation Back Button Keyboard Shortcut
 
 **Learning**: The AssignmentCreation component's "Kembali" (Back) button at line 291 was missing a keyboard shortcut hint, while other navigation buttons in the same component (Batal with `shortcut="Esc"`, Simpan Draft with `shortcut="Ctrl+S"`, Publikasikan Tugas with `shortcut="Ctrl+Enter"`) already had shortcuts. This inconsistency made it harder for keyboard users to discover the Alt+Left shortcut for navigating back.
