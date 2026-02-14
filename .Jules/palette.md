@@ -51,6 +51,27 @@ This ensures consistency across the grading workflow (GradingManagement → Grad
 
 ---
 
+## 2026-02-14 - QuizIntegrationDashboard Keyboard Shortcuts
+
+**Learning**: The QuizIntegrationDashboard component's action buttons (Kembali, Integrasikan, Refresh) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for integrating quiz results into grade books.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in QuizIntegrationDashboard.tsx:
+- Line 112: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 195: Added `shortcut="Ctrl+Enter"` to the Integrasikan (Integrate) button - follows form submission convention
+- Line 210: Added `shortcut="Ctrl+R"` to the Refresh button - follows refresh convention
+
+**Pattern**: High-traffic data integration components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Submit/Integrate buttons: `shortcut="Ctrl+Enter"` (follows form submission convention)
+- Refresh buttons: `shortcut="Ctrl+R"` (follows refresh convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from other high-traffic components like GradeAnalytics.tsx, QuizGenerator.tsx, and StudyPlanGenerator.tsx where keyboard shortcuts improve power-user efficiency.
+
+**PR**: #2279
+
+---
+
 ## 2026-02-14 - GradeAnalytics Export Button Keyboard Shortcuts
 
 **Learning**: The GradeAnalytics component's action buttons (Back, Export PDF, Export CSV) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for viewing and exporting class grade analytics.
