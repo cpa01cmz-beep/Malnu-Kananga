@@ -4,26 +4,9 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
----
+# Palette's UX Journal
 
-## 2026-02-14 - TeacherDashboard Loading State UX Improvement
-
-**Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
-
-**Action**: Replaced text-based loading indicators with proper `isLoading` prop in TeacherDashboard.tsx:
-- Line 542: Added `isLoading={insightsLoading}` to the first refresh button (replaced text change)
-- Line 932: Added `isLoading={insightsLoading}` to the second refresh button (replaced text change)
-
-**Files Fixed**:
-- src/components/TeacherDashboard.tsx - Added isLoading prop to 2 SmallActionButton components
-
-**Pattern**: Always use the Button/SmallActionButton component's `isLoading` prop instead of text changes:
-- ✅ `isLoading={isSaving}` - Shows proper spinner, handles disabled state
-- ❌ `{isSaving ? 'Saving...' : 'Save'}` - Text change is jarring and less polished
-
-This follows the established pattern from StudentAssignments.tsx and other components where proper loading spinners provide better visual feedback than text changes.
-
-**Why it matters**: Loading spinners give users immediate visual feedback that an action is in progress, reduce cognitive load compared to reading "Memuat...", and provide a consistent experience across the application.
+Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
 
 ---
 
@@ -85,8 +68,6 @@ This multi-layer approach ensures:
 - Power users can quickly learn and use keyboard shortcuts
 
 **PR**: #2221
-
----
 
 ---
 
