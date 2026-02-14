@@ -48,7 +48,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
             ← Kembali
           </Button>
         </div>
@@ -66,7 +66,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
             ← Kembali
           </Button>
         </div>
@@ -79,7 +79,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           <Button onClick={handleRefresh} variant="primary" isLoading={isGenerating} shortcut="Ctrl+R">
             Coba Lagi
           </Button>
-          <Button onClick={onBack} variant="ghost">
+          <Button onClick={onBack} variant="ghost" shortcut="Alt+Left">
             Kembali
           </Button>
         </div>
@@ -95,7 +95,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
             ← Kembali
           </Button>
         </div>
@@ -128,7 +128,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
             <Heading level={2} size="2xl" weight="bold">My Insights</Heading>
             <p className="text-neutral-600 dark:text-neutral-400 mt-1">Analisis AI performa akademik Anda</p>
           </div>
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
             ← Kembali
           </Button>
         </div>
@@ -233,7 +233,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           <Button onClick={toggleEnabled} variant="ghost" size="sm">
             {enabled ? '🔴' : '⚫'}
           </Button>
-          <Button variant="ghost" onClick={onBack}>
+          <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
             ← Kembali
           </Button>
         </div>
