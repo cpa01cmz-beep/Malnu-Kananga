@@ -387,6 +387,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
               size="sm"
               variant={filter === 'all' ? 'primary' : 'ghost'}
               onClick={() => setFilter('all')}
+              aria-pressed={filter === 'all'}
             >
               Semua
             </Button>
@@ -394,6 +395,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
               size="sm"
               variant={filter === 'unread' ? 'primary' : 'ghost'}
               onClick={() => setFilter('unread')}
+              aria-pressed={filter === 'unread'}
             >
               Belum Dibaca
             </Button>
@@ -403,6 +405,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
                 size="sm"
                 variant={filter === type ? 'primary' : 'ghost'}
                 onClick={() => setFilter(type)}
+                aria-pressed={filter === type}
               >
                 {ACTIVITY_TYPE_LABELS[type].label}
               </Button>

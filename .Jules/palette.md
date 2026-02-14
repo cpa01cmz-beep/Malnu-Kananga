@@ -482,3 +482,23 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - User management pages
 - Any page with data export functionality
 
+---
+
+## 2026-02-13 - ActivityFeed and NotificationHistory Filter Button Accessibility
+
+**Learning**: The ActivityFeed and NotificationHistory components had filter toggle buttons that changed visual state based on selection (primary vs ghost variant) but were missing `aria-pressed` attributes. This made them inaccessible to screen reader users who couldn't know which filter was currently active.
+
+**Action**: Add `aria-pressed={boolean}` to all filter toggle buttons in both components:
+- ActivityFeed.tsx: Added aria-pressed to "Semua", "Belum Dibaca", and activity type filter buttons (5 buttons total)
+- NotificationHistory.tsx: Added aria-pressed to "Semua", "Nilai", "Sistem", "Pengumuman" filter buttons (4 buttons total)
+
+**Files Fixed**:
+- src/components/ActivityFeed.tsx - Added aria-pressed to 5 filter buttons
+- src/components/NotificationHistory.tsx - Added aria-pressed to 4 filter buttons
+
+**Pattern**: Always audit filter button groups (toggle buttons that change visual state) for aria-pressed attribute. This applies to:
+- Filter buttons in activity/notification feeds
+- Toggle button groups where only one can be selected
+- Any button that changes appearance based on state (primary vs ghost variant)
+- Search for pattern: variant={filter === ? 'primary' : 'ghost'}
+

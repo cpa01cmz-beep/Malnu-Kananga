@@ -219,6 +219,7 @@ case 'announcement':
               onClick={() => setFilter(option.value as 'all' | 'grade' | 'system' | 'announcement')}
               variant={filter === option.value ? 'primary' : 'ghost'}
               size="sm"
+              aria-pressed={filter === option.value}
             >
               {option.label}
             </Button>
