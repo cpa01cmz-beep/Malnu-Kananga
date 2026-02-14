@@ -9,7 +9,7 @@
 // initialization, not to enable lazy loading.
 
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, TIME_MS, UI_DELAYS, HTTP } from '../constants';
+import { STORAGE_KEYS, TIME_MS, UI_DELAYS, HTTP, RETRY_CONFIG } from '../constants';
 import { useNetworkStatus } from '../utils/networkStatus';
 import { isNetworkError } from '../utils/retry';
 import { generateId, ID_CONFIG } from '../utils/idGenerator';
@@ -132,7 +132,7 @@ class OfflineActionQueueService {
       id: generateId({ prefix: ID_CONFIG.PREFIXES.OFFLINE }),
       timestamp: Date.now(),
       status: 'pending',
-      retryCount: 0,
+      retryCount: RETRY_CONFIG.INITIAL_RETRY_COUNT,
     };
 
     this.queue.push(queueAction);
@@ -291,7 +291,7 @@ class OfflineActionQueueService {
     // Reset failed actions to pending
     failedActions.forEach(action => {
       action.status = 'pending';
-      action.retryCount = 0;
+      action.retryCount = RETRY_CONFIG.INITIAL_RETRY_COUNT;
       action.lastError = undefined;
     });
 
@@ -317,7 +317,7 @@ class OfflineActionQueueService {
     } else if (resolution.resolution === 'keep_local') {
       // Force update server with local data
       action.status = 'pending';
-      action.retryCount = 0;
+      action.retryCount = RETRY_CONFIG.INITIAL_RETRY_COUNT;
       action.lastError = undefined;
     } else if (resolution.resolution === 'merge' && resolution.mergedData) {
       // Update with merged data and retry
