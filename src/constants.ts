@@ -586,6 +586,7 @@ export const OPACITY_TOKENS = {
 // Flexy Principle: NEVER use magic numbers for timeouts!
 export const TIME_MS = {
     // Flexy: Explicit millisecond constants for test clarity and modularity
+    ZERO: 0,
     MS10: 10,
     MS20: 20,
     MS50: 50,
@@ -900,6 +901,18 @@ export const CONVERSION = {
     MS_PER_DAY: 24 * 60 * 60 * 1000,
     MS_PER_WEEK: 7 * 24 * 60 * 60 * 1000,
     MS_PER_YEAR: 365.25 * 24 * 60 * 60 * 1000, // Accounts for leap years
+} as const;
+
+// Color Constants for QR codes and UI elements
+export const COLOR = {
+    BLACK: '#000000',
+    WHITE: '#FFFFFF',
+} as const;
+
+// QR Code Configuration
+export const QR_CODE_CONFIG = {
+    DEFAULT_WIDTH: 200,
+    DEFAULT_MARGIN: 2,
 } as const;
 
 /**

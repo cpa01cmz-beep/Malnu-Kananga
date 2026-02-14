@@ -15,6 +15,7 @@ import {
   NOTIFICATION_ICONS,
   STORAGE_KEYS,
   USER_ROLES,
+  TIME_MS,
 } from '../../constants';
 import { logger } from '../../utils/logger';
 import { handleNotificationError } from '../../utils/serviceErrorHandlers';
@@ -81,7 +82,7 @@ class UnifiedNotificationManager {
 
     setTimeout(() => {
       this.initialize();
-    }, 0);
+    }, TIME_MS.ZERO);
   }
 
   private initialize(): void {
