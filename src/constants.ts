@@ -240,6 +240,11 @@ export const STORAGE_KEYS = {
     SCHEDULED_GRADE_REMINDERS: 'malnu_scheduled_grade_reminders',
     SCHEDULED_AUTOMATION_SETTINGS: 'malnu_scheduled_automation_settings',
     ACADEMIC_CALENDAR_TRIGGERS: 'malnu_academic_calendar_triggers',
+    EXAM_PREFIX: STORAGE_KEY_PREFIX + 'exam_',
+    BACKUP_SCHEDULE: STORAGE_KEY_PREFIX + 'backup_schedule',
+    BACKUP_HISTORY: STORAGE_KEY_PREFIX + 'backup_history',
+    EXPORT_CACHE: STORAGE_KEY_PREFIX + 'export_cache',
+    IMPORT_QUEUE: STORAGE_KEY_PREFIX + 'import_queue',
 } as const;
 
 export const USER_ROLES = {
