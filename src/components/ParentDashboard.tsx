@@ -41,6 +41,7 @@ import ActivityFeed, { type Activity } from './ActivityFeed';
 import { useRealtimeEvents } from '../hooks/useRealtimeEvents';
 import { RealTimeEventType } from '../services/webSocketService';
 import { useStudentInsights } from '../hooks/useStudentInsights';
+import { useParentRecommendations } from '../hooks/useParentRecommendations';
 
 interface ParentDashboardProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -475,7 +476,22 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     enabled: true
   });
 
-  
+  // Initialize AI parent recommendations
+  const {
+    recommendations,
+    loading: recommendationsLoading,
+    error: recommendationsError,
+    refreshRecommendations,
+    isGenerating: recommendationsGenerating
+  } = useParentRecommendations({
+    parentName: 'Wali Murid',
+    children: children.map(c => ({ studentId: c.studentId, studentName: c.studentName })),
+    autoRefresh: true,
+    refreshInterval: TIME_MS.ONE_DAY,
+    enabled: true,
+    useAI: true
+  });
+
 
   if (loading) {
     return (
@@ -749,6 +765,110 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     )}
                   </div>
                 ) : null}
+              </Card>
+            )}
+
+            {/* AI Parent Recommendations */}
+            {selectedChild && recommendations.length > 0 && (
+              <Card className="mb-8 animate-fade-in-up border-l-4 border-l-purple-500">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <BrainIcon />
+                    <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
+                      Rekomendasi AI untuk {selectedChild.studentName}
+                    </h2>
+                    {recommendationsGenerating && (
+                      <span className="text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-1 rounded-full">
+                        Memuat...
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={refreshRecommendations}
+                      disabled={recommendationsLoading}
+                      aria-label="Perbarui rekomendasi"
+                      className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    >
+                      {recommendationsLoading ? 'Memuat...' : 'Perbarui'}
+                    </button>
+                  </div>
+                </div>
+
+                {recommendationsError && (
+                  <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-700 dark:text-red-300">{recommendationsError}</p>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {recommendations.slice(0, 5).map((rec) => (
+                    <div
+                      key={rec.id}
+                      className={`p-4 rounded-lg border-l-4 ${
+                        rec.priority === 'high'
+                          ? 'bg-red-50 dark:bg-red-900/20 border-red-500'
+                          : rec.priority === 'medium'
+                          ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500'
+                          : 'bg-blue-50 dark:bg-blue-900/20 border-blue-500'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded ${
+                              rec.type === 'grades' ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300' :
+                              rec.type === 'attendance' ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300' :
+                              rec.type === 'assignments' ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300' :
+                              'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
+                            }`}>
+                              {rec.type === 'grades' ? 'Nilai' :
+                               rec.type === 'attendance' ? 'Kehadiran' :
+                               rec.type === 'assignments' ? 'Tugas' :
+                               rec.type === 'meeting' ? 'Pertemuan' : 'Umum'}
+                            </span>
+                            {rec.studentName && rec.studentName !== selectedChild.studentName && (
+                              <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                                {rec.studentName}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-medium text-neutral-900 dark:text-white mb-1">
+                            {rec.title}
+                          </h3>
+                          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                            {rec.description}
+                          </p>
+                        </div>
+                        {rec.actionable && rec.action && (
+                          <button
+                            onClick={() => {
+                              if (rec.action?.view) {
+                                const viewMap: Record<string, PortalView> = {
+                                  'grades': 'grades',
+                                  'attendance': 'attendance',
+                                  'assignments': 'home',
+                                  'meetings': 'meetings'
+                                };
+                                const view = viewMap[rec.action.view] || 'home';
+                                setCurrentView(view);
+                              }
+                            }}
+                            className="ml-4 px-3 py-1.5 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium"
+                          >
+                            {rec.action.label}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {recommendations.length > 5 && (
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-4 text-center">
+                    +{recommendations.length - 5} rekomendasi lainnya
+                  </p>
+                )}
               </Card>
             )}
 

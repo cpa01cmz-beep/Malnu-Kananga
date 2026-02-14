@@ -25,6 +25,14 @@ export { generateQuiz } from './geminiQuiz';
 // Study plan exports
 export { generateStudyPlan } from './geminiStudy';
 
+// Parent AI Recommendation exports
+export {
+  generateParentRecommendations,
+  getQuickParentRecommendations,
+  clearParentRecommendationCache
+} from './parentAIRecommendationService';
+export type { ParentRecommendation, ParentChildData, ParentRecommendationsInput } from './parentAIRecommendationService';
+
 // Re-export types that might be used by external code
 export type { FeaturedProgram, LatestNews, StudyPlan } from '../../types';
 export type { AIFeedback } from '../../types';
