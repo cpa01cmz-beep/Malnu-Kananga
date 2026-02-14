@@ -444,6 +444,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             icon={announcement.isActive ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
                             title={announcement.isActive ? 'Nonaktifkan' : 'Aktifkan'}
                             ariaLabel={announcement.isActive ? 'Nonaktifkan' : 'Aktifkan'}
+                            aria-pressed={announcement.isActive}
                             variant="ghost"
                           />
                           <IconButton
