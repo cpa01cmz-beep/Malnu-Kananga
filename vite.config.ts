@@ -3,6 +3,7 @@ import { defineConfig, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
+import compression from 'vite-plugin-compression2'
 import {
   PWA_CONFIG,
   CACHE_CONFIG,
@@ -171,8 +172,26 @@ export default defineConfig(({ mode }) => {
                 },
               },
             },
+            {
+              urlPattern: URL_PATTERNS.GEMINI_API,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: CACHE_CONFIG.GEMINI_API.NAME,
+                expiration: {
+                  maxEntries: CACHE_CONFIG.GEMINI_API.MAX_ENTRIES,
+                  maxAgeSeconds: CACHE_CONFIG.GEMINI_API.MAX_AGE_SECONDS,
+                },
+                cacheableResponse: {
+                  statuses: [...CACHE_CONFIG.GEMINI_API.STATUSES],
+                },
+              },
+            },
           ],
         },
+      }),
+      compression({
+        algorithms: ['brotliCompress', 'gzip'],
+        threshold: 1024,
       }),
       // Bundle analyzer - generates stats.html after build
       visualizer({

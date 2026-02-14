@@ -253,7 +253,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
       />
         <Card className="p-8 text-center">
           <p className="text-neutral-600 dark:text-neutral-400 mb-4">Profil pengguna tidak ditemukan</p>
-          <Button onClick={() => window.history.back()}>Kembali</Button>
+          <Button onClick={() => window.history.back()} shortcut="Alt+Left">Kembali</Button>
         </Card>
       </div>
     );
@@ -402,6 +402,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               type="button"
               variant="ghost"
               onClick={onBack}
+              shortcut="Esc"
             >
               Batal
             </Button>
@@ -438,6 +439,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               variant="primary"
               icon={<SaveIcon className="w-5 h-5" />}
               isLoading={isSaving}
+              shortcut="Ctrl+S"
             >
               {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_PROFILE}
             </Button>
@@ -483,6 +485,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.currentPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.currentPassword}
+              tooltip={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, currentPassword: !prev.currentPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
@@ -506,6 +511,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.newPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.newPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.newPassword}
+              tooltip={passwordVisibility.newPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, newPassword: !prev.newPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
@@ -528,6 +536,9 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
             <IconButton
               icon={passwordVisibility.confirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
               ariaLabel={passwordVisibility.confirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              aria-pressed={passwordVisibility.confirmPassword}
+              tooltip={passwordVisibility.confirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+              shortcut="Ctrl+H"
               size="sm"
               onClick={() => setPasswordVisibility(prev => ({ ...prev, confirmPassword: !prev.confirmPassword }))}
               className="absolute right-3 top-[2.1rem] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"

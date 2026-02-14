@@ -5,9 +5,76 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 ---
 
 <<<<<<< HEAD
-# Palette's UX Journal
+## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
-Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+**Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
+
+**Action**: Added comprehensive keyboard accessibility to material selection cards:
+- `tabIndex={0}` - Makes cards focusable via keyboard navigation
+- `onKeyDown` handler - Supports Enter and Space keys to toggle selection (prevents default to avoid scrolling)
+- `role="button"` - Proper semantic role for interactive cards
+- `aria-pressed={boolean}` - Indicates selection state to screen readers (follows toggle button pattern)
+- `aria-label` - Descriptive label that changes based on selection state: "Pilih materi [title]" or "Hapus pilihan materi [title]"
+
+**Implementation Details**:
+```tsx
+<Card
+  onClick={() => toggleMaterial(material.id)}
+  onKeyDown={(e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMaterial(material.id);
+    }
+  }}
+  tabIndex={0}
+  role="button"
+  aria-pressed={selectedMaterials.includes(material.id)}
+  aria-label={`${selectedMaterials.includes(material.id) ? 'Hapus pilihan' : 'Pilih'} materi ${material.title}`}
+>
+```
+
+**Files Fixed**:
+- src/components/QuizGenerator.tsx - Added keyboard accessibility to material selection cards (lines 214-225)
+
+**Pattern**: Interactive cards that act as toggle buttons MUST implement:
+1. **Keyboard Focus**: `tabIndex={0}` to make them focusable
+2. **Keyboard Activation**: `onKeyDown` handler for Enter and Space keys
+3. **Semantic Role**: `role="button"` to indicate interactivity
+4. **State Announcement**: `aria-pressed` to communicate selection state
+5. **Descriptive Label**: `aria-label` that includes both action and item name
+
+This follows the same pattern as ActivityFeed.tsx, ELibrary.tsx, and other components where toggle buttons needed accessibility improvements. Keyboard accessibility is essential for:
+- Power users who prefer keyboard navigation
+- Screen reader users who rely on semantic markup
+- Users with motor disabilities who cannot use a mouse
+- All users who benefit from consistent keyboard shortcuts
+
+**Impact**: This change affects the QuizGenerator wizard (Step 1: Material Selection), a high-traffic component used by teachers to create AI-generated quizzes. The improvement ensures all users can select materials regardless of input method.
+
+**PR**: #2223
+
+---
+
+---
+
+## 2026-02-14 - UserProfileEditor Keyboard Shortcuts
+
+**Learning**: The UserProfileEditor component's action buttons (Kembali, Batal, Simpan Profil) were missing keyboard shortcut hints. This is a high-traffic component used by all user roles (students, teachers, parents, admins) for editing their profile information. Without shortcuts, users couldn't discover efficient keyboard navigation.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in UserProfileEditor.tsx:
+- Line 256: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 405: Added `shortcut="Esc"` to the Batal (Cancel) button - follows modal/form cancel pattern
+- Line 442: Added `shortcut="Ctrl+S"` to the Simpan Profil (Save Profile) button - follows standard save pattern
+
+**File Fixed**:
+- src/components/UserProfileEditor.tsx - Added shortcut props to 3 action buttons
+
+**Pattern**: High-traffic form components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"`
+
+This follows the established pattern from other high-traffic components like GradingManagement.tsx, AttendanceManagement.tsx, and LearningProgressReport.tsx where Ctrl+S is used for save operations.
 
 ---
 
