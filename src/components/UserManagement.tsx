@@ -210,7 +210,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
     <div className="animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
             <div>
-                <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">← Kembali</Button>
+                <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">← Kembali</Button>
                 <h2 className="text-2xl sm:text-xl font-bold text-neutral-900 dark:text-white">Manajemen Pengguna</h2>
             </div>
             {canCreateUser && (
