@@ -4,6 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentInsights Toggle Button Accessibility
+
+**Learning**: The StudentInsights component had a toggle button (showing 🔴/⚫ circles) that switched AI insights on/off, but was missing `aria-pressed` attribute. Screen reader users couldn't know whether AI Insights was currently enabled or disabled when navigating this component.
+
+**Action**: Added `aria-pressed={enabled}` and descriptive `aria-label` to the toggle button:
+- Line 233: Added `aria-pressed={enabled}` and `aria-label={enabled ? 'Nonaktifkan AI Insights' : 'Aktifkan AI Insights'}` to the toggle button
+- Line 115: Added `aria-label="Aktifkan AI Insights"` to the enable button
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses emoji or icon changes to indicate state (🔴/⚫, ✓/✗, etc.)
+- Toggle buttons in settings/preferences components
+- Feature on/off switches
+
+This follows the same pattern as ActivityFeed.tsx pause toggle, ELibrary.tsx filter toggles, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through the StudentInsights page won't know whether AI Insights is currently active or inactive, making it harder to understand the current state and use the toggle effectively.
+
+**PR**: #2299
+
+---
+
 ## 2026-02-14 - VoiceInputButton Button Type Accessibility
 
 **Learning**: The VoiceInputButton.tsx component had three plain `<button>` elements missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"`, potentially causing accidental form submissions when the component is used inside forms.
