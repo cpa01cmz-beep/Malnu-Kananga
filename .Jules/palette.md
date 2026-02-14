@@ -51,8 +51,8 @@ This ensures all input fields are properly announced by screen readers, improvin
 
 ---
 
----
-
+## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
+>>>>>>> origin/main
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
 
 **Learning**: The GlobalSearchModal component had filter toggle buttons (siswa, guru, nilai, tugas, materi) that changed visual state (blue background when active, gray when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't determine which filters were currently active when using the global search feature.
