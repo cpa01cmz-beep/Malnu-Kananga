@@ -4,6 +4,7 @@
  */
 
 import { logger } from './logger';
+import { UI_ACCESSIBILITY } from '../constants';
 
 export interface CopyResult {
   success: boolean;
@@ -44,7 +45,7 @@ function fallbackCopyToClipboard(text: string): CopyResult {
   
   // Make the textarea out of viewport
   textArea.style.position = 'fixed';
-  textArea.style.left = '-9999px';
+  textArea.style.left = UI_ACCESSIBILITY.OFFSCREEN_POSITION;
   textArea.style.top = '0';
   textArea.setAttribute('aria-hidden', 'true');
   
