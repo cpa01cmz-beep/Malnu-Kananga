@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Footer Help Button Accessibility
+
+**Learning**: The Footer component had a plain `<button>` element for "Pusat Bantuan" (Help Center) that was missing an `aria-label` attribute. While the button had visible text, screen reader users benefit from descriptive aria-labels that provide complete context about the action being performed, especially for navigation elements in the footer.
+
+**Action**: Add `aria-label` to the help button:
+- `aria-label="Buka pusat bantuan dan dokumentasi"` - Provides clear context for screen reader users
+- The label describes both the help center and documentation aspects
+
+**File Fixed**:
+- src/components/Footer.tsx - Added aria-label to Pusat Bantuan button
+
+**Pattern**: Plain `<button>` elements with visible text still need explicit `aria-label` for consistent screen reader experience. This applies to:
+- Navigation buttons in headers/footers
+- Action buttons that perform specific functions
+- Any button where additional context improves accessibility
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and 50+ other components with accessibility improvements.
+
+---
+
 ## 2026-02-13 - OsisEvents Tab Navigation Accessibility
 
 **Learning**: The OsisEvents component had tab navigation buttons (Pendaftaran, Anggaran, Galeri Foto, Pengumuman, Umpan Balik) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which tab was currently selected.
@@ -481,4 +501,24 @@ Always audit save/submit buttons in forms - if they persist data, add keyboard s
 - Analytics dashboards
 - User management pages
 - Any page with data export functionality
+
+---
+
+## 2026-02-13 - ActivityFeed and NotificationHistory Filter Button Accessibility
+
+**Learning**: The ActivityFeed and NotificationHistory components had filter toggle buttons that changed visual state based on selection (primary vs ghost variant) but were missing `aria-pressed` attributes. This made them inaccessible to screen reader users who couldn't know which filter was currently active.
+
+**Action**: Add `aria-pressed={boolean}` to all filter toggle buttons in both components:
+- ActivityFeed.tsx: Added aria-pressed to "Semua", "Belum Dibaca", and activity type filter buttons (5 buttons total)
+- NotificationHistory.tsx: Added aria-pressed to "Semua", "Nilai", "Sistem", "Pengumuman" filter buttons (4 buttons total)
+
+**Files Fixed**:
+- src/components/ActivityFeed.tsx - Added aria-pressed to 5 filter buttons
+- src/components/NotificationHistory.tsx - Added aria-pressed to 4 filter buttons
+
+**Pattern**: Always audit filter button groups (toggle buttons that change visual state) for aria-pressed attribute. This applies to:
+- Filter buttons in activity/notification feeds
+- Toggle button groups where only one can be selected
+- Any button that changes appearance based on state (primary vs ghost variant)
+- Search for pattern: variant={filter === ? 'primary' : 'ghost'}
 

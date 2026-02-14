@@ -3,7 +3,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <meta name="theme-color" content="#16a34a" />
     <meta name="description" content="Aplikasi Portal Pintar MA Malnu Kananga dengan Asisten AI - Sistem manajemen sekolah modern dengan kecerdasan buatan untuk memudahkan administrasi, pembelajaran, dan komunikasi" />
     <meta name="keywords" content="sekolah, madrasah, MA Malnu Kananga, AI, asisten AI, portal sekolah, manajemen sekolah" />
@@ -82,6 +82,21 @@
       img[width][height] {
         aspect-ratio: attr(width) / attr(height);
       }
+      
+      /* BroCula: Additional image CLS prevention for images without explicit dimensions */
+      img:not([width]):not([height]) {
+        /* Minimum height to reserve space while loading */
+        min-height: 100px;
+        /* Prevent layout shift by containing the element */
+        contain: layout;
+      }
+      
+      /* Optimize LCP by prioritizing above-the-fold images */
+      img[fetchpriority="high"] {
+        content-visibility: visible;
+        /* Ensure high priority images load immediately */
+        loading: eager;
+      }
 
       /* Prevent layout shift from dynamic content */
       .layout-stable {
@@ -93,6 +108,26 @@
         font-family: 'Inter';
         font-display: swap;
         src: local('Inter'), local('Inter-Regular');
+      }
+      
+      /* Prevent layout shift: ensure font metrics match between fallback and Inter */
+      :root {
+        --font-fallback: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-primary: 'Inter', var(--font-fallback);
+        
+        /* Prevent layout shift from scrollbar appearance */
+        scrollbar-gutter: stable;
+      }
+      
+      /* Reserve space for above-the-fold content to prevent CLS */
+      .hero-section, [class*="hero"], [class*="banner"] {
+        min-height: 200px;
+        contain: layout;
+      }
+      
+      /* Prevent layout shift from dynamically loaded content */
+      [class*="skeleton"], [class*="loading"], [class*="placeholder"] {
+        contain: layout style;
       }
       
       /* Critical layout classes */
