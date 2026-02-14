@@ -210,6 +210,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
           >
             {hasSubfolders && (
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleFolderExpansion(folder.id);
@@ -228,6 +229,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
             )}
 
             <button
+              type="button"
               onClick={() => onFolderSelect(folder)}
               className={`flex items-center gap-2 flex-1 px-2 py-1.5 -mx-2 rounded-lg transition-colors text-left ${
                 isSelected
@@ -255,6 +257,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
                 </div>
               )}
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditingFolder(folder);
@@ -266,6 +269,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
               </button>
               {folder.id !== 'root' && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteFolder(folder.id);
@@ -322,6 +326,7 @@ const FolderNavigation: React.FC<FolderNavigationProps> = ({
 
       <div className="space-y-0.5 mb-3" role="group" aria-label={`Semua Materi, ${materials.length} materi`}>
         <button
+          type="button"
           onClick={() => onFolderSelect(undefined)}
           aria-pressed={!selectedFolderId}
           aria-label={`Semua Materi, ${materials.length} materi`}
