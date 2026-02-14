@@ -6,6 +6,8 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
 ## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
 
 **Learning**: The RoleManager component had multiple action buttons (Create Role, Cancel, Save, Use Template) missing keyboard shortcut hints while other components in the codebase consistently use shortcuts. Additionally, the tab navigation was missing proper ARIA attributes for screen reader accessibility.
@@ -34,6 +36,31 @@ This follows the established pattern from other high-traffic admin components li
 - src/components/ui/RoleManager.tsx - 4 keyboard shortcuts + tab accessibility
 
 **PR**: #2363
+
+---
+
+## 2026-02-14 - TemplateManagement Loading State and Keyboard Shortcut
+
+**Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
+
+**Action**: Changed the test notification button to use `isLoading` prop:
+- Line 285: Changed `disabled={isSendingTestNotification}` + conditional text to `isLoading={isSendingTestNotification}` with static text
+- Line 114: Added `shortcut="Ctrl+N"` to the "Buat Template" button for keyboard discoverability
+
+**Pattern**: 
+- Always use Button's `isLoading` prop for loading states instead of conditional text
+- Use `shortcut` prop on action buttons to show keyboard hints in tooltips
+- The Modal component already handles Escape key to close, so no additional keyboard handling needed
+
+**Why it matters**: 
+- Loading spinner provides clearer visual feedback than text changes
+- `isLoading` properly disables the button and adds `aria-busy` for accessibility
+- Keyboard shortcuts improve power user workflow
+
+**Files Modified**:
+- src/components/TemplateManagement.tsx - Loading state fix and shortcut addition
+
+**PR**: #2362
 
 **Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
 
