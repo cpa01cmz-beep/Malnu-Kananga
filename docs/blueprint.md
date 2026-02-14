@@ -2,7 +2,7 @@
 
 **Created**: 2026-02-13
 **Last Updated**: 2026-02-14
-**Version**: 1.1.0
+**Version**: 1.2.0
 **Status**: Active
 
 ## Vision
@@ -35,7 +35,7 @@ Build a world-class school management system with AI-powered features, voice int
 | Test Coverage | 🟡 29.2% → 60% target |
 | Performance | ✅ <3s load |
 
-## Evaluation Scores (v3.11.0)
+## Evaluation Scores (v3.12.0)
 
 | Category | Score |
 |----------|-------|
@@ -46,9 +46,16 @@ Build a world-class school management system with AI-powered features, voice int
 
 ## Next Steps
 
-See `docs/task.md` for actionable items (T021-T025).
+See `docs/task.md` for actionable items (T021-T030).
 
 ## Creative Output
+
+### Added in Phase 3 (2026-02-14) - v3.12.0
+- **F029**: AI Study Guides (Medium priority)
+- **F030**: Usage Analytics Dashboard (Medium priority)
+- **F031**: Achievement Social Sharing (Low priority)
+- **F032**: Automated Weekly Reports (Medium priority)
+- **F033**: Assignment Template Library (Medium priority)
 
 ### Added in Phase 3 (2026-02-14) - v3.11.0
 - **F024**: Multi-Language Support (i18n) (Medium priority)

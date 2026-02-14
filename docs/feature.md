@@ -612,13 +612,6 @@ The following features were completed in the current development cycle:
 
 ---
 
-## Implementation Priority Order
-
-Features should be implemented in order of priority, considering:
-1. Test coverage improvements should be ongoing
-2. Backend changes require Cloudflare D1 migrations
-3. AI features require Gemini API quota management
-
 ### Recommended Implementation Order:
 
 | Priority | Feature | Effort | Impact |
@@ -628,3 +621,118 @@ Features should be implemented in order of priority, considering:
 | 3 | F026: Voice Expansion | Medium | Medium |
 | 4 | F027: Grade Predictions | Medium | High |
 | 5 | F028: Mobile App | High | High |
+
+---
+
+## F029: AI Study Guides
+
+**Type**: AI Feature
+**Priority**: Medium
+**Description**: Generate personalized study guides based on student performance data.
+
+**User Stories**:
+- As a Teacher, I want AI-generated study guides based on student performance data, so that I can provide personalized learning materials for each student.
+- As a Student, I want study guides tailored to my weak areas, so that I can improve my grades effectively.
+
+**Implementation**:
+- Use Gemini API for analysis
+- Generate study guides based on: quiz results, assignment scores, attendance patterns
+- Include practice problems, key concepts, and recommended resources
+- Allow teachers to customize and approve AI-generated guides
+
+---
+
+## F030: Usage Analytics Dashboard
+
+**Type**: Admin Feature
+**Priority**: Medium
+**Description**: Comprehensive usage analytics for administrators.
+
+**User Stories**:
+- As an Admin, I want to see login patterns by day/time, so that I can schedule system maintenance.
+- As an Admin, I want feature adoption metrics, so that I can identify training needs.
+- As a Kepsek, I want peak usage times analysis, so that I can ensure adequate server resources.
+
+**Implementation**:
+- Track: daily active users, session duration, feature usage
+- Visualizations: line charts, bar charts, heatmaps
+- Export: PDF/CSV reports
+- Real-time dashboard updates via WebSocket
+
+---
+
+## F031: Achievement Social Sharing
+
+**Type**: Student Engagement Feature
+**Priority**: Low
+**Description**: Share achievements and badges externally.
+
+**User Stories**:
+- As a Student, I want to share my badges to social media, so that my family and friends can celebrate my accomplishments.
+- As a Parent, I want to receive notifications when my child earns achievements, so that I can celebrate with them.
+
+**Implementation**:
+- Add share buttons to badges/achievements
+- Generate shareable images with school branding
+- Integrate with existing notification system for parent notifications
+- Support: WhatsApp, Instagram, general link sharing
+
+---
+
+## F032: Automated Weekly Reports
+
+**Type**: Parent Communication Feature
+**Priority**: Medium
+**Description**: Automated weekly progress summaries for parents.
+
+**User Stories**:
+- As a Parent, I want weekly email summaries of my child's progress, so that I stay informed without logging in daily.
+- As a Teacher, I want automated parent communication for attendance issues, so that I save time on administrative tasks.
+
+**Implementation**:
+- Add weekly summary generation service
+- Integrate with existing email queue system
+- Configurable: frequency (daily/weekly), content (grades/attendance/homework)
+- Opt-in/opt-out per parent
+
+---
+
+## F033: Assignment Template Library
+
+**Type**: Teacher Productivity Feature
+**Priority**: Medium
+**Description**: Pre-built assignment templates for common types.
+
+**User Stories**:
+- As a Teacher, I want assignment templates for common types (essays, quizzes, projects), so that I can quickly create assignments.
+- As a School, I want to create custom templates shared across teachers, so that we maintain consistency.
+
+**Implementation**:
+- Add template storage (localStorage for teacher-specific, backend for school-wide)
+- Template categories: Essay, Quiz, Project, Presentation, Lab Report
+- Template fields: title, description, rubric, due date options, attachment support
+- Import/export templates as JSON
+
+---
+
+## Implementation Priority Order
+
+Features should be implemented in order of priority, considering:
+1. Test coverage improvements should be ongoing
+2. Backend changes require Cloudflare D1 migrations
+3. AI features require Gemini API quota management
+
+### Recommended Implementation Order (Updated):
+
+| Priority | Feature | Effort | Impact |
+|----------|---------|--------|--------|
+| 1 | F024: i18n | Medium | Medium |
+| 2 | F025: Student Portfolio | Medium | Medium |
+| 3 | F026: Voice Expansion | Medium | Medium |
+| 4 | F027: Grade Predictions | Medium | High |
+| 5 | F028: Mobile App | High | High |
+| 6 | F029: AI Study Guides | Medium | High |
+| 7 | F030: Usage Analytics | Medium | Medium |
+| 8 | F032: Weekly Reports | Medium | High |
+| 9 | F033: Assignment Templates | Low | Medium |
+| 10 | F031: Social Sharing | Low | Low |
