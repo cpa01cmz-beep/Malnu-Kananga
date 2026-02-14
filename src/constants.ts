@@ -1203,7 +1203,7 @@ export const UI_SPACING = {
     LG: '1.5',     // 24px
     XL: '2',       // 32px
     XXL: '3',      // 48px
-    XXXL: '4',     // 64px
+    XXXL: '4',     // 1rem = 16px (Tailwind spacing scale)
     
     // Common gap patterns
     GAP_TIGHT: 'gap-2',      // 8px
@@ -1495,6 +1495,11 @@ export const UI_STRINGS = {
     VERSION: 'Versi',
     PRIVACY_POLICY: 'Kebijakan Privasi',
     TERMS_OF_SERVICE: 'Ketentuan Layanan',
+    SAVE_SCORE: 'Simpan Nilai',
+    SAVE_PROFILE: 'Simpan Profil',
+    SAVE_EVENT: 'Simpan Kegiatan',
+    UPDATE: 'Perbarui',
+    WELCOME_BACK: 'Selamat datang kembali',
 } as const;
 
 // Login-related UI strings
