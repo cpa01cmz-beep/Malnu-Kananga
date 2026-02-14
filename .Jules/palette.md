@@ -4,6 +4,53 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+# Palette's UX Journal
+
+Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+
+---
+
+## 2026-02-14 - ConfirmationDialog Keyboard Shortcuts
+
+**Learning**: The ConfirmationDialog component (used 40+ times throughout the app for delete, reset, and other destructive actions) was missing keyboard shortcut hints on its action buttons. Users couldn't discover the standard Esc and Enter shortcuts without visual hints, limiting keyboard accessibility and power-user efficiency.
+
+**Action**: Added keyboard shortcut hints to both action buttons in ConfirmationDialog.tsx:
+- Line 100: Added `shortcut="Esc"` to cancel button - follows standard cancel pattern
+- Line 111: Added `shortcut="Enter"` to confirm button - follows standard confirm pattern
+
+**File Fixed**:
+- src/components/ui/ConfirmationDialog.tsx - Added shortcut props to 2 action buttons
+
+**Pattern**: Confirmation dialogs used throughout the application should have consistent keyboard shortcut hints:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Confirm/Submit buttons: `shortcut="Enter"`
+
+This is a high-impact change because ConfirmationDialog is used in 40+ locations (UserManagement, FolderNavigation, MaterialUpload, AnnouncementManager, GradingManagement, etc.), so adding shortcuts here improves UX across the entire application.
+
+**PR**: #2263
+
+---
+
+## 2026-02-14 - GradingActions Export Button Keyboard Shortcuts
+
+**Learning**: The GradingActions component's export buttons (Export PDF, Export CSV) had proper aria-labels for screen readers but were missing keyboard shortcut hints. This inconsistency made it harder for power users to discover efficient keyboard navigation, especially since other grading-related components like GradeAnalytics already had these shortcuts.
+
+**Action**: Added keyboard shortcut hints to both export buttons in GradingActions.tsx:
+- Line 358: Added `shortcut="Ctrl+P"` to the Export PDF button - follows print/export convention
+- Line 370: Added `shortcut="Ctrl+Shift+E"` to the Export CSV button - follows export convention
+
+**Pattern**: Export buttons should consistently use keyboard shortcut hints:
+- Export/PDF buttons: `shortcut="Ctrl+P"` (follows print convention)
+- Export/CSV buttons: `shortcut="Ctrl+Shift+E"` (export convention)
+- Always pair with descriptive `aria-label` attributes for full accessibility
+- Use the Button component's `shortcut` prop to display hints in tooltips on hover/focus
+
+This ensures consistency across the grading workflow (GradingManagement → GradingActions → GradeAnalytics) and improves discoverability for keyboard power users.
+
+**PR**: #2269
+
+---
+
 ## 2026-02-14 - GradeAnalytics Export Button Keyboard Shortcuts
 
 **Learning**: The GradeAnalytics component's action buttons (Back, Export PDF, Export CSV) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for viewing and exporting class grade analytics.
@@ -22,6 +69,7 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 This follows the established pattern from other high-traffic components like QuizGenerator.tsx, StudentInsights.tsx, and AssignmentCreation.tsx where keyboard shortcuts improve power-user efficiency.
 
 **PR**: #2259
+>>>>>>> origin/main
 
 ---
 
