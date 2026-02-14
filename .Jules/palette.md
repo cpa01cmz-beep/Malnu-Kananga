@@ -6,6 +6,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
+## 2026-02-14 - MaterialManagementView Button Accessibility
+
+**Learning**: The MaterialManagementView component had plain `<button>` elements that were missing `type="button"` attribute. When buttons are nested inside form elements (like MaterialManagementView might be), missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. Additionally, the title button had a `title` attribute but was missing an explicit `aria-label` for screen reader users.
+
+**Action**: Added `type="button"` and `aria-label` to all three plain buttons in the materials list:
+- Title button (line 268): Added `type="button"` and `aria-label={\`Lihat detail ${item.title}\`}`
+- Manage button (line 305): Added `type="button"`
+- Delete button (line 315): Added `type="button"`
+
+**File Fixed**:
+- src/components/material-upload/MaterialManagementView.tsx - Added type and aria-label to 3 buttons
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+---
+
 ## 2026-02-14 - Input Component Aria-Label Support
 
 **Learning**: The Input component rendered a visible label only when the `label` prop was provided, but had no support for `aria-label` when used without a visible label. This created an accessibility gap where screen reader users couldn't identify input fields that relied on placeholder text or context for their purpose.
@@ -28,6 +51,8 @@ This ensures all input fields are properly announced by screen readers, improvin
 
 ---
 
+## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
+>>>>>>> origin/main
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
 
 **Learning**: The GlobalSearchModal component had filter toggle buttons (siswa, guru, nilai, tugas, materi) that changed visual state (blue background when active, gray when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't determine which filters were currently active when using the global search feature.

@@ -10,13 +10,14 @@ import { Toggle } from './Toggle';
 import Heading from './Heading';
 import Alert from './Alert';
 import { customRoleService, CustomRole, RoleTemplate } from '../../services/customRoleService';
+import { twoFactorEnforcementService, UserRole } from '../../services/twoFactorEnforcementService';
 
 interface RoleManagerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type TabType = 'roles' | 'templates' | 'matrix';
+type TabType = 'roles' | 'templates' | 'matrix' | 'security';
 
 const baseRoles = [
   { id: 'admin', name: 'Administrator', description: 'Full system access' },
@@ -32,6 +33,8 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
   const [templates] = useState<RoleTemplate[]>(customRoleService.getRoleTemplates());
   const [editingRole, setEditingRole] = useState<CustomRole | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [twoFactorConfig, setTwoFactorConfig] = useState(twoFactorEnforcementService.getEnforcementConfig());
+  const [selectedRoles, setSelectedRoles] = useState<UserRole[]>(twoFactorConfig.requiredRoles);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -134,7 +137,7 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
       className="max-h-[90vh] overflow-hidden flex flex-col"
     >
       <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
-        {(['roles', 'templates', 'matrix'] as TabType[]).map(tab => (
+        {(['roles', 'templates', 'matrix', 'security'] as TabType[]).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -144,7 +147,7 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
                 : 'text-gray-500 dark:text-gray-400'
             }`}
           >
-            {tab === 'matrix' ? 'Permission Matrix' : tab}
+            {tab === 'matrix' ? 'Permission Matrix' : tab === 'security' ? 'Keamanan' : tab}
           </button>
         ))}
       </div>
@@ -341,6 +344,85 @@ export const RoleManager: React.FC<RoleManagerProps> = ({ isOpen, onClose }) => 
                 </Tbody>
               </Table>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'security' && (
+          <div>
+            <Heading level={3} className="mb-4">Two-Factor Authentication Enforcement</Heading>
+            <Alert variant="info" className="mb-4">
+              Require 2FA for specific roles to enhance account security. Users in enforced roles must enable 2FA to access the system.
+            </Alert>
+            
+            <Card className="p-4 mb-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <Heading level={4}>2FA Enforcement Status</Heading>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {twoFactorConfig.enabled 
+                      ? `Enforced for: ${twoFactorEnforcementService.getRequiredRolesDisplay()}`
+                      : 'Not enforced for any role'}
+                  </p>
+                </div>
+                <Toggle
+                  checked={twoFactorConfig.enabled}
+                  onChange={(checked) => {
+                    if (checked) {
+                      twoFactorEnforcementService.enableEnforcement(selectedRoles, 'admin');
+                    } else {
+                      twoFactorEnforcementService.disableEnforcement('admin');
+                    }
+                    setTwoFactorConfig(twoFactorEnforcementService.getEnforcementConfig());
+                  }}
+                  label={twoFactorConfig.enabled ? 'Enabled' : 'Disabled'}
+                />
+              </div>
+            </Card>
+
+            <Card className="p-4">
+              <Heading level={4} className="mb-4">Select Roles Requiring 2FA</Heading>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {twoFactorEnforcementService.getAvailableRoles().map(role => (
+                  <label
+                    key={role}
+                    className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                      selectedRoles.includes(role)
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedRoles.includes(role)}
+                      onChange={(e) => {
+                        const newRoles = e.target.checked
+                          ? [...selectedRoles, role]
+                          : selectedRoles.filter(r => r !== role);
+                        setSelectedRoles(newRoles);
+                        if (twoFactorConfig.enabled) {
+                          twoFactorEnforcementService.enableEnforcement(newRoles, 'admin');
+                          setTwoFactorConfig(twoFactorEnforcementService.getEnforcementConfig());
+                        }
+                      }}
+                      className="sr-only"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium capitalize">{role}</span>
+                    </div>
+                    {selectedRoles.includes(role) && (
+                      <span className="text-blue-600">✓</span>
+                    )}
+                  </label>
+                ))}
+              </div>
+            </Card>
+
+            {twoFactorConfig.lastUpdated && (
+              <p className="text-xs text-gray-500 mt-4">
+                Last updated: {new Date(twoFactorConfig.lastUpdated).toLocaleString()}
+                {twoFactorConfig.updatedBy && ` by ${twoFactorConfig.updatedBy}`}
+              </p>
+            )}
           </div>
         )}
       </div>

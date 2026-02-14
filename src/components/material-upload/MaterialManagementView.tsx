@@ -265,9 +265,11 @@ export function MaterialManagementView({
                     <div className="flex-1">
                       <h4 className="font-semibold text-lg text-neutral-900 dark:text-white mb-1">
                         <button
+                          type="button"
                           onClick={() => onMaterialSelect(item)}
                           className="font-semibold text-left w-full text-neutral-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 line-clamp-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
                           title={`Lihat detail ${item.title}`}
+                          aria-label={`Lihat detail ${item.title}`}
                         >
                           {item.title}
                         </button>
@@ -300,8 +302,9 @@ export function MaterialManagementView({
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-1 ml-4">
+                    <div className="flex gap-1 ml-4">
                     <button
+                      type="button"
                       onClick={() => onMaterialSelect(item)}
                       className="p-2 text-neutral-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
                       title="Kelola materi"
@@ -312,6 +315,7 @@ export function MaterialManagementView({
                       </svg>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleMaterialDelete(item)}
                       className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
                       title="Hapus Materi"
