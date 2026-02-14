@@ -936,6 +936,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                         isLoading={isSubmittingFinal || isProcessingOCR}
                         disabled={isProcessingOCR || (!isOnline && !autoSaveState.data)}
                         className="rounded-full font-bold shadow-lg"
+                        shortcut="Ctrl+Enter"
                     >
                         {isProcessingOCR ? 'Memproses OCR...' : 
                          isSubmittingFinal ? 'Mengirim Data...' : 
@@ -952,6 +953,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                                     setHasDraftRecovered(false);
                                     onShowToast('Draft telah dihapus', 'info');
                                 }}
+                                aria-label="Hapus draft pendaftaran"
                                 className="text-xs text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                             >
                                 Hapus Draft

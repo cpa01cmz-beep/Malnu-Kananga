@@ -123,6 +123,47 @@ The Button component's `shortcut` prop automatically displays a tooltip hint on 
 
 ---
 
+## 2026-02-14 - PPDBRegistration Submit Button Keyboard Shortcut
+
+**Learning**: The PPDBRegistration component's "Kirim Pendaftaran" (Submit Registration) button is a high-traffic form submission used by prospective students and parents during the annual PPDB (new student registration) period. This form had no keyboard shortcut hint, making the efficient Ctrl+Enter shortcut undiscoverable to users who prefer keyboard navigation.
+
+**Action**: Added `shortcut="Ctrl+Enter"` to the submit button:
+- Line 939: Added `shortcut="Ctrl+Enter"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Ctrl+Enter is the standard pattern for form submissions (Enter alone typically adds newlines in textareas)
+
+**File Fixed**:
+- src/components/PPDBRegistration.tsx - Added shortcut prop to the submit button (line 939)
+
+**Pattern**: Form submission buttons in registration and data entry components should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Register buttons: `shortcut="Ctrl+Enter"`
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save buttons: `shortcut="Ctrl+S"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as EnhancedMaterialSharing.tsx, AssignmentCreation.tsx, and other form components where Ctrl+Enter is used for primary submission actions.
+
+---
+
+## 2026-02-14 - PPDBRegistration Delete Draft Button Accessibility
+
+**Learning**: The PPDBRegistration component's "Hapus Draft" (Delete Draft) button was a plain `<button>` element without an explicit `aria-label`. While it had visible text, adding an explicit aria-label improves screen reader consistency, especially in forms with multiple action buttons.
+
+**Action**: Added `aria-label="Hapus draft pendaftaran"` to the delete draft button:
+- Line 956: Added `aria-label` attribute to the button
+- This provides clear context for screen reader users about what will be deleted
+
+**File Fixed**:
+- src/components/PPDBRegistration.tsx - Added aria-label to the delete draft button (line 956)
+
+**Pattern**: Plain `<button>` elements in forms that perform destructive actions should have explicit aria-labels for consistent screen reader experience, especially when:
+- They appear near other action buttons (submit, cancel)
+- They perform destructive actions (delete, remove)
+- The visible text alone doesn't provide full context
+
+---
+
 ## 2026-02-14 - MaterialManagementView Button Accessibility
 
 **Learning**: The MaterialManagementView component had plain `<button>` elements that were missing `type="button"` attribute. When buttons are nested inside form elements (like MaterialManagementView might be), missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. Additionally, the title button had a `title` attribute but was missing an explicit `aria-label` for screen reader users.
