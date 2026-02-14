@@ -910,11 +910,13 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                     if (!material) return null;
                     return (
                       <button
+                        type="button"
                         key={rec.materialId}
                         onClick={() => {
                           setSearch(material.title);
                           setDebouncedSearch(material.title);
                         }}
+                        aria-label={`Cari materi: ${material.title}`}
                         className="text-left p-3 bg-white/80 dark:bg-purple-900/50 rounded-lg hover:bg-white dark:hover:bg-purple-900/70 transition-colors"
                       >
                         <div className="font-medium text-purple-900 dark:text-purple-100 text-sm line-clamp-1">

@@ -597,7 +597,9 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
                                               </>
                                             ) : (
                                               <button
+                                                type="button"
                                                 onClick={() => setShowScoringModal(reg.id)}
+                                                aria-label={`Beri skor untuk ${reg.fullName}`}
                                                 className="text-xs text-blue-600 hover:text-blue-700"
                                               >
                                                 Beri Skor
