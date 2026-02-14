@@ -39,10 +39,33 @@ function modulePreloadPlugin(): Plugin {
     name: 'module-preload',
     apply: 'build',
     transformIndexHtml(html, ctx) {
-      const chunks = Object.keys(ctx.bundle || {})
-        .filter(name => name.endsWith('.js'))
+      const bundle = ctx.bundle || {}
+      const jsChunks = Object.keys(bundle).filter(name => name.endsWith('.js'))
+      
+      const criticalChunks = jsChunks
         .filter(name => name.includes('vendor-react') || name.includes('index-'))
-        .slice(0, 3)
+        .slice(0, 2)
+      
+      const dashboardChunks = jsChunks
+        .filter(name => 
+          name.includes('dashboard-admin') || 
+          name.includes('dashboard-teacher') || 
+          name.includes('dashboard-parent') || 
+          name.includes('dashboard-student')
+        )
+        .slice(0, 2)
+      
+      const vendorChunks = jsChunks
+        .filter(name => 
+          name.includes('vendor-genai') || 
+          name.includes('vendor-sentry') ||
+          name.includes('vendor-charts')
+        )
+        .slice(0, 2)
+      
+      const allChunks = criticalChunks.concat(dashboardChunks, vendorChunks)
+      const uniqueChunks = allChunks.filter((item, index) => allChunks.indexOf(item) === index)
+      const chunks = uniqueChunks.slice(0, 6)
       
       const preloadLinks = chunks
         .map(name => {
