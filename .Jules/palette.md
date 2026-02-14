@@ -6,6 +6,7 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+<<<<<<< HEAD
 ---
 
 ## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
@@ -62,26 +63,35 @@ This follows the established pattern from other high-traffic admin components li
 
 **PR**: #2362
 
-**Learning**: The TemplateManagement component had a test notification button that used text changes to indicate loading state (`{isSendingTestNotification ? 'Mengirim...' : 'Kirim Notifikasi Tes'}`) instead of the Button component's proper `isLoading` prop. This approach is inconsistent with the codebase's established pattern and doesn't leverage the Button component's built-in loading UX (spinner, disabled state, aria-busy).
+---
 
-**Action**: Changed the test notification button to use `isLoading` prop:
-- Line 285: Changed `disabled={isSendingTestNotification}` + conditional text to `isLoading={isSendingTestNotification}` with static text
-- Line 114: Added `shortcut="Ctrl+N"` to the "Buat Template" button for keyboard discoverability
+## 2026-02-14 - BatchManagement Keyboard Shortcuts
 
-**Pattern**: 
-- Always use Button's `isLoading` prop for loading states instead of conditional text
-- Use `shortcut` prop on action buttons to show keyboard hints in tooltips
-- The Modal component already handles Escape key to close, so no additional keyboard handling needed
+**Learning**: The BatchManagement component's action buttons (Buat Batch main button, modal Buat Batch, and Batal) were missing keyboard shortcut hints. This is an admin component used for managing notification batches where efficiency matters.
 
-**Why it matters**: 
-- Loading spinner provides clearer visual feedback than text changes
-- `isLoading` properly disables the button and adds `aria-busy` for accessibility
-- Keyboard shortcuts improve power user workflow
+**Action**: Added keyboard shortcuts to all three action buttons in BatchManagement.tsx:
+- Line 74: Added `shortcut="Ctrl+N"` to main "Buat Batch" button - opens create modal
+- Line 159: Added `shortcut="Ctrl+Enter"` to modal "Buat Batch" button - creates batch
+- Line 166: Added `shortcut="Esc"` to modal "Batal" button - closes modal
+
+**Pattern**: Admin components with batch/create actions should have consistent keyboard shortcut hints:
+- Create/New buttons: `shortcut="Ctrl+N"` (standard convention)
+- Submit/Create in modals: `shortcut="Ctrl+Enter"` (form submission pattern)
+- Cancel buttons: `shortcut="Esc"` (modal pattern)
+
+This follows the established pattern from NotificationCenter.tsx, ParentMeetingsView.tsx, SchoolInventory.tsx, and other admin components.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who manage notification batches frequently. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important for administrators who need to create and send notification batches efficiently.
 
 **Files Modified**:
-- src/components/TemplateManagement.tsx - Loading state fix and shortcut addition
+- src/components/BatchManagement.tsx - Added shortcut props to 3 buttons
 
-**PR**: #2362
+**PR**: #2360
+
+---
+
+## 2026-02-14 - ErrorMessage Toggle Button Accessibility
+>>>>>>> a1f72070 (docs(palette): Add BatchManagement keyboard shortcut UX journal entry)
 
 **Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
 
