@@ -554,6 +554,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {children.map((child) => (
                     <button
+                      type="button"
                       key={child.studentId}
                       onClick={() => handleSelectChild(child)}
                       aria-label={`Pilih ${child.studentName} - ${child.className || 'Tanpa Kelas'}`}
@@ -604,6 +605,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                     </p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setInsightsEnabled(true)}
                     aria-label={`Tampilkan wawasan akademik untuk ${selectedChild.studentName}`}
                     className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium text-sm"
@@ -623,6 +625,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   </h2>
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={() => setInsightsEnabled(false)}
                       aria-label="Sembunyikan wawasan akademik"
                       className="text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
@@ -785,6 +788,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      type="button"
                       onClick={refreshRecommendations}
                       disabled={recommendationsLoading}
                       aria-label="Perbarui rekomendasi"
@@ -842,6 +846,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
                         </div>
                         {rec.actionable && rec.action && (
                           <button
+                            type="button"
                             onClick={() => {
                               if (rec.action?.view) {
                                 const viewMap: Record<string, PortalView> = {

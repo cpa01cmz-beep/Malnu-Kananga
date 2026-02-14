@@ -88,7 +88,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
     auditService.saveFilters({ ...filter, [key]: value || undefined });
   };
 
-  const handleExport = async (format: 'csv' | 'json') => {
+  const handleExport = useCallback(async (format: 'csv' | 'json') => {
     setExporting(true);
     try {
       const options: AuditLogExportOptions = { format };
@@ -107,7 +107,27 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
     } finally {
       setExporting(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'e' && !e.shiftKey) {
+        e.preventDefault();
+        if (!exporting) {
+          handleExport('csv');
+        }
+      }
+      if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        if (!exporting) {
+          handleExport('json');
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [exporting, handleExport]);
 
   const columns: Column<AuditLogEntry>[] = [
     {
@@ -213,6 +233,9 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
             size="sm"
             onClick={() => handleExport('csv')}
             disabled={exporting}
+            ariaLabel={exporting ? 'Mengekspor ke CSV' : 'Ekspor log audit ke format CSV'}
+            shortcut="Ctrl+E"
+            isLoading={exporting}
           >
             Ekspor CSV
           </Button>
@@ -221,6 +244,9 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
             size="sm"
             onClick={() => handleExport('json')}
             disabled={exporting}
+            ariaLabel={exporting ? 'Mengekspor ke JSON' : 'Ekspor log audit ke format JSON'}
+            shortcut="Ctrl+Shift+E"
+            isLoading={exporting}
           >
             Ekspor JSON
           </Button>
