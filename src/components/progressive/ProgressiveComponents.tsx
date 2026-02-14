@@ -12,6 +12,8 @@ interface ProgressiveImageProps {
   onError?: () => void;
   lazy?: boolean;
   priority?: 'high' | 'medium' | 'low';
+  width?: number;
+  height?: number;
 }
 
 export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
@@ -23,6 +25,8 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   onError,
   lazy = true,
   priority = 'medium',
+  width,
+  height,
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -83,7 +87,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
         />
       )}
       
-      {/* Image */}
+      {/* Image - BroCula: Added width/height to prevent CLS */}
       <img
         ref={imgRef}
         src={currentSrc}
@@ -91,6 +95,8 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
         className={imageClasses}
         loading={lazy ? 'lazy' : 'eager'}
         decoding={priority === 'high' ? 'sync' : 'async'}
+        width={width}
+        height={height}
       />
     </div>
   );
