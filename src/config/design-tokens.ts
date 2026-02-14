@@ -1,6 +1,7 @@
 /**
- * Enhanced Design Token System for MA Malnu Kananga
+ * Enhanced Design Token System
  * Centralized design variables for consistency and maintainability
+ * Flexy: School-agnostic design tokens for multi-tenant support
  */
 
 export const DESIGN_TOKENS = {
