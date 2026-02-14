@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
-import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES, APP_CONFIG } from '../constants';
+import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES, APP_CONFIG, EMAIL_TEMPLATE_STYLES } from '../constants';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { emailService } from '../services/emailService';
@@ -135,7 +135,7 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
               name: r.fullName
             }],
             subject: template.subject,
-            html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            html: `<div style="font-family: Arial, sans-serif; max-width: ${EMAIL_TEMPLATE_STYLES.CONTAINER_MAX_WIDTH}; margin: 0 auto;">
               <h2>${template.subject}</h2>
               <p>Dear ${r.fullName},</p>
               <div style="white-space: pre-wrap;">${body}</div>
