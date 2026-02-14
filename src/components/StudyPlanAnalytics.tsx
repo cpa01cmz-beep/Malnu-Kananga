@@ -26,7 +26,7 @@ import {
   AnalyticsRecommendation,
   StudyPlanHistory
 } from '../types';
-import { STORAGE_KEYS, TIME_MS, UI_STRINGS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, STUDY_PLAN_CONFIG, UI_STRINGS } from '../constants';
 import { logger } from '../utils/logger';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -153,7 +153,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
         const endDate = new Date(startDate);
         endDate.setDate(endDate.getDate() + 7);
 
-        const scheduledHours = plan.schedule.filter(s => s.dayOfWeek !== undefined).length * 1.5;
+        const scheduledHours = plan.schedule.filter(s => s.dayOfWeek !== undefined).length * STUDY_PLAN_CONFIG.HOURS_PER_SCHEDULE;
 
         weeklyActivity.push({
           weekNumber: i,

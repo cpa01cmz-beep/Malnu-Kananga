@@ -12,7 +12,7 @@ import { EmptyState } from './ui/LoadingState';
 import LoadingSpinner from './ui/LoadingSpinner';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { msToHours, msToMinutes } from '../constants';
+import { msToHours, msToMinutes, NOTIFICATION_UI_STRINGS } from '../constants';
 
 interface NotificationHistoryProps {
   onShowToast: (msg: string, type: ToastType) => void;
@@ -234,7 +234,7 @@ case 'announcement':
           isLoading={markingAsRead}
           className="ml-auto"
         >
-          {markingAsRead ? 'Menandai...' : 'Tandai Semua Dibaca'}
+          {markingAsRead ? NOTIFICATION_UI_STRINGS.MARKING : NOTIFICATION_UI_STRINGS.MARK_ALL_READ}
         </Button>
       </div>
 
@@ -242,7 +242,7 @@ case 'announcement':
       <div className="flex-1 overflow-y-auto">
         {notifications.length === 0 ? (
           <EmptyState
-            message="Tidak ada notifikasi untuk filter ini"
+            message={NOTIFICATION_UI_STRINGS.NO_FILTER_MATCH}
             icon={<CalendarIcon />}
             size="md"
             ariaLabel="Tidak ada notifikasi"
