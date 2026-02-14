@@ -297,6 +297,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
           onClick={toggleBatchMode}
           variant={isBatchMode ? 'blue-solid' : 'secondary'}
           className="rounded-full shadow-md"
+          aria-pressed={isBatchMode}
         >
           {isBatchMode ? `Selected: ${selectedStudents.size}` : 'Batch Mode'}
         </Button>

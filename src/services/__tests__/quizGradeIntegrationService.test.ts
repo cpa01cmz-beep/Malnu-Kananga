@@ -9,7 +9,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as quizGradeIntegrationService from '../quizGradeIntegrationService';
 import { gradesAPI } from '../apiService';
 import { logger } from '../../utils/logger';
-import { TEST_CONSTANTS } from '../../constants';
+import { TEST_CONSTANTS, STORAGE_KEYS } from '../../constants';
 import type { Grade, Quiz, QuizAttempt } from '../../types';
 
 // Mock API services
@@ -407,8 +407,8 @@ describe('quizGradeIntegrationService', () => {
 
   describe('getQuizAttempts', () => {
     beforeEach(() => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-001', JSON.stringify([mockQuizAttempt]));
-      localStorage.setItem('malnu_quiz_attempts_quiz-002', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-001'), JSON.stringify([mockQuizAttempt]));
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-002'), JSON.stringify([
         { ...mockQuizAttempt, id: 'attempt-002', quizId: 'quiz-002', studentId: 'student-002', studentName: 'Jane Doe' },
       ]));
     });
@@ -442,7 +442,7 @@ describe('quizGradeIntegrationService', () => {
     });
 
     it('should handle malformed JSON and return empty array', () => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-bad', 'invalid json');
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-bad'), 'invalid json');
 
       const attempts = quizGradeIntegrationService.getQuizAttempts();
 
@@ -453,7 +453,7 @@ describe('quizGradeIntegrationService', () => {
 
   describe('getQuiz', () => {
     it('should get quiz from localStorage', () => {
-      localStorage.setItem('malnu_quizzes', JSON.stringify([mockQuiz]));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify([mockQuiz]));
 
       const quiz = quizGradeIntegrationService.getQuiz('quiz-001');
 
@@ -461,7 +461,7 @@ describe('quizGradeIntegrationService', () => {
     });
 
     it('should return null when quiz not found', () => {
-      localStorage.setItem('malnu_quizzes', JSON.stringify([mockQuiz]));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify([mockQuiz]));
 
       const quiz = quizGradeIntegrationService.getQuiz('quiz-999');
 
@@ -475,7 +475,7 @@ describe('quizGradeIntegrationService', () => {
     });
 
     it('should handle malformed JSON and return null', () => {
-      localStorage.setItem('malnu_quizzes', 'invalid json');
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, 'invalid json');
 
       const quiz = quizGradeIntegrationService.getQuiz('quiz-001');
 
@@ -486,8 +486,8 @@ describe('quizGradeIntegrationService', () => {
 
   describe('integrateAllQuizAttempts', () => {
     beforeEach(() => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-001', JSON.stringify([mockQuizAttempt]));
-      localStorage.setItem('malnu_quizzes', JSON.stringify([mockQuiz]));
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-001'), JSON.stringify([mockQuizAttempt]));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify([mockQuiz]));
     });
 
     it('should integrate all pending quiz attempts', async () => {
@@ -525,11 +525,11 @@ describe('quizGradeIntegrationService', () => {
 
   describe('integrateStudentQuizAttempts', () => {
     beforeEach(() => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-001', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-001'), JSON.stringify([
         mockQuizAttempt,
         { ...mockQuizAttempt, id: 'attempt-002', studentId: 'student-002' },
       ]));
-      localStorage.setItem('malnu_quizzes', JSON.stringify([mockQuiz]));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify([mockQuiz]));
     });
 
     it('should integrate specific student quiz attempts', async () => {
@@ -568,8 +568,8 @@ describe('quizGradeIntegrationService', () => {
 
   describe('integrateQuizAttempts', () => {
     beforeEach(() => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-001', JSON.stringify([mockQuizAttempt]));
-      localStorage.setItem('malnu_quizzes', JSON.stringify([mockQuiz]));
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-001'), JSON.stringify([mockQuizAttempt]));
+      localStorage.setItem(STORAGE_KEYS.QUIZZES, JSON.stringify([mockQuiz]));
     });
 
     it('should integrate attempts for specific quiz', async () => {
@@ -676,7 +676,7 @@ describe('quizGradeIntegrationService', () => {
 
   describe('getIntegrationStatus', () => {
     it('should return statistics on quiz attempts', () => {
-      localStorage.setItem('malnu_quiz_attempts_quiz-001', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.QUIZ_ATTEMPTS('quiz-001'), JSON.stringify([
         mockQuizAttempt,
         { ...mockQuizAttempt, id: 'attempt-002' },
       ]));

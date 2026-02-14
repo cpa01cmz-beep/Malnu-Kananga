@@ -306,8 +306,99 @@ describe('Button', () => {
       const button = screen.getByRole('button');
       fireEvent.mouseEnter(button);
 
-      const kbd = screen.getByText('Ctrl+S');
-      expect(kbd.tagName.toLowerCase()).toBe('kbd');
+      // Find kbd elements - there should be 2 (one visible, one in tooltip)
+      const kbdElements = screen.getAllByText('Ctrl+S');
+      expect(kbdElements.length).toBeGreaterThanOrEqual(1);
+      
+      // At least one should be in a tooltip (inside role="tooltip" element)
+      const tooltipKbd = kbdElements.find(el => 
+        el.closest('[role="tooltip"]') !== null
+      );
+      expect(tooltipKbd).toBeInTheDocument();
+      expect(tooltipKbd?.tagName.toLowerCase()).toBe('kbd');
+    });
+
+    it('should render visible kbd element next to button text when shortcut is provided', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const kbdElements = screen.getAllByText('Ctrl+S');
+      // Should have kbd in both the button content and tooltip
+      expect(kbdElements.length).toBeGreaterThanOrEqual(1);
+      // At least one should be a kbd element
+      const kbdElement = kbdElements.find(el => el.tagName.toLowerCase() === 'kbd');
+      expect(kbdElement).toBeInTheDocument();
+    });
+
+    it('should not render visible kbd element when shortcut is not provided', () => {
+      render(<Button>No Shortcut</Button>);
+
+      const kbdElements = document.querySelectorAll('kbd');
+      // Should not have any kbd elements visible when no shortcut
+      expect(kbdElements.length).toBe(0);
+    });
+
+    it('should not render visible kbd element for icon-only buttons', () => {
+      render(<Button iconOnly icon={<MockIcon />} shortcut="Ctrl+S" ariaLabel="Save" />);
+
+      // Get all kbd elements
+      const allKbdElements = document.querySelectorAll('kbd');
+      // Icon-only buttons should not have visible kbd (only tooltip kbd which requires hover)
+      // The visible kbd should not be in the DOM for icon-only buttons
+      const visibleKbd = Array.from(allKbdElements).filter(kbd => {
+        // Check if the kbd is inside the button's main content (not tooltip)
+        const parent = kbd.closest('button');
+        return parent && kbd.getAttribute('aria-hidden') === 'true';
+      });
+      expect(visibleKbd.length).toBe(0);
+    });
+
+    it('should not render visible kbd element when loading', () => {
+      render(<Button shortcut="Ctrl+S" isLoading>Save</Button>);
+
+      // Get all kbd elements
+      const allKbdElements = document.querySelectorAll('kbd');
+      // Loading state should not show visible kbd
+      const visibleKbd = Array.from(allKbdElements).filter(kbd => {
+        return kbd.getAttribute('aria-hidden') === 'true';
+      });
+      expect(visibleKbd.length).toBe(0);
+    });
+
+    it('should have aria-hidden on visible kbd element', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const kbdElements = document.querySelectorAll('kbd');
+      // Find the visible kbd (not tooltip)
+      const visibleKbd = Array.from(kbdElements).find(kbd => {
+        return kbd.getAttribute('aria-hidden') === 'true';
+      });
+      expect(visibleKbd).toBeInTheDocument();
+      expect(visibleKbd).toHaveAttribute('aria-hidden', 'true');
+    });
+
+    it('should scale kbd size with button size', () => {
+      const { rerender } = render(<Button size="sm" shortcut="Ctrl+S">Save</Button>);
+      let kbdElements = document.querySelectorAll('kbd');
+      let visibleKbd = Array.from(kbdElements).find(kbd => kbd.getAttribute('aria-hidden') === 'true');
+      expect(visibleKbd).toHaveClass('text-[9px]');
+
+      rerender(<Button size="md" shortcut="Ctrl+S">Save</Button>);
+      kbdElements = document.querySelectorAll('kbd');
+      visibleKbd = Array.from(kbdElements).find(kbd => kbd.getAttribute('aria-hidden') === 'true');
+      expect(visibleKbd).toHaveClass('text-[10px]');
+
+      rerender(<Button size="lg" shortcut="Ctrl+S">Save</Button>);
+      kbdElements = document.querySelectorAll('kbd');
+      visibleKbd = Array.from(kbdElements).find(kbd => kbd.getAttribute('aria-hidden') === 'true');
+      expect(visibleKbd).toHaveClass('text-xs');
+    });
+
+    it('should have hidden class on visible kbd for mobile', () => {
+      render(<Button shortcut="Ctrl+S">Save</Button>);
+
+      const kbdElements = document.querySelectorAll('kbd');
+      const visibleKbd = Array.from(kbdElements).find(kbd => kbd.getAttribute('aria-hidden') === 'true');
+      expect(visibleKbd).toHaveClass('hidden', 'sm:inline-flex');
     });
   });
 });

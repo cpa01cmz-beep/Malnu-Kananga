@@ -818,8 +818,9 @@ export const TIME_FORMAT = {
 } as const;
 
 // API Configuration - Centralized to avoid circular dependencies
+// Flexy: Never hardcode school-specific URLs! Use ENV configuration only.
 export const API_CONFIG = {
-    DEFAULT_BASE_URL: ENV.API.BASE_URL || 'https://malnu-kananga-worker-prod.cpa01cmz.workers.dev',
+    DEFAULT_BASE_URL: ENV.API.BASE_URL,
     WS_PATH: '/ws',
     REQUEST_USER_ID: 'api-request',
     DEFAULT_IP_ADDRESS: 'server',
@@ -2831,6 +2832,29 @@ export const STORAGE_MIGRATION = {
 
 // Legacy Storage Keys - Flexy: Centralize legacy keys for migration cleanup!
 export const LEGACY_STORAGE_KEYS = {
+    // Authentication
+    AUTH_TOKEN: 'auth_token',
+    REFRESH_TOKEN: 'refresh_token',
+    
+    // User data
+    USER: 'user',
+    
+    // E-Library student data
+    STUDENT_BOOKMARKS: 'student_bookmarks',
+    STUDENT_FAVORITES: 'student_favorites',
+    STUDENT_READING_PROGRESS: 'student_reading_progress',
+    STUDENT_OFFLINE_DOWNLOADS: 'student_offline_downloads',
+    STUDENT_REVIEWS: 'student_reviews',
+    
+    // Site editor
+    SITE_EDITOR_HISTORY: 'siteEditorHistory',
+    
+    // Notifications
+    NOTIFICATION_BATCHES: 'notification_batches',
+    NOTIFICATION_TEMPLATES: 'notification_templates',
+    NOTIFICATION_ANALYTICS: 'notification_analytics',
+    
+    // Cache keys
     STUDENT_GRADES_CACHE: 'malnu_student_grades_cache',
     STUDENT_ATTENDANCE_CACHE: 'malnu_student_attendance_cache',
     PARENT_CHILDREN_CACHE: 'malnu_parent_children_cache',

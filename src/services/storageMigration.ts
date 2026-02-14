@@ -10,27 +10,27 @@ interface MigrationMap {
 }
 
 const MIGRATIONS: MigrationMap[] = [
-  // Authentication tokens
-  { oldKey: 'auth_token', newKey: STORAGE_KEYS.AUTH_TOKEN },
-  { oldKey: 'refresh_token', newKey: STORAGE_KEYS.REFRESH_TOKEN },
-  
-  // User data
-  { oldKey: 'user', newKey: STORAGE_KEYS.USER },
-  
-  // E-Library student data
-  { oldKey: 'student_bookmarks', newKey: STORAGE_KEYS.STUDENT_BOOKMARKS },
-  { oldKey: 'student_favorites', newKey: STORAGE_KEYS.STUDENT_FAVORITES },
-  { oldKey: 'student_reading_progress', newKey: STORAGE_KEYS.STUDENT_READING_PROGRESS },
-  { oldKey: 'student_offline_downloads', newKey: STORAGE_KEYS.STUDENT_OFFLINE_DOWNLOADS },
-  { oldKey: 'student_reviews', newKey: STORAGE_KEYS.STUDENT_REVIEWS },
-  
-  // Site editor
-  { oldKey: 'siteEditorHistory', newKey: STORAGE_KEYS.SITE_EDITOR_HISTORY },
-  
-  // Push notifications
-  { oldKey: 'notification_batches', newKey: STORAGE_KEYS.NOTIFICATION_BATCHES },
-  { oldKey: 'notification_templates', newKey: STORAGE_KEYS.NOTIFICATION_TEMPLATES },
-  { oldKey: 'notification_analytics', newKey: STORAGE_KEYS.NOTIFICATION_ANALYTICS },
+  // Authentication tokens - Flexy: Using LEGACY_STORAGE_KEYS instead of hardcoded strings
+  { oldKey: LEGACY_STORAGE_KEYS.AUTH_TOKEN, newKey: STORAGE_KEYS.AUTH_TOKEN },
+  { oldKey: LEGACY_STORAGE_KEYS.REFRESH_TOKEN, newKey: STORAGE_KEYS.REFRESH_TOKEN },
+
+  // User data - Flexy: Using LEGACY_STORAGE_KEYS instead of hardcoded strings
+  { oldKey: LEGACY_STORAGE_KEYS.USER, newKey: STORAGE_KEYS.USER },
+
+  // E-Library student data - Flexy: Using LEGACY_STORAGE_KEYS instead of hardcoded strings
+  { oldKey: LEGACY_STORAGE_KEYS.STUDENT_BOOKMARKS, newKey: STORAGE_KEYS.STUDENT_BOOKMARKS },
+  { oldKey: LEGACY_STORAGE_KEYS.STUDENT_FAVORITES, newKey: STORAGE_KEYS.STUDENT_FAVORITES },
+  { oldKey: LEGACY_STORAGE_KEYS.STUDENT_READING_PROGRESS, newKey: STORAGE_KEYS.STUDENT_READING_PROGRESS },
+  { oldKey: LEGACY_STORAGE_KEYS.STUDENT_OFFLINE_DOWNLOADS, newKey: STORAGE_KEYS.STUDENT_OFFLINE_DOWNLOADS },
+  { oldKey: LEGACY_STORAGE_KEYS.STUDENT_REVIEWS, newKey: STORAGE_KEYS.STUDENT_REVIEWS },
+
+  // Site editor - Flexy: Using LEGACY_STORAGE_KEYS instead of hardcoded strings
+  { oldKey: LEGACY_STORAGE_KEYS.SITE_EDITOR_HISTORY, newKey: STORAGE_KEYS.SITE_EDITOR_HISTORY },
+
+  // Push notifications - Flexy: Using LEGACY_STORAGE_KEYS instead of hardcoded strings
+  { oldKey: LEGACY_STORAGE_KEYS.NOTIFICATION_BATCHES, newKey: STORAGE_KEYS.NOTIFICATION_BATCHES },
+  { oldKey: LEGACY_STORAGE_KEYS.NOTIFICATION_TEMPLATES, newKey: STORAGE_KEYS.NOTIFICATION_TEMPLATES },
+  { oldKey: LEGACY_STORAGE_KEYS.NOTIFICATION_ANALYTICS, newKey: STORAGE_KEYS.NOTIFICATION_ANALYTICS },
   
     // Category service
     { oldKey: LEGACY_STORAGE_KEYS.SUBJECTS_CACHE, newKey: STORAGE_KEYS.SUBJECTS_CACHE },

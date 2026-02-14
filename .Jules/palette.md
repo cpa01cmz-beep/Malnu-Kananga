@@ -4,26 +4,165 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-14 - StudyPlanAnalytics Back Button Keyboard Shortcuts
+<<<<<<< HEAD
+## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
-**Learning**: The StudyPlanAnalytics component had four "Kembali" (Back) buttons across different states (loading, error, empty state, and main view) that supported the Alt+Left keyboard shortcut for browser back navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a student-facing analytics component used for tracking study plan progress and effectiveness.
+**Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
 
-**Action**: Added `shortcut="Alt+Left"` to all four back buttons in StudyPlanAnalytics.tsx:
-- Line 320: Added `shortcut="Alt+Left"` to loading state back button
-- Line 341: Added `shortcut="Alt+Left"` to error state back button
-- Line 358: Added `shortcut="Alt+Left"` to empty state back button
-- Line 399: Added `shortcut="Alt+Left"` to main view back button
+**Action**: Added comprehensive keyboard accessibility to material selection cards:
+- `tabIndex={0}` - Makes cards focusable via keyboard navigation
+- `onKeyDown` handler - Supports Enter and Space keys to toggle selection (prevents default to avoid scrolling)
+- `role="button"` - Proper semantic role for interactive cards
+- `aria-pressed={boolean}` - Indicates selection state to screen readers (follows toggle button pattern)
+- `aria-label` - Descriptive label that changes based on selection state: "Pilih materi [title]" or "Hapus pilihan materi [title]"
+
+**Implementation Details**:
+```tsx
+<Card
+  onClick={() => toggleMaterial(material.id)}
+  onKeyDown={(e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMaterial(material.id);
+    }
+  }}
+  tabIndex={0}
+  role="button"
+  aria-pressed={selectedMaterials.includes(material.id)}
+  aria-label={`${selectedMaterials.includes(material.id) ? 'Hapus pilihan' : 'Pilih'} materi ${material.title}`}
+>
+```
+
+**Files Fixed**:
+- src/components/QuizGenerator.tsx - Added keyboard accessibility to material selection cards (lines 214-225)
+
+**Pattern**: Interactive cards that act as toggle buttons MUST implement:
+1. **Keyboard Focus**: `tabIndex={0}` to make them focusable
+2. **Keyboard Activation**: `onKeyDown` handler for Enter and Space keys
+3. **Semantic Role**: `role="button"` to indicate interactivity
+4. **State Announcement**: `aria-pressed` to communicate selection state
+5. **Descriptive Label**: `aria-label` that includes both action and item name
+
+This follows the same pattern as ActivityFeed.tsx, ELibrary.tsx, and other components where toggle buttons needed accessibility improvements. Keyboard accessibility is essential for:
+- Power users who prefer keyboard navigation
+- Screen reader users who rely on semantic markup
+- Users with motor disabilities who cannot use a mouse
+- All users who benefit from consistent keyboard shortcuts
+
+**Impact**: This change affects the QuizGenerator wizard (Step 1: Material Selection), a high-traffic component used by teachers to create AI-generated quizzes. The improvement ensures all users can select materials regardless of input method.
+
+**PR**: #2223
+
+---
+
+---
+
+## 2026-02-14 - UserProfileEditor Keyboard Shortcuts
+
+**Learning**: The UserProfileEditor component's action buttons (Kembali, Batal, Simpan Profil) were missing keyboard shortcut hints. This is a high-traffic component used by all user roles (students, teachers, parents, admins) for editing their profile information. Without shortcuts, users couldn't discover efficient keyboard navigation.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in UserProfileEditor.tsx:
+- Line 256: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 405: Added `shortcut="Esc"` to the Batal (Cancel) button - follows modal/form cancel pattern
+- Line 442: Added `shortcut="Ctrl+S"` to the Simpan Profil (Save Profile) button - follows standard save pattern
 
 **File Fixed**:
-- src/components/StudyPlanAnalytics.tsx - Added shortcut props to 4 back buttons
+- src/components/UserProfileEditor.tsx - Added shortcut props to 3 action buttons
 
-**Pattern**: All navigation buttons in student-facing analytics components should have consistent keyboard shortcut hints:
+**Pattern**: High-traffic form components should have consistent keyboard shortcut hints:
 - Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"`
+
+This follows the established pattern from other high-traffic components like GradingManagement.tsx, AttendanceManagement.tsx, and LearningProgressReport.tsx where Ctrl+S is used for save operations.
+
+---
+
+## 2026-02-14 - ELibrary Toggle Button Accessibility
+
+**Learning**: The ELibrary component had multiple toggle buttons that changed visual state (variant changes from 'secondary' to 'success'/'info'/'primary' based on boolean state) but were missing `aria-pressed` attributes. Screen reader users couldn't know which filters or toggles were currently active when searching for educational materials.
+
+**Action**: Added `aria-pressed={booleanState}` to all 7 toggle buttons in ELibrary.tsx:
+- Line 966: Added `aria-pressed={showAdvancedSearch}` to advanced search toggle
+- Line 978: Added `aria-pressed={showOnlyFavorites}` to favorites filter toggle
+- Line 990: Added `aria-pressed={isSemanticMode}` to AI semantic search toggle (filter bar)
+- Line 1005: Added `aria-pressed={showSemanticOptions}` to semantic options toggle
+- Line 1017: Added `aria-pressed={showOCROptions || ocrEnabled}` to OCR settings toggle
+- Line 1300: Added `aria-pressed={isSemanticMode}` to AI Search activation toggle (full-width button)
+- Line 1705: Added `aria-pressed={offlineDownloads.has(item.id)}` to offline download toggle
+
+**File Fixed**:
+- src/components/ELibrary.tsx - Added aria-pressed to 7 toggle buttons
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Filter toggles (search filters, favorites, advanced options)
+- Feature toggles (AI modes, OCR settings)
+- Download/offline toggles
+- Any button that uses variant changes to indicate state (primary vs ghost, success vs secondary, etc.)
+
+This follows the same pattern as ActivityFeed.tsx, ChatWindow.tsx, NotificationHistory.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+**PR**: #2222
+
+---
+
+## 2026-02-14 - DirectMessage New Chat Modal Keyboard Shortcuts
+
+**Learning**: The DirectMessage component's "Buat Percakapan Baru" (Create New Chat) modal had action buttons (Batal and Buat Percakapan) that supported keyboard shortcuts (Esc to cancel, Ctrl+Enter to submit) but users couldn't discover them without visual hints. This is a high-traffic communication feature used by teachers, parents, and students for direct messaging.
+
+**Action**: Added keyboard shortcut hints to both modal action buttons:
+- Line 161: Added `shortcut="Esc"` to the Batal button - follows standard cancel pattern
+- Line 170: Added `shortcut="Ctrl+Enter"` to the Buat Percakapan button - follows form submission pattern
+
+**File Fixed**:
+- src/components/DirectMessage.tsx - Added shortcut props to 2 modal action buttons
+
+**Pattern**: Modal dialogs for creating new conversations/chats should have keyboard shortcut hints on all action buttons:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Create/Submit buttons: `shortcut="Ctrl+Enter"`
 - Always use the Button component's `shortcut` prop to display hints in tooltips
 
-**Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and StudyPlanGenerator.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+This follows the established keyboard shortcut pattern used in GroupChat.tsx, EnhancedMaterialSharing.tsx, and other modal dialogs across the codebase.
 
-**PR**: #2226
+**PR**: #2219
+
+---
+
+## 2026-02-14 - AssignmentGrading Voice Recording Button Accessibility
+
+**Learning**: The AssignmentGrading component's voice recording button (for providing feedback on student submissions) changed visual state (variant changes from 'secondary' to 'primary') to indicate when recording is active, but was missing the `aria-pressed` attribute. Screen reader users couldn't know if voice recording was currently active.
+
+**Action**: Added `aria-pressed={isVoiceRecording && voiceTarget === 'feedback'}` to the voice recording button:
+- Line 910: Added `aria-pressed={isVoiceRecording && voiceTarget === 'feedback'}` to the Button component
+
+**File Fixed**:
+- src/components/AssignmentGrading.tsx - Added aria-pressed to the voice recording feedback button
+
+**Pattern**: Voice recording toggle buttons that change visual state MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Voice input buttons in grading components
+- Any button that uses variant changes to indicate recording state
+- Microphone buttons that toggle on/off
+
+This follows the established pattern from VoiceInputButton.tsx (line 337), ChatWindow.tsx, and other components where aria-pressed was added to toggle buttons.
+
+---
+
+## 2026-02-14 - GradingActions Batch Mode Toggle Accessibility
+
+**Learning**: The GradingActions component's "Batch Mode" toggle button changed visual state (variant changes from 'secondary' to 'blue-solid') but was missing the `aria-pressed` attribute. Screen reader users couldn't know if batch mode was currently active or inactive when toggling this feature.
+
+**Action**: Added `aria-pressed={isBatchMode}` to the Batch Mode toggle button:
+- Line 300: Added `aria-pressed={isBatchMode}` to the Button component
+
+**File Fixed**:
+- src/components/grading/GradingActions.tsx - Added aria-pressed to the Batch Mode toggle button
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Button variants that change based on state (primary vs ghost, blue-solid vs secondary)
+- Batch mode toggles
+- Any button that uses variant changes to indicate state
+
+This follows the established pattern from ActivityFeed.tsx, ChatWindow.tsx, ELibrary.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
 
 ---
 
@@ -66,6 +205,46 @@ This follows the established pattern from StudentAssignments.tsx and other compo
 - Always use the Button component's `shortcut` prop to display hints in tooltips
 
 **Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and AssignmentCreation.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
+## 2026-02-14 - Button Component Visible Keyboard Shortcut Hints
+
+**Learning**: The Button component accepted a `shortcut` prop and displayed keyboard shortcuts in tooltips on hover/focus, but users couldn't discover these shortcuts at a glance. Desktop users had to hover over each button to see if a keyboard shortcut was available, which hindered keyboard shortcut discoverability and power-user efficiency.
+
+**Action**: Added visible keyboard shortcut hints (small kbd pills) next to button text:
+- Modified `/src/components/ui/Button.tsx` to render a `<kbd>` element after button text when `shortcut` prop is provided
+- Scales hint size with button size: sm=text-[9px], md=text-[10px], lg=text-xs
+- Hidden on mobile screens (`hidden sm:inline-flex`) since mobile users typically don't have physical keyboards
+- Uses translucent background (`bg-white/20 dark:bg-black/20`) with current text color for compatibility with all button variants
+- Added `aria-hidden="true"` to prevent double announcement (aria-label already includes shortcut)
+
+**Implementation Details**:
+```tsx
+// New kbd element rendered next to button text
+{!isLoading && shortcut && (
+  <kbd className="hidden sm:inline-flex ml-2 px-1.5 py-0.5 text-[10px] font-mono ...">
+    {shortcut}
+  </kbd>
+)}
+```
+
+**Files Fixed**:
+- src/components/ui/Button.tsx - Added visible kbd element (lines 227-248)
+- src/components/ui/__tests__/Button.test.tsx - Added 7 new tests for visible shortcut functionality
+
+**Pattern**: Keyboard shortcuts should be discoverable in multiple ways:
+1. **Visible hint**: Small kbd pill next to button text (desktop only)
+2. **Tooltip**: Shows on hover/focus with full message "Tekan {shortcut} saat fokus"
+3. **Aria-label**: Announced by screen readers "{label} (Tekan {shortcut} saat fokus)"
+
+This multi-layer approach ensures:
+- Desktop users see shortcuts at a glance without hovering
+- Mobile users don't see unnecessary clutter (hidden on small screens)
+- Screen reader users get full context via aria-label
+- Power users can quickly learn and use keyboard shortcuts
+
+**PR**: #2221
 
 ---
 
@@ -185,7 +364,9 @@ This ensures both screen reader users (via aria-label) and sighted users (via to
 4. **Accessible Labels**: Descriptive aria-labels for screen reader context
 
 This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
-=======
+
+---
+
 ## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
 
 **Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
@@ -229,7 +410,8 @@ The Button component's `shortcut` prop automatically displays a tooltip hint on 
 - Always pair shortcut with tooltip for consistent UX
 
 **Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
->>>>>>> origin/main
+
+---
 
 ---
 

@@ -1,6 +1,6 @@
 # UI Components
 
-This directory contains the enhanced UI components for MA Malnu Kananga with mobile-first design, accessibility features, and micro-interactions.
+This directory contains the enhanced UI components for the school portal with mobile-first design, accessibility features, and micro-interactions.
 
 ## Recent Enhancements
 

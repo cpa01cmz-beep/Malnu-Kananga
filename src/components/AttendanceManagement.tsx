@@ -285,7 +285,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
       {/* Date Selection and Summary */}
       <div className="bg-white dark:bg-neutral-800 rounded-2xl p-6 shadow-sm border border-neutral-200 dark:border-neutral-700 mb-6">
         <div className="flex flex-wrap items-center gap-4 mb-6">
-          <div className="flex-1 min-w-[200px]">
+          <div className="flex-1 min-w-[12.5rem]">
             <label htmlFor="attendance-date" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
               Tanggal
             </label>
@@ -309,7 +309,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ onBack, onS
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Cari siswa..."
-                className="flex-1 min-w-[200px]"
+                className="flex-1 min-w-[12.5rem]"
               />
             </div>
             <Button

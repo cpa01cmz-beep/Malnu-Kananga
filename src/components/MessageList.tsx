@@ -348,7 +348,7 @@ export function MessageList({
                        <div className="mt-1 flex items-center justify-between">
                          <p className="truncate text-sm text-gray-600">{lastMessage}</p>
                          {conversation.unreadCount > 0 && (
-                           <span className="ml-2 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-semibold text-white">
+                            <span className="ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-semibold text-white">
                              {conversation.unreadCount}
                            </span>
                          )}
