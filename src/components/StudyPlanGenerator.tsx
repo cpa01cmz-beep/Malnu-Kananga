@@ -433,10 +433,10 @@ import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
             <Button
               onClick={handleGeneratePlan}
               variant="green-solid"
-              disabled={generating}
+              isLoading={generating}
               icon={<LightBulbIcon />}
             >
-              {generating ? 'Membuat Rencana...' : 'Buat Rencana Belajar'}
+              Buat Rencana Belajar
             </Button>
           </div>
         )}
