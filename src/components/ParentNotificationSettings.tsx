@@ -129,7 +129,9 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Tutup pengaturan notifikasi"
             className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +225,10 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
                   ].map((option) => (
                     <button
                       key={option.value}
+                      type="button"
                       onClick={() => updateSettings({ frequency: option.value as ParentGradeNotificationSettings['frequency'] })}
+                      aria-pressed={settings.frequency === option.value}
+                      aria-label={`Frekuensi notifikasi: ${option.label}`}
                       className={`p-3 rounded-lg border-2 text-left transition-colors ${
                         settings.frequency === option.value
                           ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20'
