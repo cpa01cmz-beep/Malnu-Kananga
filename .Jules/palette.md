@@ -4,6 +4,8 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
 ## 2026-02-14 - Toast Close Button Keyboard Shortcut
 
 **Learning**: The Toast component's close button was using IconButton but was missing the `shortcut` prop, which meant users couldn't discover that they could press "Esc" to close the toast notification. While the component already supported the Escape key (via handleKeyDown), there was no visual indication of this shortcut. The IconButton component has a built-in `shortcut` prop that displays keyboard shortcuts in tooltips, making them discoverable to users.
@@ -22,6 +24,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 - Always pair shortcut with tooltip for consistent UX
 
 **Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
+
+---
+
+## 2026-02-14 - StudentQuiz Confirmation Modal Keyboard Shortcuts
+
+**Learning**: The StudentQuiz component's confirmation modal (shown when students click "Kirim Kuis" to submit their quiz) had "Batal" (Cancel) and "Ya, Kirim Kuis" (Yes, Submit Quiz) buttons that supported keyboard shortcuts (Esc to cancel, Enter to submit) but users couldn't discover them without visual hints. This is a critical action point where students make an irreversible decision about submitting their quiz answers.
+
+**Action**: Add keyboard shortcut hints to both confirmation modal buttons:
+- Line 581: Added `shortcut="Esc"` to the "Batal" button - follows the standard cancel pattern
+- Line 584: Added `shortcut="Enter"` to the "Ya, Kirim Kuis" button - makes the primary action discoverable
+- Students can now see keyboard shortcuts via tooltips on hover/focus
+
+**File Fixed**:
+- src/components/StudentQuiz.tsx - Added shortcut props to 2 buttons in confirmation modal
+
+**Pattern**: Confirmation dialogs for irreversible actions should have keyboard shortcut hints on all action buttons:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Confirm/Submit buttons: `shortcut="Enter"` (for primary actions)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- This is especially important for high-stakes actions like quiz submission where users need clarity
+
+---
 
 ---
 
@@ -68,8 +92,6 @@ This ensures all input fields are properly announced by screen readers, improvin
 
 ---
 
-## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
->>>>>>> origin/main
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
 
 **Learning**: The GlobalSearchModal component had filter toggle buttons (siswa, guru, nilai, tugas, materi) that changed visual state (blue background when active, gray when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't determine which filters were currently active when using the global search feature.
