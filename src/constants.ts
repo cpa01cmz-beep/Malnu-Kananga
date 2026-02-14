@@ -701,6 +701,7 @@ export const RETRY_CONFIG = {
     BASE_DELAY_MS: 1000,
     MAX_DELAY_MS: 5000,
     BACKOFF_MULTIPLIER: 2,
+    INITIAL_RETRY_COUNT: 0, // Flexy: Never hardcode initial retry count!
 } as const;
 
 // Grade validation limits
