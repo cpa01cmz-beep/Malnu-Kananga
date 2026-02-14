@@ -4,6 +4,24 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - GradingActions Export Button Keyboard Shortcuts
+
+**Learning**: The GradingActions component's export buttons (Export PDF, Export CSV) had proper aria-labels for screen readers but were missing keyboard shortcut hints. This inconsistency made it harder for power users to discover efficient keyboard navigation, especially since other grading-related components like GradeAnalytics already had these shortcuts.
+
+**Action**: Added keyboard shortcut hints to both export buttons in GradingActions.tsx:
+- Line 358: Added `shortcut="Ctrl+P"` to the Export PDF button - follows print/export convention
+- Line 370: Added `shortcut="Ctrl+Shift+E"` to the Export CSV button - follows export convention
+
+**Pattern**: Export buttons should consistently use keyboard shortcut hints:
+- Export/PDF buttons: `shortcut="Ctrl+P"` (follows print convention)
+- Export/CSV buttons: `shortcut="Ctrl+Shift+E"` (export convention)
+- Always pair with descriptive `aria-label` attributes for full accessibility
+- Use the Button component's `shortcut` prop to display hints in tooltips on hover/focus
+
+This ensures consistency across the grading workflow (GradingManagement → GradingActions → GradeAnalytics) and improves discoverability for keyboard power users.
+
+---
+
 ## 2026-02-14 - GradeAnalytics Export Button Keyboard Shortcuts
 
 **Learning**: The GradeAnalytics component's action buttons (Back, Export PDF, Export CSV) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for viewing and exporting class grade analytics.
