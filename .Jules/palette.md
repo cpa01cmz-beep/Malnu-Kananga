@@ -4,6 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudyPlanAnalytics Back Button Keyboard Shortcuts
+
+**Learning**: The StudyPlanAnalytics component had four "Kembali" (Back) buttons across different states (loading, error, empty state, and main view) that supported the Alt+Left keyboard shortcut for browser back navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a student-facing analytics component used for tracking study plan progress and effectiveness.
+
+**Action**: Added `shortcut="Alt+Left"` to all four back buttons in StudyPlanAnalytics.tsx:
+- Line 320: Added `shortcut="Alt+Left"` to loading state back button
+- Line 341: Added `shortcut="Alt+Left"` to error state back button
+- Line 358: Added `shortcut="Alt+Left"` to empty state back button
+- Line 399: Added `shortcut="Alt+Left"` to main view back button
+
+**File Fixed**:
+- src/components/StudyPlanAnalytics.tsx - Added shortcut props to 4 back buttons
+
+**Pattern**: All navigation buttons in student-facing analytics components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+**Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and StudyPlanGenerator.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+**PR**: #2226
+
+---
+
 ## 2026-02-14 - TeacherDashboard Loading State UX Improvement
 
 **Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
