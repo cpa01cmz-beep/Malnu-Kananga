@@ -37,10 +37,7 @@ export const useStudentGoals = (studentId?: string): UseStudentGoalsReturn => {
   const [error, setError] = useState<string | null>(null);
 
   const getStorageKey = useCallback(() => {
-    if (typeof STORAGE_KEYS.STUDENT_GOALS === 'function') {
-      return STORAGE_KEYS.STUDENT_GOALS(studentId || 'default');
-    }
-    return 'malnu_student_goals';
+    return STORAGE_KEYS.STUDENT_GOALS(studentId || 'default');
   }, [studentId]);
 
   useEffect(() => {
