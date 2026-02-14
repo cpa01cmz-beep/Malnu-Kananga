@@ -3,7 +3,7 @@
  * Flexy: Centralized configuration for document templates
  */
 
-import { APP_CONFIG } from '../constants';
+import { APP_CONFIG, TIME_MS } from '../constants';
 
 /** Template types available in the system */
 export type DocumentTemplateType = 
@@ -327,7 +327,7 @@ export const DOCUMENT_TEMPLATE_CONFIG = {
   
   /** Default school branding */
   DEFAULT_SCHOOL_NAME: APP_CONFIG.SCHOOL_NAME,
-  DEFAULT_SCHOOL_ADDRESS: 'Indonesia',
+  DEFAULT_SCHOOL_ADDRESS: APP_CONFIG.SCHOOL_ADDRESS,
   
   /** PDF settings */
   PDF: {
@@ -345,7 +345,7 @@ export const DOCUMENT_TEMPLATE_CONFIG = {
   /** Batch generation settings */
   BATCH: {
     maxConcurrent: 5,
-    delayBetweenBatches: 100, // ms
+    delayBetweenBatches: TIME_MS.MS100, // Flexy: Use centralized time constant
   },
 } as const;
 
