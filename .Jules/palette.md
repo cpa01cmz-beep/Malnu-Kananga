@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
+## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
+
+**Learning**: The GlobalSearchModal component had filter toggle buttons (siswa, guru, nilai, tugas, materi) that changed visual state (blue background when active, gray when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't determine which filters were currently active when using the global search feature.
+
+**Action**: Added `aria-pressed={activeFilters.includes(type)}` to all filter buttons:
+- Line 228: Added `aria-pressed={activeFilters.includes(type)}` to each filter button
+- Screen readers now announce the active/inactive state of each filter
+
+**File Fixed**:
+- src/components/ui/GlobalSearchModal.tsx - Added aria-pressed to 5 filter buttons
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Filter buttons in search modals
+- Toggle buttons in any component where appearance changes based on state
+- Always audit filter/toggle buttons in commonly-used modals
+
+---
+
 ## 2026-02-14 - LoginModal Keyboard Shortcut Discoverability
 
 **Learning**: The LoginModal component's submit button supports Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic component used by all users (students, teachers, parents, admins) every time they access the system.
