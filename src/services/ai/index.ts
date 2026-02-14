@@ -13,7 +13,8 @@ export {
   analyzeClassPerformance,
   analyzeStudentPerformance,
   generateAssignmentFeedback,
-  generateMaterialRecommendations
+  generateMaterialRecommendations,
+  generateLearningResources
 } from './geminiAnalysis';
 
 // Editor exports

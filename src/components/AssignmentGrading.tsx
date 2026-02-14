@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { assignmentsAPI, assignmentSubmissionsAPI } from '../services/apiService';
-import { generateAssignmentFeedback } from '../services/ai';
+import { generateAssignmentFeedback, generateLearningResources } from '../services/ai';
+import { feedbackHistoryService } from '../services/feedbackHistoryService';
 import { Assignment, AssignmentStatus, AssignmentSubmission, User, AIFeedback } from '../types';
 import { useEventNotifications } from '../hooks/useEventNotifications';
 import { useCanAccess } from '../hooks/useCanAccess';
@@ -59,6 +60,19 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   const [aiFeedback, setAiFeedback] = useState<AIFeedback | null>(null);
   const [generatingFeedback, setGeneratingFeedback] = useState(false);
   const [showAiFeedback, setShowAiFeedback] = useState(false);
+  const [learningResources, setLearningResources] = useState<{
+    resources: Array<{
+      title: string;
+      type: 'video' | 'article' | 'exercise' | 'tutorial' | 'summary';
+      description: string;
+      url?: string;
+      priority: 'high' | 'medium' | 'low';
+      relatedTopic: string;
+      estimatedTime: string;
+    }>;
+    summary: string;
+  } | null>(null);
+  const [generatingResources, setGeneratingResources] = useState(false);
 
   // Voice recognition states
   const [isVoiceRecording, setIsVoiceRecording] = useState(false);
@@ -369,6 +383,25 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         confidence: feedbackData.confidence
       });
 
+      feedbackHistoryService.addToHistory(
+        {
+          id: feedbackId,
+          assignmentId: selectedAssignment.id,
+          submissionId: selectedSubmission.id,
+          feedback: feedbackData.feedback,
+          strengths: feedbackData.strengths,
+          improvements: feedbackData.improvements,
+          suggestedScore: feedbackData.suggestedScore,
+          generatedAt: new Date().toISOString(),
+          aiModel: 'gemini-3-pro-preview',
+          confidence: feedbackData.confidence
+        },
+        {
+          studentName: selectedSubmission.studentName,
+          assignmentTitle: selectedAssignment.title
+        }
+      );
+
       onShowToast('Feedback AI berhasil dibuat', 'success');
     } catch (err) {
       logger.error('Error generating AI feedback:', err);
@@ -389,7 +422,37 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 
     setFeedback(aiFeedback.feedback);
     setShowAiFeedback(false);
+    
+    feedbackHistoryService.markAsApplied(aiFeedback.id);
+    
     onShowToast('Feedback AI diterapkan', 'success');
+  };
+
+  const handleGenerateLearningResources = async () => {
+    if (!aiFeedback || !selectedAssignment) {
+      return;
+    }
+
+    setGeneratingResources(true);
+
+    try {
+      const resources = await generateLearningResources(
+        {
+          title: selectedAssignment.title,
+          subjectName: selectedAssignment.subjectName,
+          topic: selectedAssignment.description
+        },
+        aiFeedback.improvements
+      );
+
+      setLearningResources(resources);
+      onShowToast('Saran sumber belajar berhasil dibuat', 'success');
+    } catch (err) {
+      logger.error('Error generating learning resources:', err);
+      onShowToast('Gagal membuat saran sumber belajar', 'error');
+    } finally {
+      setGeneratingResources(false);
+    }
   };
 
   const getFilteredSubmissions = () => {
@@ -1024,6 +1087,45 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                       {Math.round(aiFeedback.confidence * 100)}%
                     </div>
                   </div>
+                </div>
+              )}
+
+              {!learningResources ? (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleGenerateLearningResources}
+                    variant="outline"
+                    disabled={generatingResources}
+                    className="w-full"
+                  >
+                    {generatingResources ? 'Membuat saran...' : 'Buat Saran Sumber Belajar'}
+                  </Button>
+                </div>
+              ) : (
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                  <h4 className="font-medium text-indigo-900 mb-2">Saran Sumber Belajar</h4>
+                  <p className="text-sm text-indigo-800 mb-4">{learningResources.summary}</p>
+                  <ul className="space-y-3">
+                    {learningResources.resources.map((resource, index) => (
+                      <li key={index} className="bg-white rounded-lg p-3 border border-indigo-100">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium text-indigo-900">{resource.title}</span>
+                              <Badge variant={resource.priority === 'high' ? 'error' : resource.priority === 'medium' ? 'warning' : 'info'}>
+                                {resource.priority}
+                              </Badge>
+                              <Badge variant="neutral">{resource.type}</Badge>
+                            </div>
+                            <p className="text-sm text-indigo-700 mt-1">{resource.description}</p>
+                            <div className="text-xs text-indigo-500 mt-1">
+                              Topik: {resource.relatedTopic} • Waktu: {resource.estimatedTime}
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
 

@@ -443,3 +443,146 @@ export async function generateMaterialRecommendations(
     throw new Error(message);
   }
 }
+
+/**
+ * Generate learning resource suggestions based on feedback/improvements
+ */
+export async function generateLearningResources(
+  assignment: {
+    title: string;
+    subjectName?: string;
+    topic?: string;
+  },
+  improvements: string[],
+  studentData?: {
+    gradeLevel?: string;
+    learningStyle?: string;
+  }
+): Promise<{
+  resources: Array<{
+    title: string;
+    type: 'video' | 'article' | 'exercise' | 'tutorial' | 'summary';
+    description: string;
+    url?: string;
+    priority: 'high' | 'medium' | 'low';
+    relatedTopic: string;
+    estimatedTime: string;
+  }>;
+  summary: string;
+}> {
+  const cacheKey = {
+    operation: 'learningResources',
+    input: JSON.stringify({ assignment, improvements, studentData }),
+    model: AI_MODELS.PRO_THINKING
+  };
+
+  const cachedResources = analysisCache.get<{
+    resources: Array<{
+      title: string;
+      type: 'video' | 'article' | 'exercise' | 'tutorial' | 'summary';
+      description: string;
+      url?: string;
+      priority: 'high' | 'medium' | 'low';
+      relatedTopic: string;
+      estimatedTime: string;
+    }>;
+    summary: string;
+  }>(cacheKey);
+
+  if (cachedResources) {
+    logger.debug('Returning cached learning resources');
+    return cachedResources;
+  }
+
+  const improvementsList = improvements.map((imp, idx) => `${idx + 1}. ${imp}`).join('\n');
+
+  const prompt = `
+  Anda adalah asisten pembelajaran yang menyarankan sumber belajar untuk membantu siswa meningkatkan kemampuan mereka.
+
+  INFORMASI TUGAS:
+  - Judul: ${assignment.title}
+  - Mata Pelajaran: ${assignment.subjectName || 'Umum'}
+  - Topik: ${assignment.topic || 'Tidak spesifik'}
+
+  AREA PERBAIKAN YANG PERLU DIBANTU:
+  ${improvementsList}
+
+  ${studentData ? `- Tingkat Kelas: ${studentData.gradeLevel || 'Tidak diketahui'}
+  - Gaya Belajar: ${studentData.learningStyle || 'Tidak diketahui'}` : ''}
+
+  INSTRUKSI:
+  Berikan rekomendasi sumber belajar yang spesifik dan actionable untuk setiap area perbaikan.
+  
+  FORMAT OUTPUT (JSON):
+  {
+    "summary": "Ringkasan singkat tentang mengapa sumber-sumber ini direkomendasikan",
+    "resources": [
+      {
+        "title": "Judul sumber belajar yang spesifik",
+        "type": "video|article|exercise|tutorial|summary",
+        "description": "Penjelasan singkat mengapa sumber ini membantu",
+        "url": "URL jika tersedia (jika tidak, kosongkan)",
+        "priority": "high|medium|low",
+        "relatedTopic": "Topik yang relevan dari area perbaikan",
+        "estimatedTime": "Estimasi waktu untuk menggunakan sumber ini"
+      }
+    ]
+  }
+
+  PEDOMAN:
+  - Berikan minimal 3-5 sumber belajar yang relevan
+  - Prioritaskan sumber yang gratis dan mudah diakses
+  - Variasikan jenis sumber (video, artikel, latihan, dll)
+  - Gunakan bahasa Indonesia yang mudah dipahami siswa
+  - Pertimbangkan konteks pendidikan Indonesia
+  `;
+
+  const schema = {
+    type: Type.OBJECT,
+    properties: {
+      summary: { type: Type.STRING },
+      resources: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            type: { type: Type.STRING, enum: ['video', 'article', 'exercise', 'tutorial', 'summary'] },
+            description: { type: Type.STRING },
+            url: { type: Type.STRING },
+            priority: { type: Type.STRING, enum: ['high', 'medium', 'low'] },
+            relatedTopic: { type: Type.STRING },
+            estimatedTime: { type: Type.STRING }
+          },
+          required: ['title', 'type', 'description', 'priority', 'relatedTopic', 'estimatedTime']
+        }
+      }
+    },
+    required: ['summary', 'resources']
+  };
+
+  try {
+    const response = await withCircuitBreaker(async () => {
+      return await (await getAIInstance()).models.generateContent({
+        model: AI_MODELS.PRO_THINKING,
+        contents: prompt,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: schema,
+          thinkingConfig: { thinkingBudget: AI_CONFIG.THINKING_BUDGET }
+        }
+      });
+    });
+
+    const jsonText = (response.text || '').trim();
+    const data = JSON.parse(jsonText);
+
+    analysisCache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    const classifiedError = handleAIError(error, AIOperationType.ANALYSIS, AI_MODELS.PRO_THINKING);
+    const message = getAIErrorMessage(classifiedError, AIOperationType.ANALYSIS);
+    throw new Error(message);
+  }
+}
