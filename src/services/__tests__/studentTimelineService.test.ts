@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { studentTimelineService } from '../studentTimelineService';
-import { TEST_CONSTANTS } from '../../constants';
+import { TEST_CONSTANTS, STORAGE_KEYS } from '../../constants';
 import type {
   TimelineEvent,
   TimelineFilter,
@@ -24,7 +24,7 @@ describe('studentTimelineService', () => {
     });
 
     it('should return timeline events sorted by timestamp desc by default', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -66,7 +66,7 @@ describe('studentTimelineService', () => {
 
   describe('getFilteredTimeline', () => {
     it('should filter events by type', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -93,7 +93,7 @@ describe('studentTimelineService', () => {
     });
 
     it('should filter events by date range', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -136,7 +136,7 @@ describe('studentTimelineService', () => {
     });
 
     it('should filter events by minimum score', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -178,7 +178,7 @@ describe('studentTimelineService', () => {
 
   describe('getTimelineStats', () => {
     it('should return stats for timeline events', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -210,7 +210,7 @@ describe('studentTimelineService', () => {
 
   describe('addEvent', () => {
     it('should update cache with new event', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -247,7 +247,7 @@ describe('studentTimelineService', () => {
 
       await studentTimelineService.addEvent(mockEvent);
 
-      const cachedData = localStorage.getItem('malnu_timeline_student-1');
+      const cachedData = localStorage.getItem(STORAGE_KEYS.TIMELINE_CACHE('student-1'));
       expect(cachedData).toBeDefined();
 
       if (cachedData) {
@@ -259,7 +259,7 @@ describe('studentTimelineService', () => {
 
   describe('clearCache', () => {
     it('should clear cache for specific student', async () => {
-      localStorage.setItem('malnu_grades', JSON.stringify([
+      localStorage.setItem(STORAGE_KEYS.GRADES, JSON.stringify([
         {
           id: TEST_CONSTANTS.IDS.GRADE_1,
           studentId: TEST_CONSTANTS.IDS.STUDENT_1,
@@ -287,7 +287,7 @@ describe('studentTimelineService', () => {
     it('should clear all cache when no student ID provided', () => {
       studentTimelineService.clearCache();
 
-      expect(localStorage.getItem('malnu_timeline_student-1')).toBeNull();
+      expect(localStorage.getItem(STORAGE_KEYS.TIMELINE_CACHE('student-1'))).toBeNull();
     });
   });
 });
