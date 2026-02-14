@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - AssignmentGrading Voice Recording Button Accessibility
+
+**Learning**: The AssignmentGrading component's voice recording button (for providing feedback on student submissions) changed visual state (variant changes from 'secondary' to 'primary') to indicate when recording is active, but was missing the `aria-pressed` attribute. Screen reader users couldn't know if voice recording was currently active.
+
+**Action**: Added `aria-pressed={isVoiceRecording && voiceTarget === 'feedback'}` to the voice recording button:
+- Line 910: Added `aria-pressed={isVoiceRecording && voiceTarget === 'feedback'}` to the Button component
+
+**File Fixed**:
+- src/components/AssignmentGrading.tsx - Added aria-pressed to the voice recording feedback button
+
+**Pattern**: Voice recording toggle buttons that change visual state MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Voice input buttons in grading components
+- Any button that uses variant changes to indicate recording state
+- Microphone buttons that toggle on/off
+
+This follows the established pattern from VoiceInputButton.tsx (line 337), ChatWindow.tsx, and other components where aria-pressed was added to toggle buttons.
+
+---
+
 ## 2026-02-14 - GradingActions Batch Mode Toggle Accessibility
 
 **Learning**: The GradingActions component's "Batch Mode" toggle button changed visual state (variant changes from 'secondary' to 'blue-solid') but was missing the `aria-pressed` attribute. Screen reader users couldn't know if batch mode was currently active or inactive when toggling this feature.
