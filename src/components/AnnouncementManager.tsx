@@ -569,6 +569,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
               }}
               variant="secondary"
               disabled={saving}
+              shortcut="Esc"
             >
               Batal
             </Button>
