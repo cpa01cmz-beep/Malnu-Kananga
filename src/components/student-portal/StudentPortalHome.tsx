@@ -70,7 +70,7 @@ export const StudentPortalHome: React.FC<StudentPortalHomeProps> = ({
           <div>
             <h1 className="text-4xl sm:text-3xl md:text-2xl font-bold text-neutral-900 dark:text-white tracking-tight">Portal Siswa</h1>
             <p className="mt-2 text-neutral-600 dark:text-neutral-300 text-lg">
-              Selamat datang kembali, <strong>{loading ? UI_STRINGS.LOADING : studentData?.className || 'Siswa'}</strong>!
+              {UI_STRINGS.WELCOME_BACK}, <strong>{loading ? UI_STRINGS.LOADING : studentData?.className || 'Siswa'}</strong>!
               {extraRole === 'osis' && (
                 <Badge variant="warning" size="sm" className="block mt-1">
                   ⭐ Pengurus OSIS
