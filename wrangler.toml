@@ -21,6 +21,19 @@ binding = "DB"
 database_name = "malnu-kananga-db-dev"
 database_id = "69605f72-4b69-4dd6-a72c-a17006f61254"
 
+# Cloudflare Scheduled Tasks (cron triggers)
+# These endpoints will be called on the specified schedules
+# The worker handles these via fetch to /tasks/backup, /tasks/attendance, etc.
+# More info: https://developers.cloudflare.com/workers/examples/cron-triggers/
+[triggers]
+crons = [
+  "0 0 * * *",      # Daily at midnight - backup check
+  "0 6 * * *",      # Daily at 6 AM - morning attendance reminder
+  "0 18 * * *",     # Daily at 6 PM - evening grade reminder
+  "0 0 * * 0",      # Weekly on Sunday - full backup
+  "0 0 1 * *",      # Monthly on 1st - monthly backup
+]
+
 # KV namespace for rate limiting - create with: wrangler kv:namespace create "RATE_LIMIT_KV"
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
