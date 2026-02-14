@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - MaterialUpload View Toggle Accessibility
+
+**Learning**: The MaterialUpload component had view toggle buttons (Upload, Template, Kelola) that changed visual state based on selection (blue-solid when active, ghost when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't know which view was currently active when switching between upload, template, and management views.
+
+**Action**: Added `aria-pressed={selectedView === 'viewname'}` to all three toggle buttons:
+- Line 169: Added `aria-pressed={selectedView === 'upload'}` to Upload button
+- Line 177: Added `aria-pressed={selectedView === 'templates'}` to Template button
+- Line 185: Added `aria-pressed={selectedView === 'management'}` to Kelola button
+
+**File Fixed**:
+- src/components/material-upload/MaterialUpload.tsx - Added aria-pressed to 3 view toggle buttons
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- View mode toggles (upload/template/management)
+- Tab navigation buttons
+- Filter buttons in any component
+- Any button that changes appearance based on state (primary vs ghost, blue-solid vs ghost)
+
+---
+
 ## 2026-02-14 - StudentInsights Back Button Keyboard Shortcuts
 
 **Learning**: The StudentInsights component had 6 "Kembali" (Back) buttons across different states (loading, error, disabled, enabled) that supported the Alt+Left keyboard shortcut for navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic student-facing component used for viewing AI-generated academic insights.

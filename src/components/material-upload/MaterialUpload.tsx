@@ -166,6 +166,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             onClick={() => setSelectedView('upload')}
             variant={selectedView === 'upload' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'upload'}
           >
             Upload
           </Button>
@@ -173,6 +174,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             onClick={() => setSelectedView('templates')}
             variant={selectedView === 'templates' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'templates'}
           >
             Template
           </Button>
@@ -180,6 +182,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
             onClick={() => setSelectedView('management')}
             variant={selectedView === 'management' ? 'blue-solid' : 'ghost'}
             size="sm"
+            aria-pressed={selectedView === 'management'}
           >
             Kelola
           </Button>
