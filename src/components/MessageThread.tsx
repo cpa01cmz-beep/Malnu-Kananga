@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { apiService } from '../services/apiService';
 import { logger } from '../utils/logger';
+import { TIME_MS } from '../constants';
 import { MessageInput } from './MessageInput';
 import type { DirectMessage, Participant, Conversation } from '../types';
 
@@ -138,10 +139,10 @@ export function MessageThread({ conversationId, currentUser, participant }: Mess
     const now = new Date();
     const diff = now.getTime() - date.getTime();
 
-    if (diff < 60000) return 'Baru saja';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} mnt lalu`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)} jam lalu`;
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)} hari lalu`;
+    if (diff < TIME_MS.ONE_MINUTE) return 'Baru saja';
+    if (diff < TIME_MS.ONE_HOUR) return `${Math.floor(diff / TIME_MS.ONE_MINUTE)} mnt lalu`;
+    if (diff < TIME_MS.ONE_DAY) return `${Math.floor(diff / TIME_MS.ONE_HOUR)} jam lalu`;
+    if (diff < TIME_MS.ONE_WEEK) return `${Math.floor(diff / TIME_MS.ONE_DAY)} hari lalu`;
 
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   };

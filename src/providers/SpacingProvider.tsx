@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SpacingContext } from '../hooks/useSpacing';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, BREAKPOINTS } from '../constants';
 
 export type Density = 'comfortable' | 'compact' | 'spacious';
 
@@ -107,7 +107,7 @@ export const SpacingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
       
       // Use compact on mobile by default
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < BREAKPOINTS.MD) {
         return 'compact';
       }
     }

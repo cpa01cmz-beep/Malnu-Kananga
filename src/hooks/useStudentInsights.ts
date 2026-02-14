@@ -5,7 +5,7 @@ import { Grade, Attendance } from '../types';
 import { authAPI } from '../services/apiService';
 import { logger } from '../utils/logger';
 import { classifyError, logError, ErrorType } from '../utils/errorHandler';
-import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS, ID_FORMAT, getGradeLetter, STUDENT_PERFORMANCE_THRESHOLDS } from '../constants';
+import { STORAGE_KEYS, TIME_MS, ACADEMIC, COMPONENT_DELAYS, ID_FORMAT, getGradeLetter, STUDENT_PERFORMANCE_THRESHOLDS, PROGRESS_REPORT_CONFIG } from '../constants';
 import { useRealtimeEvent } from './useWebSocket';
 import type { RealTimeEvent } from '../services/webSocketService';
 
@@ -132,7 +132,7 @@ export const useStudentInsights = ({
       perf.grade = getGradeFromScore(perf.averageScore);
       
       // Simple trend calculation (can be enhanced)
-      if (perf.assignments.length >= 3) {
+      if (perf.assignments.length >= PROGRESS_REPORT_CONFIG.MIN_ASSIGNMENTS_FOR_TREND) {
         const recent = perf.assignments.slice(-2);
         const earlier = perf.assignments.slice(-4, -2);
         const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;

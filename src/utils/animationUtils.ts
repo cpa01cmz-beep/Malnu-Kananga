@@ -1,6 +1,6 @@
 
 
-import { STAGGER_DELAYS, HAPTIC_PATTERNS } from '../constants';
+import { STAGGER_DELAYS, HAPTIC_PATTERNS, BREAKPOINTS } from '../constants';
 
 /**
  * Animation utilities for consistent, performant, and accessible micro-interactions
@@ -191,7 +191,7 @@ export function triggerHapticFeedback(
     return false; // Don't trigger haptic feedback if user prefers reduced motion
   }
   
-  if ('vibrate' in navigator && window.innerWidth <= 768) {
+  if ('vibrate' in navigator && window.innerWidth <= BREAKPOINTS.MD) {
     const vibrationPattern = Array.isArray(pattern) ? pattern : HAPTIC_PATTERNS[pattern];
     navigator.vibrate(vibrationPattern);
     return true;
