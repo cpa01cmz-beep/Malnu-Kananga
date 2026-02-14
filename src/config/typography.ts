@@ -1,6 +1,7 @@
 /**
  * Enhanced Typography Utility Classes - Palette 🎨
- * Comprehensive typography system for MA Malnu Kananga
+ * Comprehensive typography system for the school portal
+ * Flexy: Using generic naming to support multi-tenant deployments
  */
 
 // import { DESIGN_SYSTEM } from './designSystem';
