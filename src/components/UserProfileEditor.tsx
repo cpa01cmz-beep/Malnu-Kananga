@@ -253,7 +253,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
       />
         <Card className="p-8 text-center">
           <p className="text-neutral-600 dark:text-neutral-400 mb-4">Profil pengguna tidak ditemukan</p>
-          <Button onClick={() => window.history.back()}>Kembali</Button>
+          <Button onClick={() => window.history.back()} shortcut="Alt+Left">Kembali</Button>
         </Card>
       </div>
     );
@@ -402,6 +402,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               type="button"
               variant="ghost"
               onClick={onBack}
+              shortcut="Esc"
             >
               Batal
             </Button>
@@ -438,6 +439,7 @@ const UserProfileEditorContent: React.FC<UserProfileEditorProps> = ({ userId, on
               variant="primary"
               icon={<SaveIcon className="w-5 h-5" />}
               isLoading={isSaving}
+              shortcut="Ctrl+S"
             >
               {isSaving ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_PROFILE}
             </Button>
