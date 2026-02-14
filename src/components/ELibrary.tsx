@@ -392,7 +392,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
     // In real implementation, this would be handled by the API
     setTimeout(() => {
       onShowToast('Terima kasih atas review Anda!', 'info');
-    }, 1000);
+    }, TIME_MS.ONE_SECOND);
   };
 
   const getSubjectName = (material: ELibraryType): string => {

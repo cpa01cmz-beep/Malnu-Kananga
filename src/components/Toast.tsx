@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
 import IconButton from './ui/IconButton';
-import { OPACITY_TOKENS, TIMEOUT_CONFIG, TOAST_UI_STRINGS } from '../constants';
+import { OPACITY_TOKENS, TIMEOUT_CONFIG, TOAST_UI_STRINGS, UI_DELAYS } from '../constants';
 
 export type ToastType = 'success' | 'info' | 'error' | 'warning';
 
@@ -77,7 +77,7 @@ const Toast: React.FC<ToastProps> = ({
     // Show shortcut tooltip after a brief delay to avoid flickering
     shortcutTooltipTimeoutRef.current = setTimeout(() => {
       setShowShortcutTooltip(true);
-    }, 400);
+    }, UI_DELAYS.SHORTCUT_HINT_DELAY);
   }, [progress]);
 
   const handleMouseLeave = useCallback(() => {

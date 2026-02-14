@@ -263,7 +263,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
       handleToast('Keluar dari sistem...', 'info');
       setTimeout(() => {
         window.location.href = '/';
-      }, 1500);
+      }, TIME_MS.ONE_SECOND + TIME_MS.MS500);
     },
   });
 

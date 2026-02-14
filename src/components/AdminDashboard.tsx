@@ -13,7 +13,7 @@ import AICacheManager from './AICacheManager';
 import AnnouncementManager from './AnnouncementManager';
 import MegaphoneIcon from './icons/MegaphoneIcon';
 import { ToastType } from './Toast';
-import { STORAGE_KEYS, OPACITY_TOKENS, RETRY_CONFIG } from '../constants';
+import { STORAGE_KEYS, OPACITY_TOKENS, RETRY_CONFIG, TIME_MS } from '../constants';
 import { logger } from '../utils/logger';
 import { usePushNotifications } from '../hooks/useUnifiedNotifications';
 import { useOfflineDataService, useOfflineData, type CachedAdminData } from '../services/offlineDataService';
@@ -350,7 +350,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
       onShowToast('Keluar dari sistem...', 'info');
       setTimeout(() => {
         window.location.href = '/';
-      }, 1500);
+      }, TIME_MS.ONE_SECOND + TIME_MS.MS500);
     },
   });
 
@@ -387,7 +387,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
     setTimeout(() => {
       setCurrentView(view);
       setNavigatingView(null);
-    }, 300);
+    }, TIME_MS.DEBOUNCE);
   }, []);
 
   // Notify admin of new PPDB registrations

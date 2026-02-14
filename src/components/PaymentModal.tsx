@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
+import { TIME_MS } from '../constants';
 
 export interface PaymentModalProps {
   isOpen: boolean;
@@ -78,7 +79,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     setTimeout(() => {
       onPaymentMethodSelect(method.id);
       onClose();
-    }, 300);
+    }, TIME_MS.DEBOUNCE);
   };
 
   const colorClasses: Record<string, string> = {
