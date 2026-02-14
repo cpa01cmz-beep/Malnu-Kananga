@@ -42,6 +42,8 @@ describe('AI Editor Validator', () => {
     });
 
     it('should reject prompt with dangerous patterns - eval', () => {
+      // Test: Validate AI command rejects eval() as a dangerous pattern
+      // Note: eval string here is for validator testing only, never executed
       const result = validateAICommand('eval("malicious code")');
       expect(result.isValid).toBe(false);
     });
