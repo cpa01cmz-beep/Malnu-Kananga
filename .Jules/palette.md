@@ -28,6 +28,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ChatWindow Toggle Buttons Accessibility
+
+**Learning**: The ChatWindow component had two IconButton toggle buttons (Voice Settings and Thinking Mode) that changed visual state based on selection but were missing `aria-pressed` attributes. These buttons use `variant={state ? 'primary' : 'ghost'}` to indicate active/inactive state visually, but screen reader users couldn't know which mode was currently active.
+
+**Action**: Add `aria-pressed` to both toggle buttons:
+- Voice Settings button: `aria-pressed={showVoiceSettings}` - Indicates when voice settings panel is open
+- Thinking Mode button: `aria-pressed={isThinkingMode}` - Indicates when deep thinking mode is active
+
+**Files Fixed**:
+- src/components/ChatWindow.tsx - Added aria-pressed to Voice Settings button (line 327)
+- src/components/ChatWindow.tsx - Added aria-pressed to Thinking Mode button (line 340)
+
+**Pattern**: Toggle buttons that change appearance based on state MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- IconButton components with toggle functionality
+- Feature toggle buttons (voice settings, thinking mode, etc.)
+- Any button that uses variant changes to indicate state
+- Button groups where one or more can be active simultaneously
+
+**Related**: This follows the same pattern as ActivityFeed.tsx, NotificationHistory.tsx, OsisEvents.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+---
+
 ## 2026-02-14 - Footer Help Button Accessibility
 
 **Learning**: The Footer component had a plain `<button>` element for "Pusat Bantuan" (Help Center) that was missing an `aria-label` attribute. While the button had visible text, screen reader users benefit from descriptive aria-labels that provide complete context about the action being performed, especially for navigation elements in the footer.
