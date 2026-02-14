@@ -4,9 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
-## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
+## 2026-02-14 - AnnouncementManager Toggle Button Accessibility
 
+**Learning**: The AnnouncementManager component had a toggle button for activating/deactivating announcements that changed visual state (different icons for active vs inactive) but was missing `aria-pressed` attribute. Screen reader users couldn't know if an announcement was currently active or inactive when managing announcements.
+
+**Action**: Added `aria-pressed={announcement.isActive}` to the toggle IconButton:
+- Line 448: Added `aria-pressed={announcement.isActive}` to the activate/deactivate button
+- Screen readers now announce "Nonaktifkan" (when active) or "Aktifkan" (when inactive) correctly
+
+**File Fixed**:
+- src/components/AnnouncementManager.tsx - Added aria-pressed to the status toggle button
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses icon changes to indicate state (EyeIcon vs EyeSlashIcon)
+- Status toggle buttons (active/inactive, on/off)
+- Buttons with different icons based on boolean state
+
+This follows the established pattern from 28+ other components where aria-pressed was added to toggle buttons (ActivityFeed, ChatWindow, ELibrary, etc.).
+
+**PR**: #2251
 **Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
 
 **Action**: Added comprehensive keyboard accessibility to material selection cards:
