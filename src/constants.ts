@@ -2767,6 +2767,10 @@ export const LEGACY_STORAGE_KEYS = {
     CLASSES_CACHE: 'malnu_classes_cache',
     CATEGORY_SUGGESTIONS: 'malnu_category_suggestions',
     MATERIAL_STATS: 'malnu_material_stats',
+
+    // Dynamic key patterns (for migration) - Flexy: Centralized legacy patterns
+    STUDENT_GOALS_PREFIX: 'goals_',
+    STUDENT_GOALS_ALT_PREFIX: 'student_goals_',
 } as const;
 
 // Number formatting constants - Flexy: Never hardcode decimal places!
