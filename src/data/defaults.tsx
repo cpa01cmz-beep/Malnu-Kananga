@@ -1,6 +1,7 @@
 import React from 'react';
 import type { FeaturedProgram, LatestNews, User } from '../types';
 import { EXTERNAL_URLS, USER_ROLES, USER_STATUS, APP_CONFIG } from '../constants';
+import { ENV } from '../config/env';
 
 export const INITIAL_PROGRAMS: FeaturedProgram[] = [
   {
@@ -95,59 +96,59 @@ export const RELATED_LINKS = [];
 // DATA AKUN DUMMY UNTUK PENGUJIAN
 // Digunakan sebagai default jika LocalStorage kosong atau di-reset
 export const INITIAL_USERS: User[] = [
-    { 
-        id: '1', 
-        name: 'Ahmad Dahlan', 
-        email: 'admin@malnu.sch.id', 
-        role: USER_ROLES.ADMIN, 
-        status: USER_STATUS.ACTIVE 
+    {
+        id: '1',
+        name: 'Ahmad Dahlan',
+        email: ENV.SCHOOL.CONTACTS.ADMIN,
+        role: USER_ROLES.ADMIN,
+        status: USER_STATUS.ACTIVE
     },
-    { 
-        id: '2', 
-        name: 'Siti Aminah, S.Pd.', 
-        email: 'guru.staff@malnu.sch.id', 
-        role: USER_ROLES.TEACHER, 
-        extraRole: 'staff', // Guru merangkap Staff Tata Usaha/Sarpras
-        status: USER_STATUS.ACTIVE 
+    {
+        id: '2',
+        name: 'Siti Aminah, S.Pd.',
+        email: ENV.SCHOOL.CONTACTS.GURU.STAFF,
+        role: USER_ROLES.TEACHER,
+        extraRole: 'staff',
+        status: USER_STATUS.ACTIVE
     },
-    { 
-        id: '3', 
-        name: 'Budi Santoso', 
-        email: 'siswa.osis@malnu.sch.id', 
-        role: USER_ROLES.STUDENT, 
-        extraRole: 'osis', // Siswa merangkap Ketua OSIS
-        status: USER_STATUS.ACTIVE 
+    {
+        id: '3',
+        name: 'Budi Santoso',
+        email: ENV.SCHOOL.CONTACTS.SISWA.OSIS,
+        role: USER_ROLES.STUDENT,
+        extraRole: 'osis',
+        status: USER_STATUS.ACTIVE
     },
-    { 
-        id: '4', 
-        name: 'Rudi Hartono, M.Pd.', 
-        email: 'guru.biasa@malnu.sch.id', 
-        role: USER_ROLES.TEACHER, 
-        extraRole: null, 
-        status: USER_STATUS.ACTIVE 
+    {
+        id: '4',
+        name: 'Rudi Hartono, M.Pd.',
+        email: ENV.SCHOOL.CONTACTS.GURU.BIASA,
+        role: USER_ROLES.TEACHER,
+        extraRole: null,
+        status: USER_STATUS.ACTIVE
     },
-    { 
-        id: '5', 
-        name: 'Dewi Sartika', 
-        email: 'siswa.biasa@malnu.sch.id', 
-        role: USER_ROLES.STUDENT, 
-        extraRole: null, 
-        status: USER_STATUS.ACTIVE 
+    {
+        id: '5',
+        name: 'Dewi Sartika',
+        email: ENV.SCHOOL.CONTACTS.SISWA.BIASA,
+        role: USER_ROLES.STUDENT,
+        extraRole: null,
+        status: USER_STATUS.ACTIVE
     },
     {
         id: '6',
         name: 'Andi Pratama',
-        email: 'andi.osis@malnu.sch.id',
+        email: ENV.SCHOOL.CONTACTS.SISWA.OSIS,
         role: USER_ROLES.STUDENT,
-        extraRole: 'osis', // Siswa merangkap Wakil Ketua OSIS
+        extraRole: 'osis',
         status: USER_STATUS.ACTIVE
     },
     {
         id: '7',
         name: 'Nurul Hidayah, S.Kom',
-        email: 'nurul.staff@malnu.sch.id',
+        email: ENV.SCHOOL.CONTACTS.GURU.STAFF,
         role: USER_ROLES.TEACHER,
-        extraRole: 'staff', // Guru merangkap Staff IT/Laboran
+        extraRole: 'staff',
         status: USER_STATUS.ACTIVE
     }
 ];
