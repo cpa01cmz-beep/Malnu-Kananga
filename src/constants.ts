@@ -1495,6 +1495,11 @@ export const UI_STRINGS = {
     VERSION: 'Versi',
     PRIVACY_POLICY: 'Kebijakan Privasi',
     TERMS_OF_SERVICE: 'Ketentuan Layanan',
+    SAVE_SCORE: 'Simpan Nilai',
+    SAVE_PROFILE: 'Simpan Profil',
+    SAVE_EVENT: 'Simpan Kegiatan',
+    UPDATE: 'Perbarui',
+    WELCOME_BACK: 'Selamat datang kembali',
 } as const;
 
 // Login-related UI strings

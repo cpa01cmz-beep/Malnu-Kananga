@@ -956,7 +956,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                   shortcut="Ctrl+S"
                   isLoading={submitting}
                 >
-                  {submitting ? UI_STRINGS.SAVING : 'Simpan Nilai'}
+                  {submitting ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_SCORE}
                 </Button>
                 <Button
                   onClick={handleBackToSubmissions}
