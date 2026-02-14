@@ -69,7 +69,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                           </ul>
                              <div className="flex justify-center sm:justify-start gap-3 mt-6">
                                 <SocialLink
-                                    icon={<FacebookIcon ariaLabel="Facebook MA Malnu Kananga" />}
+                                    icon={<FacebookIcon ariaLabel={`Facebook ${APP_CONFIG.SCHOOL_NAME}`} />}
                                     label="Facebook"
                                     variant="default"
                                     size="lg"
@@ -77,7 +77,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     disabledReason="Facebook akan tersedia segera"
                                 />
                                 <SocialLink
-                                    icon={<InstagramIcon ariaLabel="Instagram MA Malnu Kananga" />}
+                                    icon={<InstagramIcon ariaLabel={`Instagram ${APP_CONFIG.SCHOOL_NAME}`} />}
                                     label="Instagram"
                                     variant="default"
                                     size="lg"
@@ -85,7 +85,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     disabledReason="Instagram akan tersedia segera"
                                 />
                                 <SocialLink
-                                    icon={<YoutubeIcon ariaLabel="YouTube MA Malnu Kananga" />}
+                                    icon={<YoutubeIcon ariaLabel={`YouTube ${APP_CONFIG.SCHOOL_NAME}`} />}
                                     label="YouTube"
                                     variant="default"
                                     size="lg"
