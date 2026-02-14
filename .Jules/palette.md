@@ -4,6 +4,31 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ParentDashboard Plain Button Type Attribute
+
+**Learning**: The ParentDashboard component had five plain `<button>` elements that were missing the `type="button"` attribute. When buttons are nested inside form elements, missing `type="button"` causes them to default to `type="submit"`, potentially causing accidental form submissions. This is a high-traffic parent-facing component used by parents to monitor their children's academic progress.
+
+**Action**: Added `type="button"` to all five plain button elements in ParentDashboard.tsx:
+- Line 557: Added `type="button"` to child selection buttons (in map callback)
+- Line 607: Added `type="button"` to "Tampilkan Wawasan" (Show Insights) button
+- Line 627: Added `type="button"` to "Sembunyikan" (Hide) button
+- Line 789: Added `type="button"` to refresh recommendations button
+- Line 846: Added `type="button"` to actionable recommendation buttons
+
+**File Fixed**:
+- src/components/ParentDashboard.tsx - Added type="button" to 5 plain button elements
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is a subtle but critical accessibility issue that can cause user frustration.
+
+---
+
 ## 2026-02-14 - AssignmentGrading Back Button Keyboard Shortcuts
 
 **Learning**: The AssignmentGrading component had three "Kembali" (Back) buttons across different views (assignment list, submissions list, submission detail) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic teacher component used for grading student assignments.
