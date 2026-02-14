@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const _TouchEvent: any;
 import { XMarkIcon } from '../icons/MaterialIcons';
 
 export interface ActionSheetProps {
@@ -71,15 +69,13 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
     let currentY = 0;
     let isDragging = false;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleStart = (e: any) => {
+    const handleStart = (e: TouchEvent) => {
       startY = e.touches[0].clientY;
       isDragging = true;
       sheet.style.transition = 'none';
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleMove = (e: any) => {
+    const handleMove = (e: TouchEvent) => {
       if (!isDragging) return;
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
