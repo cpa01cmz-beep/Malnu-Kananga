@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compression from 'vite-plugin-compression2'
+import purgecss from 'vite-plugin-purgecss'
 import {
   PWA_CONFIG,
   CACHE_CONFIG,
@@ -175,6 +176,27 @@ export default defineConfig(({ mode }) => {
         algorithms: ['brotliCompress', 'gzip'],
         threshold: 1024,
       }),
+      // BroCula: PurgeCSS to remove unused CSS - targets 45+ KiB savings
+      purgecss({
+        content: [
+          './index.html',
+          './src/**/*.tsx',
+          './src/**/*.ts',
+          './src/**/*.css',
+        ],
+        safelist: [
+          /^(bg|text|border|hover|focus|active|disabled|animate|transition|transform|shadow|rounded|opacity)-/,
+          'sr-only',
+          'not-sr-only',
+          'loading',
+          'animate-spin',
+          'animate-pulse',
+          'animate-bounce',
+        ],
+        defaultExtractor: (content) => {
+          return content.match(/[\w-/:]+(?<!:)/g) || []
+        },
+      }) as unknown as Plugin,
       // Bundle analyzer - generates stats.html after build
       visualizer({
         filename: ANALYZER_CONFIG.FILENAME,
