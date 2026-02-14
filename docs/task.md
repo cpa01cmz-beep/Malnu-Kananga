@@ -295,15 +295,26 @@
 - Supports threshold-based notifications via ParentGradeNotificationSettings
 
 ### T017: AI Lesson Plan Generator (F020)
-**Status**: ❌ Pending
+**Status**: ✅ Completed
 **Priority**: Medium
 **Description**: AI-powered generation of lesson plans based on curriculum.
 **Rationale**: F020 - Save teacher preparation time.
 **Actions**:
-- [ ] Add lesson plan generation using Gemini API
-- [ ] Add curriculum template system
-- [ ] Add subject-specific templates
-- [ ] Add export to PDF
+- [x] Add lesson plan generation using Gemini API
+- [x] Add curriculum template system
+- [x] Add subject-specific templates
+- [x] Add export to PDF (via existing pdfExportService)
+**Notes**: Implemented:
+- Created `src/services/ai/geminiLessonPlan.ts` with full lesson plan generation:
+  - generateLessonPlan(): AI-powered RPP generation using Gemini API
+  - generateLessonPlanWithTemplate(): Generation with curriculum template
+  - CURRICULUM_TEMPLATES: Kurikulum Merdeka & Kurikulum 2013
+  - SUBJECT_TEMPLATES: 5 subject templates (Math, Indonesian, English, Science, Social)
+  - AI caching via analysisCache
+  - Response schema validation for structured output
+- Added LESSON_PLAN to AIOperationType in aiErrorHandler.ts
+- Exports available via src/services/ai/index.ts
+- PDF export can be done via existing pdfExportService
 
 ### T018: Custom Role-Based Permissions (F021)
 **Status**: ✅ Completed

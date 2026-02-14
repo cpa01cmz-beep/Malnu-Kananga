@@ -28,6 +28,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ActivityFeed Pause Toggle Accessibility
+
+**Learning**: The ActivityFeed component had a pause/resume toggle button that used visual state (primary vs ghost variant) to indicate whether updates were paused, but was missing `aria-pressed` attribute. Screen reader users couldn't know if the activity feed updates were currently paused or active.
+
+**Action**: Add `aria-pressed` and `aria-label` to the pause toggle button:
+- `aria-pressed={localPaused}` - Indicates toggle state to screen readers
+- `aria-label={localPaused ? 'Lanjutkan pembaruan aktivitas' : 'Jeda pembaruan aktivitas'}` - Clear context in Indonesian
+
+**File Fixed**:
+- src/components/ActivityFeed.tsx - Added aria-pressed and aria-label to pause toggle button (line 367-368)
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses variant changes to indicate state (primary vs ghost)
+- Pause/resume toggles
+- Play/pause buttons
+- Feature on/off toggles
+
+---
+
 ## 2026-02-14 - ChatWindow Toggle Buttons Accessibility
 
 **Learning**: The ChatWindow component had two IconButton toggle buttons (Voice Settings and Thinking Mode) that changed visual state based on selection but were missing `aria-pressed` attributes. These buttons use `variant={state ? 'primary' : 'ghost'}` to indicate active/inactive state visually, but screen reader users couldn't know which mode was currently active.

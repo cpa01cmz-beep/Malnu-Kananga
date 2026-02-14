@@ -365,6 +365,8 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
               size="sm"
               variant={localPaused ? 'primary' : 'ghost'}
               onClick={handlePauseToggle}
+              aria-pressed={localPaused}
+              aria-label={localPaused ? 'Lanjutkan pembaruan aktivitas' : 'Jeda pembaruan aktivitas'}
               title={localPaused ? 'Lanjutkan update' : 'Jeda update'}
             >
               {localPaused ? '▶' : '⏸'}
