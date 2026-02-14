@@ -212,6 +212,16 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                   : 'hover:border-blue-300 dark:hover:border-blue-700'
               }`}
               onClick={() => toggleMaterial(material.id)}
+              onKeyDown={(e: React.KeyboardEvent) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleMaterial(material.id);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-pressed={selectedMaterials.includes(material.id)}
+              aria-label={`${selectedMaterials.includes(material.id) ? 'Hapus pilihan' : 'Pilih'} materi ${material.title}`}
             >
               <div className="flex items-start gap-3">
                 <input
