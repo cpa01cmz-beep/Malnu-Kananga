@@ -4,6 +4,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - UserProfileEditor Password Visibility Toggle Accessibility
+
+**Learning**: The UserProfileEditor component's password visibility toggle buttons (current password, new password, confirm password) were missing `aria-pressed`, `tooltip`, and `shortcut` attributes. These are toggle buttons that change visual state (eye icon to eye-slash icon), but screen reader users couldn't know if password was currently visible or hidden. Additionally, users couldn't discover the efficient Ctrl+H keyboard shortcut without visual hints.
+
+**Action**: Added accessibility and UX improvements to all three password visibility toggle buttons:
+- Line 488: Added `aria-pressed={passwordVisibility.currentPassword}` - indicates toggle state to screen readers
+- Line 489: Added `tooltip={passwordVisibility.currentPassword ? 'Sembunyikan password' : 'Tampilkan password'}` - visible on hover/focus
+- Line 490: Added `shortcut="Ctrl+H"` - keyboard shortcut hint following LoginModal pattern
+- Same attributes added to new password toggle (lines 514-516) and confirm password toggle (lines 539-541)
+
+**File Fixed**:
+- src/components/UserProfileEditor.tsx - Added aria-pressed, tooltip, and shortcut to 3 password visibility toggles
+
+**Pattern**: Password visibility toggle buttons in forms should consistently have:
+- `aria-pressed={boolean}` - screen reader awareness of toggle state
+- `tooltip` - visual hint on hover/focus
+- `shortcut="Ctrl+H"` - keyboard shortcut following LoginModal pattern
+
+This follows the established pattern from LoginModal.tsx (line 257-258) where password visibility toggles have full accessibility support.
+
+**PR**: #2237
+
+---
+
 ## 2026-02-14 - UserProfileEditor Keyboard Shortcuts
 
 **Learning**: The UserProfileEditor component's action buttons (Kembali, Batal, Simpan Profil) were missing keyboard shortcut hints. This is a high-traffic component used by all user roles (students, teachers, parents, admins) for editing their profile information. Without shortcuts, users couldn't discover efficient keyboard navigation.
