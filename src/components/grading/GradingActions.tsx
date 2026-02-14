@@ -382,6 +382,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
             icon={<LightBulbIcon className="w-5 h-5" />}
             isLoading={isAnalyzing}
             aria-label="Analisis nilai siswa menggunakan AI"
+            shortcut="Ctrl+I"
             className="rounded-full shadow-md"
           >
             {isAnalyzing ? "Menganalisis..." : "Analisis AI"}
