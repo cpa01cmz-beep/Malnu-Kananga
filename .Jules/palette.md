@@ -4,6 +4,58 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Footer Help Button Tooltip
+
+**Learning**: The "Pusat Bantuan" (Help Center) button in the Footer component had an `aria-label` for screen reader accessibility but lacked a visible tooltip for sighted users. While screen reader users understood the button's purpose through the aria-label, sighted users had to rely on the text "Pusat Bantuan" alone without additional context about what would happen when clicked.
+
+**Action**: Wrapped the Footer help button with the Tooltip component to provide visible context on hover/focus:
+- Imported `Tooltip` component from './ui/Tooltip'
+- Wrapped the "Pusat Bantuan" button with `<Tooltip content="Buka pusat bantuan dan dokumentasi" position="top">`
+- The tooltip content matches the aria-label for consistency across assistive technologies
+- Positioned the tooltip at 'top' to avoid overlapping with footer content
+
+**File Fixed**:
+- src/components/Footer.tsx - Added Tooltip wrapper to "Pusat Bantuan" button (lines 49-53)
+
+**Pattern**: Plain `<button>` elements with visible text should still have explicit tooltips when:
+1. The button triggers a modal or navigates to documentation (not a standard link)
+2. Additional context would help users understand the action
+3. The pattern exists elsewhere in the codebase for similar actions
+
+This ensures both screen reader users (via aria-label) and sighted users (via tooltip) have clear understanding of interactive elements.
+
+---
+
+## 2026-02-14 - Breadcrumb Dropdown Keyboard Navigation
+
+**Learning**: The Breadcrumb component's dropdown menu for collapsed items was missing keyboard navigation support. When breadcrumbs had too many items and showed a "...n items" dropdown, keyboard users couldn't navigate through the dropdown items using Arrow keys or close it with Escape. Screen reader users also didn't have proper ARIA roles to understand the menu structure.
+
+**Action**: Implemented comprehensive keyboard navigation and ARIA support for the Breadcrumb dropdown:
+- Added `useRef` array to track dropdown item elements for focus management
+- Added `useEffect` to automatically focus the first item when dropdown opens
+- Created `handleDropdownKeyDown` function to manage keyboard interactions:
+  - ArrowDown: Moves focus to next item (wraps around to first)
+  - ArrowUp: Moves focus to previous item (wraps around to last)
+  - Escape: Closes dropdown and returns focus to trigger button
+- Added proper ARIA attributes:
+  - Dropdown button: `aria-haspopup="menu"`, `aria-expanded`, `aria-label` with item count
+  - Dropdown container: `role="menu"`, `aria-label="Item breadcrumb tersembunyi"`
+  - Dropdown items: `role="menuitem"`, `tabIndex={0}`
+- Added focus ring styles to dropdown items for visibility
+
+**File Fixed**:
+- src/components/ui/Breadcrumb.tsx - Added keyboard navigation and ARIA roles to dropdown
+
+**Pattern**: Dropdown menus in UI components MUST implement:
+1. **Keyboard Navigation**: ArrowUp/ArrowDown to navigate items, Escape to close
+2. **Focus Management**: Focus first item on open, return focus to trigger on close
+3. **ARIA Roles**: `role="menu"` on container, `role="menuitem"` on items
+4. **Accessible Labels**: Descriptive aria-labels for screen reader context
+
+This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
+
+---
+
 ## 2026-02-14 - StudentQuiz Confirmation Modal Keyboard Shortcuts
 
 **Learning**: The StudentQuiz component's confirmation modal (shown when students click "Kirim Kuis" to submit their quiz) had "Batal" (Cancel) and "Ya, Kirim Kuis" (Yes, Submit Quiz) buttons that supported keyboard shortcuts (Esc to cancel, Enter to submit) but users couldn't discover them without visual hints. This is a critical action point where students make an irreversible decision about submitting their quiz answers.
