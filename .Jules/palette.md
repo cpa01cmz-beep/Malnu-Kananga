@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - AssignmentGrading Status Filter Accessibility
+
+**Learning**: The AssignmentGrading component had status filter toggle buttons (Semua, Belum Dinilai, Sudah Dinilai) that changed visual state (variant from primary to secondary) based on selection but were missing `aria-pressed` attributes. This is a high-traffic component where teachers filter and grade assignments daily, and screen reader users couldn't determine which filter was currently active.
+
+**Action**: Added `aria-pressed={statusFilter === 'value'}` to all three filter buttons:
+- Line 630: Added `aria-pressed={statusFilter === 'all'}` to "Semua" button
+- Line 638: Added `aria-pressed={statusFilter === 'ungraded'}` to "Belum Dinilai" button
+- Line 646: Added `aria-pressed={statusFilter === 'graded'}` to "Sudah Dinilai" button
+
+**File Fixed**:
+- src/components/AssignmentGrading.tsx - Added aria-pressed to 3 status filter buttons
+
+**Pattern**: Toggle button groups that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility:
+- Filter buttons in lists and tables
+- Status/category filter buttons
+- View mode toggles
+- Any button that changes appearance based on state
+
+This follows the same pattern as ActivityFeed.tsx, MessageList.tsx, ELibrary.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+---
+
 ## 2026-02-14 - StudentInsights Back Button Keyboard Shortcuts
 
 **Learning**: The StudentInsights component had 6 "Kembali" (Back) buttons across different states (loading, error, disabled, enabled) that supported the Alt+Left keyboard shortcut for navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic student-facing component used for viewing AI-generated academic insights.
