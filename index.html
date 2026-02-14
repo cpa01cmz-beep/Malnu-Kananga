@@ -77,10 +77,12 @@
       }
 
       /* Reserve space for images to prevent CLS */
+      /* Note: aspect-ratio should be set via inline style or computed values, not attr() */
       img[width][height] {
-        aspect-ratio: attr(width) / attr(height);
+        /* Let the browser maintain aspect ratio naturally when width/height attrs present */
+        height: auto;
       }
-      
+
       /* BroCula: Additional image CLS prevention for images without explicit dimensions */
       img:not([width]):not([height]) {
         /* Minimum height to reserve space while loading */
@@ -88,12 +90,11 @@
         /* Prevent layout shift by containing the element */
         contain: layout;
       }
-      
+
       /* Optimize LCP by prioritizing above-the-fold images */
       img[fetchpriority="high"] {
         content-visibility: visible;
-        /* Ensure high priority images load immediately */
-        loading: eager;
+        /* Note: loading="eager" should be set as HTML attribute, not CSS */
       }
 
       /* Prevent layout shift from dynamic content */
