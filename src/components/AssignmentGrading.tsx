@@ -627,6 +627,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
               onClick={() => setStatusFilter('all')}
               variant={statusFilter === 'all' ? 'primary' : 'secondary'}
               size="sm"
+              aria-pressed={statusFilter === 'all'}
             >
               Semua ({submissions.length})
             </Button>
@@ -634,6 +635,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
               onClick={() => setStatusFilter('ungraded')}
               variant={statusFilter === 'ungraded' ? 'primary' : 'secondary'}
               size="sm"
+              aria-pressed={statusFilter === 'ungraded'}
             >
               Belum Dinilai ({ungradedCount})
             </Button>
@@ -641,6 +643,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
               onClick={() => setStatusFilter('graded')}
               variant={statusFilter === 'graded' ? 'primary' : 'secondary'}
               size="sm"
+              aria-pressed={statusFilter === 'graded'}
             >
               Sudah Dinilai ({gradedCount})
             </Button>
