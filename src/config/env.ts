@@ -36,8 +36,23 @@ export const ENV = {
   EXTERNAL: {
     GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
     GOOGLE_FONTS_JETBRAINS: import.meta.env.VITE_GOOGLE_FONTS_JETBRAINS || 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
+    RDM_PORTAL: String(import.meta.env.VITE_RDM_PORTAL || 'https://rdm.ma-malnukananga.sch.id'),
   },
 } as const;
+
+// School Legal Documents Configuration
+export const SCHOOL_DOCUMENTS = {
+  SK_PENDIRIAN: {
+    NUMBER: import.meta.env.VITE_SK_PENDIRIAN_NUMBER || 'D/Wi/MA./101/2000',
+    DATE: import.meta.env.VITE_SK_PENDIRIAN_DATE || '20-09-2000',
+  },
+  SK_OPERASIONAL: {
+    NUMBER: import.meta.env.VITE_SK_OPERASIONAL_NUMBER || 'D/Wi/MA./101/2000',
+    DATE: import.meta.env.VITE_SK_OPERASIONAL_DATE || '20-09-2000',
+  },
+} as const;
+
+export type SchoolDocumentsConfig = typeof SCHOOL_DOCUMENTS;
 
 export type SchoolConfig = typeof ENV.SCHOOL;
 export type EmailConfig = typeof ENV.EMAIL;

@@ -1,5 +1,6 @@
 
 import { VoiceLanguage } from './types';
+import { SCHOOL_DOCUMENTS } from './config/env';
 
 /**
  * Storage Key Prefix
@@ -279,20 +280,14 @@ export const APP_CONFIG = {
     SCHOOL_PHONE: ENV.SCHOOL.PHONE,
     SCHOOL_EMAIL: ENV.SCHOOL.EMAIL,
     SCHOOL_WEBSITE: ENV.SCHOOL.WEBSITE,
-    SK_PENDIRIAN: {
-        NUMBER: 'D/Wi/MA./101/2000',
-        DATE: '20-09-2000',
-    },
-    SK_OPERASIONAL: {
-        NUMBER: 'D/Wi/MA./101/2000',
-        DATE: '20-09-2000',
-    },
+    SK_PENDIRIAN: SCHOOL_DOCUMENTS.SK_PENDIRIAN,
+    SK_OPERASIONAL: SCHOOL_DOCUMENTS.SK_OPERASIONAL,
 } as const;
 
 export const EXTERNAL_URLS = {
     MAKER_SUITE_API: 'https://makersuite.google.com/app/apikey',
     PLACEHOLDER_IMAGE_BASE: 'https://placehold.co/600x400?text=',
-    RDM_PORTAL: 'https://rdm.ma-malnukananga.sch.id',
+    RDM_PORTAL: ENV.EXTERNAL.RDM_PORTAL,
     KEMENAG: 'https://kemenag.go.id',
     EMIS: 'https://emis.kemenag.go.id',
     SIMPATIKA: 'https://simpatika.kemenag.go.id',
