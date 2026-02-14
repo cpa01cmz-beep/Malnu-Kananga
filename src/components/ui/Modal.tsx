@@ -158,6 +158,7 @@ const Modal: React.FC<ModalProps> = ({
       className={getContainerClasses()}
       onClick={handleBackdropClick}
       role="presentation"
+      data-testid="modal-backdrop"
     >
       <div
         ref={modalRef}

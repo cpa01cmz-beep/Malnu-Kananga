@@ -6,10 +6,7 @@ import Modal from '../ui/Modal';
 
 // Mock the useFocusTrap hook
 vi.mock('../../hooks/useFocusTrap', () => ({
-  useFocusTrap: vi.fn(() => ({
-    modalRef: { current: null },
-    trapFocus: vi.fn()
-  }))
+  useFocusTrap: vi.fn(() => ({ current: null }))
 }));
 
 // Mock constants
