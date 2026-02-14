@@ -97,6 +97,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           ariaLabel={cancelText}
           variant="secondary"
           size="md"
+          shortcut="Esc"
         >
           {cancelText}
         </Button>
@@ -107,6 +108,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           variant={styles.confirmVariant}
           size="md"
           isLoading={isLoading}
+          shortcut="Enter"
         >
           {confirmText}
         </Button>
