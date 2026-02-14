@@ -73,6 +73,7 @@ const SchoolInsightsContent: React.FC = () => {
           {error || 'Belum ada data insight'}
         </p>
         <button
+          type="button"
           onClick={refreshInsights}
           className="text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
         >
@@ -597,6 +598,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 component-rhythm-lg animate-fade-in-up">
                     {canAccess('content.update').canAccess && (
                         <button
+                            type="button"
                             onClick={onOpenEditor}
                             aria-label="Buka AI Site Editor"
                              className={`${getGradientClass('INDIGO_MAIN')} rounded-2xl p-6 lg:p-8 text-white shadow-xl hover:shadow-2xl transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] group focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-neutral-900 relative overflow-hidden`}
@@ -678,6 +680,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {canAccess('system.admin').canAccess && (
                         <button
+                            type="button"
                             onClick={() => handleViewNavigation('ai-cache')}
                             disabled={navigatingView === 'ai-cache'}
                             aria-label="Buka AI Cache Manager"
@@ -693,6 +696,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
 
                     {canAccess('system.admin').canAccess && (
                         <button
+                            type="button"
                             onClick={() => handleViewNavigation('permissions')}
                             disabled={navigatingView === 'permissions'}
                             aria-label="Buka Permission System"
@@ -820,6 +824,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onOpenEditor, onShowToa
                         </p>
                     </div>
                     <button
+                        type="button"
                         onClick={() => setCurrentView('home')}
                         className="px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-all duration-200 ease-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
                     >
