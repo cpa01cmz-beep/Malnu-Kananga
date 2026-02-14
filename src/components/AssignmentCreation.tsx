@@ -288,7 +288,7 @@ const AssignmentCreation: React.FC<AssignmentCreationProps> = ({ onBack, onShowT
             Buat tugas untuk siswa dengan rubrik dan lampiran
           </p>
         </div>
-        <Button variant="secondary" onClick={onBack}>
+        <Button variant="secondary" onClick={onBack} shortcut="Alt+Left">
           Kembali
         </Button>
       </div>
