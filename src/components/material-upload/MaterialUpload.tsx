@@ -155,7 +155,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
       />
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">
             ← Kembali ke Dashboard
           </Button>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Manajemen Materi</h2>

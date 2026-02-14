@@ -380,7 +380,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       <div className="animate-fade-in-up">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">
               ← Kembali ke Portal
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analitik Nilai Kelas</h2>
@@ -408,7 +408,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
       <div className="animate-fade-in-up">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">
               ← Kembali ke Portal
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analitik Nilai Kelas</h2>
