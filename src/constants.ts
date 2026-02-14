@@ -2843,6 +2843,7 @@ export const PROGRESS_REPORT_CONFIG = {
     CACHE_TTL_DAYS: 7,
     MAX_REPORTS_PER_STUDENT: 10,
     GRADE_TREND_THRESHOLD: 5, // Difference threshold for trend calculation
+    MIN_ASSIGNMENTS_FOR_TREND: 3, // Minimum assignments needed for trend calculation
     LETTER_GRADE_THRESHOLDS: {
         A: 90,
         B: 80,
@@ -3018,6 +3019,11 @@ export const UI_DIMENSIONS = {
         CARD_BORDER_RADIUS: '8px',
         BUTTON_BORDER_RADIUS: '6px',
         AVATAR_BORDER_RADIUS: '9999px',
+    },
+
+    // Image dimensions
+    IMAGE: {
+        FALLBACK_MIN_HEIGHT: '150px',
     },
 
     // Loading and progress

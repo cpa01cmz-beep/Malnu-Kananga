@@ -6,7 +6,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import PageTransition, { TransitionType, TransitionEasing } from './PageTransition';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
-import { TIME_MS, ROUTE_TRANSITION_DURATIONS } from '../../constants';
+import { TIME_MS, ROUTE_TRANSITION_DURATIONS, BREAKPOINTS } from '../../constants';
 
 interface RouteTransition {
   from: string;
@@ -84,7 +84,7 @@ export const RouteTransitionProvider: React.FC<RouteTransitionProviderProps> = (
     setTransitionConfig(finalConfig);
     
     // Haptic feedback for mobile navigation
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= BREAKPOINTS.MD) {
       onTap();
     }
 

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { PhotoIcon } from './icons/PhotoIcon';
+import { UI_DIMENSIONS } from '../constants';
 
 interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackText?: string;
@@ -33,7 +34,7 @@ const ImageWithFallback: React.FC<ImageWithFallbackProps> = ({
           width: width ? `${width}px` : '100%',
           height: height ? `${height}px` : 'auto',
           aspectRatio: width && height ? `${width}/${height}` : '16/9',
-          minHeight: '150px'
+          minHeight: UI_DIMENSIONS.IMAGE.FALLBACK_MIN_HEIGHT
         }}
       >
         <PhotoIcon className="w-12 h-12 mb-2" aria-hidden="true" />
