@@ -27,6 +27,7 @@ import Button from '../ui/Button';
 import ErrorMessage from '../ui/ErrorMessage';
 import { authAPI } from '../../services/apiService';
 import { useStudentPortalData } from './useStudentPortalData';
+import { TIME_MS } from '../../constants';
 import { StudentPortalHome } from './StudentPortalHome';
 import { useFilteredMenuItems } from './StudentPortalMenu';
 import { StudentPortalOffline } from './StudentPortalOffline';
@@ -158,7 +159,7 @@ const StudentPortal: React.FC<StudentPortalProps> = ({ onShowToast, extraRole })
       onShowToast('Keluar dari sistem...', 'info');
       setTimeout(() => {
         window.location.href = '/';
-      }, 1500);
+      }, TIME_MS.ONE_SECOND + TIME_MS.MS500);
     },
   });
 

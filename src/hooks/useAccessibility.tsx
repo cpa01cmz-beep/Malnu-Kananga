@@ -1,4 +1,5 @@
 import React from 'react';
+import { TIME_MS } from '../constants';
 
 // Hook to detect if user prefers reduced motion
 export function useReducedMotion(): boolean {
@@ -75,7 +76,7 @@ export function useAnnouncer() {
         if (announcerRef.current) {
           announcerRef.current.textContent = '';
         }
-      }, 1000);
+      }, TIME_MS.ONE_SECOND);
     }
   }, []);
 
