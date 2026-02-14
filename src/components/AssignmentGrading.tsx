@@ -907,6 +907,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
                               ? 'Browser tidak mendukung rekaman suara'
                               : undefined
                         }
+                        aria-pressed={isVoiceRecording && voiceTarget === 'feedback'}
                         variant={isVoiceRecording && voiceTarget === 'feedback' ? 'primary' : 'secondary'}
                         size="sm"
                         className="flex items-center"
