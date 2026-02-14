@@ -6,6 +6,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - NotificationCenter Test Button Keyboard Shortcut
+
+**Learning**: The NotificationCenter component had a "Tes" (Test) button for sending test notifications that was missing a keyboard shortcut hint, while other action buttons in the same component already had shortcuts ("Mark All as Read" - Ctrl+D, "Clear History" - Ctrl+Shift+X). This created inconsistency in the user experience and made the test feature less discoverable for keyboard users.
+
+**Action**: Added `shortcut="Ctrl+T"` to the test notification button in NotificationCenter.tsx (line 309):
+- Follows the existing Button component shortcut pattern
+- Uses Ctrl+T (T for Test) which is intuitive and doesn't conflict with other shortcuts
+- Maintains consistency with other action buttons in the component
+
+**Pattern**: When adding shortcuts to buttons in a component with multiple actions:
+1. Check existing shortcuts to avoid conflicts
+2. Use intuitive letters (T for Test, S for Save, N for New)
+3. Maintain consistency with Ctrl/Cmd modifier for actions
+4. Document in component or follow established conventions
+
+**Why it matters**: Consistent keyboard shortcuts improve accessibility for keyboard users and power users. When some buttons have shortcuts and others don't, it creates a fragmented experience. The NotificationCenter is a frequently-used component, so making all actions keyboard-accessible improves overall UX efficiency.
+
+**PR**: #2335
+
+---
+
 ## 2026-02-14 - Duplicate Keyboard Shortcut in VoiceSettings
 
 **Learning**: The VoiceSettings component's Backup & Restore section had two adjacent buttons ("Pulihkan" and "Hapus") both with `shortcut="Enter"`. This creates keyboard confusion - pressing Enter will trigger the first button in DOM order, potentially causing unintended actions (especially dangerous for a "Hapus/Delete" action).
@@ -68,6 +89,7 @@ This follows the same pattern documented from StudyPlanAnalytics.tsx, VoiceNotif
 - src/components/grading/GradingList.tsx - Added type and aria-label to reset button
 
 **PR**: #2327
+>>>>>>> origin/main
 
 ---
 
