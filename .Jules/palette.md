@@ -4,6 +4,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - AssignmentCreation Back Button Keyboard Shortcut
+
+**Learning**: The AssignmentCreation component's "Kembali" (Back) button at line 291 was missing a keyboard shortcut hint, while other navigation buttons in the same component (Batal with `shortcut="Esc"`, Simpan Draft with `shortcut="Ctrl+S"`, Publikasikan Tugas with `shortcut="Ctrl+Enter"`) already had shortcuts. This inconsistency made it harder for keyboard users to discover the Alt+Left shortcut for navigating back.
+
+**Action**: Add `shortcut="Alt+Left"` prop to the "Kembali" button:
+- Line 291: Added `shortcut="Alt+Left"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Alt+Left follows the browser back navigation convention, making it intuitive
+- Completes the consistent keyboard shortcut coverage for AssignmentCreation navigation
+
+**File Fixed**:
+- src/components/AssignmentCreation.tsx - Added shortcut prop to the back button (line 291)
+
+**Pattern**: All navigation buttons in form/wizard components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"` or `shortcut="Ctrl+Enter"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- Complete the set: don't leave one button without a shortcut if others have them
+
+**Related**: This follows the same pattern as QuizGenerator.tsx, StudentInsights.tsx, and other wizard components. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
 ## 2026-02-14 - MaterialUpload View Toggle Accessibility
 
 **Learning**: The MaterialUpload component had view toggle buttons (Upload, Template, Kelola) that changed visual state based on selection (blue-solid when active, ghost when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't know which view was currently active when switching between upload, template, and management views.
