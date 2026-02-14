@@ -4,6 +4,7 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+<<<<<<< HEAD
 ## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
 **Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
@@ -54,10 +55,26 @@ This follows the same pattern as ActivityFeed.tsx, ELibrary.tsx, and other compo
 
 ---
 
-<<<<<<< HEAD
-# Palette's UX Journal
+---
 
-Critical UX/accessibility learnings specific to MA Malnu Kananga school management system.
+## 2026-02-14 - UserProfileEditor Keyboard Shortcuts
+
+**Learning**: The UserProfileEditor component's action buttons (Kembali, Batal, Simpan Profil) were missing keyboard shortcut hints. This is a high-traffic component used by all user roles (students, teachers, parents, admins) for editing their profile information. Without shortcuts, users couldn't discover efficient keyboard navigation.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in UserProfileEditor.tsx:
+- Line 256: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 405: Added `shortcut="Esc"` to the Batal (Cancel) button - follows modal/form cancel pattern
+- Line 442: Added `shortcut="Ctrl+S"` to the Simpan Profil (Save Profile) button - follows standard save pattern
+
+**File Fixed**:
+- src/components/UserProfileEditor.tsx - Added shortcut props to 3 action buttons
+
+**Pattern**: High-traffic form components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save/Submit buttons: `shortcut="Ctrl+S"`
+
+This follows the established pattern from other high-traffic components like GradingManagement.tsx, AttendanceManagement.tsx, and LearningProgressReport.tsx where Ctrl+S is used for save operations.
 
 ---
 
