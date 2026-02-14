@@ -157,7 +157,7 @@ export const SkeletonPresets = {
   // Dashboard skeletons
   dashboardCard: { variant: 'card' as SkeletonVariant, lines: 4, className: 'mb-4' },
   dashboardStats: { variant: 'dashboard' as SkeletonVariant },
-  dashboardChart: { variant: 'chart' as SkeletonVariant, height: '300px' },
+  dashboardChart: { variant: 'chart' as SkeletonVariant, height: UI_DIMENSIONS.SKELETON.CHART_HEIGHT },
   
   // Form skeletons
   formField: { variant: 'form' as SkeletonVariant, lines: 1 },

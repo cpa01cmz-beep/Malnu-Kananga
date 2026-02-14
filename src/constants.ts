@@ -230,6 +230,15 @@ export const STORAGE_KEYS = {
     COMMAND_PALETTE_RECENT: 'malnu_command_palette_recent',
     GLOBAL_SEARCH_RECENT: 'malnu_global_search_recent',
     SPACING_DENSITY: 'malnu_spacing_density',
+    
+    // Scheduled Automation Configuration (T015 - new)
+    SCHEDULED_TASKS: 'malnu_scheduled_tasks',
+    SCHEDULED_TASK_HISTORY: 'malnu_scheduled_task_history',
+    SCHEDULED_BACKUP_JOBS: 'malnu_scheduled_backup_jobs',
+    SCHEDULED_ATTENDANCE_NOTIFICATIONS: 'malnu_scheduled_attendance_notifications',
+    SCHEDULED_GRADE_REMINDERS: 'malnu_scheduled_grade_reminders',
+    SCHEDULED_AUTOMATION_SETTINGS: 'malnu_scheduled_automation_settings',
+    ACADEMIC_CALENDAR_TRIGGERS: 'malnu_academic_calendar_triggers',
 } as const;
 
 export const USER_ROLES = {
@@ -1723,6 +1732,7 @@ export const ID_PREFIXES = {
     MATERIAL: 'material',
     ANNOUNCEMENT: 'announcement',
     OFFLINE: 'offline',
+    SCHEDULED_TASK: 'sched_task',
 } as const;
 
 // Academic subjects - Flexy: Never hardcode subject names!
@@ -3007,6 +3017,16 @@ export const UI_DIMENSIONS = {
         LINE_HEIGHT_LARGE: '24px',
         HEADER_LINE_WIDTH: '60%',
         SUBHEADER_LINE_WIDTH: '40%',
+        BUTTON_SMALL_WIDTH: '60px',
+    },
+
+    // Table column widths
+    TABLE_COLUMN: {
+        TIMESTAMP: '180px',
+        USER: '150px',
+        ROLE: '100px',
+        ACTION: '100px',
+        RESOURCE: '120px',
     },
 
     // Textarea dimensions
