@@ -38,6 +38,7 @@ export const DURATION = {
   VERY_SLOW: 1.0,
   CONTINUOUS: 1.4,
   LOADING: 1.5,
+  TWO_SECONDS: 2.0,
 } as const;
 
 // ============================================================================
@@ -273,7 +274,7 @@ export const KEYFRAMES = {
   },
   // Float animation
   FLOAT: {
-    duration: 2, // 2 seconds
+    duration: DURATION.TWO_SECONDS,
     translateY: -TRANSFORM.TRANSLATE.MEDIUM,
   },
   // Success checkmark

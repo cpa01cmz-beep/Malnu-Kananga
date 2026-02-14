@@ -72,6 +72,11 @@ export type ExamAuditEvent =
     | 'answer_changed'
     | 'exam_abandoned';
 
+const EXAM_CONSTANTS = {
+    /** Default exam duration in minutes */
+    DEFAULT_DURATION: 60,
+} as const;
+
 export const EXAM_SECURITY_CONFIG: ExamSecurityConfig = {
     antiTabSwitch: true,
     maxTabSwitches: 3,
@@ -85,7 +90,7 @@ export const EXAM_SECURITY_CONFIG: ExamSecurityConfig = {
 };
 
 export const EXAM_TIMING_CONFIG: ExamTimingConfig = {
-    duration: 60,
+    duration: EXAM_CONSTANTS.DEFAULT_DURATION,
     warningTime: 5,
     showTimer: true,
     enableTimeWarnings: true,
@@ -96,7 +101,7 @@ export const EXAM_TIMING_CONFIG: ExamTimingConfig = {
 
 export const EXAM_CONFIG = {
     /** Default exam duration in minutes */
-    DEFAULT_DURATION: 60,
+    DEFAULT_DURATION: EXAM_CONSTANTS.DEFAULT_DURATION,
     /** Minimum exam duration in minutes */
     MIN_DURATION: 10,
     /** Maximum exam duration in minutes */
