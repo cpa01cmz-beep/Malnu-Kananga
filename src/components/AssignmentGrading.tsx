@@ -530,7 +530,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Penilaian Tugas</h2>
-          <Button onClick={onBack} variant="secondary">
+          <Button onClick={onBack} variant="secondary" shortcut="Alt+Left">
             Kembali
           </Button>
         </div>
@@ -605,7 +605,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button onClick={handleBackToAssignments} variant="secondary">
+            <Button onClick={handleBackToAssignments} variant="secondary" shortcut="Alt+Left">
               Kembali
             </Button>
             <h2 className="text-2xl font-bold text-gray-900">
@@ -714,7 +714,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         <OfflineIndicator />
 
         <div className="flex items-center space-x-4">
-          <Button onClick={handleBackToSubmissions} variant="secondary">
+          <Button onClick={handleBackToSubmissions} variant="secondary" shortcut="Alt+Left">
             Kembali
           </Button>
           <h2 className="text-2xl font-bold text-gray-900">
