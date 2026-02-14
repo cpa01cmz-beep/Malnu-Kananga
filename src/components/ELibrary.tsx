@@ -964,6 +964,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             aria-label="Pencarian lanjutan"
             aria-expanded={showAdvancedSearch}
             aria-controls="advanced-search-panel"
+            aria-pressed={showAdvancedSearch}
             shortcut="Enter"
           >
             <FunnelIcon className="w-5 h-5" />
@@ -975,6 +976,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Tampilkan hanya favorit"
+            aria-pressed={showOnlyFavorites}
             shortcut="Enter"
           >
             <StarIcon className="w-5 h-5" />
@@ -986,6 +988,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Pencarian semantik AI"
+            aria-pressed={isSemanticMode}
             shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center">
@@ -1001,6 +1004,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             aria-label="Opsi pencarian semantik"
             aria-expanded={showSemanticOptions}
             aria-controls="semantic-options-panel"
+            aria-pressed={showSemanticOptions}
             shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
@@ -1013,6 +1017,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             size="md"
             className="p-2"
             aria-label="Pengaturan OCR"
+            aria-pressed={showOCROptions || ocrEnabled}
             shortcut="Enter"
           >
             <div className="w-5 h-5 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
@@ -1296,6 +1301,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                   variant={isSemanticMode ? 'danger' : 'success'}
                   size="sm"
                   fullWidth
+                  aria-pressed={isSemanticMode}
                 >
                   {isSemanticMode ? 'Nonaktifkan Pencarian AI' : 'Aktifkan Pencarian AI'}
                 </Button>
@@ -1695,6 +1701,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                   size="sm"
                   className="p-2"
                   aria-label={offlineDownloads.has(item.id) ? 'Tersedia offline' : 'Unduh untuk akses offline'}
+                  aria-pressed={offlineDownloads.has(item.id)}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V2" />

@@ -4,6 +4,32 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ELibrary Toggle Button Accessibility
+
+**Learning**: The ELibrary component had multiple toggle buttons that changed visual state (variant changes from 'secondary' to 'success'/'info'/'primary' based on boolean state) but were missing `aria-pressed` attributes. Screen reader users couldn't know which filters or toggles were currently active when searching for educational materials.
+
+**Action**: Added `aria-pressed={booleanState}` to all 7 toggle buttons in ELibrary.tsx:
+- Line 966: Added `aria-pressed={showAdvancedSearch}` to advanced search toggle
+- Line 978: Added `aria-pressed={showOnlyFavorites}` to favorites filter toggle
+- Line 990: Added `aria-pressed={isSemanticMode}` to AI semantic search toggle (filter bar)
+- Line 1005: Added `aria-pressed={showSemanticOptions}` to semantic options toggle
+- Line 1017: Added `aria-pressed={showOCROptions || ocrEnabled}` to OCR settings toggle
+- Line 1300: Added `aria-pressed={isSemanticMode}` to AI Search activation toggle (full-width button)
+- Line 1705: Added `aria-pressed={offlineDownloads.has(item.id)}` to offline download toggle
+
+**File Fixed**:
+- src/components/ELibrary.tsx - Added aria-pressed to 7 toggle buttons
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Filter toggles (search filters, favorites, advanced options)
+- Feature toggles (AI modes, OCR settings)
+- Download/offline toggles
+- Any button that uses variant changes to indicate state (primary vs ghost, success vs secondary, etc.)
+
+This follows the same pattern as ActivityFeed.tsx, ChatWindow.tsx, NotificationHistory.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+---
+
 ## 2026-02-14 - DirectMessage New Chat Modal Keyboard Shortcuts
 
 **Learning**: The DirectMessage component's "Buat Percakapan Baru" (Create New Chat) modal had action buttons (Batal and Buat Percakapan) that supported keyboard shortcuts (Esc to cancel, Ctrl+Enter to submit) but users couldn't discover them without visual hints. This is a high-traffic communication feature used by teachers, parents, and students for direct messaging.
