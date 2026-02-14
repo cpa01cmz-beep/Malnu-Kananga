@@ -330,6 +330,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {(['small', 'medium', 'large', 'extra-large'] as TextSize[]).map((size) => (
                     <button
+                      type="button"
                       key={size}
                       onClick={() => updateSetting('fontSize', size)}
                       aria-pressed={settings.fontSize === size}
@@ -353,6 +354,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 <div className="grid grid-cols-3 gap-2">
                   {(['normal', 'relaxed', 'loose'] as LineSpacing[]).map((spacing) => (
                     <button
+                      type="button"
                       key={spacing}
                       onClick={() => updateSetting('lineSpacing', spacing)}
                       aria-pressed={settings.lineSpacing === spacing}
@@ -376,6 +378,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 <div className="grid grid-cols-3 gap-2">
                   {(['normal', 'wide', 'wider'] as LetterSpacing[]).map((spacing) => (
                     <button
+                      type="button"
                       key={spacing}
                       onClick={() => updateSetting('letterSpacing', spacing)}
                       aria-pressed={settings.letterSpacing === spacing}
@@ -405,6 +408,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 <div className="grid grid-cols-3 gap-2">
                   {(['normal', 'high', 'extra-high'] as ContrastMode[]).map((mode) => (
                     <button
+                      type="button"
                       key={mode}
                       onClick={() => updateSetting('contrastMode', mode)}
                       aria-pressed={settings.contrastMode === mode}
@@ -448,6 +452,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => updateSetting('readableWidth', !settings.readableWidth)}
                   aria-pressed={settings.readableWidth}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
@@ -477,6 +482,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => updateSetting('reducedMotion', !settings.reducedMotion)}
                 aria-pressed={settings.reducedMotion}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
@@ -495,6 +501,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
           {/* Reset Button */}
           <div className="pt-4 border-t border-neutral-200 dark:border-neutral-700">
             <button
+              type="button"
               onClick={resetSettings}
               className="w-full p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200 font-medium"
             >
