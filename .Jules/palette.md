@@ -4,6 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
+## 2026-02-14 - Toast Close Button Keyboard Shortcut
+
+**Learning**: The Toast component's close button was using IconButton but was missing the `shortcut` prop, which meant users couldn't discover that they could press "Esc" to close the toast notification. While the component already supported the Escape key (via handleKeyDown), there was no visual indication of this shortcut. The IconButton component has a built-in `shortcut` prop that displays keyboard shortcuts in tooltips, making them discoverable to users.
+
+**Action**: Added `shortcut="Esc"` and `tooltip` props to the Toast's close IconButton:
+- Line 227-234: Added `tooltip={TOAST_UI_STRINGS.CLOSE}` and `shortcut="Esc"` to the IconButton
+- This makes the Escape key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern used in Header.tsx, ChatWindow.tsx, and other components
+
+**File Fixed**:
+- src/components/Toast.tsx - Added shortcut and tooltip props to close IconButton
+
+**Pattern**: IconButton components should consistently show keyboard shortcuts when available:
+- Close/Dismiss actions: `shortcut="Esc"`
+- This helps users discover keyboard shortcuts and improves accessibility
+- Always pair shortcut with tooltip for consistent UX
+
+**Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
+
+---
+
 ## 2026-02-14 - StudentQuiz Confirmation Modal Keyboard Shortcuts
 
 **Learning**: The StudentQuiz component's confirmation modal (shown when students click "Kirim Kuis" to submit their quiz) had "Batal" (Cancel) and "Ya, Kirim Kuis" (Yes, Submit Quiz) buttons that supported keyboard shortcuts (Esc to cancel, Enter to submit) but users couldn't discover them without visual hints. This is a critical action point where students make an irreversible decision about submitting their quiz answers.
@@ -69,8 +92,6 @@ This ensures all input fields are properly announced by screen readers, improvin
 
 ---
 
-## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
->>>>>>> origin/main
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
 
 **Learning**: The GlobalSearchModal component had filter toggle buttons (siswa, guru, nilai, tugas, materi) that changed visual state (blue background when active, gray when inactive) but were missing `aria-pressed` attributes. Screen reader users couldn't determine which filters were currently active when using the global search feature.
