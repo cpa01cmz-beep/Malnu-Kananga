@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - GradingActions Batch Mode Toggle Accessibility
+
+**Learning**: The GradingActions component's "Batch Mode" toggle button changed visual state (variant changes from 'secondary' to 'blue-solid') but was missing the `aria-pressed` attribute. Screen reader users couldn't know if batch mode was currently active or inactive when toggling this feature.
+
+**Action**: Added `aria-pressed={isBatchMode}` to the Batch Mode toggle button:
+- Line 300: Added `aria-pressed={isBatchMode}` to the Button component
+
+**File Fixed**:
+- src/components/grading/GradingActions.tsx - Added aria-pressed to the Batch Mode toggle button
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Button variants that change based on state (primary vs ghost, blue-solid vs secondary)
+- Batch mode toggles
+- Any button that uses variant changes to indicate state
+
+This follows the established pattern from ActivityFeed.tsx, ChatWindow.tsx, ELibrary.tsx, and 20+ other components where aria-pressed was added to toggle buttons.
+
+---
+
 ## 2026-02-14 - TeacherDashboard Loading State UX Improvement
 
 **Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
