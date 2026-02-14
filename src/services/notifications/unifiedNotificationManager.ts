@@ -16,6 +16,7 @@ import {
   STORAGE_KEYS,
   USER_ROLES,
   TIME_MS,
+  UI_STRINGS,
 } from '../../constants';
 import { logger } from '../../utils/logger';
 import { handleNotificationError } from '../../utils/serviceErrorHandlers';
@@ -287,7 +288,7 @@ class UnifiedNotificationManager {
       const notification: PushNotification = {
         id: `notif-grade-${Date.now()}`,
         type: 'grade',
-        title: `Nilai Update: ${subject}`,
+        title: UI_STRINGS.NOTIFICATIONS.GRADE_UPDATE_TITLE(subject),
         body,
         timestamp: new Date().toISOString(),
         read: false,

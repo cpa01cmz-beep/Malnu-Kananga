@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { UserOptions } from 'jspdf-autotable';
-import { APP_CONFIG, PDF_COLORS } from '../constants';
+import { APP_CONFIG, PDF_COLORS, UI_STRINGS } from '../constants';
 
 export interface PDFReportData {
   title: string;
@@ -92,7 +92,7 @@ class PDFExportService {
     // Date
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Dicetak: ${new Date().toLocaleDateString('id-ID')}`, pageWidth / 2, 32, { align: 'center' });
+    doc.text(`${UI_STRINGS.PDF.PRINTED_PREFIX}${new Date().toLocaleDateString('id-ID')}`, pageWidth / 2, 32, { align: 'center' });
   }
   
   private addStudentInfo(doc: jsPDF, reportData: PDFReportData, yPosition: number): number {
