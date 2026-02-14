@@ -4,6 +4,24 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Duplicate Keyboard Shortcut in VoiceSettings
+
+**Learning**: The VoiceSettings component's Backup & Restore section had two adjacent buttons ("Pulihkan" and "Hapus") both with `shortcut="Enter"`. This creates keyboard confusion - pressing Enter will trigger the first button in DOM order, potentially causing unintended actions (especially dangerous for a "Hapus/Delete" action).
+
+**Action**: Changed the "Hapus" (Delete) button shortcut from "Enter" to "Del" in VoiceSettings.tsx line 421.
+
+**Pattern**: When multiple action buttons are adjacent (especially in dialogs or confirmation contexts), each button should have a unique keyboard shortcut to prevent accidental triggering. For destructive actions like delete, consider:
+- Using different shortcuts (Enter for primary action, Del/Esc for destructive)
+- Or removing shortcuts entirely and requiring explicit clicks for destructive actions
+- Never having two buttons with the same shortcut in the same component/view
+
+**Files Modified**:
+- src/components/VoiceSettings.tsx - Changed Hapus button shortcut from "Enter" to "Del"
+
+**PR**: #2331
+
+---
+
 ## 2026-02-14 - Plain Button Accessibility in Admin and Parent Components
 
 **Learning**: The AdminDashboard and ParentMessagingView components had plain `<button>` elements missing accessibility attributes. AdminDashboard had two buttons ("Muat Ulang" and "Kembali ke Dashboard") missing `aria-label`, while ParentMessagingView had teacher selection buttons missing both `type="button"` and `aria-label`. Without these attributes, screen reader users lack context about button actions, and buttons inside forms may accidentally trigger submissions.
