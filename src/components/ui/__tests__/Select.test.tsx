@@ -1,6 +1,6 @@
  
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Select from '../Select';
 
@@ -285,6 +285,193 @@ describe('Select Component', () => {
       render(<Select options={mockOptions} />);
       const spinner = screen.getByRole('combobox').parentElement?.querySelector('.animate-spin');
       expect(spinner).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Clear on Escape Feature', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('clears selection when Escape is pressed with clearOnEscape enabled', () => {
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape 
+          onChange={handleChange}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.keyDown(select, { key: 'Escape' });
+      
+      expect(handleChange).toHaveBeenCalledTimes(1);
+      expect(handleChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: '' })
+        })
+      );
+    });
+
+    it('calls onClear callback when Escape is pressed', () => {
+      const handleClear = vi.fn();
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape 
+          onChange={handleChange}
+          onClear={handleClear}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.keyDown(select, { key: 'Escape' });
+      
+      expect(handleClear).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not clear selection when Escape is pressed without clearOnEscape', () => {
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          onChange={handleChange}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.keyDown(select, { key: 'Escape' });
+      
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    it('does not clear selection when Escape is pressed with empty value', () => {
+      const handleChange = vi.fn();
+      render(
+        <Select 
+          options={mockOptions} 
+          value="" 
+          clearOnEscape 
+          onChange={handleChange}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.keyDown(select, { key: 'Escape' });
+      
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+
+    it('shows escape hint tooltip when focused with clearOnEscape and value', () => {
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape 
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.focus(select);
+      
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toBeInTheDocument();
+      expect(tooltip).toHaveTextContent('ESC');
+      expect(tooltip).toHaveTextContent('bersihkan');
+    });
+
+    it('hides escape hint tooltip when blurred', () => {
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape 
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.focus(select);
+      
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      
+      fireEvent.blur(select);
+      
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('does not show escape hint tooltip when clearOnEscape is disabled', () => {
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape={false}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.focus(select);
+      
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('does not show escape hint tooltip when value is empty', () => {
+      render(
+        <Select 
+          options={mockOptions} 
+          value="" 
+          clearOnEscape 
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.focus(select);
+      
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    });
+
+    it('has correct aria-hidden attribute on escape hint tooltip', () => {
+      render(
+        <Select 
+          options={mockOptions} 
+          value="option1" 
+          clearOnEscape 
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      fireEvent.focus(select);
+      
+      act(() => {
+        vi.advanceTimersByTime(400);
+      });
+      
+      const tooltip = screen.getByRole('tooltip');
+      expect(tooltip).toHaveAttribute('aria-hidden', 'false');
     });
   });
 });
