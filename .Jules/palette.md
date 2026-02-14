@@ -6,6 +6,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ErrorMessage Toggle Button Accessibility
+
+**Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
+
+**Action**: Added `aria-pressed={detailsVisible}` to the toggle button in ErrorMessage.tsx:
+- Line 488: Added `aria-pressed={detailsVisible}` to the details toggle button
+
+**Pattern**: Toggle buttons that change text based on state MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that toggles visibility of content sections
+- Buttons where text changes between show/hide states (e.g., "Show details" ↔ "Hide details")
+- Expand/collapse toggles
+
+This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through error messages won't know whether the technical details are currently expanded or collapsed, making it harder to understand the current state of the error component.
+
+**Files Modified**:
+- src/components/ui/ErrorMessage.tsx - Added aria-pressed to toggle button
+
+**PR**: #TBD
+
+---
+
 ## 2026-02-14 - WebSocketStatus Plain Button Type Accessibility
 
 **Learning**: The WebSocketStatus component had 3 plain `<button>` elements for reconnect functionality that were missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked, potentially causing unintended actions.

@@ -258,6 +258,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               Accessibility Settings
             </h2>
             <button
+              type="button"
               onClick={onClose}
               className="p-2 rounded-full text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200"
               aria-label="Close accessibility settings"
@@ -276,6 +277,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
             <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-4">Quick Presets</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
+                type="button"
                 onClick={applyDyslexiaFont}
                 className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200 text-left"
               >
@@ -286,6 +288,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               </button>
               
               <button
+                type="button"
                 onClick={applyHighContrast}
                 className="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200 text-left"
               >
