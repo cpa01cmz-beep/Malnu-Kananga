@@ -221,6 +221,7 @@ const handleEventClick = (event: Schedule | ParentMeeting) => {
               type="button"
               onClick={() => setActiveDay(day)}
               aria-pressed={activeDay === day}
+              aria-label={`Lihat jadwal hari ${day}`}
               className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all ${
                 activeDay === day
                   ? 'bg-green-600 text-white shadow-md shadow-green-200 dark:shadow-none'
