@@ -123,6 +123,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
             </h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
             aria-label="Tutup"

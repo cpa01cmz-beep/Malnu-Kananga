@@ -4,7 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-## 2026-02-14 - QuizIntegrationDashboard Keyboard Shortcuts
+## 2026-02-14 - Plain Button Type Attribute for Accessibility
+
+**Learning**: The StudyPlanAnalytics and VoiceNotificationSettings components had plain `<button>` elements that were missing the `type="button"` attribute. When buttons are nested inside form elements, missing `type="button"` causes them to default to `type="submit"`, potentially causing accidental form submissions. Additionally, the VoiceNotificationSettings close button was missing the type attribute for proper button semantics.
+
+**Action**: Added `type="button"` to all plain button elements:
+- StudyPlanAnalytics.tsx Line 546: Added `type="button"` to "Lihat detail" recommendation button
+- StudyPlanAnalytics.tsx Line 776: Added `type="button"` to "Lihat detail" recommendation button (second occurrence)
+- VoiceNotificationSettings.tsx Line 125: Added `type="button"` to close button
+
+**Files Fixed**:
+- src/components/StudyPlanAnalytics.tsx - Added type="button" to 2 recommendation action buttons
+- src/components/VoiceNotificationSettings.tsx - Added type="button" to close button
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is a subtle but critical accessibility issue that can cause user frustration.
+
+**PR**: Created
 
 **Learning**: The QuizIntegrationDashboard component's action buttons (Kembali, Integrasikan, Refresh) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for integrating quiz results into grade books.
 
