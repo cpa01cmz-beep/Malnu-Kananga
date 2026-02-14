@@ -262,8 +262,10 @@ export const ProgressiveContent = <T,>({
           <div className="text-center p-8">
             <div className="text-red-500 mb-2">Error loading content</div>
             <button 
+              type="button"
               onClick={retry}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              aria-label="Coba lagi memuat konten"
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             >
               Retry
             </button>
