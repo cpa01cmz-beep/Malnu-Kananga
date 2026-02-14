@@ -228,6 +228,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
             <span className="mr-2 flex items-center">{icon}</span>
           )}
           {children}
+          {!isLoading && shortcut && (
+            <kbd
+              className={`
+                hidden sm:inline-flex
+                items-center justify-center
+                ml-2 px-1.5 py-0.5
+                ${size === 'sm' ? 'text-[9px]' : size === 'lg' ? 'text-xs' : 'text-[10px]'}
+                font-mono font-medium
+                rounded border
+                bg-white/20 dark:bg-black/20
+                border-white/30 dark:border-white/20
+                text-current
+                opacity-70
+                shadow-sm
+                select-none
+                pointer-events-none
+              `}
+              aria-hidden="true"
+            >
+              {shortcut}
+            </kbd>
+          )}
           {icon && iconPosition === 'right' && (
             <span className="ml-2 flex items-center">{icon}</span>
           )}

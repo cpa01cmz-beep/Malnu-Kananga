@@ -4,6 +4,8 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
 ## 2026-02-14 - TeacherDashboard Loading State UX Improvement
 
 **Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
@@ -43,6 +45,48 @@ This follows the established pattern from StudentAssignments.tsx and other compo
 - Always use the Button component's `shortcut` prop to display hints in tooltips
 
 **Related**: This follows the same pattern as StudentInsights.tsx, QuizGenerator.tsx, and AssignmentCreation.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
+## 2026-02-14 - Button Component Visible Keyboard Shortcut Hints
+
+**Learning**: The Button component accepted a `shortcut` prop and displayed keyboard shortcuts in tooltips on hover/focus, but users couldn't discover these shortcuts at a glance. Desktop users had to hover over each button to see if a keyboard shortcut was available, which hindered keyboard shortcut discoverability and power-user efficiency.
+
+**Action**: Added visible keyboard shortcut hints (small kbd pills) next to button text:
+- Modified `/src/components/ui/Button.tsx` to render a `<kbd>` element after button text when `shortcut` prop is provided
+- Scales hint size with button size: sm=text-[9px], md=text-[10px], lg=text-xs
+- Hidden on mobile screens (`hidden sm:inline-flex`) since mobile users typically don't have physical keyboards
+- Uses translucent background (`bg-white/20 dark:bg-black/20`) with current text color for compatibility with all button variants
+- Added `aria-hidden="true"` to prevent double announcement (aria-label already includes shortcut)
+
+**Implementation Details**:
+```tsx
+// New kbd element rendered next to button text
+{!isLoading && shortcut && (
+  <kbd className="hidden sm:inline-flex ml-2 px-1.5 py-0.5 text-[10px] font-mono ...">
+    {shortcut}
+  </kbd>
+)}
+```
+
+**Files Fixed**:
+- src/components/ui/Button.tsx - Added visible kbd element (lines 227-248)
+- src/components/ui/__tests__/Button.test.tsx - Added 7 new tests for visible shortcut functionality
+
+**Pattern**: Keyboard shortcuts should be discoverable in multiple ways:
+1. **Visible hint**: Small kbd pill next to button text (desktop only)
+2. **Tooltip**: Shows on hover/focus with full message "Tekan {shortcut} saat fokus"
+3. **Aria-label**: Announced by screen readers "{label} (Tekan {shortcut} saat fokus)"
+
+This multi-layer approach ensures:
+- Desktop users see shortcuts at a glance without hovering
+- Mobile users don't see unnecessary clutter (hidden on small screens)
+- Screen reader users get full context via aria-label
+- Power users can quickly learn and use keyboard shortcuts
+
+**PR**: #2221
+
+---
 
 ---
 
@@ -162,7 +206,9 @@ This ensures both screen reader users (via aria-label) and sighted users (via to
 4. **Accessible Labels**: Descriptive aria-labels for screen reader context
 
 This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
-=======
+
+---
+
 ## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
 
 **Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
@@ -206,7 +252,8 @@ The Button component's `shortcut` prop automatically displays a tooltip hint on 
 - Always pair shortcut with tooltip for consistent UX
 
 **Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
->>>>>>> origin/main
+
+---
 
 ---
 
