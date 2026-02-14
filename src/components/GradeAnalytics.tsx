@@ -455,7 +455,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
     <div className="animate-fade-in-up">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
         <div>
-          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mb-2" shortcut="Alt+Left">
             ← Kembali ke Portal
           </Button>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">Analitik Nilai Kelas</h2>
@@ -467,6 +467,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           onClick={() => exportAnalyticsReport('pdf')}
           variant="blue-solid"
           aria-label="Ekspor laporan analitik nilai ke PDF"
+          shortcut="Ctrl+P"
         >
           Export PDF
         </Button>
@@ -474,6 +475,7 @@ const GradeAnalytics: React.FC<GradeAnalyticsProps> = ({ onBack, onShowToast = (
           onClick={() => exportAnalyticsReport('csv')}
           variant="secondary"
           aria-label="Ekspor laporan analitik nilai ke CSV"
+          shortcut="Ctrl+Shift+E"
         >
           Export CSV
         </Button>
