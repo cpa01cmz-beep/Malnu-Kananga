@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - UserManagement Add Button Keyboard Shortcut
+
+**Learning**: The UserManagement component's "Tambah" (Add User) button was missing a keyboard shortcut hint. This is a high-traffic admin component where users frequently add new users. Without shortcuts, power users couldn't discover the efficient `Ctrl+N` keyboard shortcut for creating new users.
+
+**Action**: Added `shortcut="Ctrl+N"` to the add user button:
+- UserManagement.tsx Line 221: Added `shortcut="Ctrl+N"` to the Button component
+
+**File Fixed**:
+- src/components/UserManagement.tsx - Added shortcut prop to add user button
+
+**Pattern**: Admin components with create/add actions should have consistent keyboard shortcut hints:
+- Add/Create buttons: `shortcut="Ctrl+N"` (follows standard convention)
+- This enables power users to quickly create new users without reaching for the mouse
+
+This follows the same pattern as SchoolInventory.tsx where `Ctrl+N` is used for adding new inventory items.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who prefer keyboard navigation. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button.
+
+**PR**: #2281
+
+---
+
 ## 2026-02-14 - Plain Button Type Attribute for Accessibility
 
 **Learning**: The StudyPlanAnalytics and VoiceNotificationSettings components had plain `<button>` elements that were missing the `type="button"` attribute. When buttons are nested inside form elements, missing `type="button"` causes them to default to `type="submit"`, potentially causing accidental form submissions. Additionally, the VoiceNotificationSettings close button was missing the type attribute for proper button semantics.
