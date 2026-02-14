@@ -410,6 +410,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                       onClick={() => setShowRestoreConfirmation(true)}
                       variant="primary"
                       fullWidth
+                      shortcut="Enter"
                     >
                       Pulihkan
                     </SmallActionButton>
@@ -417,6 +418,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                       onClick={() => setShowDeleteConfirmation(true)}
                       variant="neutral"
                       fullWidth
+                      shortcut="Enter"
                     >
                       Hapus
                     </SmallActionButton>
@@ -427,6 +429,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
                   onClick={handleBackup}
                   variant="blue-solid"
                   fullWidth
+                  shortcut="Ctrl+Enter"
                   icon={
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -445,6 +448,7 @@ const VoiceSettings: React.FC<VoiceSettingsProps> = ({ isOpen, onClose, onShowTo
               onClick={() => setShowResetConfirmation(true)}
               variant="red-solid"
               fullWidth
+              shortcut="Ctrl+Shift+R"
               icon={
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
