@@ -221,6 +221,7 @@ const deleteVersion = (versionId: string) => {
             size="sm"
             onClick={() => setShowVersionHistory(!showVersionHistory)}
             icon={<ClockIcon className="w-4 h-4" />}
+            shortcut="Ctrl+V"
           >
             Versi {activeVersion?.version || 'N/A'}
           </Button>
@@ -234,6 +235,7 @@ const deleteVersion = (versionId: string) => {
           size="sm"
           onClick={() => setShowCreateVersion(true)}
           icon={<ArrowPathIcon className="w-4 h-4" />}
+          shortcut="Ctrl+N"
         >
           Versi Baru
         </Button>
@@ -377,6 +379,7 @@ const deleteVersion = (versionId: string) => {
           <Button
             variant="secondary"
             onClick={() => setShowCreateVersion(false)}
+            shortcut="Esc"
           >
             Batal
           </Button>
@@ -385,6 +388,7 @@ const deleteVersion = (versionId: string) => {
             onClick={createVersion}
             disabled={!newFile || !versionTitle.trim() || !changeLog.trim()}
             isLoading={loading}
+            shortcut="Ctrl+Enter"
           >
             {loading ? 'Membuat...' : 'Buat Versi'}
           </Button>
