@@ -496,7 +496,7 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
                 Simpan Kuis
               </Button>
             ) : (
-              <Button onClick={handleNextStep} disabled={loading || generating}>
+              <Button onClick={handleNextStep} disabled={loading || generating} shortcut="Ctrl+Enter">
                 {generating ? (
                   <>
                     <LoadingSpinner className="mr-2 h-4 w-4" />
