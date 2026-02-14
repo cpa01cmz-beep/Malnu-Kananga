@@ -12,7 +12,7 @@ import { registerSW } from 'virtual:pwa-register';
 // Import storage migration
 import { runStorageMigration } from './services/storageMigration';
 // Flexy: Import TIME_MS for modular timeout values
-import { TIME_MS } from './constants';
+import { TIME_MS, LOG_MESSAGES } from './constants';
 
 // Run storage migration before initialization
 runStorageMigration();
@@ -23,7 +23,7 @@ const updateSW = registerSW({
     window.dispatchEvent(new CustomEvent('sw-update-available'));
   },
   onOfflineReady() {
-    logger.info('Aplikasi siap untuk penggunaan offline.');
+    logger.info(LOG_MESSAGES.APP.OFFLINE_READY);
   },
 });
 
@@ -34,7 +34,7 @@ const updateSW = registerSW({
 // Routes errors to logger for centralized error tracking
 window.addEventListener('unhandledrejection', (event) => {
   event.preventDefault();
-  logger.error('Unhandled promise rejection:', event.reason);
+    logger.error(LOG_MESSAGES.APP.UNHANDLED_REJECTION, event.reason);
 });
 
 const rootElement = document.getElementById('root');

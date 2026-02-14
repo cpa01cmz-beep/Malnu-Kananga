@@ -1,7 +1,7 @@
 import {
   PushNotification,
 } from '../../types';
-import { STORAGE_KEYS } from '../../constants';
+import { STORAGE_KEYS, LOG_MESSAGES } from '../../constants';
 import { logger } from '../../utils/logger';
 import { getEmailNotificationService } from '../emailNotificationService';
 
@@ -29,9 +29,9 @@ export class EmailNotificationHandler {
         currentUser.id
       );
 
-      logger.info('Email notification queued for:', notification.id);
+      logger.info(LOG_MESSAGES.EMAIL_NOTIFICATIONS.QUEUED, notification.id);
     } catch (error) {
-      logger.error('Failed to send email notification:', error);
+      logger.error(LOG_MESSAGES.EMAIL_NOTIFICATIONS.FAILED, error);
     }
   }
 
@@ -46,6 +46,6 @@ export class EmailNotificationHandler {
   }
 
   cleanup(): void {
-    logger.info('Email notification handler cleaned up');
+    logger.info(LOG_MESSAGES.EMAIL_NOTIFICATIONS.CLEANUP);
   }
 }
