@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import { EXAM_CONFIG, EXAM_STATUS, type ExamAttemptAuditLog, type ExamAuditEvent } from '../config/exam-config';
 import type { Quiz, QuizAttempt, QuizQuestion } from '../types/quiz';
 import { generateId } from '../utils/idGenerator';
@@ -225,7 +225,7 @@ class OnlineAssessmentService {
             }
             
             callback(remaining);
-        }, 1000);
+        }, TIME_MS.ONE_SECOND);
     }
 
     stopTimer(): void {

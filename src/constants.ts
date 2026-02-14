@@ -608,6 +608,7 @@ export const TIME_MS = {
     LONG_UI: 800,       // Long UI delays (search hints, toasts)
     // Standard time units
     ONE_SECOND: 1000,
+    TWO_SECONDS: 2 * 1000,
     FIVE_SECONDS: 5 * 1000,
     TEN_SECONDS: 10 * 1000,
     THIRTY_SECONDS: 30 * 1000,

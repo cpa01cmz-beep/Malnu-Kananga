@@ -37,7 +37,7 @@ export const RouteTransitionProvider: React.FC<RouteTransitionProviderProps> = (
   defaultTransition = {
     type: 'slide-fade',
     easing: 'ease-out',
-    duration: 300,
+    duration: TIME_MS.MODERATE,
   },
 }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);

@@ -401,8 +401,8 @@ export const MICRO_INTERACTIONS = `
 }
 
 .ripple-click:active::before {
-  width: 300px;
-  height: 300px;
+  width: ${SIZE.RIPPLE.SIZE}px;
+  height: ${SIZE.RIPPLE.SIZE}px;
 }
 
 /* Smooth Number Counter */
