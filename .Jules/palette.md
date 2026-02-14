@@ -4,6 +4,36 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - SchoolInventory Keyboard Shortcuts
+
+**Learning**: The SchoolInventory component (a high-traffic admin component for managing school assets) had 10 action buttons without keyboard shortcut hints. This component handles inventory management including adding items, scheduling maintenance, running audits, and generating reports - actions frequently performed by admin staff.
+
+**Action**: Added keyboard shortcut hints to all action buttons in SchoolInventory.tsx:
+- Line 339: Added `shortcut="Alt+Left"` to back navigation button
+- Line 371: Added `shortcut="Ctrl+N"` to "Tambah Barang" (Add Item) button
+- Line 480: Added `shortcut="Ctrl+Enter"` to "Simpan Barang" (Save Item) form
+- Line 489: Added `shortcut="Esc"` to "Batal" (Cancel) button
+- Line 608: Added `shortcut="Ctrl+Enter"` to "Tambah Jadwal" (Add Schedule) form
+- Line 708: Added `shortcut="Ctrl+Enter"` to "Selesaikan Audit" (Complete Audit) button
+- Line 715: Added `shortcut="Esc"` to "Batal" (Cancel) button
+- Line 776: Added `shortcut="Ctrl+S"` to "Export Laporan" (Export Report) button
+- Line 903: Added `shortcut="Ctrl+S"` to "Unduh" (Download QR) button
+- Line 911: Added `shortcut="Esc"` to "Tutup" (Close Modal) button
+
+**File Fixed**:
+- src/components/SchoolInventory.tsx - Added shortcut hints to 10 buttons
+
+**Pattern**: Admin management components (inventory, grading, attendance) benefit from comprehensive keyboard shortcut coverage:
+- Navigation: `shortcut="Alt+Left"` for back buttons
+- Create/Add: `shortcut="Ctrl+N"` or `shortcut="Ctrl+Enter"` for form submissions
+- Save: `shortcut="Ctrl+S"` for data persistence
+- Export/Download: `shortcut="Ctrl+S"` for file operations
+- Cancel/Close: `shortcut="Esc"` for dismiss actions
+
+This follows the established pattern from AttendanceManagement.tsx, AnnouncementManager.tsx, GradingManagement.tsx, and other high-traffic admin components.
+
+---
+
 ## 2026-02-14 - AssignmentGrading Status Filter Accessibility
 
 **Learning**: The AssignmentGrading component had status filter toggle buttons (Semua, Belum Dinilai, Sudah Dinilai) that changed visual state (variant from primary to secondary) based on selection but were missing `aria-pressed` attributes. This is a high-traffic component where teachers filter and grade assignments daily, and screen reader users couldn't determine which filter was currently active.
