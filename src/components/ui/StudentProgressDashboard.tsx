@@ -195,6 +195,8 @@ export function StudentProgressDashboard({ studentId }: StudentProgressDashboard
                     )}
                   </div>
                   <button
+                    type="button"
+                    aria-label={`Hapus tujuan ${goal.title}`}
                     onClick={() => deleteGoal(goal.id)}
                     className="text-red-500 hover:text-red-700 text-sm"
                   >
