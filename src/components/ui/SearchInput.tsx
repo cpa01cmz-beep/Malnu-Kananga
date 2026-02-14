@@ -297,7 +297,7 @@ const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(({
           onMouseUp={() => setIsClearPressed(false)}
           onFocus={() => setShowTooltip(true)}
           onBlur={() => setShowTooltip(false)}
-          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center overflow-hidden group backdrop-blur-sm ${
+          className={`absolute top-1/2 -translate-y-1/2 rounded-full text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-800 active:bg-neutral-200 dark:active:bg-neutral-500 icon-interactive-enhanced mobile-touch-target haptic-feedback min-w-11 min-h-11 p-2.5 flex items-center justify-center overflow-hidden group backdrop-blur-sm ${
             showIcon && iconPosition === 'right' ? 'right-10' : 'right-3'
           } ${
             value && String(value).length > 0 && !validation.state.isValidating
