@@ -892,16 +892,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'student-insights' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
-              <button
-                type="button"
+              <SmallActionButton
                 onClick={() => setCurrentView('home')}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                shortcut="Alt+Left"
+                tooltip="Kembali ke Dashboard"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Kembali ke Dashboard
-              </button>
+              </SmallActionButton>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Wawasan Siswa AI</h2>
             </div>
 
@@ -1177,16 +1177,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'messages' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
-              <button
-                type="button"
+              <SmallActionButton
                 onClick={() => setCurrentView('home')}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                shortcut="Alt+Left"
+                tooltip="Kembali ke Dashboard"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Kembali ke Dashboard
-              </button>
+              </SmallActionButton>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pesan</h2>
             </div>
             <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.MESSAGES} />}>
@@ -1206,16 +1206,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'groups' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
-              <button
-                type="button"
+              <SmallActionButton
                 onClick={() => setCurrentView('home')}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                shortcut="Alt+Left"
+                tooltip="Kembali ke Dashboard"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Kembali ke Dashboard
-              </button>
+              </SmallActionButton>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Grup Diskusi</h2>
             </div>
             <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.GROUPS} />}>
@@ -1235,16 +1235,16 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
         {currentView === 'communication-log' && (
           <div className="animate-fade-in-up">
             <div className="mb-4 flex items-center gap-4">
-              <button
-                type="button"
+              <SmallActionButton
                 onClick={() => setCurrentView('home')}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                shortcut="Alt+Left"
+                tooltip="Kembali ke Dashboard"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
                 Kembali ke Dashboard
-              </button>
+              </SmallActionButton>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Log Komunikasi</h2>
             </div>
             <Suspense fallback={<SuspenseLoading message={LOADING_MESSAGES.COMMUNICATION_LOG} />}>
