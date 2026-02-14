@@ -25,6 +25,8 @@ interface ErrorBoundaryState {
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  private copyTimeoutId: number | null = null;
+
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -33,6 +35,13 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       errorInfo: null,
       copyStatus: null,
     };
+  }
+
+  componentWillUnmount(): void {
+    if (this.copyTimeoutId) {
+      window.clearTimeout(this.copyTimeoutId);
+      this.copyTimeoutId = null;
+    }
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
@@ -118,8 +127,9 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
     // Clear the success message after 3 seconds
     if (result.success) {
-      setTimeout(() => {
+      this.copyTimeoutId = window.setTimeout(() => {
         this.setState({ copyStatus: null });
+        this.copyTimeoutId = null;
       }, UI_DELAYS.CLEAR_COPY_STATUS);
     }
   };
