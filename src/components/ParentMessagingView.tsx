@@ -178,6 +178,7 @@ const ParentMessagingView: React.FC<ParentMessagingViewProps> = ({ onShowToast, 
                   type="button"
                   key={teacher.teacherId}
                   onClick={() => setSelectedTeacher(teacher)}
+                  aria-label={`Pilih ${teacher.teacherName} - ${teacher.subject} (${teacher.className})`}
                   className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left ${
                     selectedTeacher?.teacherId === teacher.teacherId
                       ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
