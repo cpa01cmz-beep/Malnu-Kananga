@@ -255,7 +255,7 @@
 - [x] Add QR code setup for authenticator apps
 - [x] Add backup codes for account recovery
 - [x] Add optional 2FA toggle in user settings
-- [ ] Add admin enforcement option for specific roles
+- [x] Add admin enforcement option for specific roles
 **Notes**: Implemented:
 - Created `src/services/totpService.ts` with full TOTP implementation using Web Crypto API
 - Created `src/components/ui/TwoFactorAuth.tsx` with Three components:
@@ -265,6 +265,10 @@
 - Added storage keys in constants.ts for 2FA data
 - Uses QRCode library for authenticator app setup
 - Integrated into UserProfileEditor.tsx with "Autentikasi Dua Faktor" button
+- Created `src/services/twoFactorEnforcementService.ts` for admin 2FA enforcement:
+  - Admin can require 2FA for specific roles (admin, teacher, staff, etc.)
+  - Added "Keamanan" (Security) tab to RoleManager component
+  - Config stored in localStorage (TWO_FACTOR_ENFORCEMENT key)
 
 ### T015: Scheduled Automation System (F018)
 **Status**: ✅ Completed
@@ -471,6 +475,18 @@
   - Production build successful (23.98s)
 
 ## Session Notes (2026-02-14 - ULW-Loop Analyze Mode)
+
+- T014 (Two-Factor Authentication - Admin Enforcement): COMPLETED
+  - Created: src/services/twoFactorEnforcementService.ts
+    - Admin can require 2FA for specific roles (admin, teacher, staff, etc.)
+    - getAvailableRoles(), enableEnforcement(), disableEnforcement()
+    - isRoleRequired(), getRequiredRoles(), getRequiredRolesDisplay()
+  - Added: TWO_FACTOR_ENFORCEMENT storage key in constants.ts
+  - Updated: src/components/ui/RoleManager.tsx
+    - Added "Keamanan" (Security) tab for 2FA enforcement configuration
+    - Toggle to enable/disable enforcement
+    - Checkbox list to select which roles require 2FA
+  - TypeScript and lint checks pass
 
 - T015 (Scheduled Automation System): PARTIAL COMPLETE (Frontend)
   - Added: Storage keys in constants.ts for scheduled automation (SCHEDULED_TASKS, SCHEDULED_TASK_HISTORY, etc.)
