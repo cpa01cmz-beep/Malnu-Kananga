@@ -31,6 +31,7 @@ export * from './payment-config';
 export * from './quiz-config';
 export * from './exam-config';
 export * from './academic-config';
+export * from './document-template-config';
 export * from './permissions';
 export * from './ocrConfig';
 export * from './env';

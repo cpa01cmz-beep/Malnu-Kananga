@@ -115,6 +115,11 @@ export const STORAGE_KEYS = {
     // Student Badges
     STUDENT_BADGES: 'malnu_student_badges',
 
+    // Document Templates (new)
+    DOCUMENT_TEMPLATES: 'malnu_document_templates',
+    DOCUMENT_TEMPLATE_CACHE: 'malnu_document_template_cache',
+    DOCUMENT_GENERATION_HISTORY: 'malnu_document_generation_history',
+
     // Study Plans (dynamic factory function)
     STUDY_PLANS: (studentId: string) => `malnu_study_plans_${studentId}`,
     ACTIVE_STUDY_PLAN: (studentId: string) => `malnu_active_study_plan_${studentId}`,
