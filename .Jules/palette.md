@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentAssignments Back Button Keyboard Shortcuts
+
+**Learning**: The StudentAssignments component had three "Kembali" (Back) buttons across different views (assignment list, detail view, submit view) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic student component used for viewing and submitting assignments.
+
+**Action**: Added `shortcut="Alt+Left"` to all three back buttons in StudentAssignments.tsx:
+- Line 251: Added `shortcut="Alt+Left"` to assignment list view back button
+- Line 362: Added `shortcut="Alt+Left"` to assignment detail view back button
+- Line 465: Added `shortcut="Alt+Left"` to assignment submit view back button
+
+**Pattern**: Navigation buttons in student-facing assignment components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from GradeAnalytics.tsx, QuizGenerator.tsx, StudyPlanGenerator.tsx, and other high-traffic components where Alt+Left is used for back navigation.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who prefer keyboard navigation. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important for students who frequently navigate between assignment list, details, and submission views.
+
+---
+
 ## 2026-02-14 - StudentInsights Toggle Button Accessibility
 
 **Learning**: The StudentInsights component had a toggle button (showing 🔴/⚫ circles) that switched AI insights on/off, but was missing `aria-pressed` attribute. Screen reader users couldn't know whether AI Insights was currently enabled or disabled when navigating this component.

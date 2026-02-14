@@ -248,7 +248,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
               Daftar Tugas
             </h2>
-            <Button variant="ghost" onClick={onBack}>
+            <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
               Kembali
             </Button>
           </div>
@@ -359,7 +359,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
       {currentView === 'detail' && selectedAssignment && (
         <>
           <div className="flex items-center justify-between mb-6">
-            <Button variant="ghost" onClick={() => setCurrentView('list')}>
+            <Button variant="ghost" onClick={() => setCurrentView('list')} shortcut="Alt+Left">
               Kembali
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
@@ -462,7 +462,7 @@ const StudentAssignments: React.FC<StudentAssignmentsProps> = ({
       {currentView === 'submit' && selectedAssignment && (
         <>
           <div className="flex items-center justify-between mb-6">
-            <Button variant="ghost" onClick={() => setCurrentView('list')}>
+            <Button variant="ghost" onClick={() => setCurrentView('list')} shortcut="Alt+Left">
               Kembali
             </Button>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
