@@ -11,7 +11,7 @@ import Button from './ui/Button';
 import SearchInput from './ui/SearchInput';
 import { EmptyState } from './ui/LoadingState';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { APP_CONFIG } from '../constants';
+import { APP_CONFIG, NOTIFICATION_UI_STRINGS } from '../constants';
 
 interface NotificationCenterProps {
   userRole: UserRole;
@@ -295,17 +295,17 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     intent="info"
                     size="sm"
                     className="flex-1"
-                    disabledReason={unreadCount === 0 ? 'Tidak ada notifikasi yang belum dibaca' : undefined}
+                    disabledReason={unreadCount === 0 ? NOTIFICATION_UI_STRINGS.NO_UNREAD : undefined}
                   >
                     <CheckCircleIcon className="w-4 h-4" />
-                    Tandai Semua Dibaca
+                    {NOTIFICATION_UI_STRINGS.MARK_ALL_READ}
                   </Button>
                   <Button
                     onClick={handleSendTestNotification}
                     disabled={!permissionGranted || isSendingTestNotification}
                     variant="secondary"
                     size="sm"
-                    disabledReason={!permissionGranted ? 'Izin notifikasi diperlukan untuk mengirim tes' : undefined}
+                    disabledReason={!permissionGranted ? NOTIFICATION_UI_STRINGS.PERMISSION_REQUIRED : undefined}
                   >
                     {isSendingTestNotification ? 'Mengirim...' : 'Tes'}
                   </Button>
@@ -317,12 +317,12 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               {filteredHistory().length === 0 ? (
                 <div className="p-8">
                   <EmptyState
-                    message={searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? 'Tidak ada notifikasi yang cocok dengan filter' : 'Belum ada notifikasi'}
+                    message={searchQuery || selectedType !== 'all' || selectedStatus !== 'all' ? NOTIFICATION_UI_STRINGS.NO_MATCHING_FILTER : NOTIFICATION_UI_STRINGS.NO_NOTIFICATIONS}
                     action={
                       searchQuery || selectedType !== 'all' || selectedStatus !== 'all'
                         ? undefined
                         : {
-                            label: 'Kirim Notifikasi Tes',
+                            label: NOTIFICATION_UI_STRINGS.TEST_NOTIFICATION,
                             onClick: handleSendTestNotification
                           }
                     }
