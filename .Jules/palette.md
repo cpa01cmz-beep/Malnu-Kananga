@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - DirectMessage New Chat Modal Keyboard Shortcuts
+
+**Learning**: The DirectMessage component's "Buat Percakapan Baru" (Create New Chat) modal had action buttons (Batal and Buat Percakapan) that supported keyboard shortcuts (Esc to cancel, Ctrl+Enter to submit) but users couldn't discover them without visual hints. This is a high-traffic communication feature used by teachers, parents, and students for direct messaging.
+
+**Action**: Added keyboard shortcut hints to both modal action buttons:
+- Line 161: Added `shortcut="Esc"` to the Batal button - follows standard cancel pattern
+- Line 170: Added `shortcut="Ctrl+Enter"` to the Buat Percakapan button - follows form submission pattern
+
+**File Fixed**:
+- src/components/DirectMessage.tsx - Added shortcut props to 2 modal action buttons
+
+**Pattern**: Modal dialogs for creating new conversations/chats should have keyboard shortcut hints on all action buttons:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Create/Submit buttons: `shortcut="Ctrl+Enter"`
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established keyboard shortcut pattern used in GroupChat.tsx, EnhancedMaterialSharing.tsx, and other modal dialogs across the codebase.
+
+**PR**: #2219
+
+---
+
 ## 2026-02-14 - TeacherDashboard Loading State UX Improvement
 
 **Learning**: The TeacherDashboard component had two refresh buttons (for class insights) that used text changes (`'Memuat...'` vs `'Refresh'`) to indicate loading state instead of using the SmallActionButton component's built-in `isLoading` prop. This resulted in a less polished user experience compared to other components in the codebase that use proper spinner loading states.
