@@ -82,8 +82,8 @@ export const RELATED_LINKS = [];
 
 // DATA AKUN DUMMY UNTUK PENGUJIAN
 // Digunakan sebagai default jika LocalStorage kosong atau di-reset
-// Flexy: Using ENV-driven domain for multi-tenant compatibility
-const DUMMY_DOMAIN = ENV.SCHOOL.WEBSITE.replace('https://', '') || 'example.sch.id';
+// Flexy: Using ENV-driven domain for multi-tenant compatibility - no hardcoded fallbacks
+const DUMMY_DOMAIN = ENV.SCHOOL.WEBSITE.replace('https://', '').replace('http://', '') || 'localhost';
 
 export const INITIAL_USERS: User[] = [
     { 
