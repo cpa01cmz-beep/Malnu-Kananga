@@ -4,6 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - LoginModal Keyboard Shortcut Discoverability
+
+**Learning**: The LoginModal component's submit button supports Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic component used by all users (students, teachers, parents, admins) every time they access the system.
+
+**Action**: Add `shortcut="Enter"` prop to the login Button component:
+- Line 308: Added `shortcut="Enter"` to the Button component
+- This makes the Enter key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern in the codebase for form submission buttons
+
+**File Fixed**:
+- src/components/LoginModal.tsx - Added shortcut prop to the login button
+
+**Pattern**: Form submission buttons should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Login buttons: `shortcut="Enter"`
+- Save buttons: `shortcut="Ctrl+S"`
+- Cancel/Close buttons: `shortcut="Esc"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as ChatWindow.tsx, SiteEditor.tsx, and MessageInput.tsx where Enter key shortcuts were made discoverable. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
 ## 2026-02-14 - QuizGenerator Keyboard Shortcut Discoverability
 
 **Learning**: The QuizGenerator component is a multi-step wizard where teachers create AI-generated quizzes. The "Lanjut" / "Buat Kuis" (Next / Create Quiz) button on line 499 was missing a keyboard shortcut hint, even though other buttons in the same component (Batal with `shortcut="Esc"`, Simpan Kuis with `shortcut="Ctrl+S"`) already had shortcuts. This inconsistency meant keyboard users couldn't discover the Ctrl+Enter shortcut for advancing to the next step.
