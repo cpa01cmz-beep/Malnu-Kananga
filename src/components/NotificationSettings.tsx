@@ -14,7 +14,7 @@ import Tab from './ui/Tab';
 import Modal from './ui/Modal';
 import ConfirmationDialog from './ui/ConfirmationDialog';
 import { EmptyState } from './ui/LoadingState';
-import { STORAGE_KEYS, COMPONENT_DELAYS, APP_CONFIG } from '../constants';
+import { STORAGE_KEYS, COMPONENT_DELAYS, APP_CONFIG, NOTIFICATION_UI_STRINGS } from '../constants';
 
 interface NotificationSettingsProps {
   isOpen: boolean;
@@ -87,11 +87,11 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     const granted = await requestPermission();
     if (granted) {
       if (onShowToast) {
-        onShowToast('Izin notifikasi berhasil diberikan', 'success');
+        onShowToast(NOTIFICATION_UI_STRINGS.PERMISSION_GRANTED, 'success');
       }
     } else {
       if (onShowToast) {
-        onShowToast('Izin notifikasi ditolak', 'error');
+        onShowToast(NOTIFICATION_UI_STRINGS.PERMISSION_DENIED, 'error');
       }
     }
   }, [requestPermission, onShowToast]);
@@ -594,7 +594,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                           size="sm"
                           onClick={handleMarkAllAsRead}
                         >
-                          Tandai Semua Dibaca
+                          {NOTIFICATION_UI_STRINGS.MARK_ALL_READ}
                         </Button>
                         <Button
                           variant="danger"
