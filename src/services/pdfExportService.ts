@@ -35,7 +35,7 @@ class PDFExportService {
 
   constructor() {
     this.schoolName = APP_CONFIG.SCHOOL_NAME;
-    this.schoolAddress = 'Indonesia';
+    this.schoolAddress = APP_CONFIG.SCHOOL_ADDRESS;
   }
 
   createReport(reportData: PDFReportData): void {
