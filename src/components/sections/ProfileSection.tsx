@@ -4,7 +4,7 @@ import Badge from '../ui/Badge';
 import Section from '../ui/Section';
 import { getResponsiveGradient } from '../../config/gradients';
 import { GRADIENT_CLASSES } from '../../config/gradients';
-import { SECTION_TITLES } from '../../constants';
+import { SECTION_TITLES, APP_CONFIG } from '../../constants';
 import { ICON_SIZES } from '../../utils/iconUtils';
 
 const ProfileSection: React.FC = () => {
@@ -15,10 +15,10 @@ const ProfileSection: React.FC = () => {
       subtitle={SECTION_TITLES.PROFILE_SUBTITLE}
       className={getResponsiveGradient('PROFILE')}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12 items-start animate-fade-in-up">
             <div className="lg:col-span-3 text-base sm:text-lg text-neutral-700 dark:text-neutral-300 space-y-8 text-left sm:text-justify leading-relaxed">
                 <p>
-                    <strong className="text-neutral-900 dark:text-white font-semibold">Madrasah Aliyah MALNU Kananga</strong> adalah lembaga pendidikan menengah atas swasta bernaung di bawah Kementerian Agama Republik Indonesia. Berlokasi di Jalan Desa Kananga Km. 0,5, Kecamatan Menes, Kabupaten Pandeglang, Banten, madrasah ini didirikan pada tahun 2000 dengan tujuan mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
+                    <strong className="text-neutral-900 dark:text-white font-semibold">{APP_CONFIG.SCHOOL_NAME}</strong> adalah lembaga pendidikan menengah atas swasta bernaung di bawah Kementerian Agama Republik Indonesia. Berlokasi di {APP_CONFIG.SCHOOL_ADDRESS}, madrasah ini didirikan pada tahun 2000 dengan tujuan mencetak generasi berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.
                 </p>
                 <p>
                     Kurikulum yang digunakan memadukan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan salafiyah</strong> dengan <strong className="text-neutral-900 dark:text-white font-semibold">pendidikan modern</strong>, termasuk pemantapan keterampilan abad 21 untuk menjawab kebutuhan masa depan.

@@ -63,7 +63,7 @@ export const getRelatedLinks = async () => {
 
     return [
         {
-            name: 'RDM Malnu Kananga',
+            name: `RDM ${APP_CONFIG.SCHOOL_NAME}`,
             href: EXTERNAL_URLS.RDM_PORTAL,
             icon: <DocumentTextIcon />,
             color: getColorIconClass('sky')

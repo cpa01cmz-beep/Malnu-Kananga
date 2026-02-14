@@ -174,7 +174,7 @@ const EnhancedSkeleton: React.FC<EnhancedSkeletonProps> = ({
         <div
           className={`${baseClasses} rounded-lg h-8`}
           style={{
-            width: '60px',
+            width: UI_DIMENSIONS.SKELETON.BUTTON_SMALL_WIDTH,
             ...getSkeletonStyle(),
           }}
         />

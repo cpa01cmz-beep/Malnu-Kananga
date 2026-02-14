@@ -99,8 +99,7 @@ export const ANALYZER_CONFIG = {
   BROTLI_SIZE: true,
 } as const;
 
-// Environment-based school configuration for Node.js context - Flexy: Never hardcode!
-const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || 'MA Malnu Kananga';
+const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || '';
 
 // PWA Manifest Configuration - Flexy: Dynamic school name from environment
 export const PWA_MANIFEST = {

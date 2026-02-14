@@ -1,5 +1,6 @@
 import { STORAGE_KEYS } from '../constants';
 import { logger } from '../utils/logger';
+import { ENV } from '../config/env';
 
 export interface TwoFactorSetup {
   secret: string;
@@ -14,7 +15,7 @@ export interface TwoFactorData {
   createdAt?: string;
 }
 
-const TOTP_ISSUER = 'MA Malnu Kananga';
+const TOTP_ISSUER = ENV.SCHOOL.NAME || 'MA Malnu Kananga';
 const BACKUP_CODES_COUNT = 10;
 
 function base32Encode(buffer: ArrayBuffer): string {

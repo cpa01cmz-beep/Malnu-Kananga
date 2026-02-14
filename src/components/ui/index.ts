@@ -63,6 +63,7 @@ export { default as PageHeader } from './PageHeader';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as PDFExportButton } from './PDFExportButton';
 export { default as DataExportImportButton } from './DataExportImportButton';
+export { default as ScheduledAutomationManager } from './ScheduledAutomationManager';
 
 // Security Components
 export { TwoFactorSetup, TwoFactorDisable, TwoFactorStatus } from './TwoFactorAuth';

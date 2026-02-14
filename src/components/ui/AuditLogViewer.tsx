@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { UI_DIMENSIONS } from '../../constants';
 import DataTable from './DataTable';
 import type { Column } from './DataTable';
 import SearchInput from './SearchInput';
@@ -113,7 +114,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
       key: 'timestamp',
       title: 'Waktu',
       sortable: true,
-      width: '180px',
+      width: UI_DIMENSIONS.TABLE_COLUMN.TIMESTAMP,
       render: (value) => {
         const date = new Date(value as string);
         return date.toLocaleString('id-ID', {
@@ -128,12 +129,12 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
     {
       key: 'userName',
       title: 'Pengguna',
-      width: '150px',
+      width: UI_DIMENSIONS.TABLE_COLUMN.USER,
     },
     {
       key: 'userRole',
       title: 'Peran',
-      width: '100px',
+      width: UI_DIMENSIONS.TABLE_COLUMN.ROLE,
       render: (value) => (
         <span className="capitalize">{value as string}</span>
       ),
@@ -141,7 +142,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
     {
       key: 'action',
       title: 'Aksi',
-      width: '100px',
+      width: UI_DIMENSIONS.TABLE_COLUMN.ACTION,
       render: (value) => {
         const colors: Record<string, string> = {
           create: 'bg-green-100 text-green-800',
@@ -171,7 +172,7 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
     {
       key: 'resource',
       title: 'Sumber',
-      width: '120px',
+      width: UI_DIMENSIONS.TABLE_COLUMN.RESOURCE,
     },
     {
       key: 'description',
