@@ -5,6 +5,8 @@ import App from './App';
 import { logger } from './utils/logger';
 import './index.css';
 import './styles/themes.css';
+// Import i18n configuration
+import './i18n';
 // Import registration function
 import { registerSW } from 'virtual:pwa-register';
 // Import storage migration

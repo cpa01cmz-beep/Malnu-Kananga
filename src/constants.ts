@@ -27,6 +27,7 @@ export const STORAGE_KEYS = {
     EVENTS: 'malnu_events',
     AUTH_SESSION: 'malnu_auth_session',
     THEME: 'malnu_theme',
+    LANGUAGE_PREFERENCE: 'malnu_language_preference',
     VOICE_STORAGE_KEY: 'malnu_voice_settings',
     VOICE_SETTINGS_BACKUP_KEY: 'malnu_voice_settings_backup',
     NOTIFICATION_SETTINGS_KEY: 'malnu_notification_settings',

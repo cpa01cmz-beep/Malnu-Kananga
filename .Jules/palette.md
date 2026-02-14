@@ -4,6 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentInsights Back Button Keyboard Shortcuts
+
+**Learning**: The StudentInsights component had 6 "Kembali" (Back) buttons across different states (loading, error, disabled, enabled) that supported the Alt+Left keyboard shortcut for navigation, but users couldn't discover this keyboard shortcut without visual hints. This is a high-traffic student-facing component used for viewing AI-generated academic insights.
+
+**Action**: Added `shortcut="Alt+Left"` to all 6 back buttons in StudentInsights.tsx:
+- Line 51: Added `shortcut="Alt+Left"` to loading state back button
+- Line 69: Added `shortcut="Alt+Left"` to error state back button
+- Line 82: Added `shortcut="Alt+Left"` to error state action buttons
+- Line 98: Added `shortcut="Alt+Left"` to disabled state back button
+- Line 131: Added `shortcut="Alt+Left"` to loading insights back button
+- Line 236: Added `shortcut="Alt+Left"` to main view back button
+
+**File Fixed**:
+- src/components/StudentInsights.tsx - Added shortcut props to 6 back buttons
+
+**Pattern**: All navigation buttons in student-facing components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+**Related**: This follows the same pattern as QuizGenerator.tsx where Alt+Left was added to wizard navigation buttons. Consistent keyboard shortcut hints improve accessibility and power-user efficiency.
+
+---
+
 ## 2026-02-14 - Footer Help Button Tooltip
 
 **Learning**: The "Pusat Bantuan" (Help Center) button in the Footer component had an `aria-label` for screen reader accessibility but lacked a visible tooltip for sighted users. While screen reader users understood the button's purpose through the aria-label, sighted users had to rely on the text "Pusat Bantuan" alone without additional context about what would happen when clicked.
