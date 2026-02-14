@@ -345,7 +345,9 @@ describe('StudyPlanGenerator', () => {
       fireEvent.click(screen.getByText('Buat Rencana Belajar'));
 
       await waitFor(() => {
-        expect(screen.getByText('Membuat Rencana...')).toBeInTheDocument();
+        // When isLoading is true, button shows spinner with aria-disabled
+        const button = screen.getByText('Buat Rencana Belajar').closest('button');
+        expect(button).toHaveAttribute('aria-disabled', 'true');
       });
     });
 
