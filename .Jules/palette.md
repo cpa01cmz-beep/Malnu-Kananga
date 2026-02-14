@@ -4,6 +4,25 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - AssignmentGrading Back Button Keyboard Shortcuts
+
+**Learning**: The AssignmentGrading component had three "Kembali" (Back) buttons across different views (assignment list, submissions list, submission detail) that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. This is a high-traffic teacher component used for grading student assignments.
+
+**Action**: Added `shortcut="Alt+Left"` to all three back buttons in AssignmentGrading.tsx:
+- Line 533: Added `shortcut="Alt+Left"` to assignment list view back button
+- Line 608: Added `shortcut="Alt+Left"` to submissions list view back button
+- Line 717: Added `shortcut="Alt+Left"` to submission detail view back button
+
+**Pattern**: High-traffic grading components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from GradeAnalytics.tsx, QuizGenerator.tsx, StudyPlanGenerator.tsx, and other high-traffic components where Alt+Left is used for back navigation.
+
+**PR**: #2293
+
+---
+
 ## 2026-02-14 - Parent Payment View Export Button Keyboard Shortcut
 
 **Learning**: The ParentPaymentsView and ConsolidatedReportsView components had "Unduh Laporan" (Download Report) buttons that supported Ctrl+P keyboard shortcut for quick access, but users couldn't discover this shortcut without visual hints. This is a high-traffic parent-facing component used for downloading payment and progress reports.
