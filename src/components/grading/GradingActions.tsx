@@ -355,6 +355,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
             isLoading={isExportingPDF}
             aria-label="Ekspor nilai siswa ke file PDF"
             disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
+            shortcut="Ctrl+P"
           >
             {isExportingPDF ? 'Exporting...' : '📄 Export PDF'}
           </Button>
@@ -367,6 +368,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
             variant="teal-solid"
             aria-label="Ekspor nilai ke file CSV"
             disabledReason={grades.length === 0 ? 'Tidak ada nilai untuk diekspor' : undefined}
+            shortcut="Ctrl+Shift+E"
           >
             Export CSV
           </Button>
