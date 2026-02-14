@@ -161,7 +161,7 @@ describe('DataTable', () => {
       />
     );
     
-    const nextPageButton = screen.getByLabelText('Next page');
+    const nextPageButton = screen.getByLabelText('Next page (Press Right Arrow)');
     fireEvent.click(nextPageButton);
     
     await waitFor(() => {
