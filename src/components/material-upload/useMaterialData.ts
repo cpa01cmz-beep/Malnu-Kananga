@@ -280,7 +280,7 @@ export function useMaterialData({ onShowToast }: UseMaterialDataOptions): UseMat
         operation: createOperation,
         config: {
           maxRetries: 3,
-          retryDelay: 2 * RETRY_CONFIG.DEFAULT_INITIAL_DELAY // 2 seconds
+          retryDelay: RETRY_CONFIG.BACKOFF_MULTIPLIER * RETRY_CONFIG.DEFAULT_INITIAL_DELAY // 2 seconds
         }
       });
 
