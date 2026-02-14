@@ -6,6 +6,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - WebSocketStatus Plain Button Type Accessibility
+
+**Learning**: The WebSocketStatus component had 3 plain `<button>` elements for reconnect functionality that were missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked, potentially causing unintended actions.
+
+**Action**: Added `type="button"` to all 3 reconnect buttons in WebSocketStatus.tsx:
+- Line 62: Added `type="button"` to compact reconnect button (inside span)
+- Line 92: Added `type="button"` to standard reconnect button (inline button)
+- Line 195: Added `type="button"` to full-width reconnect button (in status panel)
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+
+This follows the same accessibility pattern documented for AICacheManager.tsx, GradingList.tsx, VoiceInputButton.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic for WebSocketStatus which can appear in various contexts including forms.
+
+**Files Modified**:
+- src/components/WebSocketStatus.tsx - Added type="button" to 3 reconnect buttons
+
+**PR**: #2343
+
+---
+
 ## 2026-02-14 - NotificationCenter Test Button Keyboard Shortcut
 
 **Learning**: The NotificationCenter component had a "Tes" (Test) button for sending test notifications that was missing a keyboard shortcut hint, while other action buttons in the same component already had shortcuts ("Mark All as Read" - Ctrl+D, "Clear History" - Ctrl+Shift+X). This created inconsistency in the user experience and made the test feature less discoverable for keyboard users.
