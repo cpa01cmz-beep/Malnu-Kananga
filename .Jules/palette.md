@@ -4,6 +4,22 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Parent Payment View Export Button Keyboard Shortcut
+
+**Learning**: The ParentPaymentsView and ConsolidatedReportsView components had "Unduh Laporan" (Download Report) buttons that supported Ctrl+P keyboard shortcut for quick access, but users couldn't discover this shortcut without visual hints. This is a high-traffic parent-facing component used for downloading payment and progress reports.
+
+**Action**: Added `shortcut="Ctrl+P"` to both export buttons:
+- ParentPaymentsView.tsx Line 235: Added `shortcut="Ctrl+P"` to the export button
+- ConsolidatedReportsView.tsx Line 137: Added `shortcut="Ctrl+P"` to the export button
+
+**Pattern**: Export/download buttons in parent-facing components should have consistent keyboard shortcut hints:
+- Export buttons: `shortcut="Ctrl+P"` (follows print/export convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from GradeAnalytics.tsx, QuizIntegrationDashboard.tsx, and other components where Ctrl+P is used for export actions.
+
+---
+
 ## 2026-02-14 - StudentPortalOffline Toggle Button Accessibility
 
 **Learning**: The StudentPortalOffline component had toggle buttons for showing/hiding validation details that changed their text between "Tutup Detail" (Close Details) and "Lihat Detail" (View Details), but were missing the `aria-pressed` attribute. Screen reader users couldn't know if the validation details were currently visible or hidden when toggling this feature.
