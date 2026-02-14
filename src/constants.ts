@@ -1433,97 +1433,6 @@ export const HAPTIC_PATTERNS = {
     NOTIFICATION: [15, 10, 15],
 } as const;
 
-// UI Text Constants - Centralized to avoid hardcoded strings
-export const UI_STRINGS = {
-    // Common actions
-    SAVE: 'Simpan',
-    SAVING: 'Menyimpan...',
-    SAVE_ALL: 'Simpan Semua',
-    CANCEL: 'Batal',
-    CLOSE: 'Tutup',
-    DELETE: 'Hapus',
-    EDIT: 'Edit',
-    CREATE: 'Buat',
-    SEARCH: 'Cari',
-    LOADING: 'Memuat...',
-    PROCESSING: 'Memproses...',
-    ERROR: 'Error',
-    SUCCESS: 'Berhasil',
-    WARNING: 'Peringatan',
-    INFO: 'Info',
-    CONFIRM: 'Konfirmasi',
-    BACK: 'Kembali',
-    NEXT: 'Lanjut',
-    SUBMIT: 'Kirim',
-    SUBMITTING: 'Mengirim...',
-    DONE: 'Selesai',
-    CONTINUE: 'Lanjutkan',
-    TRY_AGAIN: 'Coba Lagi',
-    SELECT_ALL: 'Pilih Semua',
-    CLEAR_SELECTION: 'Bersihkan Pilihan',
-    CLEAR_INPUT: 'Bersihkan input',
-    CLEAR_TEXTAREA: 'Bersihkan textarea',
-    SELECTED: 'terpilih',
-    OR: 'atau',
-    YES: 'Ya',
-    NO: 'Tidak',
-    OK: 'OK',
-    CONFIRM_ACTION: 'Ya, Lanjutkan',
-    REVOKE_ACCESS: 'Batasi',
-    SHARE: 'Bagikan',
-    SHARING: 'Membagikan...',
-    TO: 'ke',
-    LOGOUT: 'Keluar',
-    LOGIN: 'Login',
-    REGISTER: 'Daftar',
-    FORGOT_PASSWORD: 'Lupa Password?',
-    RESET_PASSWORD: 'Reset Password',
-    DASHBOARD: 'Dashboard',
-    HOME: 'Beranda',
-    PROFILE: 'Profil',
-    NOTIFICATIONS: 'Notifikasi',
-    MESSAGES: 'Pesan',
-    CALENDAR: 'Kalender',
-    SCHEDULE: 'Jadwal',
-    ATTENDANCE: 'Absensi',
-    GRADES: 'Nilai',
-    ASSIGNMENTS: 'Tugas',
-    MATERIALS: 'Materi',
-    LIBRARY: 'Perpustakaan',
-    EVENTS: 'Kegiatan',
-    ANNOUNCEMENTS: 'Pengumuman',
-    NEWS: 'Berita',
-    CLASSES: 'Kelas',
-    STUDENTS: 'Siswa',
-    TEACHERS: 'Guru',
-    PARENTS: 'Orang Tua',
-    SUBJECTS: 'Mata Pelajaran',
-    EXAMS: 'Ujian',
-    REPORTS: 'Laporan',
-    ANALYTICS: 'Analitik',
-    STATISTICS: 'Statistik',
-    OVERVIEW: 'Ringkasan',
-    DETAILS: 'Detail',
-    HISTORY: 'Riwayat',
-    ACTIVITY: 'Aktivitas',
-    PROGRESS: 'Progres',
-    PERFORMANCE: 'Performa',
-    DOCUMENTS: 'Dokumen',
-    FILES: 'File',
-    SETTINGS: 'Pengaturan',
-    HELP: 'Bantuan',
-    SUPPORT: 'Dukungan',
-    ABOUT: 'Tentang',
-    VERSION: 'Versi',
-    PRIVACY_POLICY: 'Kebijakan Privasi',
-    TERMS_OF_SERVICE: 'Ketentuan Layanan',
-    SAVE_SCORE: 'Simpan Nilai',
-    SAVE_PROFILE: 'Simpan Profil',
-    SAVE_EVENT: 'Simpan Kegiatan',
-    UPDATE: 'Perbarui',
-    WELCOME_BACK: 'Selamat datang kembali',
-} as const;
-
 // Login-related UI strings
 export const LOGIN_UI_STRINGS = {
     TITLE: 'Login',
@@ -3411,80 +3320,6 @@ export const NOTIFICATION_MESSAGES = {
     },
 } as const;
 
-// Form Labels - Flexy: Never hardcode form field labels!
-export const FORM_LABELS = {
-    // Personal info
-    PERSONAL: {
-        FULL_NAME: 'Nama Lengkap',
-        FIRST_NAME: 'Nama Depan',
-        LAST_NAME: 'Nama Belakang',
-        NICKNAME: 'Nama Panggilan',
-        GENDER: 'Jenis Kelamin',
-        BIRTH_DATE: 'Tanggal Lahir',
-        BIRTH_PLACE: 'Tempat Lahir',
-        NISN: 'NISN',
-        NIS: 'NIS',
-        NIK: 'NIK',
-    },
-
-    // Contact info
-    CONTACT: {
-        EMAIL: 'Email',
-        PHONE: 'Nomor Telepon',
-        WHATSAPP: 'Nomor WhatsApp',
-        ADDRESS: 'Alamat Lengkap',
-        CITY: 'Kota/Kabupaten',
-        PROVINCE: 'Provinsi',
-        POSTAL_CODE: 'Kode Pos',
-    },
-
-    // Education info
-    EDUCATION: {
-        SCHOOL_NAME: 'Nama Sekolah',
-        SCHOOL_ADDRESS: 'Alamat Sekolah',
-        GRADUATION_YEAR: 'Tahun Lulus',
-        PREVIOUS_SCHOOL: 'Sekolah Asal',
-        MAJOR: 'Jurusan',
-        CLASS: 'Kelas',
-        ACADEMIC_YEAR: 'Tahun Ajaran',
-        SEMESTER: 'Semester',
-    },
-
-    // Parent info
-    PARENT: {
-        FATHER_NAME: 'Nama Ayah',
-        MOTHER_NAME: 'Nama Ibu',
-        PARENT_PHONE: 'Nomor Telepon Orang Tua',
-        GUARDIAN_NAME: 'Nama Wali',
-        GUARDIAN_PHONE: 'Nomor Telepon Wali',
-        PARENT_OCCUPATION: 'Pekerjaan Orang Tua',
-        PARENT_ADDRESS: 'Alamat Orang Tua',
-    },
-
-    // Account info
-    ACCOUNT: {
-        USERNAME: 'Username',
-        PASSWORD: 'Password',
-        NEW_PASSWORD: 'Password Baru',
-        CONFIRM_PASSWORD: 'Konfirmasi Password',
-        CURRENT_PASSWORD: 'Password Saat Ini',
-        ROLE: 'Peran',
-    },
-
-    // Common
-    COMMON: {
-        TITLE: 'Judul',
-        DESCRIPTION: 'Deskripsi',
-        CONTENT: 'Konten',
-        CATEGORY: 'Kategori',
-        STATUS: 'Status',
-        DATE: 'Tanggal',
-        TIME: 'Waktu',
-        REMARKS: 'Keterangan',
-        NOTES: 'Catatan',
-    },
-} as const;
-
 // Status Labels - Flexy: Never hardcode status display text!
 export const STATUS_LABELS = {
     // Connection status
@@ -3948,6 +3783,68 @@ export const UI_DELAY_CONSTANTS = {
     MIN_DISPLAY_TIME: 500, // Uses DELAY_MS.LONG
     ACTION_FEEDBACK: 500, // Uses DELAY_MS.LONG
 } as const;
+
+// ============================================================================
+// Flexy Modularity Additions - Run #104
+// ============================================================================
+
+export const UI_STRINGS = {
+  LOADING: 'Memuat...',
+  LOADING_DATA: 'Memuat data...',
+  PROCESSING: 'Memproses...',
+  SAVING: 'Menyimpan...',
+  ERROR: 'Error',
+  ERROR_LOADING: 'Gagal memuat data',
+  ERROR_SAVING: 'Gagal menyimpan',
+  TRY_AGAIN: 'Coba Lagi',
+  NO_DATA: 'Tidak ada data',
+  NO_RESULTS: 'Tidak ada hasil',
+  SAVE: 'Simpan',
+  SAVE_ALL: 'Simpan Semua',
+  SAVE_SCORE: 'Simpan Nilai',
+  SAVE_PROFILE: 'Simpan Profil',
+  SAVE_EVENT: 'Simpan Kegiatan',
+  CANCEL: 'Batal',
+  CLOSE: 'Tutup',
+  BACK: 'Kembali',
+  NEXT: 'Lanjut',
+  SUBMIT: 'Kirim',
+  SUBMITTING: 'Mengirim...',
+  DELETE: 'Hapus',
+  EDIT: 'Edit',
+  CREATE: 'Buat',
+  UPDATE: 'Perbarui',
+  SEARCH: 'Cari',
+  REFRESH: 'Segarkan',
+  CONFIRM: 'Konfirmasi',
+  CONFIRM_DELETE: 'Apakah Anda yakin ingin menghapus ini?',
+  CONFIRM_ACTION: 'Ya, Lanjutkan',
+  UNSAVED_CHANGES: 'Anda memiliki perubahan yang belum disimpan',
+  SUCCESS: 'Berhasil',
+  WARNING: 'Peringatan',
+  INFO: 'Info',
+  PENDING: 'Menunggu',
+  COMPLETED: 'Selesai',
+  FAILED: 'Gagal',
+  HOME: 'Beranda',
+  DASHBOARD: 'Dashboard',
+  PROFILE: 'Profil',
+  SETTINGS: 'Pengaturan',
+  LOGOUT: 'Keluar',
+  LOGIN: 'Masuk',
+  JUST_NOW: 'Baru saja',
+  TODAY: 'Hari ini',
+  YESTERDAY: 'Kemarin',
+  SHARE: 'Bagikan',
+  SHARING: 'Membagikan...',
+  TO: 'ke',
+  REVOKE_ACCESS: 'Batasi',
+  WELCOME_BACK: 'Selamat Datang Kembali',
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #104
+// ============================================================================
 
 // ============================================================================
 // End of Flexy Modularity Additions - Run #69
