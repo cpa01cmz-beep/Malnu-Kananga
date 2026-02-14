@@ -22,6 +22,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - StudentProgressDashboard Delete Button Accessibility
+
+**Learning**: The StudentProgressDashboard component had a plain `<button>` element for deleting goals that was missing both `type="button"` and `aria-label` attributes. This is a common oversight where visible button text ("Hapus") is assumed to be sufficient, but screen reader users benefit from explicit aria-labels that describe the exact item being deleted.
+
+**Action**: Add accessibility attributes to the delete button:
+- Added `type="button"` - prevents accidental form submission
+- Added `aria-label={\`Hapus tujuan ${goal.title}\`}` - provides screen reader context about which goal is being deleted
+
+**File Fixed**:
+- src/components/ui/StudentProgressDashboard.tsx - Added type="button" and aria-label to delete button (line 197-199)
+
+**Pattern**: Plain `<button>` elements in list contexts should ALWAYS have:
+1. `type="button"` - Prevents accidental form submission when inside forms
+2. `aria-label` - Provides screen reader context about what action applies to which item
+
+This is especially important when:
+- Buttons are inside forms
+- Buttons appear in list/card contexts
+- Multiple similar buttons exist (delete, edit, view)
+- The visible text alone doesn't provide enough context
+
+---
+
 ## 2026-02-14 - QuizGenerator Keyboard Shortcut Discoverability
 
 **Learning**: The QuizGenerator component is a multi-step wizard where teachers create AI-generated quizzes. The "Lanjut" / "Buat Kuis" (Next / Create Quiz) button on line 499 was missing a keyboard shortcut hint, even though other buttons in the same component (Batal with `shortcut="Esc"`, Simpan Kuis with `shortcut="Ctrl+S"`) already had shortcuts. This inconsistency meant keyboard users couldn't discover the Ctrl+Enter shortcut for advancing to the next step.
