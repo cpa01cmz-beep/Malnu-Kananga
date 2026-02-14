@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Footer Help Button Accessibility
+
+**Learning**: The Footer component had a plain `<button>` element for "Pusat Bantuan" (Help Center) that was missing an `aria-label` attribute. While the button had visible text, screen reader users benefit from descriptive aria-labels that provide complete context about the action being performed, especially for navigation elements in the footer.
+
+**Action**: Add `aria-label` to the help button:
+- `aria-label="Buka pusat bantuan dan dokumentasi"` - Provides clear context for screen reader users
+- The label describes both the help center and documentation aspects
+
+**File Fixed**:
+- src/components/Footer.tsx - Added aria-label to Pusat Bantuan button
+
+**Pattern**: Plain `<button>` elements with visible text still need explicit `aria-label` for consistent screen reader experience. This applies to:
+- Navigation buttons in headers/footers
+- Action buttons that perform specific functions
+- Any button where additional context improves accessibility
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and 50+ other components with accessibility improvements.
+
+---
+
 ## 2026-02-13 - OsisEvents Tab Navigation Accessibility
 
 **Learning**: The OsisEvents component had tab navigation buttons (Pendaftaran, Anggaran, Galeri Foto, Pengumuman, Umpan Balik) that changed visual state based on selection but were missing `aria-pressed` attributes. Screen reader users couldn't know which tab was currently selected.
