@@ -29,6 +29,12 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
    * Improves UX by making keyboard shortcuts discoverable
    */
   shortcut?: string;
+  /**
+   * For toggle buttons - indicates the pressed state.
+   * When true, aria-pressed="true" is set for accessibility.
+   * Use this for buttons that toggle a state on/off (e.g., theme toggle, menu toggle).
+   */
+  pressed?: boolean;
 }
 
 const baseClasses = "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275) focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed relative group ripple-effect icon-hover hover-lift-premium focus-visible-enhanced mobile-touch-target haptic-feedback button-enhanced glass-effect";
@@ -70,6 +76,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   showError = false,
   errorDuration = 2000,
   shortcut,
+  pressed,
   className = '',
   disabled,
   ...props
@@ -194,6 +201,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       aria-busy={isLoading}
       aria-live="polite"
       aria-label={isLoading ? `${ariaLabel} - Memuat` : isSuccessVisible ? `${ariaLabel} - Berhasil` : isErrorVisible ? `${ariaLabel} - Gagal` : shortcut ? `${ariaLabel} (${shortcut})` : ariaLabel}
+      aria-pressed={pressed}
       onMouseEnter={hasTooltip ? showTooltip : undefined}
       onMouseLeave={hasTooltip ? hideTooltip : undefined}
       onFocus={hasTooltip ? showTooltip : undefined}
