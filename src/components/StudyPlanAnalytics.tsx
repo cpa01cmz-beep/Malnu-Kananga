@@ -26,7 +26,7 @@ import {
   AnalyticsRecommendation,
   StudyPlanHistory
 } from '../types';
-import { STORAGE_KEYS, TIME_MS, STUDY_PLAN_CONFIG } from '../constants';
+import { STORAGE_KEYS, TIME_MS, STUDY_PLAN_CONFIG, UI_STRINGS } from '../constants';
 import { logger } from '../utils/logger';
 import Card from './ui/Card';
 import Button from './ui/Button';
@@ -391,7 +391,7 @@ const StudyPlanAnalyticsComponent: React.FC<StudyPlanAnalyticsProps> = ({ onBack
           </div>
           <div className="flex gap-2">
             <Button variant="secondary" onClick={handleRefreshAnalytics} shortcut="Ctrl+R">
-              Perbarui
+              {UI_STRINGS.UPDATE}
             </Button>
             <Button variant="secondary" onClick={handleExportAnalytics} aria-label="Ekspor analitik rencana belajar ke PDF">
               Ekspor

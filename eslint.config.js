@@ -63,6 +63,7 @@ export default [
         TouchEvent: 'readonly',
         IntersectionObserver: 'readonly',
         IntersectionObserverEntry: 'readonly',
+        ResizeObserver: 'readonly',
         AbortController: 'readonly',
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly',

@@ -11,7 +11,7 @@ import { PencilIcon } from '../icons/PencilIcon';
 import { TrashIcon } from '../icons/TrashIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS, UI_DELAYS } from '../../constants';
+import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS, UI_DELAYS, UI_STRINGS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -763,7 +763,7 @@ const DataTable = <T extends Record<string, unknown>>({
                       className="touch-manipulation haptic-feedback mobile-touch-target"
                       icon={<PencilIcon className="w-4 h-4" />}
                     >
-                      <span className="hidden sm:inline">{bulkActions.updateLabel || 'Perbarui'}</span>
+                      <span className="hidden sm:inline">{bulkActions.updateLabel || UI_STRINGS.UPDATE}</span>
                     </Button>
                   )}
                   {bulkActions.onBulkDelete && (

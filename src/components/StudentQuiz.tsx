@@ -577,11 +577,11 @@ export function StudentQuiz({ quiz, onSubmit, onCancel }: StudentQuizProps) {
                 ⚠️ Setelah dikirim, jawaban tidak dapat diubah.
               </p>
             </div>
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={handleCancelSubmit} disabled={isSubmitting}>
+              <div className="flex gap-3">
+              <Button variant="outline" onClick={handleCancelSubmit} disabled={isSubmitting} shortcut="Esc">
                 Batal
               </Button>
-              <Button onClick={handleConfirmSubmit} disabled={isSubmitting}>
+              <Button onClick={handleConfirmSubmit} disabled={isSubmitting} shortcut="Enter">
                 {isSubmitting ? 'Mengirim...' : 'Ya, Kirim Kuis'}
               </Button>
             </div>

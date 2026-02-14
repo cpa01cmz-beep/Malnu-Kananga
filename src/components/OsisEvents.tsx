@@ -673,7 +673,7 @@ const OsisEvents: React.FC<OsisEventsProps> = ({ onBack, onShowToast }) => {
                 fullWidth
               />
               <Button type="submit" fullWidth icon={<PlusIcon className="w-5 h-5" />} isLoading={isCreating}>
-                {isCreating ? UI_STRINGS.SAVING : 'Simpan Kegiatan'}
+                {isCreating ? UI_STRINGS.SAVING : UI_STRINGS.SAVE_EVENT}
               </Button>
             </form>
           </Card>

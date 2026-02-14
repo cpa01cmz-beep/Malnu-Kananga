@@ -1,9 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-// ResizeObserver is available globally but TypeScript needs this for ESLint
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const ResizeObserver: any;
-
 export interface ResponsiveGridProps {
   children: React.ReactNode[];
   minItemWidth?: number;
