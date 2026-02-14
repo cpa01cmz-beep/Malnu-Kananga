@@ -9,6 +9,8 @@ import './styles/themes.css';
 import { registerSW } from 'virtual:pwa-register';
 // Import storage migration
 import { runStorageMigration } from './services/storageMigration';
+// Flexy: Import TIME_MS for modular timeout values
+import { TIME_MS } from './constants';
 
 // Run storage migration before initialization
 runStorageMigration();
@@ -45,7 +47,7 @@ const hideInitialLoader = () => {
     loader.style.transition = 'opacity 0.3s ease-out';
     setTimeout(() => {
       loader.style.display = 'none';
-    }, 300);
+    }, TIME_MS.ANIMATION); // Flexy: Using centralized constant instead of magic number
   }
 };
 

@@ -201,7 +201,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-    }, 300);
+    }, TIME_MS.SEARCH_DEBOUNCE); // Flexy: Using centralized constant instead of magic number
 
     return () => clearTimeout(timer);
   }, [search]);
