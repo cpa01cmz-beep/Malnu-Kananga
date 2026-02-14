@@ -296,6 +296,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     size="sm"
                     className="flex-1"
                     disabledReason={unreadCount === 0 ? NOTIFICATION_UI_STRINGS.NO_UNREAD : undefined}
+                    shortcut="Ctrl+D"
                   >
                     <CheckCircleIcon className="w-4 h-4" />
                     {NOTIFICATION_UI_STRINGS.MARK_ALL_READ}
@@ -392,6 +393,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 variant="destructive"
                 size="sm"
                 fullWidth
+                shortcut="Ctrl+Shift+X"
               >
                 <TrashIcon className="w-4 h-4" />
                 Hapus Semua Notifikasi
