@@ -1,6 +1,7 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import QRCode from 'qrcode';
 import { totpService } from '../../services/totpService';
+import { STORAGE_KEYS } from '../../constants';
 import Button from './Button';
 import Input from './Input';
 
@@ -51,7 +52,7 @@ export function TwoFactorSetup({ userId, userEmail, onComplete, onCancel }: TwoF
     setError('');
 
     try {
-      const pendingKey = 'malnu_2fa_pending_setup';
+      const pendingKey = STORAGE_KEYS.TWO_FACTOR_PENDING_SETUP;
       const pendingData = JSON.parse(localStorage.getItem(pendingKey) || '{}');
       const success = await totpService.confirmTwoFactor(userId, pendingData.secret, verificationCode);
       

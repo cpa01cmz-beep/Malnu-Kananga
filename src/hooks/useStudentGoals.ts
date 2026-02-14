@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, STORAGE_KEY_PREFIX } from '../constants';
 import { logger } from '../utils/logger';
 
 export interface StudentGoal {
@@ -40,7 +40,7 @@ export const useStudentGoals = (studentId?: string): UseStudentGoalsReturn => {
     if (typeof STORAGE_KEYS.STUDENT_GOALS === 'function') {
       return STORAGE_KEYS.STUDENT_GOALS(studentId || 'default');
     }
-    return 'malnu_student_goals';
+    return `${STORAGE_KEY_PREFIX}student_goals`;
   }, [studentId]);
 
   useEffect(() => {
