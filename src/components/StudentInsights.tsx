@@ -112,7 +112,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-md mx-auto">
             Aktifkan insight AI untuk mendapatkan analisis personal tentang performa akademik Anda.
           </p>
-          <Button onClick={toggleEnabled} variant="primary">
+          <Button onClick={toggleEnabled} variant="primary" aria-label="Aktifkan AI Insights">
             Aktifkan AI Insights
           </Button>
         </div>
@@ -230,7 +230,7 @@ const StudentInsights: React.FC<StudentInsightsProps> = ({ onBack, onShowToast }
           >
             {isGenerating ? 'Menganalisis...' : '🔄 Refresh'}
           </Button>
-          <Button onClick={toggleEnabled} variant="ghost" size="sm">
+          <Button onClick={toggleEnabled} variant="ghost" size="sm" aria-pressed={enabled} aria-label={enabled ? 'Nonaktifkan AI Insights' : 'Aktifkan AI Insights'}>
             {enabled ? '🔴' : '⚫'}
           </Button>
           <Button variant="ghost" onClick={onBack} shortcut="Alt+Left">
