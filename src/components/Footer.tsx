@@ -4,7 +4,7 @@ import SocialLink from './ui/SocialLink';
 import DisabledLinkButton from './ui/DisabledLinkButton';
 import Tooltip from './ui/Tooltip';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './icons/StatusIcons';
-import { INFO_EMAIL, APP_CONFIG } from '../constants';
+import { INFO_EMAIL, APP_CONFIG, UI_STRINGS } from '../constants';
 
 interface FooterProps {
     onDocsClick: () => void;
@@ -24,7 +24,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                             <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <a 
                                     href={`mailto:${INFO_EMAIL}`} 
-                                    aria-label={`Kirim email ke ${INFO_EMAIL}`}
+                                    aria-label={UI_STRINGS.FOOTER.EMAIL_ARIA_LABEL(INFO_EMAIL)}
                                     className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium"
                                 >
                                     {INFO_EMAIL}
@@ -47,27 +47,27 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                         <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <li>
-                                    <Tooltip content="Buka pusat bantuan dan dokumentasi" position="top">
-                                        <button type="button" onClick={onDocsClick} aria-label="Buka pusat bantuan dan dokumentasi" className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button>
+                                    <Tooltip content={UI_STRINGS.FOOTER.TOOLTIP_HELP_CENTER} position="top">
+                                        <button type="button" onClick={onDocsClick} aria-label={UI_STRINGS.FOOTER.HELP_CENTER_ARIA_LABEL} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button>
                                     </Tooltip>
                                 </li>
                                 <li>
-                                    <DisabledLinkButton disabledReason="Area Download akan tersedia segera">
+                                    <DisabledLinkButton disabledReason={UI_STRINGS.FOOTER.COMING_SOON.DOWNLOAD}>
                                         Download
                                     </DisabledLinkButton>
                                 </li>
                                 <li>
-                                    <DisabledLinkButton disabledReason="Kebijakan Privasi akan tersedia segera">
+                                    <DisabledLinkButton disabledReason={UI_STRINGS.FOOTER.COMING_SOON.PRIVACY_POLICY}>
                                         Kebijakan Privasi
                                     </DisabledLinkButton>
                                 </li>
                                 <li>
-                                    <DisabledLinkButton disabledReason="Informasi Karir akan tersedia segera">
+                                    <DisabledLinkButton disabledReason={UI_STRINGS.FOOTER.COMING_SOON.CAREERS}>
                                         Karir
                                     </DisabledLinkButton>
                                 </li>
                                 <li>
-                                    <DisabledLinkButton disabledReason="Informasi Beasiswa akan tersedia segera">
+                                    <DisabledLinkButton disabledReason={UI_STRINGS.FOOTER.COMING_SOON.SCHOLARSHIPS}>
                                         Beasiswa
                                     </DisabledLinkButton>
                                 </li>
@@ -79,7 +79,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    disabledReason="Facebook akan tersedia segera"
+                                    disabledReason={UI_STRINGS.FOOTER.COMING_SOON.FACEBOOK}
                                 />
                                 <SocialLink
                                     icon={<InstagramIcon ariaLabel={`Instagram ${APP_CONFIG.SCHOOL_NAME}`} />}
@@ -87,7 +87,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    disabledReason="Instagram akan tersedia segera"
+                                    disabledReason={UI_STRINGS.FOOTER.COMING_SOON.INSTAGRAM}
                                 />
                                 <SocialLink
                                     icon={<YoutubeIcon ariaLabel={`YouTube ${APP_CONFIG.SCHOOL_NAME}`} />}
@@ -95,7 +95,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                                     variant="default"
                                     size="lg"
                                     disabled
-                                    disabledReason="YouTube akan tersedia segera"
+                                    disabledReason={UI_STRINGS.FOOTER.COMING_SOON.YOUTUBE}
                                 />
                             </div>
                     </div>

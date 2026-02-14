@@ -323,7 +323,7 @@ class OfflineActionQueueService {
       // Update with merged data and retry
       action.data = resolution.mergedData;
       action.status = 'pending';
-      action.retryCount = 0;
+      action.retryCount = RETRY_CONFIG.INITIAL_RETRY_COUNT;
       action.lastError = undefined;
     }
 
