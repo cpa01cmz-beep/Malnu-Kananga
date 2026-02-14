@@ -4,7 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
+## 2026-02-14 - ConfirmationDialog Keyboard Shortcuts
+
+**Learning**: The ConfirmationDialog component (used 40+ times throughout the app for delete, reset, and other destructive actions) was missing keyboard shortcut hints on its action buttons. Users couldn't discover the standard Esc and Enter shortcuts without visual hints, limiting keyboard accessibility and power-user efficiency.
+
+**Action**: Added keyboard shortcut hints to both action buttons in ConfirmationDialog.tsx:
+- Line 100: Added `shortcut="Esc"` to cancel button - follows standard cancel pattern
+- Line 111: Added `shortcut="Enter"` to confirm button - follows standard confirm pattern
+
+**File Fixed**:
+- src/components/ui/ConfirmationDialog.tsx - Added shortcut props to 2 action buttons
+
+**Pattern**: Confirmation dialogs used throughout the application should have consistent keyboard shortcut hints:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Confirm/Submit buttons: `shortcut="Enter"`
+
+This is a high-impact change because ConfirmationDialog is used in 40+ locations (UserManagement, FolderNavigation, MaterialUpload, AnnouncementManager, GradingManagement, etc.), so adding shortcuts here improves UX across the entire application.
+
+**PR**: #2263
+
+---
+
 ## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
 **Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
