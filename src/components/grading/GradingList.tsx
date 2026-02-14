@@ -236,6 +236,7 @@ const GradingList: React.FC<GradingListProps> = ({
                             studentName: student.name
                           });
                         }}
+                        aria-label={`Reset nilai ${student.name}`}
                         className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline"
                       >
                         Reset
