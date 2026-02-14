@@ -4,6 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - GradingList Reset Button Accessibility
+
+**Learning**: The GradingList component had a plain `<button>` element for resetting student grades that was missing `type="button"` and `aria-label` attributes. Without `type="button"`, the button defaults to `type="submit"` when nested inside forms, potentially causing accidental form submissions. Without `aria-label`, screen reader users couldn't get clear context about which student's grade was being reset.
+
+**Action**: Added accessibility attributes to the reset button in GradingList.tsx:
+- Line 230: Added `type="button"` to prevent accidental form submission
+- Line 238: Added `aria-label={\`Reset nilai ${student.name}\`}` for screen reader context
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+
+This follows the same pattern documented from StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and MaterialManagementView.tsx fixes.
+
+**Files Modified**:
+- src/components/grading/GradingList.tsx - Added type and aria-label to reset button
+
+**PR**: #2327
+
+---
+
 ## 2026-02-14 - ParentMeetingsView Keyboard Shortcuts
 
 **Learning**: The ParentMeetingsView component had three action buttons (Jadwalkan Pertemuan, Batal, Jadwalkan) for scheduling parent-teacher meetings that supported keyboard shortcuts but users couldn't discover them without visual hints. This is a high-traffic parent-facing component where efficiency matters.
