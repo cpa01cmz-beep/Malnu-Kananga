@@ -4,6 +4,85 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Toast and ParentMessaging Plain Button Type Accessibility
+
+**Learning**: The Toast component's undo button and ParentMessagingView's teacher selection button were missing `type="button"`. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked. This is particularly problematic for Toast since it's a global component that can appear anywhere in the application, including inside forms.
+
+**Action**: Added `type="button"` to two plain button elements:
+- Toast.tsx Line 219: Added `type="button"` to undo button
+- ParentMessagingView.tsx Line 177: Added `type="button"` to teacher selection button
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text (already present in both)
+
+This follows the same pattern documented from AICacheManager.tsx, GradingList.tsx, VoiceInputButton.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly critical for global components like Toast that can appear anywhere.
+
+---
+
+## 2026-02-14 - ParentNotificationSettings Frequency Toggle Accessibility
+
+**Learning**: The ParentNotificationSettings component had frequency selection toggle buttons (Langsung, Ringkasan Harian, Ringkasan Mingguan) that changed visual state based on selection (border and background color change) but were missing the `aria-pressed` attribute. Screen reader users couldn't know which notification frequency was currently selected when navigating this component. Additionally, the close button was missing `type="button"` which can cause accidental form submissions.
+
+**Action**: Added accessibility attributes to 4 buttons in ParentNotificationSettings.tsx:
+- Line 131: Added `type="button"` and `aria-label="Tutup pengaturan notifikasi"` to close button
+- Line 227: Added `type="button"`, `aria-pressed={settings.frequency === option.value}`, and `aria-label={\`Frekuensi notifikasi: ${option.label}\`}` to 3 frequency toggle buttons
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility. This applies to:
+- Any button that uses visual state changes (border color, background) to indicate selection
+- Frequency/option selection buttons in settings components
+- Toggle button groups where only one option can be selected
+
+This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Why it matters**: Without `aria-pressed`, screen reader users navigating through the ParentNotificationSettings page won't know which notification frequency option is currently active, making it difficult to understand the current state and effectively use the settings. The close button missing `type="button"` can also cause accidental form submissions when the component is used inside forms.
+
+---
+
+## 2026-02-14 - Plain Button Type Attribute for Accessibility
+
+**Learning**: The AICacheManager and GradingList components had plain `<button>` elements missing the `type="button"` attribute. When buttons are nested inside form elements, missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. This is a subtle but critical accessibility issue that can cause user frustration.
+
+**Action**: Added `type="button"` to 5 plain button elements:
+- AICacheManager.tsx Line 130: Added `type="button"` to refresh cache statistics button
+- AICacheManager.tsx Line 137: Added `type="button"` to clear all AI cache entries button
+- AICacheManager.tsx Line 211: Added `type="button"` to expand/collapse section button
+- AICacheManager.tsx Line 271: Added `type="button"` to clear section button
+- GradingList.tsx Line 230: Added `type="button"` to reset student grade button
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic in data tables, lists, and cards where buttons appear near form inputs.
+
+---
+
+## 2026-02-14 - ParentMeetingsView Keyboard Shortcuts
+
+**Learning**: The ParentMeetingsView component had three action buttons (Jadwalkan Pertemuan, Batal, Jadwalkan) for scheduling parent-teacher meetings that supported keyboard shortcuts but users couldn't discover them without visual hints. This is a high-traffic parent-facing component where efficiency matters.
+
+**Action**: Added keyboard shortcuts to all three action buttons:
+- Line 182: Added `shortcut="Ctrl+N"` to "Jadwalkan Pertemuan" button - opens scheduling form
+- Line 285: Added `shortcut="Esc"` to "Batal" cancel button - closes form
+- Line 296: Added `shortcut="Ctrl+Enter"` to "Jadwalkan" submit button - submits meeting request
+
+**Pattern**: Parent-facing scheduling components should have consistent keyboard shortcuts:
+- Create/New buttons: `shortcut="Ctrl+N"` (standard convention)
+- Cancel buttons: `shortcut="Esc"` (modal pattern)
+- Submit buttons: `shortcut="Ctrl+Enter"` (Enter alone adds newlines in textareas)
+
+This follows the pattern from ParentMessagingView.tsx (has shortcut="Enter"), EnhancedMaterialSharing.tsx, and other high-traffic parent components.
+
+**PR**: #2317
+
+---
+
 ## 2026-02-14 - Back Button Keyboard Shortcuts Consistency
 
 **Learning**: Six components (OsisEvents, AcademicGrades, GradeAnalytics, PPDBManagement, GradingManagement, MaterialUpload) had "Kembali" (Back) buttons that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. Some components had back buttons in loading/error states that were missing the shortcut while main state buttons had them, creating inconsistent user experience.
