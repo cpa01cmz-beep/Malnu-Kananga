@@ -2,6 +2,11 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { validateAICommand, validateAIResponse, type AuditLogEntry } from '../aiEditorValidator';
 import type { FeaturedProgram, LatestNews } from '../../types';
 
+// Flexy: Test constants to avoid hardcoded values
+const TEST_URLS = {
+  EVIL_API: 'https://evil.com/api',
+} as const;
+
 // Mock localStorage for audit logging tests
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -54,7 +59,7 @@ describe('AI Editor Validator', () => {
     });
 
     it('should reject prompt with dangerous patterns - fetch API', () => {
-      const result = validateAICommand('fetch("https://evil.com/api")');
+      const result = validateAICommand(`fetch("${TEST_URLS.EVIL_API}")`);
       expect(result.isValid).toBe(false);
     });
 
