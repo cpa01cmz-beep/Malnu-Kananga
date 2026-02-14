@@ -4,7 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
+## 2026-02-14 - GradeAnalytics Export Button Keyboard Shortcuts
+
+**Learning**: The GradeAnalytics component's action buttons (Back, Export PDF, Export CSV) were missing keyboard shortcut hints, making efficient keyboard navigation undiscoverable to users. This is a high-traffic teacher component used for viewing and exporting class grade analytics.
+
+**Action**: Added keyboard shortcut hints to all three action buttons in GradeAnalytics.tsx:
+- Line 458: Added `shortcut="Alt+Left"` to the Kembali (Back) button - follows browser navigation convention
+- Line 471: Added `shortcut="Ctrl+P"` to the Export PDF button - follows print/export convention
+- Line 479: Added `shortcut="Ctrl+Shift+E"` to the Export CSV button - follows export convention
+
+**Pattern**: High-traffic data export components should have consistent keyboard shortcut hints:
+- Back/Previous buttons: `shortcut="Alt+Left"` (follows browser convention)
+- Export/PDF buttons: `shortcut="Ctrl+P"` (follows print convention)
+- Export/CSV buttons: `shortcut="Ctrl+Shift+E"` (export convention)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+
+This follows the established pattern from other high-traffic components like QuizGenerator.tsx, StudentInsights.tsx, and AssignmentCreation.tsx where keyboard shortcuts improve power-user efficiency.
+
+**PR**: #2259
+
+---
+
 ## 2026-02-14 - QuizGenerator Material Selection Keyboard Accessibility
 
 **Learning**: The QuizGenerator component's material selection cards were mouse-only interactions - users could click to select/deselect materials, but keyboard users couldn't access this functionality. The cards had visual selection states (blue border and background when selected) but lacked the necessary ARIA attributes and keyboard handlers for screen reader and keyboard-only users.
