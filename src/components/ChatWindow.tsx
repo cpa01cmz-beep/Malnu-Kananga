@@ -322,6 +322,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     shortcut="Ctrl+V"
                     size="md"
                     variant={showVoiceSettings ? 'primary' : 'ghost'}
+                    aria-pressed={showVoiceSettings}
                     className={`p-2 ${showVoiceSettings ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                     icon={<SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />}
                   />
@@ -334,6 +335,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, closeChat, siteContext,
                     shortcut="Ctrl+B"
                     size="md"
                     variant={isThinkingMode ? 'primary' : 'ghost'}
+                    aria-pressed={isThinkingMode}
                     className={`p-2 flex items-center gap-1 ${isThinkingMode ? 'bg-white text-primary-700' : 'bg-primary-700 text-primary-200 hover:bg-primary-800'}`}
                     icon={<BrainIcon className="w-4 h-4" />}
                 >
