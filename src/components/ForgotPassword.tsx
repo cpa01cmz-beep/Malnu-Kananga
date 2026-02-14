@@ -158,6 +158,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isOpen, onClose, onSucc
               isLoading={formState === 'loading'}
               fullWidth
               className="py-3.5"
+              shortcut="Enter"
             >
               {formState === 'loading' ? 'Mengirim...' : FORGOT_PASSWORD_STRINGS.SUBMIT_BUTTON}
             </Button>

@@ -4,6 +4,29 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
+
+**Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
+
+**Action**: Add `shortcut="Enter"` prop to the submit Button component:
+- Line 161: Added `shortcut="Enter"` to the Button component
+- This makes the Enter key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern in the codebase for form submission buttons
+
+**File Fixed**:
+- src/components/ForgotPassword.tsx - Added shortcut prop to the submit button
+
+**Pattern**: Form submission buttons should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Login buttons: `shortcut="Enter"`
+- Save buttons: `shortcut="Ctrl+S"`
+- Cancel/Close buttons: `shortcut="Esc"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as LoginModal.tsx and is part of the authentication flow UX improvements. Consistent keyboard shortcut hints improve accessibility and power-user efficiency across all authentication forms.
+
+**PR**: #2171
+
 ---
 
 ## 2026-02-14 - Toast Close Button Keyboard Shortcut
