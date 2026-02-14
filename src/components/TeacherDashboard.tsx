@@ -539,8 +539,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                                     disabled={insightsLoading}
                                     tooltip="Muat ulang data"
                                     shortcut="Ctrl+R"
+                                    isLoading={insightsLoading}
                                 >
-                                    {insightsLoading ? 'Memuat...' : 'Refresh'}
+                                    Refresh
                                 </SmallActionButton>
                             </div>
                         </div>
@@ -928,8 +929,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                     disabled={insightsLoading}
                     tooltip="Muat ulang data"
                     shortcut="Ctrl+R"
+                    isLoading={insightsLoading}
                   >
-                    {insightsLoading ? 'Memuat...' : 'Refresh Data'}
+                    Refresh Data
                   </SmallActionButton>
                 </div>
 
