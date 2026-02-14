@@ -4,6 +4,37 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Back Button Keyboard Shortcuts Consistency
+
+**Learning**: Six components (OsisEvents, AcademicGrades, GradeAnalytics, PPDBManagement, GradingManagement, MaterialUpload) had "Kembali" (Back) buttons that supported the Alt+Left keyboard shortcut for browser-style navigation, but users couldn't discover this shortcut without visual hints. Some components had back buttons in loading/error states that were missing the shortcut while main state buttons had them, creating inconsistent user experience.
+
+**Action**: Added `shortcut="Alt+Left"` to all back buttons in these components:
+- OsisEvents.tsx: Added shortcut to back button (line 629)
+- AcademicGrades.tsx: Added shortcut to 2 back buttons - loading state (line 361) and error state (line 380)
+- GradeAnalytics.tsx: Added shortcut to 2 back buttons - loading state (line 383) and error state (line 411)
+- PPDBManagement.tsx: Added shortcut to back button (line 375)
+- GradingManagement.tsx: Added shortcut to back button (line 239)
+- MaterialUpload.tsx: Added shortcut to back button (line 158)
+
+**Pattern**: When a component has multiple instances of the same action button in different states/rendering branches, ALL of them MUST have consistent keyboard shortcut hints. Users should be able to discover shortcuts regardless of which state the component is in. This applies especially to:
+- Loading states with skeleton UI
+- Error states with retry options
+- Empty states with call-to-action
+
+This follows the established pattern from GradeAnalytics.tsx where back buttons in all states have consistent Alt+Left shortcuts.
+
+**Files Modified**:
+- src/components/OsisEvents.tsx - Added shortcut prop to 1 back button
+- src/components/AcademicGrades.tsx - Added shortcut prop to 2 back buttons
+- src/components/GradeAnalytics.tsx - Added shortcut prop to 2 back buttons
+- src/components/PPDBManagement.tsx - Added shortcut prop to 1 back button
+- src/components/grading/GradingManagement.tsx - Added shortcut prop to 1 back button
+- src/components/material-upload/MaterialUpload.tsx - Added shortcut prop to 1 back button
+
+**Why it matters**: Users viewing loading or error states still need to navigate back. Without consistent shortcuts, they can't discover efficient keyboard navigation, especially frustrating for power users who rely on keyboard shortcuts.
+
+---
+
 ## 2026-02-14 - ResetPassword Back Button Accessibility
 
 **Learning**: The ResetPassword component had a plain `<button>` element for navigating back to the login page with visible text "Kembali ke Login", but it lacked an explicit `aria-label`. While screen readers can use the visible text, adding an explicit `aria-label` ensures consistent accessibility even if the text changes, gets truncated, or is translated.
