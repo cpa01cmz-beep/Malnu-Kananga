@@ -2,6 +2,7 @@ import React from 'react';
 import { getResponsiveGradient } from '../config/gradients';
 import SocialLink from './ui/SocialLink';
 import DisabledLinkButton from './ui/DisabledLinkButton';
+import Tooltip from './ui/Tooltip';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from './icons/StatusIcons';
 import { INFO_EMAIL, APP_CONFIG } from '../constants';
 
@@ -45,7 +46,11 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                      <div className="sm:justify-self-end">
                         <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white mb-4">Tautan Bermanfaat</h3>
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
-                                <li><button type="button" onClick={onDocsClick} aria-label="Buka pusat bantuan dan dokumentasi" className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button></li>
+                                <li>
+                                    <Tooltip content="Buka pusat bantuan dan dokumentasi" position="top">
+                                        <button type="button" onClick={onDocsClick} aria-label="Buka pusat bantuan dan dokumentasi" className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button>
+                                    </Tooltip>
+                                </li>
                                 <li>
                                     <DisabledLinkButton disabledReason="Area Download akan tersedia segera">
                                         Download

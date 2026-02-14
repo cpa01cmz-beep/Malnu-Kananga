@@ -47,6 +47,7 @@ export const STORAGE_KEYS = {
     TWO_FACTOR_ENABLED: (userId: string) => `malnu_2fa_enabled_${userId}`,
     TWO_FACTOR_BACKUP_CODES: (userId: string) => `malnu_2fa_backup_codes_${userId}`,
     TWO_FACTOR_PENDING_SETUP: 'malnu_2fa_pending_setup',
+    TWO_FACTOR_ENFORCEMENT: 'malnu_2fa_enforcement',
     
     // User and push notification data (refactored from hardcoded)
     USER: 'malnu_user',
@@ -585,6 +586,7 @@ export const OPACITY_TOKENS = {
 // Flexy Principle: NEVER use magic numbers for timeouts!
 export const TIME_MS = {
     // Flexy: Explicit millisecond constants for test clarity and modularity
+    ZERO: 0,
     MS10: 10,
     MS20: 20,
     MS50: 50,
@@ -901,6 +903,18 @@ export const CONVERSION = {
     MS_PER_YEAR: 365.25 * 24 * 60 * 60 * 1000, // Accounts for leap years
 } as const;
 
+// Color Constants for QR codes and UI elements
+export const COLOR = {
+    BLACK: '#000000',
+    WHITE: '#FFFFFF',
+} as const;
+
+// QR Code Configuration
+export const QR_CODE_CONFIG = {
+    DEFAULT_WIDTH: 200,
+    DEFAULT_MARGIN: 2,
+} as const;
+
 /**
  * Convert megabytes to bytes
  * Flexy says: Use this instead of hardcoded `mb * 1024 * 1024`
@@ -1203,7 +1217,7 @@ export const UI_SPACING = {
     LG: '1.5',     // 24px
     XL: '2',       // 32px
     XXL: '3',      // 48px
-    XXXL: '4',     // 64px
+    XXXL: '4',     // 1rem = 16px (Tailwind spacing scale)
     
     // Common gap patterns
     GAP_TIGHT: 'gap-2',      // 8px
@@ -1633,6 +1647,21 @@ export const NOTIFICATION_TEMPLATE_STRINGS = {
     OCR_COMPLETE_TITLE: '🔍 OCR Validation Complete',
 } as const;
 
+// Notification UI strings - Flexy: Never hardcode notification messages!
+export const NOTIFICATION_UI_STRINGS = {
+    NO_UNREAD: 'Tidak ada notifikasi yang belum dibaca',
+    PERMISSION_REQUIRED: 'Izin notifikasi diperlukan untuk mengirim tes',
+    NO_MATCHING_FILTER: 'Tidak ada notifikasi yang cocok dengan filter',
+    NO_NOTIFICATIONS: 'Belum ada notifikasi',
+    PERMISSION_GRANTED: 'Izin notifikasi berhasil diberikan',
+    PERMISSION_DENIED: 'Izin notifikasi ditolak',
+    EMPTY_QUEUE: 'Tidak ada notifikasi suara dalam antrian',
+    NO_FILTER_MATCH: 'Tidak ada notifikasi untuk filter ini',
+    TEST_NOTIFICATION: 'Kirim Notifikasi Tes',
+    MARK_ALL_READ: 'Tandai Semua Dibaca',
+    MARKING: 'Menandai...',
+} as const;
+
 // Animation and timeout constants
 export const TIMEOUT_CONFIG = {
     UI_ANIMATION_DURATION: 300,
@@ -1862,6 +1891,9 @@ export const QUIZ_CONFIG = {
 // Study plan configuration constants
 export const STUDY_PLAN_CONFIG = {
     DEFAULT_DURATION_WEEKS: 4,
+    HOURS_PER_SCHEDULE: 1.5,
+    DEFAULT_WEEKS_TO_SHOW: 8,
+    DAYS_PER_WEEK: 7,
 } as const;
 
 // Parent notification configuration constants

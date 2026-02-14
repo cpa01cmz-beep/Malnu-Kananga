@@ -1,6 +1,7 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import QRCode from 'qrcode';
 import { totpService } from '../../services/totpService';
+import { COLOR, QR_CODE_CONFIG, STORAGE_KEYS } from '../../constants';
 import Button from './Button';
 import Input from './Input';
 
@@ -24,11 +25,11 @@ export function TwoFactorSetup({ userId, userEmail, onComplete, onCancel }: TwoF
       try {
         const setup = await totpService.setupTwoFactor(userId, userEmail);
         const qrDataUrl = await QRCode.toDataURL(setup.qrCodeUrl, {
-          width: 200,
-          margin: 2,
+          width: QR_CODE_CONFIG.DEFAULT_WIDTH,
+          margin: QR_CODE_CONFIG.DEFAULT_MARGIN,
           color: {
-            dark: '#000000',
-            light: '#FFFFFF'
+            dark: COLOR.BLACK,
+            light: COLOR.WHITE
           }
         });
         setQrCodeUrl(qrDataUrl);
@@ -51,8 +52,7 @@ export function TwoFactorSetup({ userId, userEmail, onComplete, onCancel }: TwoF
     setError('');
 
     try {
-      const pendingKey = 'malnu_2fa_pending_setup';
-      const pendingData = JSON.parse(localStorage.getItem(pendingKey) || '{}');
+      const pendingData = JSON.parse(localStorage.getItem(STORAGE_KEYS.TWO_FACTOR_PENDING_SETUP) || '{}');
       const success = await totpService.confirmTwoFactor(userId, pendingData.secret, verificationCode);
       
       if (success) {
@@ -116,7 +116,15 @@ export function TwoFactorSetup({ userId, userEmail, onComplete, onCancel }: TwoF
           </p>
           <div className="flex justify-center mb-6">
             {qrCodeUrl && (
-              <img src={qrCodeUrl} alt="QR Code" className="border rounded-lg" />
+              <img 
+                src={qrCodeUrl} 
+                alt="QR Code" 
+                className="border rounded-lg" 
+                loading="eager"
+                decoding="async"
+                width={200}
+                height={200}
+              />
             )}
           </div>
           <p className="text-sm text-gray-600 mb-4">

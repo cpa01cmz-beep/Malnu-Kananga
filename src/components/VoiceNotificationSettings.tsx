@@ -8,6 +8,7 @@ import Tab from './ui/Tab';
 import Modal from './ui/Modal';
 import type { SpeechSynthesisVoice } from '../types';
 import { EmptyState } from './ui/LoadingState';
+import { NOTIFICATION_UI_STRINGS } from '../constants';
 
 interface VoiceNotificationSettingsProps {
   isOpen: boolean;
@@ -440,7 +441,7 @@ const VoiceNotificationSettings: React.FC<VoiceNotificationSettingsProps> = ({
               {queue.length === 0 ? (
                 <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
                   <SpeakerWaveIcon className="w-12 h-12 mx-auto mb-3 opacity-50" aria-hidden="true" />
-                  <p>Tidak ada notifikasi suara dalam antrian</p>
+                  <p>{NOTIFICATION_UI_STRINGS.EMPTY_QUEUE}</p>
                 </div>
               ) : (
                 <div className="space-y-2">

@@ -4,6 +4,207 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - Footer Help Button Tooltip
+
+**Learning**: The "Pusat Bantuan" (Help Center) button in the Footer component had an `aria-label` for screen reader accessibility but lacked a visible tooltip for sighted users. While screen reader users understood the button's purpose through the aria-label, sighted users had to rely on the text "Pusat Bantuan" alone without additional context about what would happen when clicked.
+
+**Action**: Wrapped the Footer help button with the Tooltip component to provide visible context on hover/focus:
+- Imported `Tooltip` component from './ui/Tooltip'
+- Wrapped the "Pusat Bantuan" button with `<Tooltip content="Buka pusat bantuan dan dokumentasi" position="top">`
+- The tooltip content matches the aria-label for consistency across assistive technologies
+- Positioned the tooltip at 'top' to avoid overlapping with footer content
+
+**File Fixed**:
+- src/components/Footer.tsx - Added Tooltip wrapper to "Pusat Bantuan" button (lines 49-53)
+
+**Pattern**: Plain `<button>` elements with visible text should still have explicit tooltips when:
+1. The button triggers a modal or navigates to documentation (not a standard link)
+2. Additional context would help users understand the action
+3. The pattern exists elsewhere in the codebase for similar actions
+
+This ensures both screen reader users (via aria-label) and sighted users (via tooltip) have clear understanding of interactive elements.
+
+---
+
+## 2026-02-14 - Breadcrumb Dropdown Keyboard Navigation
+
+**Learning**: The Breadcrumb component's dropdown menu for collapsed items was missing keyboard navigation support. When breadcrumbs had too many items and showed a "...n items" dropdown, keyboard users couldn't navigate through the dropdown items using Arrow keys or close it with Escape. Screen reader users also didn't have proper ARIA roles to understand the menu structure.
+
+**Action**: Implemented comprehensive keyboard navigation and ARIA support for the Breadcrumb dropdown:
+- Added `useRef` array to track dropdown item elements for focus management
+- Added `useEffect` to automatically focus the first item when dropdown opens
+- Created `handleDropdownKeyDown` function to manage keyboard interactions:
+  - ArrowDown: Moves focus to next item (wraps around to first)
+  - ArrowUp: Moves focus to previous item (wraps around to last)
+  - Escape: Closes dropdown and returns focus to trigger button
+- Added proper ARIA attributes:
+  - Dropdown button: `aria-haspopup="menu"`, `aria-expanded`, `aria-label` with item count
+  - Dropdown container: `role="menu"`, `aria-label="Item breadcrumb tersembunyi"`
+  - Dropdown items: `role="menuitem"`, `tabIndex={0}`
+- Added focus ring styles to dropdown items for visibility
+
+**File Fixed**:
+- src/components/ui/Breadcrumb.tsx - Added keyboard navigation and ARIA roles to dropdown
+
+**Pattern**: Dropdown menus in UI components MUST implement:
+1. **Keyboard Navigation**: ArrowUp/ArrowDown to navigate items, Escape to close
+2. **Focus Management**: Focus first item on open, return focus to trigger on close
+3. **ARIA Roles**: `role="menu"` on container, `role="menuitem"` on items
+4. **Accessible Labels**: Descriptive aria-labels for screen reader context
+
+This follows the WAI-ARIA menu pattern and ensures keyboard-only users can fully interact with collapsed breadcrumb navigation.
+=======
+## 2026-02-14 - ForgotPassword Keyboard Shortcut Discoverability
+
+**Learning**: The ForgotPassword component's submit button supported Enter key form submission (standard HTML form behavior), but users couldn't discover this keyboard shortcut without visual hints. This is part of the authentication flow used by users who need to reset their passwords.
+
+**Action**: Add `shortcut="Enter"` prop to the submit Button component:
+- Line 161: Added `shortcut="Enter"` to the Button component
+- This makes the Enter key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern in the codebase for form submission buttons
+
+**File Fixed**:
+- src/components/ForgotPassword.tsx - Added shortcut prop to the submit button
+
+**Pattern**: Form submission buttons should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Login buttons: `shortcut="Enter"`
+- Save buttons: `shortcut="Ctrl+S"`
+- Cancel/Close buttons: `shortcut="Esc"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as LoginModal.tsx and is part of the authentication flow UX improvements. Consistent keyboard shortcut hints improve accessibility and power-user efficiency across all authentication forms.
+
+**PR**: #2171
+
+---
+
+## 2026-02-14 - Toast Close Button Keyboard Shortcut
+
+**Learning**: The Toast component's close button was using IconButton but was missing the `shortcut` prop, which meant users couldn't discover that they could press "Esc" to close the toast notification. While the component already supported the Escape key (via handleKeyDown), there was no visual indication of this shortcut. The IconButton component has a built-in `shortcut` prop that displays keyboard shortcuts in tooltips, making them discoverable to users.
+
+**Action**: Added `shortcut="Esc"` and `tooltip` props to the Toast's close IconButton:
+- Line 227-234: Added `tooltip={TOAST_UI_STRINGS.CLOSE}` and `shortcut="Esc"` to the IconButton
+- This makes the Escape key shortcut discoverable via tooltip on hover/focus
+- Follows the established pattern used in Header.tsx, ChatWindow.tsx, and other components
+
+**File Fixed**:
+- src/components/Toast.tsx - Added shortcut and tooltip props to close IconButton
+
+**Pattern**: IconButton components should consistently show keyboard shortcuts when available:
+- Close/Dismiss actions: `shortcut="Esc"`
+- This helps users discover keyboard shortcuts and improves accessibility
+- Always pair shortcut with tooltip for consistent UX
+
+**Related**: This follows the same pattern as ChatWindow.tsx close button (line 349) and Header.tsx menu button (line 317).
+>>>>>>> origin/main
+
+---
+
+## 2026-02-14 - StudentQuiz Confirmation Modal Keyboard Shortcuts
+
+**Learning**: The StudentQuiz component's confirmation modal (shown when students click "Kirim Kuis" to submit their quiz) had "Batal" (Cancel) and "Ya, Kirim Kuis" (Yes, Submit Quiz) buttons that supported keyboard shortcuts (Esc to cancel, Enter to submit) but users couldn't discover them without visual hints. This is a critical action point where students make an irreversible decision about submitting their quiz answers.
+
+**Action**: Add keyboard shortcut hints to both confirmation modal buttons:
+- Line 581: Added `shortcut="Esc"` to the "Batal" button - follows the standard cancel pattern
+- Line 584: Added `shortcut="Enter"` to the "Ya, Kirim Kuis" button - makes the primary action discoverable
+- Students can now see keyboard shortcuts via tooltips on hover/focus
+
+**File Fixed**:
+- src/components/StudentQuiz.tsx - Added shortcut props to 2 buttons in confirmation modal
+
+**Pattern**: Confirmation dialogs for irreversible actions should have keyboard shortcut hints on all action buttons:
+- Cancel/Close buttons: `shortcut="Esc"`
+- Confirm/Submit buttons: `shortcut="Enter"` (for primary actions)
+- Always use the Button component's `shortcut` prop to display hints in tooltips
+- This is especially important for high-stakes actions like quiz submission where users need clarity
+
+---
+
+---
+
+## 2026-02-14 - PPDBRegistration Submit Button Keyboard Shortcut
+
+**Learning**: The PPDBRegistration component's "Kirim Pendaftaran" (Submit Registration) button is a high-traffic form submission used by prospective students and parents during the annual PPDB (new student registration) period. This form had no keyboard shortcut hint, making the efficient Ctrl+Enter shortcut undiscoverable to users who prefer keyboard navigation.
+
+**Action**: Added `shortcut="Ctrl+Enter"` to the submit button:
+- Line 939: Added `shortcut="Ctrl+Enter"` to the Button component
+- This makes the keyboard shortcut discoverable via tooltip on hover/focus
+- Ctrl+Enter is the standard pattern for form submissions (Enter alone typically adds newlines in textareas)
+
+**File Fixed**:
+- src/components/PPDBRegistration.tsx - Added shortcut prop to the submit button (line 939)
+
+**Pattern**: Form submission buttons in registration and data entry components should consistently show keyboard shortcuts to improve discoverability:
+- Submit/Register buttons: `shortcut="Ctrl+Enter"`
+- Cancel/Close buttons: `shortcut="Esc"`
+- Save buttons: `shortcut="Ctrl+S"`
+
+The Button component's `shortcut` prop automatically displays a tooltip hint on hover/focus, making keyboard shortcuts discoverable to all users.
+
+**Related**: This follows the same pattern as EnhancedMaterialSharing.tsx, AssignmentCreation.tsx, and other form components where Ctrl+Enter is used for primary submission actions.
+
+---
+
+## 2026-02-14 - PPDBRegistration Delete Draft Button Accessibility
+
+**Learning**: The PPDBRegistration component's "Hapus Draft" (Delete Draft) button was a plain `<button>` element without an explicit `aria-label`. While it had visible text, adding an explicit aria-label improves screen reader consistency, especially in forms with multiple action buttons.
+
+**Action**: Added `aria-label="Hapus draft pendaftaran"` to the delete draft button:
+- Line 956: Added `aria-label` attribute to the button
+- This provides clear context for screen reader users about what will be deleted
+
+**File Fixed**:
+- src/components/PPDBRegistration.tsx - Added aria-label to the delete draft button (line 956)
+
+**Pattern**: Plain `<button>` elements in forms that perform destructive actions should have explicit aria-labels for consistent screen reader experience, especially when:
+- They appear near other action buttons (submit, cancel)
+- They perform destructive actions (delete, remove)
+- The visible text alone doesn't provide full context
+
+---
+
+## 2026-02-14 - MaterialManagementView Button Accessibility
+
+**Learning**: The MaterialManagementView component had plain `<button>` elements that were missing `type="button"` attribute. When buttons are nested inside form elements (like MaterialManagementView might be), missing type="button" causes them to default to type="submit", potentially causing accidental form submissions. Additionally, the title button had a `title` attribute but was missing an explicit `aria-label` for screen reader users.
+
+**Action**: Added `type="button"` and `aria-label` to all three plain buttons in the materials list:
+- Title button (line 268): Added `type="button"` and `aria-label={\`Lihat detail ${item.title}\`}`
+- Manage button (line 305): Added `type="button"`
+- Delete button (line 315): Added `type="button"`
+
+**File Fixed**:
+- src/components/material-upload/MaterialManagementView.tsx - Added type and aria-label to 3 buttons
+
+**Pattern**: Always audit plain `<button>` elements (not using the Button component) for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text
+3. This is especially important for list/card items with action buttons
+
+**Related**: This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, and other components with plain button accessibility fixes.
+
+---
+
+## 2026-02-14 - Input Component Aria-Label Support
+
+**Learning**: The Input component rendered a visible label only when the `label` prop was provided, but had no support for `aria-label` when used without a visible label. This created an accessibility gap where screen reader users couldn't identify input fields that relied on placeholder text or context for their purpose.
+
+**Action**: Added `ariaLabel` prop and automatic aria-label fallback:
+- Added `ariaLabel?: string` prop to InputProps interface (line 33)
+- Added aria-label attribute that uses `ariaLabel` prop when provided, or falls back to `placeholder` text when no visible label exists (line 285)
+- Fixed pre-existing bug: corrected variable name from `describedByIds` to `describedBy` in accessibilityProps (line 281)
+
+**Files Fixed**:
+- src/components/ui/Input.tsx - Added ariaLabel prop and fallback logic
+
+**Pattern**: Form inputs MUST have an accessible name via one of these methods:
+- Visible `<label>` element (htmlFor/id association)
+- `aria-label` attribute describing the input's purpose
+- `aria-labelledby` pointing to a descriptive element
+- When no visible label is provided, fall back to placeholder text as aria-label
+
+This ensures all input fields are properly announced by screen readers, improving accessibility for users navigating forms without visual cues.
+
 ---
 
 ## 2026-02-14 - GlobalSearchModal Filter Button Accessibility
