@@ -59,6 +59,7 @@ export function WebSocketStatus({
         <span className="font-medium">{getStatusText()}</span>
         {!isConnected && showReconnectButton && (
           <button
+            type="button"
             onClick={() => reconnect()}
             aria-label="Reconnect WebSocket"
             className="ml-1 p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded transition-colors"
@@ -88,6 +89,7 @@ export function WebSocketStatus({
       
       {!isConnected && showReconnectButton && (
         <button
+          type="button"
           onClick={() => reconnect()}
           disabled={isConnecting || isReconnecting}
           aria-label="Reconnect WebSocket connection"
@@ -190,6 +192,7 @@ export function WebSocketStatusPanel({ className = '' }: { className?: string })
         {!isConnected && (
           <div className="pt-2 border-t">
             <button
+              type="button"
               onClick={() => reconnect()}
               disabled={isConnecting || isReconnecting}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
