@@ -6,9 +6,6 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
----
-
 ## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
 
 **Learning**: The RoleManager component had multiple action buttons (Create Role, Cancel, Save, Use Template) missing keyboard shortcut hints while other components in the codebase consistently use shortcuts. Additionally, the tab navigation was missing proper ARIA attributes for screen reader accessibility.
@@ -91,7 +88,6 @@ This follows the established pattern from NotificationCenter.tsx, ParentMeetings
 ---
 
 ## 2026-02-14 - ErrorMessage Toggle Button Accessibility
->>>>>>> a1f72070 (docs(palette): Add BatchManagement keyboard shortcut UX journal entry)
 
 **Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
 
@@ -221,7 +217,6 @@ This follows the same pattern documented from StudyPlanAnalytics.tsx, VoiceNotif
 - src/components/grading/GradingList.tsx - Added type and aria-label to reset button
 
 **PR**: #2327
->>>>>>> origin/main
 
 ---
 
@@ -281,7 +276,6 @@ This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx,
 This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and other components with plain button accessibility fixes.
 
 **Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic in data tables, lists, and cards where buttons appear near form inputs.
->>>>>>> origin/main
 
 ---
 
