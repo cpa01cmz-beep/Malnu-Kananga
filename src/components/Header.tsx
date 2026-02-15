@@ -303,7 +303,7 @@ const Header: React.FC<HeaderProps> = ({
                             </div>
                           ) : (
                               <div className="hidden sm:flex items-center gap-2">
-                                    <Button variant="outline" intent="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left">
+                                    <Button variant="outline" intent="info" onClick={onChatClick} icon={<ChatIcon />} iconPosition="left" shortcut="Ctrl+T">
                                          <span>{HEADER_NAV_STRINGS.AI_ASK}</span>
                                      </Button>
                                     <Button onClick={onLoginClick}>
