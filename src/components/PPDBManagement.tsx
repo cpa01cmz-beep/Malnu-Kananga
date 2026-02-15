@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { PPDBRegistrant, PPDBFilterOptions, PPDBSortOptions, PPDBTemplate, PPDBRubric, User, UserRole, UserExtraRole, DocumentPreview } from '../types';
 
 import { STORAGE_KEYS, BYTES_PER_KB, PPDB_LEGACY_STATUS, USER_ROLES, APP_CONFIG, EMAIL_TEMPLATE_STYLES } from '../constants';
+import { ENV } from '../config/env';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { permissionService } from '../services/permissionService';
 import { emailService } from '../services/emailService';
@@ -56,16 +57,16 @@ const PPDBManagement: React.FC<PPDBManagementProps> = ({ onBack, onShowToast }) 
       id: 'approval-default',
       name: 'Persetujuan Standar',
       type: 'approval',
-      subject: 'Selamat! Diterima di SMA Negeri 1 Malang',
-      body: 'Dear {fullName},\n\nKami dengan senang hati menginformasikan bahwa Anda telah diterima di SMA Negeri 1 Malang untuk tahun ajaran 2025/2026.\n\nSilakan melakukan daftar ulang pada {registrationDate}.\n\nHormat kami,\nPanitia PPDB',
+      subject: `Selamat! Diterima di ${ENV.SCHOOL.NAME}`,
+      body: `Dear {fullName},\n\nKami dengan senang hati menginformasikan bahwa Anda telah diterima di ${ENV.SCHOOL.NAME} untuk tahun ajaran 2025/2026.\n\nSilakan melakukan daftar ulang pada {registrationDate}.\n\nHormat kami,\nPanitia PPDB`,
       variables: ['fullName', 'registrationDate']
     },
     {
       id: 'rejection-default',
       name: 'Penolakan Standar',
       type: 'rejection',
-      subject: 'Hasil Seleksi PPDB SMA Negeri 1 Malang',
-      body: 'Dear {fullName},\n\nTerima kasih telah mendaftar di SMA Negeri 1 Malang. Setelah melalui proses seleksi, mohon maaf kami belum dapat menerima Anda pada tahun ajaran ini.\n\nJangan menyerah dan tetap semangat!\n\nHormat kami,\nPanitia PPDB',
+      subject: `Hasil Seleksi PPDB ${ENV.SCHOOL.NAME}`,
+      body: `Dear {fullName},\n\nTerima kasih telah mendaftar di ${ENV.SCHOOL.NAME}. Setelah melalui proses seleksi, mohon maaf kami belum dapat menerima Anda pada tahun ajaran ini.\n\nJangan menyerah dan tetap semangat!\n\nHormat kami,\nPanitia PPDB`,
       variables: ['fullName']
     }
   ]);
