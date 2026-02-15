@@ -376,7 +376,7 @@ const ActivityFeed: React.FC<ActivityFeedProps> = ({
               title={isConnected ? 'Terhubung' : 'Terputus'}
             />
             {unreadCount > 0 && (
-              <Button size="sm" variant="ghost" onClick={handleMarkAllAsRead}>
+              <Button size="sm" variant="ghost" onClick={handleMarkAllAsRead} shortcut="Ctrl+D">
                 Tandai semua dibaca
               </Button>
             )}

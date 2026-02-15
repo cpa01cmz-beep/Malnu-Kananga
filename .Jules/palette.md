@@ -4,6 +4,47 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - Accessibility Settings Quick Presets Toggle
+
+**Learning**: The AccessibilitySettings component's Quick Presets (Dyslexia-Friendly, High Contrast) buttons were "apply only" - clicking them always applied the preset but offered no way to reset. Users couldn't easily turn off the accessibility settings they had enabled.
+
+**Action**: Made the preset buttons toggleable:
+- Modified `applyDyslexiaFont()` to toggle on/off (if dyslexiaMode is true, reset to defaults; otherwise apply preset)
+- Modified `applyHighContrast()` to toggle on/off (if highContrastColors is true, reset to defaults; otherwise apply preset)
+- Added `aria-pressed={settings.dyslexiaMode}` and `aria-pressed={settings.highContrastColors}` to both buttons
+
+**Pattern**: Toggle buttons for accessibility settings should:
+- Be toggleable (click to enable, click again to disable)
+- Use `aria-pressed` attribute to indicate state to screen readers
+- Reset related settings when toggled off (not just the mode flag)
+
+**Files Modified**:
+- src/components/ui/AccessibilitySettings.tsx - Added toggle logic and aria-pressed to preset buttons
+
+---
+
+## 2026-02-15 - ActivityFeed Mark All as Read Keyboard Shortcut
+
+**Learning**: The ActivityFeed component's "Tandai semua dibaca" (Mark all as read) button was missing a keyboard shortcut hint, while the same action in NotificationCenter already uses `shortcut="Ctrl+D"`. This inconsistency makes the feature less discoverable for keyboard users and creates a fragmented UX across similar components.
+
+**Action**: Added `shortcut="Ctrl+D"` to the mark all as read button in ActivityFeed.tsx:
+- Line 379: Added `shortcut="Ctrl+D"` to align with NotificationCenter pattern
+- D for "Dibaca" (Read) or "Done" - intuitive mnemonic
+
+**Pattern**: Consistent keyboard shortcuts across similar actions:
+- Mark all as read: `shortcut="Ctrl+D"` (D for Done/Dibaca)
+- Use same shortcut for same semantic action across different components
+- This follows the established pattern from NotificationCenter.tsx
+
+**Why it matters**: Consistency in keyboard shortcuts improves muscle memory and makes features more discoverable. Users who learn Ctrl+D marks notifications as read in NotificationCenter will expect the same shortcut to work in ActivityFeed. This is especially important for power users who manage notifications and activity feeds frequently.
+
+**Files Modified**:
+- src/components/ActivityFeed.tsx - Added shortcut prop to mark all as read button
+
+**PR**: #2409
+
+---
+
 ## 2026-02-15 - TeacherDashboard Voice Help Keyboard Shortcut
 
 **Learning**: The TeacherDashboard component's voice command help button ("Bantuan") was missing a keyboard shortcut hint, while other action buttons in the codebase consistently use shortcuts for better discoverability. This is a high-traffic teacher-facing component where keyboard efficiency matters.

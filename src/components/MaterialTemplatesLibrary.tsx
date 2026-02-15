@@ -371,9 +371,11 @@ const MaterialTemplatesLibrary: React.FC<MaterialTemplatesProps> = ({
                   <button
                     type="button"
                     onClick={() => onSelectTemplate(template)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium"
+                    aria-label={`Gunakan template ${template.title}`}
+                    title={`Gunakan template ${template.title} (Tekan Enter saat fokus)`}
+                    className="flex-1 flex items-center justify-center gap-2 py-2 bg-neutral-100 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 transition-colors text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1"
                   >
-                    <PlusIcon className="w-4 h-4" />
+                    <PlusIcon className="w-4 h-4" aria-hidden="true" />
                     Gunakan
                   </button>
                 )}
