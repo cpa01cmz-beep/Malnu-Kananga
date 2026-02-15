@@ -17,7 +17,7 @@ import IconButton from './ui/IconButton';
 import Modal from './ui/Modal';
 import { SendIcon } from './icons/SendIcon';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, SITE_EDITOR_LIMITS } from '../constants';
+import { STORAGE_KEYS, SITE_EDITOR_LIMITS, TIME_MS } from '../constants';
 import { HEIGHTS } from '../config/heights';
 
 interface SiteEditorProps {
@@ -148,7 +148,7 @@ const SiteEditor: React.FC<SiteEditorProps> = ({ isOpen, onClose, currentContent
         } else {
           setRateLimitInfo(prev => prev ? { ...prev, remaining: Math.max(0, prev.resetTime - now) } : null);
         }
-      }, 1000);
+      }, TIME_MS.ONE_SECOND);
       return () => clearInterval(interval);
     }
   }, [rateLimitInfo]);

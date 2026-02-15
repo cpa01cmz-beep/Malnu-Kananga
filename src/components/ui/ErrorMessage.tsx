@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ERROR_MESSAGE_CONFIG, RETRY_CONFIG } from '../../constants';
+import { ERROR_MESSAGE_CONFIG, RETRY_CONFIG, UI_DELAYS, TIME_MS } from '../../constants';
 
 interface ErrorMessageProps {
   title?: string;
@@ -87,7 +87,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
     if (retryAction && !retryAction.loading) {
       shortcutHintTimeoutRef.current = setTimeout(() => {
         setShowShortcutHint(true);
-      }, 400);
+      }, UI_DELAYS.SHORTCUT_HINT_DELAY);
     }
   }, [retryAction]);
 
@@ -131,7 +131,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
           clearInterval(countdown);
           return null;
         });
-      }, 1000);
+      }, TIME_MS.ONE_SECOND);
 
       const timer = setTimeout(() => {
         setRetryCount(prev => prev + 1);

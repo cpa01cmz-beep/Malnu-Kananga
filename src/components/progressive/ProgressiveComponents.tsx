@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useProgressiveLoading } from '../../hooks/useProgressiveLoading';
 import LoadingSpinner from '../ui/LoadingSpinner';
+import { TIME_MS } from '../../constants';
 
 // Progressive image loading component
 interface ProgressiveImageProps {
@@ -144,7 +145,7 @@ export const ProgressiveList = <T,>({
       setVisibleItems(prev => [...prev, ...newItems]);
       setLoadedCount(nextCount);
       setIsLoading(false);
-    }, 300);
+    }, TIME_MS.MS300);
   }, [isLoading, loadedCount, items]);
 
   // Load initial items

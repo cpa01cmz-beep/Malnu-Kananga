@@ -282,7 +282,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
     setTimeout(() => {
       setCurrentView(view);
       setNavigatingView(null);
-    }, 300);
+    }, TIME_MS.MS300);
   }, []);
 
   const refreshDashboardData = useCallback(async () => {

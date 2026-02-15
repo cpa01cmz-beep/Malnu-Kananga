@@ -10,7 +10,7 @@ import { CheckIcon } from './icons/CheckIcon';
 import { ChevronLeftIcon } from './icons/ChevronLeftIcon';
 import { ArrowRightIcon } from './icons/ArrowRightIcon';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, ID_FORMAT } from '../constants';
+import { STORAGE_KEYS, ID_FORMAT, TIME_MS } from '../constants';
 
 interface StudentQuizProps {
   quiz: Quiz;
@@ -355,7 +355,7 @@ export function StudentQuiz({ quiz, onSubmit, onCancel }: StudentQuizProps) {
         
         return { ...prev, timeRemaining: newTimeRemaining };
       });
-    }, 1000);
+    }, TIME_MS.ONE_SECOND);
 
     return () => clearInterval(timer);
   }, [showTimeWarning]);
@@ -371,7 +371,7 @@ export function StudentQuiz({ quiz, onSubmit, onCancel }: StudentQuizProps) {
 
     const autoSaveInterval = setInterval(() => {
       handleAutoSave();
-    }, 30000);
+    }, TIME_MS.THIRTY_SECONDS);
 
     return () => {
       clearInterval(autoSaveInterval);
