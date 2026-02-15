@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
+import { DATE_PARSING, INDEX, STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -205,8 +205,8 @@ class PPDBIntegrationService {
         phoneNumber: registrant.phoneNumber,
         parentName: registrant.parentName,
         parentPhone: registrant.phoneNumber, // Use same phone as primary
-        dateOfBirth: new Date().toISOString().split('T')[0], // Placeholder, will be updated
-        enrollmentDate: new Date().toISOString().split('T')[0],
+        dateOfBirth: new Date().toISOString().split(DATE_PARSING.ISO_SEPARATOR)[INDEX.FIRST], // Placeholder, will be updated
+        enrollmentDate: new Date().toISOString().split(DATE_PARSING.ISO_SEPARATOR)[INDEX.FIRST],
       };
 
       const response = await studentsAPI.create(student);

@@ -13,7 +13,7 @@ import Button from './ui/Button';
 import { pdfExportService } from '../services/pdfExportService';
 import { logger } from '../utils/logger';
 import { EmptyState } from './ui/LoadingState';
-import { USER_ROLES } from '../constants';
+import { DATE_PARSING, INDEX, USER_ROLES } from '../constants';
 
 interface AttendanceViewProps {
   onBack: () => void;
@@ -66,7 +66,7 @@ const AttendanceView: React.FC<AttendanceViewProps> = ({ onBack }) => {
   }, [fetchAttendance]);
 
   const processAttendanceData = (attendanceData: Attendance[]) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split(DATE_PARSING.ISO_SEPARATOR)[INDEX.FIRST];
 
     const todayRecord = attendanceData.find((att) => att.date === today);
     if (todayRecord) {

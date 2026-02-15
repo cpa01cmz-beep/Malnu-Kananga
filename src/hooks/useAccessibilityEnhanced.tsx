@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { UI_DELAYS, UI_ACCESSIBILITY } from '../constants';
+import { INDEX, UI_DELAYS, UI_ACCESSIBILITY } from '../constants';
 
 export interface AccessibilityOptions {
   announceChanges?: boolean;
@@ -76,8 +76,8 @@ export const useAccessibility = (options: AccessibilityOptions = {}) => {
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     );
     
-    const firstElement = focusableElements[0] as HTMLElement;
-    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+    const firstElement = focusableElements[INDEX.FIRST] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - INDEX.LAST_OFFSET] as HTMLElement;
 
     const handleTabKey = (e: KeyboardEvent) => {
       if (e.key === 'Tab') {

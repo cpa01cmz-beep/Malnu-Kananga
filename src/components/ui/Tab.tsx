@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { UI_DELAYS } from '../../constants';
+import { INDEX, UI_DELAYS } from '../../constants';
 
 export type TabColor = 'green' | 'blue' | 'purple' | 'red' | 'yellow' | 'neutral';
 
@@ -179,13 +179,13 @@ const Tab: React.FC<TabProps> = ({
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!enableSwipeGestures) return;
     setIsDragging(true);
-    setStartX(e.touches[0].clientX);
-    setCurrentX(e.touches[0].clientX);
+    setStartX(e.touches[INDEX.FIRST].clientX);
+    setCurrentX(e.touches[INDEX.FIRST].clientX);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!enableSwipeGestures || !isDragging) return;
-    setCurrentX(e.touches[0].clientX);
+    setCurrentX(e.touches[INDEX.FIRST].clientX);
   };
 
   const handleTouchEnd = () => {
@@ -217,14 +217,14 @@ const Tab: React.FC<TabProps> = ({
       handleTabChange(enabledOptions[nextIndex].id);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault();
-      const prevIndex = currentEnabledIndex === 0 ? enabledOptions.length - 1 : currentEnabledIndex - 1;
+      const prevIndex = currentEnabledIndex === INDEX.FIRST ? enabledOptions.length - INDEX.LAST_OFFSET : currentEnabledIndex - 1;
       handleTabChange(enabledOptions[prevIndex].id);
     } else if (e.key === 'Home') {
       e.preventDefault();
-      handleTabChange(enabledOptions[0].id);
+      handleTabChange(enabledOptions[INDEX.FIRST].id);
     } else if (e.key === 'End') {
       e.preventDefault();
-      handleTabChange(enabledOptions[enabledOptions.length - 1].id);
+      handleTabChange(enabledOptions[enabledOptions.length - INDEX.LAST_OFFSET].id);
     }
   };
 
