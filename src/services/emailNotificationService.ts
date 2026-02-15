@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, EMAIL_COLORS, TIME_MS, SCHEDULER_INTERVALS, TIME_FORMAT } from '../constants';
+import { STORAGE_KEYS, STORAGE_LIMITS, APP_CONFIG, EMAIL_COLORS, EMAIL_FONT_FAMILY, TIME_MS, SCHEDULER_INTERVALS, TIME_FORMAT } from '../constants';
 
 export interface EmailNotificationPreferences {
   userId: string;
@@ -382,6 +382,7 @@ class EmailNotificationService {
       const groupedByType = this.groupNotificationsByType(items);
       
       const EC = EMAIL_COLORS;
+      const EF = EMAIL_FONT_FAMILY;
       let htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -389,7 +390,7 @@ class EmailNotificationService {
           <meta charset="utf-8">
           <title>Email Notifikasi - ${new Date().toLocaleDateString('id-ID')}</title>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+            body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
             .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
             .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid #e5e7eb; }

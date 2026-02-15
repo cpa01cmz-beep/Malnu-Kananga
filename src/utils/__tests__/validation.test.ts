@@ -14,6 +14,7 @@ import {
   classifyLoginError,
   announceValidation
 } from '../validation';
+import { UI_ACCESSIBILITY } from '../../constants';
 
 describe('validation', () => {
   describe('emailValidation', () => {
@@ -443,7 +444,7 @@ describe('validation', () => {
       const element = createElementSpy.mock.results[0].value;
 
       expect(element.style.position).toBe('absolute');
-      expect(element.style.left).toBe('-9999px');
+      expect(element.style.left).toBe(UI_ACCESSIBILITY.OFFSCREEN_POSITION);
       expect(element.style.width).toBe('1px');
       expect(element.style.height).toBe('1px');
       expect(element.style.overflow).toBe('hidden');
