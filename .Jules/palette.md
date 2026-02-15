@@ -4,6 +4,42 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - QuizGenerator Disabled Button Tooltips
+
+**Learning**: The QuizGenerator component had action buttons that became disabled during async operations (loading materials, generating quiz with AI, saving quiz), but users couldn't understand WHY the buttons were disabled. This created confusion and poor UX, especially for users with assistive technologies.
+
+**Action**: Added `disabledReason` props to both action buttons to provide contextual feedback:
+- Line 505-512: Added `disabledReason={generating ? 'Sedang menyimpan kuis, harap tunggu...' : undefined}` to "Simpan Kuis" button
+- Line 514-534: Added `disabledReason` with conditional messages to "Lanjut/Buat Kuis" button:
+  - Loading state: "Sedang memuat materi..."
+  - Generating state: "Sedang membuat kuis dengan AI..."
+
+**Pattern**: Disabled action buttons should ALWAYS include `disabledReason` when the disabled state is not immediately obvious:
+- Async operations (loading, saving, generating): Explain what the system is doing
+- Form validation: Explain what needs to be corrected
+- Permission checks: Explain why the action is unavailable
+- The `disabledReason` prop renders as a tooltip on hover and is announced by screen readers
+
+This follows the established pattern from ResetPassword.tsx, SchoolInventory.tsx, and other components where disabledReason provides critical context for disabled states.
+
+**Why it matters**: When buttons are disabled without explanation, users may think:
+- The system is broken
+- They did something wrong
+- The feature is unavailable to them
+
+Providing a `disabledReason` tooltip:
+- Reduces user confusion and anxiety
+- Improves accessibility for screen reader users
+- Provides transparency about system state
+- Follows inclusive design principles
+
+**Files Modified**:
+- src/components/QuizGenerator.tsx - Added disabledReason props to 2 buttons
+
+**PR**: #2465
+
+---
+
 ## 2026-02-15 - DirectMessage & GroupChat New Chat Shortcuts
 
 **Learning**: The DirectMessage and GroupChat components' "New Conversation" and "Create Group" buttons were missing keyboard shortcut hints. These are high-traffic messaging components where users frequently start new conversations, and the lack of shortcuts made these actions less discoverable for keyboard users.
