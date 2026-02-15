@@ -71,6 +71,7 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
         <Button
           onClick={() => setShowCreateModal(true)}
           size="sm"
+          shortcut="Ctrl+N"
         >
           Buat Batch
         </Button>
@@ -155,12 +156,14 @@ const BatchManagement: React.FC<BatchManagementProps> = ({
               onClick={handleCreateBatch}
               disabled={!batchName.trim() || !notificationText.trim()}
               fullWidth
+              shortcut="Ctrl+Enter"
             >
               Buat Batch
             </Button>
             <Button
               onClick={() => setShowCreateModal(false)}
               variant="secondary"
+              shortcut="Esc"
             >
               Batal
             </Button>
