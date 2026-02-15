@@ -459,6 +459,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onShowToast, extraR
                             <div className="flex items-center gap-2">
                                 <SmallActionButton
                                     onClick={() => setShowVoiceHelp(true)}
+                                    shortcut="Ctrl+H"
+                                    tooltip="Bantuan perintah suara"
                                 >
                                     Bantuan
                                 </SmallActionButton>

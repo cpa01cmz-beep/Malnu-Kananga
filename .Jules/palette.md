@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - TeacherDashboard Voice Help Keyboard Shortcut
+
+**Learning**: The TeacherDashboard component's voice command help button ("Bantuan") was missing a keyboard shortcut hint, while other action buttons in the codebase consistently use shortcuts for better discoverability. This is a high-traffic teacher-facing component where keyboard efficiency matters.
+
+**Action**: Added `shortcut="Ctrl+H"` and `tooltip="Bantuan perintah suara"` to the voice help button:
+- Line 461: Added `shortcut="Ctrl+H"` to make the help shortcut discoverable
+- Line 462: Added `tooltip="Bantuan perintah suara"` for better context
+
+**Pattern**: Help buttons in high-traffic components should have consistent keyboard shortcuts:
+- Help buttons: `shortcut="Ctrl+H"` (H for Help, standard convention)
+- Always use the SmallActionButton/Button component's `shortcut` prop to display hints in tooltips
+- Add descriptive tooltip text to clarify the button's purpose
+
+This follows the established pattern from other components where keyboard shortcuts improve power-user efficiency and make features more discoverable.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who prefer keyboard navigation. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important for teachers who need quick access to voice command help while managing their dashboard.
+
+**Files Modified**:
+- src/components/TeacherDashboard.tsx - Added shortcut and tooltip to voice help button
+
+---
+
 ## 2026-02-15 - StudentQuiz Question Navigation Button Accessibility
 
 **Learning**: The StudentQuiz component had a plain `<button>` element for navigating between quiz questions (question number buttons in the grid) that was missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and can trigger unintended form submissions when clicked.
