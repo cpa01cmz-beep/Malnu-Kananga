@@ -1,5 +1,5 @@
 import React from 'react';
-import { XML_NAMESPACES } from '../../constants';
+import { XML_NAMESPACES, TIME_MS } from '../../constants';
 
 interface LoadingSpinnerProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -221,7 +221,7 @@ interface FadeInProps {
 export const FadeIn: React.FC<FadeInProps> = ({
   children,
   duration = 'normal',
-  delay = 0,
+  delay = TIME_MS.ZERO,
   direction = 'up',
   className = ''
 }) => {
@@ -320,7 +320,7 @@ interface ScaleInProps {
 export const ScaleIn: React.FC<ScaleInProps> = ({
   children,
   duration = 'normal',
-  delay = 0,
+  delay = TIME_MS.ZERO,
   className = ''
 }) => {
   const durationClasses = {

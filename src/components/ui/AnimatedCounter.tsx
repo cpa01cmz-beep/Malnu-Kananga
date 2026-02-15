@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { TIME_MS } from '../../constants';
 
 export interface AnimatedCounterProps {
   value: number;
@@ -18,7 +19,7 @@ export interface AnimatedCounterProps {
 const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   value,
   duration = 1500,
-  delay = 0,
+  delay = TIME_MS.ZERO,
   format,
   prefix = '',
   suffix = '',
