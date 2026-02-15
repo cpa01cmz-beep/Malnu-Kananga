@@ -4,6 +4,51 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - GradingActions Statistics Button Toggle Accessibility
+
+**Learning**: The GradingActions component's Statistics button was missing toggle state indicators while the adjacent Batch Mode button had proper accessibility (aria-pressed and visual variant change). This inconsistency creates a confusing experience for screen reader users who can't tell if Statistics panel is currently visible.
+
+**Action**: Added toggle state to Statistics button:
+- Added `showStats: boolean` prop to GradingActionsProps interface
+- Added `variant={showStats ? 'blue-solid' : 'secondary'}` for visual feedback when active
+- Added `aria-pressed={showStats}` to announce state to screen readers
+- Follows same pattern as Batch Mode toggle button
+
+**Pattern**: Toggle action buttons should consistently show state:
+- Visual: Change variant (e.g., 'secondary' → 'blue-solid') when active
+- Accessibility: Always include `aria-pressed={isActive}` attribute
+- This helps keyboard/screen reader users know the current state
+
+**Files Modified**:
+- src/components/grading/GradingActions.tsx - Added showStats prop, updated Statistics button
+
+**PR**: #2438
+
+---
+
+## 2026-02-15 - MessageInput File Attachment Keyboard Shortcut
+
+**Learning**: The MessageInput component's file attachment button was missing a keyboard shortcut hint, while the send button already has `shortcut="Enter"`. This inconsistency makes the attachment feature less discoverable for keyboard users in a high-traffic messaging component.
+
+**Action**: Added `shortcut="Ctrl+O"` to the file attachment button in MessageInput.tsx:
+- Line 172: Added `shortcut="Ctrl+O"` to make the attachment shortcut discoverable
+- O for "Open" (file dialog) - intuitive mnemonic that aligns with common file attachment patterns
+
+**Pattern**: Consistent keyboard shortcuts in messaging interfaces:
+- File attachment buttons: `shortcut="Ctrl+O"` (O for Open file dialog)
+- Send buttons: `shortcut="Enter"` (already implemented)
+- Clear message: `Escape` (already implemented via aria-label)
+- This creates a complete keyboard-accessible messaging experience
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who compose messages frequently. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important in messaging workflows where users need quick access to file attachments while typing.
+
+**Files Modified**:
+- src/components/MessageInput.tsx - Added shortcut prop to file attachment button
+
+**PR**: #2436
+
+---
+
 ## 2026-02-15 - Accessibility Settings Quick Presets Toggle
 
 **Learning**: The AccessibilitySettings component's Quick Presets (Dyslexia-Friendly, High Contrast) buttons were "apply only" - clicking them always applied the preset but offered no way to reset. Users couldn't easily turn off the accessibility settings they had enabled.
