@@ -215,7 +215,7 @@ const UserManagementContent: React.FC<UserManagementProps> = ({ onBack, onShowTo
             </div>
             {canCreateUser && (
                 <div className="flex gap-2">
-                    <Button variant="secondary" onClick={() => setIsImportModalOpen(true)} icon={<DocumentTextIcon className="w-5 h-5" />}>
+                    <Button variant="secondary" onClick={() => setIsImportModalOpen(true)} icon={<DocumentTextIcon className="w-5 h-5" />} shortcut="Ctrl+I" aria-label="Import pengguna dari file CSV">
                         <span className="hidden sm:inline">Import CSV</span>
                     </Button>
                     <Button onClick={handleAddUser} icon={<PlusIcon className="w-5 h-5" />} shortcut="Ctrl+N">

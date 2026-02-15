@@ -1,10 +1,12 @@
 import type { EmailTemplate, EmailTemplateContext } from '../types/email.types';
-import { STORAGE_KEYS, EMAIL_COLORS, APP_CONFIG } from '../constants';
+import { STORAGE_KEYS, EMAIL_COLORS, EMAIL_FONT_FAMILY, APP_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { generateTemplateId } from '../utils/idGenerator';
 
 // Flexy: Email color aliases for template readability
 const EC = EMAIL_COLORS;
+// Flexy: Email font family alias for template readability
+const EF = EMAIL_FONT_FAMILY;
 
 class EmailTemplatesService {
   private templates: Map<string, EmailTemplate> = new Map();
@@ -54,7 +56,7 @@ class EmailTemplatesService {
   <meta charset="utf-8">
   <title>Update Nilai</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -131,7 +133,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Laporan Kehadiran</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -201,7 +203,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Laporan Progress</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -277,7 +279,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Pengingat Acara</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.PRIMARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -345,7 +347,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Notifikasi Sistem</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.TEXT_DARK}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -402,7 +404,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Pengumuman Baru</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.SUCCESS}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -465,7 +467,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Materi Baru</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.LIBRARY}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -530,7 +532,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Notifikasi PPDB</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.PPDB}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
@@ -591,7 +593,7 @@ Email ini dikirim secara otomatis, jangan balas ke email ini.`,
   <meta charset="utf-8">
   <title>Nilai Belum Lengkap</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
+    body { font-family: ${EF}; line-height: 1.6; color: ${EC.TEXT_PRIMARY}; }
     .container { max-width: 600px; margin: 0 auto; padding: 20px; }
     .header { background: ${EC.WARNING}; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
     .content { background: ${EC.BACKGROUND}; padding: 20px; border: 1px solid ${EC.BORDER}; }
