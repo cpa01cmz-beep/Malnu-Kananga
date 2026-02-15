@@ -181,6 +181,7 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
           <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
             {actions.map((action, index) => (
               <button
+                type="button"
                 key={index}
                 onClick={() => {
                   if (!action.disabled) {
@@ -212,6 +213,7 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
           {/* Cancel button */}
           <div className="border-t border-neutral-200 dark:border-neutral-700 mt-2">
             <button
+              type="button"
               onClick={() => {
                 // Haptic feedback for cancel
                 if ('vibrate' in navigator) {
@@ -228,6 +230,7 @@ const ActionSheet: React.FC<ActionSheetProps> = ({
 
         {/* Close button for desktop */}
         <button
+          type="button"
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors lg:hidden"
           aria-label="Tutup"
