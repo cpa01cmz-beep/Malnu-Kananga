@@ -4,6 +4,30 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - Header AI Chat Button Keyboard Shortcut
+
+**Learning**: The Header component's AI Chat button ("Tanya AI") was missing a keyboard shortcut hint, while the adjacent menu button already had `shortcut="Ctrl+M"`. This inconsistency made the chat feature less discoverable for keyboard users in a high-traffic navigation component.
+
+**Action**: Added `shortcut="Ctrl+T"` to the AI Chat button:
+- Line 306: Added `shortcut="Ctrl+T"` to make the chat shortcut discoverable
+- T for "Talk" or "Tanya" - intuitive mnemonic
+- Consistent with menu button pattern (Ctrl+M)
+- Visible kbd pill makes shortcut discoverable without hovering
+
+**Pattern**: Navigation buttons in Header should have consistent keyboard shortcuts:
+- Menu button: `shortcut="Ctrl+M"` (already implemented)
+- AI Chat button: `shortcut="Ctrl+T"` (T for Talk/Tanya)
+- Login button: Could use `shortcut="Ctrl+L"` in future (L for Login)
+
+**Why it matters**: The Header is a high-traffic component seen on every page. Keyboard users should be able to quickly access the AI chat feature without reaching for the mouse. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This improves efficiency for power users who navigate frequently with keyboards.
+
+**Files Modified**:
+- src/components/Header.tsx - Added shortcut prop to AI Chat button (1 line change)
+
+**PR**: #2446
+
+---
+
 ## 2026-02-15 - GradingActions Statistics Button Toggle Accessibility
 
 **Learning**: The GradingActions component's Statistics button was missing toggle state indicators while the adjacent Batch Mode button had proper accessibility (aria-pressed and visual variant change). This inconsistency creates a confusing experience for screen reader users who can't tell if Statistics panel is currently visible.
