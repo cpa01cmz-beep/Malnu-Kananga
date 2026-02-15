@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
-import { TIME_MS } from '../constants';
+import { TIME_MS, UI_STRINGS } from '../constants';
 
 export interface PaymentModalProps {
   isOpen: boolean;
@@ -94,8 +94,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Pilih Metode Pembayaran"
-      description="Pilih metode pembayaran yang Anda inginkan"
+      title={UI_STRINGS.PAYMENT.MODAL_TITLE}
+      description={UI_STRINGS.PAYMENT.MODAL_DESCRIPTION}
       size="lg"
       animation="fade-in-up"
       closeOnBackdropClick

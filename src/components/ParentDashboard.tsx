@@ -344,10 +344,10 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
       setShowVoiceHelp(true);
     },
     onLogout: () => {
-      onShowToast('Keluar dari sistem...', 'info');
+      onShowToast(UI_STRINGS.MESSAGES.LOGOUT_IN_PROGRESS, 'info');
       setTimeout(() => {
         window.location.href = '/';
-      }, 1500);
+      }, TIME_MS.MS1500);
     },
   });
 

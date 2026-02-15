@@ -599,6 +599,7 @@ export const TIME_MS = {
     MS500: 500,
     MS600: 600,
     MS800: 800,
+    MS1500: 1500, // Flexy: Added for logout delay - eliminates hardcoded magic number
     // Very short delays for immediate UI updates
     VERY_SHORT: 10,
     SHORT: 50,
@@ -3892,6 +3893,17 @@ export const UI_STRINGS = {
   // Notification strings (Flexy: Eliminated hardcoded values - Run #116)
   NOTIFICATIONS: {
     GRADE_UPDATE_TITLE: (subject: string) => `Nilai Update: ${subject}`,
+  },
+
+  MESSAGES: {
+    LOGOUT_IN_PROGRESS: 'Keluar dari sistem...',
+  },
+  PAYMENT: {
+    MODAL_TITLE: 'Pilih Metode Pembayaran',
+    MODAL_DESCRIPTION: 'Pilih metode pembayaran yang Anda inginkan',
+  },
+  DOCUMENTS: {
+    STUDENT_CARD_TITLE: 'KARTU SISWA',
   },
 } as const;
 

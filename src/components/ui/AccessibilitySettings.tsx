@@ -196,16 +196,29 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const applyDyslexiaFont = () => {
-    updateSetting('fontFamily', 'dyslexia');
-    updateSetting('lineSpacing', 'relaxed');
-    updateSetting('letterSpacing', 'wide');
-    updateSetting('dyslexiaMode', true);
+    if (settings.dyslexiaMode) {
+      updateSetting('fontFamily', 'default');
+      updateSetting('lineSpacing', 'normal');
+      updateSetting('letterSpacing', 'normal');
+      updateSetting('dyslexiaMode', false);
+    } else {
+      updateSetting('fontFamily', 'dyslexia');
+      updateSetting('lineSpacing', 'relaxed');
+      updateSetting('letterSpacing', 'wide');
+      updateSetting('dyslexiaMode', true);
+    }
   };
 
   const applyHighContrast = () => {
-    updateSetting('contrastMode', 'high');
-    updateSetting('highContrastColors', true);
-    updateSetting('fontSize', 'large');
+    if (settings.highContrastColors) {
+      updateSetting('contrastMode', 'normal');
+      updateSetting('highContrastColors', false);
+      updateSetting('fontSize', 'medium');
+    } else {
+      updateSetting('contrastMode', 'high');
+      updateSetting('highContrastColors', true);
+      updateSetting('fontSize', 'large');
+    }
   };
 
   const value: AccessibilityContextType = {
@@ -279,6 +292,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               <button
                 type="button"
                 onClick={applyDyslexiaFont}
+                aria-pressed={settings.dyslexiaMode}
                 className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200 text-left"
               >
                 <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-1">Dyslexia-Friendly</h4>
@@ -290,6 +304,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               <button
                 type="button"
                 onClick={applyHighContrast}
+                aria-pressed={settings.highContrastColors}
                 className="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200 text-left"
               >
                 <h4 className="font-medium text-purple-900 dark:text-purple-100 mb-1">High Contrast</h4>
