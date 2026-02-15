@@ -59,7 +59,7 @@ export class NotificationHistoryHandler {
     }
   }
 
-  getUnifiedHistory(limit: number = 20): NotificationHistoryItem[] {
+  getUnifiedHistory(limit: number = NOTIFICATION_CONFIG.MAX_HISTORY_SIZE): NotificationHistoryItem[] {
     try {
       // Reload from localStorage to ensure we have the latest data
       this.loadHistory();

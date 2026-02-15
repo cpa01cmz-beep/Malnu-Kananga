@@ -3,7 +3,7 @@
  * Centralized test configuration to ensure consistency across all test files
  */
 
-import { RETRY_CONFIG } from '../constants';
+import { RETRY_CONFIG, BYTES_PER_KB } from '../constants';
 
 export const TEST_TIMEOUTS = {
     /** Very short timeout for simple operations */
@@ -42,7 +42,7 @@ export const TEST_RETRY_CONFIG = {
 
 export const MOCK_DATA_CONFIG = {
     /** Default mock file size in bytes (1KB) */
-    DEFAULT_FILE_SIZE: 1024,
+    DEFAULT_FILE_SIZE: BYTES_PER_KB,
     /** Default mock pagination total items */
     DEFAULT_TOTAL_ITEMS: 50,
     /** Default skeleton items count */
