@@ -131,6 +131,7 @@ export const ScheduledAutomationManager: React.FC<ScheduledAutomationManagerProp
             size="sm"
             onClick={() => setIsCreating(true)}
             disabled={!settings.enabled}
+            shortcut="Ctrl+N"
           >
             + Tambah Tugas
           </Button>
@@ -249,13 +250,14 @@ export const ScheduledAutomationManager: React.FC<ScheduledAutomationManagerProp
               </div>
             </div>
             <div className="flex gap-2 mt-4 justify-end">
-              <Button variant="secondary" onClick={() => setIsCreating(false)}>
+              <Button variant="secondary" onClick={() => setIsCreating(false)} shortcut="Esc">
                 Batal
               </Button>
               <Button
                 variant="primary"
                 onClick={handleCreateTask}
                 disabled={!formData.name}
+                shortcut="Ctrl+S"
               >
                 Simpan
               </Button>
