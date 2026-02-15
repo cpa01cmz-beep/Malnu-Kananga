@@ -1,7 +1,7 @@
 # Documentation Index
 
    **Created**: 2026-01-05
-        **Last Updated**: 2026-02-15 (Run #134)
+        **Last Updated**: 2026-02-15 (Run #135)
         **Version**: 3.10.6
        **Status**: Active
 
@@ -93,13 +93,13 @@ These files are operational instructions for AI agents and should not be conside
 ---
 
 ## Documentation Metrics
- - **Total Source Files**: 540 TypeScript/TSX files in src/ directory (382 source + 158 test)
- - **Test Files**: 158 test files (*.test.ts, *.test.tsx)
- - **Source Files (Non-Test)**: 382 files
+- **Total Source Files**: 695 TypeScript/TSX files in src/ directory (496 source + 199 test)
+- **Test Files**: 199 test files (*.test.ts, *.test.tsx)
+- **Source Files (Non-Test)**: 496 files
  - **Documentation Files**: 129 (in /docs directory) + 70 archived in `archive/`
  - **Services**: 27 services in src/services/ (excluding .test., .types., and deprecated files)
  - **Components**: 41 components exported from src/components/ui/index.ts
- - **Test Coverage**: 29.2% (158/540 files with tests)
+ - **Test Coverage**: 28.6% (199/695 files with tests)
  - **Code Examples**: 20+
  - **Troubleshooting Scenarios**: 25+
  - **Architecture Diagrams**: 1+ (in ROADMAP.md)
