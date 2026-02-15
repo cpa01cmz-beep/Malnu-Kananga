@@ -4,6 +4,7 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+<<<<<<< HEAD
 ---
 
 ## 2026-02-15 - Header AI Chat Button Keyboard Shortcut
@@ -59,6 +60,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 **PR**: #2447
 
 ---
+
+## 2026-02-15 - ActionSheet Button Type Accessibility
+
+**Learning**: The ActionSheet component had plain `<button>` elements without explicit `type="button"` attribute. This can cause accidental form submissions if the ActionSheet is placed inside a `<form>` element.
+
+**Action**: Added `type="button"` to 3 buttons:
+- Line 184: Action buttons in the actions list
+- Line 216: Cancel button
+- Line 233: Close button (desktop)
+
+**Pattern**: Buttons inside forms should always have explicit `type="button"` to prevent accidental submission:
+- `<button type="button">` - Does not trigger form submission (safe default)
+- `<button type="submit">` - Triggers form submission (default if omitted)
+- `<button type="reset">` - Resets the form
+
+This follows the established pattern in SearchInput and other components.
+
+**Files Modified**:
+- src/components/ui/ActionSheet.tsx
+
+**PR**: #2453
 
 ---
 
