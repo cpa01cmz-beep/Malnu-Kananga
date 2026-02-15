@@ -1,9 +1,7 @@
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, AUDIT_CONFIG } from '../constants';
 import { logger } from '../utils/logger';
 import { generateId } from '../utils/idGenerator';
 import { auditAPI, type AuditLogEntry, type AuditLogFilter, type AuditLogExportOptions, type AuditLogStats } from './api';
-
-const MAX_LOCAL_ENTRIES = 1000;
 
 class AuditService {
   private storageKey: string = STORAGE_KEYS.AUDIT_LOG;
@@ -40,7 +38,7 @@ class AuditService {
 
   private saveLogsToStorage(logs: AuditLogEntry[]): void {
     try {
-      const trimmed = logs.length > MAX_LOCAL_ENTRIES ? logs.slice(0, MAX_LOCAL_ENTRIES) : logs;
+      const trimmed = logs.length > AUDIT_CONFIG.MAX_LOCAL_ENTRIES ? logs.slice(0, AUDIT_CONFIG.MAX_LOCAL_ENTRIES) : logs;
       localStorage.setItem(this.storageKey, JSON.stringify(trimmed));
     } catch (error) {
       logger.error('Failed to save audit logs to storage:', error);
