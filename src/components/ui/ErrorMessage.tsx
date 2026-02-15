@@ -438,16 +438,17 @@ if (variant === 'inline') {
                    <div className="flex-1">
                      <p className="font-medium text-blue-800 dark:text-blue-200 text-sm">{contextualHelp.title}</p>
                      <p className="text-blue-700 dark:text-blue-300 text-xs mt-1">{contextualHelp.content}</p>
-                     {contextualHelp.link && (
-                       <a 
-                         href={contextualHelp.link} 
-                         target="_blank" 
-                         rel="noopener noreferrer"
-                         className="text-blue-600 dark:text-blue-400 text-xs hover:underline mt-1 inline-block"
-                       >
-                         Pelajari lebih lanjut →
-                       </a>
-                     )}
+                      {contextualHelp.link && (
+                        <a 
+                          href={contextualHelp.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          aria-label="Pelajari lebih lanjut (buka di tab baru)"
+                          className="text-blue-600 dark:text-blue-400 text-xs hover:underline mt-1 inline-block"
+                        >
+                          Pelajari lebih lanjut →
+                        </a>
+                      )}
                    </div>
                  </div>
                </div>
