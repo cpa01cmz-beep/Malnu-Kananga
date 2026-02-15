@@ -4,9 +4,6 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
-<<<<<<< HEAD
----
-
 ## 2026-02-15 - Header AI Chat Button Keyboard Shortcut
 
 **Learning**: The Header component's AI Chat button ("Tanya AI") was missing a keyboard shortcut hint, while the adjacent menu button already had `shortcut="Ctrl+M"`. This inconsistency made the chat feature less discoverable for keyboard users in a high-traffic navigation component.
