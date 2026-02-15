@@ -502,11 +502,27 @@ export function QuizGenerator({ onSuccess, onCancel, defaultSubjectId, defaultCl
               Batal
             </Button>
             {step === 'preview' ? (
-              <Button onClick={handleSaveQuiz} disabled={generating} shortcut="Ctrl+S">
+              <Button
+                onClick={handleSaveQuiz}
+                disabled={generating}
+                disabledReason={generating ? 'Sedang menyimpan kuis, harap tunggu...' : undefined}
+                shortcut="Ctrl+S"
+              >
                 Simpan Kuis
               </Button>
             ) : (
-              <Button onClick={handleNextStep} disabled={loading || generating} shortcut="Ctrl+Enter">
+              <Button
+                onClick={handleNextStep}
+                disabled={loading || generating}
+                disabledReason={
+                  loading
+                    ? 'Sedang memuat materi...'
+                    : generating
+                      ? 'Sedang membuat kuis dengan AI...'
+                      : undefined
+                }
+                shortcut="Ctrl+Enter"
+              >
                 {generating ? (
                   <>
                     <LoadingSpinner className="mr-2 h-4 w-4" />
