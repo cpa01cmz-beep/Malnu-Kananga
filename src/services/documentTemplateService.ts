@@ -6,7 +6,7 @@ import {
   type LetterType,
   type BatchGenerationOptions
 } from '../config/document-template-config';
-import { PDF_COLORS } from '../constants';
+import { PDF_COLORS, UI_STRINGS } from '../constants';
 
 class DocumentTemplateService {
   private schoolName: string;
@@ -389,7 +389,7 @@ class DocumentTemplateService {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    doc.text('KARTU SISWA', 27, 10, { align: 'center' });
+    doc.text(UI_STRINGS.DOCUMENTS.STUDENT_CARD_TITLE, 27, 10, { align: 'center' });
     
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(6);
