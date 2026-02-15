@@ -98,6 +98,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     };
   }, []);
 
+  const getPasteKeyboardShortcut = useCallback((): string => {
+    if (typeof navigator === 'undefined') return 'Ctrl+V';
+    const platform = navigator.platform.toLowerCase();
+    const isMac = platform.includes('mac') || platform.includes('darwin');
+    return isMac ? '⌘+V' : 'Ctrl+V';
+  }, []);
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const sizes = ['B', 'KB', 'MB', 'GB'];
@@ -406,6 +413,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     lg: 'p-12 text-lg',
   };
 
+  const uploadAreaAriaLabel = uploading
+    ? `Uploading file, ${uploadProgress}% complete`
+    : `Click to upload or drag and drop files. ${isPasteSupported ? `You can also paste images using ${getPasteKeyboardShortcut()}.` : ''} Supported types: ${acceptedFileTypes}. Max size: ${maxSizeMB}MB`;
+
   const getUploadArea = () => {
     if (uploading) {
       return (
@@ -462,7 +473,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         </p>
         {isPasteSupported && (
           <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-2">
-            You can also paste images (Ctrl+V)
+            You can also paste images ({getPasteKeyboardShortcut()})
           </p>
         )}
       </>
@@ -495,7 +506,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          aria-label={uploading ? `Uploading file, ${uploadProgress}% complete` : `Click to upload or drag and drop files. ${isPasteSupported ? 'You can also paste images using Ctrl+V.' : ''} Supported types: ${acceptedFileTypes}. Max size: ${maxSizeMB}MB`}
+          aria-label={uploadAreaAriaLabel}
           aria-describedby="upload-instructions"
           aria-dropeffect={dragActive ? "copy" : "none"}
           className={`border-2 border-dashed rounded-xl ${sizeClasses[size]} flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 ease-out w-full focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 dark:focus:ring-offset-neutral-900 relative overflow-hidden ${
@@ -516,7 +527,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             >
               <span className="flex items-center gap-2">
                 <kbd className="px-2 py-0.5 bg-neutral-700 dark:bg-neutral-600 rounded text-[10px] font-mono font-bold border border-neutral-500 shadow-sm">
-                  Ctrl+V
+                  {getPasteKeyboardShortcut()}
                 </kbd>
                 <span>tempel gambar</span>
               </span>
@@ -530,7 +541,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         Supported file types: {acceptedFileTypes}. Maximum file size: {maxSizeMB}MB.
         {allowMultiple ? ` You can upload up to ${maxFiles} files.` : ''}
         {dragActive ? ' Files detected. Release to drop.' : ''}
-        {isPasteSupported ? ' You can paste images from clipboard using Ctrl+V.' : ''}
+        {isPasteSupported ? ` You can paste images from clipboard using ${getPasteKeyboardShortcut()}.` : ''}
       </span>
 
       {variant === 'minimal' && (
