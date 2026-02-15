@@ -3865,9 +3865,10 @@ export const UI_STRINGS = {
   REVOKE_ACCESS: 'Batasi',
   WELCOME_BACK: 'Selamat Datang Kembali',
 
-  // Footer UI strings (Flexy: Eliminated hardcoded values - Run #116)
+  // Footer UI strings (Flexy: Eliminated hardcoded values - Run #136)
   FOOTER: {
     EMAIL_ARIA_LABEL: (email: string) => `Kirim email ke ${email}`,
+    HELP_CENTER_LABEL: 'Pusat Bantuan',
     HELP_CENTER_ARIA_LABEL: 'Buka pusat bantuan dan dokumentasi',
     TOOLTIP_HELP_CENTER: 'Buka pusat bantuan dan dokumentasi',
     COMING_SOON: {
@@ -3911,6 +3912,12 @@ export const UI_STRINGS = {
   },
   DOCUMENTS: {
     STUDENT_CARD_TITLE: 'KARTU SISWA',
+  },
+
+  // Documentation UI strings (Flexy: Eliminated hardcoded values - Run #136)
+  DOCUMENTATION: {
+    HELP_CENTER_TITLE: 'Pusat Bantuan',
+    HELP_CENTER_DESCRIPTION: 'Pusat bantuan dan dokumentasi untuk pengguna',
   },
 } as const;
 
