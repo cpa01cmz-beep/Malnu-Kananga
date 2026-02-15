@@ -214,6 +214,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
             <Button
               onClick={() => setShowNewGroupModal(true)}
               className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              shortcut="Ctrl+N"
             >
               + Buat Grup
             </Button>
@@ -405,6 +406,7 @@ export function GroupChat({ currentUser }: GroupChatProps) {
                 onClick={handleCreateGroup}
                 disabled={creatingGroup || selectedParticipants.length === 0 || !groupName}
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                shortcut="Ctrl+Enter"
               >
                 {creatingGroup ? 'Membuat...' : 'Buat Grup'}
               </Button>
