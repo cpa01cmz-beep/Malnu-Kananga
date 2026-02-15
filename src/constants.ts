@@ -597,6 +597,7 @@ export const TIME_MS = {
     MS200: 200,
     MS300: 300,
     MS500: 500,
+    MS600: 600,
     MS800: 800,
     // Very short delays for immediate UI updates
     VERY_SHORT: 10,

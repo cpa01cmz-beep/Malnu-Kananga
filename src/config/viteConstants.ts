@@ -106,7 +106,7 @@ export const ANALYZER_CONFIG = {
   BROTLI_SIZE: true,
 } as const;
 
-const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || '';
+const SCHOOL_NAME = process.env.VITE_SCHOOL_NAME || 'MA Malnu Kananga';
 
 // PWA Manifest Configuration - Flexy: Dynamic school name from environment
 export const PWA_MANIFEST = {
