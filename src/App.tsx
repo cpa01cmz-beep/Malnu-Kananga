@@ -299,6 +299,7 @@ const App: React.FC = () => {
       id: 'open-docs',
       label: 'Buka Dokumentasi',
       description: 'Lihat dokumentasi aplikasi',
+      shortcut: 'F1',
       category: 'Bantuan',
       action: () => setIsDocsOpen(true),
     },
@@ -357,6 +358,11 @@ const App: React.FC = () => {
         description: 'Tutup Command Palette',
         action: () => setIsCommandPaletteOpen(false),
         disabled: !isCommandPaletteOpen,
+      },
+      {
+        key: 'F1',
+        description: 'Buka Dokumentasi Bantuan (F1)',
+        action: () => setIsDocsOpen(true),
       },
     ],
   });
