@@ -38,6 +38,7 @@ export interface GradingActionsProps {
     onConfirm: () => void;
   }>>;
   setShowStats: React.Dispatch<React.SetStateAction<boolean>>;
+  showStats: boolean;
   setIsAnalyzing: React.Dispatch<React.SetStateAction<boolean>>;
   setAnalysisResult: React.Dispatch<React.SetStateAction<string | null>>;
   setIsOCRProcessing: React.Dispatch<React.SetStateAction<boolean>>;
@@ -68,6 +69,7 @@ const GradingActions: React.FC<GradingActionsProps> = ({
   setQueuedGradeUpdates: _setQueuedGradeUpdates,
   setConfirmDialog,
   setShowStats,
+  showStats,
   setIsAnalyzing: _setIsAnalyzing,
   setAnalysisResult,
   setIsOCRProcessing: _setIsOCRProcessing,
@@ -304,7 +306,8 @@ const GradingActions: React.FC<GradingActionsProps> = ({
 
         <Button
           onClick={() => setShowStats(prev => !prev)}
-          variant="secondary"
+          variant={showStats ? 'blue-solid' : 'secondary'}
+          aria-pressed={showStats}
         >
           Statistics
         </Button>
