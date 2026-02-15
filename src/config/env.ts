@@ -15,6 +15,7 @@ export const ENV = {
     PHONE: import.meta.env.VITE_SCHOOL_PHONE || '',
     EMAIL: import.meta.env.VITE_SCHOOL_EMAIL || '',
     WEBSITE: import.meta.env.VITE_SCHOOL_WEBSITE || '',
+    FOUNDING_YEAR: import.meta.env.VITE_SCHOOL_FOUNDING_YEAR || '2000',
     CONTACTS: {
       ADMIN: import.meta.env.VITE_CONTACT_ADMIN || '',
       GURU: {
