@@ -303,6 +303,8 @@ export const StudentTimeline: React.FC<StudentTimelineProps> = ({
                   key={type}
                   type="button"
                   onClick={() => handleTypeToggle(type as TimelineEventType)}
+                  aria-pressed={selectedTypes.includes(type as TimelineEventType)}
+                  aria-label={`Filter ${label}${selectedTypes.includes(type as TimelineEventType) ? ' (aktif)' : ''}`}
                   className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm transition-colors ${
                     selectedTypes.includes(type as TimelineEventType)
                       ? 'bg-blue-600 text-white'
