@@ -4,6 +4,26 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - StudentQuiz Question Navigation Button Accessibility
+
+**Learning**: The StudentQuiz component had a plain `<button>` element for navigating between quiz questions (question number buttons in the grid) that was missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and can trigger unintended form submissions when clicked.
+
+**Action**: Added `type="button"` to the question navigation button in StudentQuiz.tsx:
+- Line 531: Added `type="button"` to the question number button in the quiz navigation grid
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text (already present in this case)
+
+This follows the same accessibility pattern documented from VoiceInputButton.tsx, GradingList.tsx, StudyPlanAnalytics.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic for the StudentQuiz component since it can appear inside forms and users could accidentally submit the quiz when trying to navigate between questions.
+
+**Files Modified**:
+- src/components/StudentQuiz.tsx - Added type="button" to question navigation button
+
+---
+
 ## 2026-02-15 - StudentTimeline Filter Toggle Accessibility
 
 **Learning**: The StudentTimeline component had event type filter buttons that changed visual state (background color changes from gray to blue when selected) but were missing `aria-pressed` attribute. Screen reader users couldn't know which event types were currently selected when filtering the timeline.
