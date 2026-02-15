@@ -508,7 +508,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
   if (loading && currentView === 'assignment-list') {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-500">Memuat data...</div>
+        <div className="text-gray-500">{UI_STRINGS.LOADING_DATA}</div>
       </div>
     );
   }
@@ -518,7 +518,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <AlertCircleIcon className="w-12 h-12 text-red-500" />
         <div className="text-gray-500">{error}</div>
-        <Button onClick={fetchAssignments} aria-label="Coba lagi memuat tugas" shortcut="Ctrl+R">Coba Lagi</Button>
+        <Button onClick={fetchAssignments} aria-label={UI_STRINGS.LOADING_DATA} shortcut="Ctrl+R">{UI_STRINGS.TRY_AGAIN}</Button>
       </div>
     );
   }
@@ -529,7 +529,7 @@ const AssignmentGrading: React.FC<AssignmentGradingProps> = ({
         <OfflineIndicator />
 
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Penilaian Tugas</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{UI_STRINGS.GRADING?.TITLE || 'Penilaian Tugas'}</h2>
           <Button onClick={onBack} variant="secondary" shortcut="Alt+Left">
             Kembali
           </Button>

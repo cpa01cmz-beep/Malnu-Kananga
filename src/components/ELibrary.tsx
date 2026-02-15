@@ -13,7 +13,7 @@ import { VoiceLanguage } from '../types';
 import { categoryService } from '../services/categoryService';
 import { CategoryValidator } from '../utils/categoryValidator';
 import { GRADIENT_CLASSES } from '../config/gradients';
-import { STORAGE_KEYS, TIME_MS, CONVERSION } from '../constants';
+import { STORAGE_KEYS, TIME_MS, CONVERSION, DISPLAY_LIMITS } from '../constants';
 import { ocrService } from '../services/ocrService';
 import { generateTextSummary, compareTextsForSimilarity } from '../services/ocrEnhancementService';
 import { generateMaterialRecommendations } from '../services/ai';
@@ -736,7 +736,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
       if (result.quality.isSearchable) {
         const otherMaterials = materials.filter(m => m.id !== material.id && m.ocrText && m.ocrText.length > 50);
         
-        for (const otherMaterial of otherMaterials.slice(0, 5)) { // Limit to 5 comparisons for performance
+        for (const otherMaterial of otherMaterials.slice(0, DISPLAY_LIMITS.RECOMMENDATIONS)) { // Limit to 5 comparisons for performance
           try {
             const similarity = await compareTextsForSimilarity(ocrText, otherMaterial.ocrText!);
             if (similarity.isPlagiarized) {
@@ -905,7 +905,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {recommendations.slice(0, 3).map((rec) => {
+                  {recommendations.slice(0, DISPLAY_LIMITS.RECENT_ITEMS).map((rec) => {
                     const material = materials.find(m => m.id === rec.materialId);
                     if (!material) return null;
                     return (
@@ -1340,7 +1340,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
             <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-700">
               <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">Hasil Pencarian Semantik</h4>
               <div className="space-y-2 max-h-32 overflow-y-auto">
-                {semanticSearchHook.searchResults.slice(0, 3).map((result, index) => (
+                {semanticSearchHook.searchResults.slice(0, DISPLAY_LIMITS.RECENT_ITEMS).map((result, index) => (
                   <div key={index} className="flex items-center justify-between text-xs bg-white dark:bg-neutral-800 p-2 rounded">
                     <div className="flex-1">
                       <span className="font-medium text-neutral-700 dark:text-neutral-300">
@@ -1386,7 +1386,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
           <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg px-4 py-2">
             <div className="text-xs text-neutral-500 dark:text-neutral-400 mb-1">Statistik Materi</div>
             <div className="flex flex-wrap gap-2">
-              {subjectStats.slice(0, 3).map((stat) => (
+              {subjectStats.slice(0, DISPLAY_LIMITS.RECENT_ITEMS).map((stat) => (
                 <div key={stat.subject.id} className="text-xs">
                   <span className="font-medium text-neutral-700 dark:text-neutral-300">
                     {stat.subject.name}:
@@ -1494,7 +1494,7 @@ const ELibrary: React.FC<ELibraryProps> = ({ onBack, onShowToast }) => {
                       </div>
                       {semanticResult.matchedConcepts.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
-                          {semanticResult.matchedConcepts.slice(0, 3).map((concept, idx) => (
+                          {semanticResult.matchedConcepts.slice(0, DISPLAY_LIMITS.RECENT_ITEMS).map((concept, idx) => (
                             <span key={idx} className="px-2 py-0.5 bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 rounded text-xs">
                               {concept}
                             </span>

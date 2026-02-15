@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Permission, UserRole, UserExtraRole, AuditLog } from '../../types/permissions';
 import { permissionService } from '../../services/permissionService';
 import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../../config/permissions';
-import { TIME_MS } from '../../constants';
+import { TIME_MS, DISPLAY_LIMITS } from '../../constants';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import Tab from '../ui/Tab';
@@ -245,7 +245,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                        </td>
                        <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
                          <div className="max-w-full sm:max-w-xs">
-                           {permissions.slice(0, 3).map(permId => {
+                            {permissions.slice(0, DISPLAY_LIMITS.NOTIFICATION_PREVIEW).map(permId => {
                              const perm = PERMISSIONS[permId];
                              return perm ? (
                                <span key={permId} className="inline-block bg-neutral-100 dark:bg-neutral-700 rounded px-2 py-1 text-xs mr-1 mb-1">
@@ -253,9 +253,9 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                                </span>
                              ) : null;
                            })}
-                           {permissions.length > 3 && (
-                             <span className="text-xs text-neutral-400">+{permissions.length - 3} more</span>
-                           )}
+                            {permissions.length > DISPLAY_LIMITS.NOTIFICATION_PREVIEW && (
+                              <span className="text-xs text-neutral-400">+{permissions.length - DISPLAY_LIMITS.NOTIFICATION_PREVIEW} more</span>
+                            )}
                          </div>
                        </td>
                      </tr>
@@ -302,7 +302,7 @@ const PermissionManager: React.FC<PermissionManagerProps> = ({ onShowToast }) =>
                   </tr>
                 </thead>
                  <tbody className="bg-white dark:bg-neutral-800 divide-y divide-neutral-200 dark:divide-neutral-700">
-                   {auditLogs.slice(0, 50).map((log, index) => (
+                    {auditLogs.slice(0, DISPLAY_LIMITS.AUDIT_LOGS).map((log, index) => (
                      <tr key={index}>
                        <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
                          {new Date(log.timestamp).toLocaleString()}

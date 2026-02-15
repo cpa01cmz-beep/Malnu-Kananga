@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { ELibrary as ELibraryType, MaterialFolder } from '../../types';
+import { MATERIALS_UI_STRINGS } from '../../constants';
 import FolderNavigation from '../FolderNavigation';
 import { HEIGHT_CLASSES } from '../../config/heights';
 import Button from '../ui/Button';
@@ -149,7 +150,7 @@ export function MaterialManagementView({
               value={filters.filterCategory}
               onChange={(e) => onFilterChange({ ...filters, filterCategory: e.target.value })}
               options={[
-                { value: 'all', label: 'Semua Kategori' },
+                { value: 'all', label: MATERIALS_UI_STRINGS.ALL_CATEGORIES },
                 ...categories.map(cat => ({ value: cat, label: cat }))
               ]}
             />
@@ -161,7 +162,7 @@ export function MaterialManagementView({
               value={filters.filterFileType}
               onChange={(e) => onFilterChange({ ...filters, filterFileType: e.target.value })}
               options={[
-                { value: 'all', label: 'Semua Tipe' },
+                { value: 'all', label: MATERIALS_UI_STRINGS.ALL_TYPES },
                 { value: 'PDF', label: 'PDF' },
                 { value: 'DOCX', label: 'DOCX' },
                 { value: 'PPT', label: 'PPT' },

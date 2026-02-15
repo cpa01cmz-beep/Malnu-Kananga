@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MaterialFolder, ELibrary } from '../../types';
 import { FileUploadResponse } from '../../services/apiService';
+import { MATERIALS_UI_STRINGS } from '../../constants';
 import { useMaterialData } from './useMaterialData';
 import { MaterialForm } from './MaterialForm';
 import { MaterialManagementView } from './MaterialManagementView';
@@ -96,7 +97,7 @@ const MaterialUpload: React.FC<MaterialUploadProps> = ({ onBack, onShowToast }) 
 
     setConfirmDialog({
       isOpen: true,
-      title: 'Tambah Materi Baru',
+      title: MATERIALS_UI_STRINGS.ADD_NEW_TITLE,
       message: `Apakah Anda yakin ingin menambahkan materi "${newTitle}" ke kategori "${newCategory}"?`,
       type: 'info',
       onConfirm: async () => {
