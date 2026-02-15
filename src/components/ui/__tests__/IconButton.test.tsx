@@ -1,8 +1,9 @@
  
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import IconButton from '../IconButton';
+import { logger } from '../../../utils/logger';
 
 describe('IconButton', () => {
   const mockIcon = <svg data-testid="test-icon"><circle cx="12" cy="12" r="10" /></svg>;
@@ -176,10 +177,45 @@ describe('IconButton', () => {
   });
 
   describe('Accessibility', () => {
+    beforeEach(() => {
+      vi.spyOn(logger, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('has proper aria-label attribute', () => {
       render(<IconButton icon={mockIcon} ariaLabel="Close modal" />);
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Close modal');
+    });
+
+    it('logs warning in development mode when ariaLabel is missing', () => {
+      vi.stubGlobal('import', { meta: { env: { DEV: true } } });
+      render(<IconButton icon={mockIcon} ariaLabel="" />);
+      expect(logger.warn).toHaveBeenCalledWith(
+        'IconButton requires ariaLabel prop for accessibility. Button will be invisible to screen readers.',
+        expect.objectContaining({ component: 'IconButton' })
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it('logs warning in development mode when ariaLabel is whitespace only', () => {
+      vi.stubGlobal('import', { meta: { env: { DEV: true } } });
+      render(<IconButton icon={mockIcon} ariaLabel="   " />);
+      expect(logger.warn).toHaveBeenCalledWith(
+        'IconButton requires ariaLabel prop for accessibility. Button will be invisible to screen readers.',
+        expect.objectContaining({ component: 'IconButton' })
+      );
+      vi.unstubAllGlobals();
+    });
+
+    it('does not log warning when ariaLabel is provided', () => {
+      vi.stubGlobal('import', { meta: { env: { DEV: true } } });
+      render(<IconButton icon={mockIcon} ariaLabel="Valid label" />);
+      expect(logger.warn).not.toHaveBeenCalled();
+      vi.unstubAllGlobals();
     });
 
     it('has aria-hidden on icon span', () => {

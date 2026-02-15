@@ -1,32 +1,87 @@
 import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
 import { UI_DELAYS } from '../../constants';
+import { logger } from '../../utils/logger';
 
 export type IconButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'ghost';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 export type IconButtonTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
+/**
+ * Props for the IconButton component.
+ *
+ * IconButton is an accessible button component designed for icon-only interactions.
+ * It provides built-in accessibility features including automatic aria-label handling,
+ * focus management, and screen reader support.
+ *
+ * @example
+ * // Basic usage with required ariaLabel
+ * <IconButton
+ *   icon={<TrashIcon />}
+ *   ariaLabel="Delete item"
+ *   onClick={handleDelete}
+ * />
+ *
+ * @example
+ * // With tooltip and keyboard shortcut hint
+ * <IconButton
+ *   icon={<SearchIcon />}
+ *   ariaLabel="Open search"
+ *   tooltip="Search materials"
+ *   shortcut="Ctrl+K"
+ *   onClick={openSearch}
+ * />
+ *
+ * @example
+ * // Loading state with accessibility announcement
+ * <IconButton
+ *   icon={<SaveIcon />}
+ *   ariaLabel="Save document"
+ *   isLoading={isSaving}
+ *   tooltip="Saving..."
+ * />
+ */
 interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Visual style variant - affects colors and hover states */
   variant?: IconButtonVariant;
+  /** Size of the button - affects padding and icon dimensions */
   size?: IconButtonSize;
+  /** The icon element to display (typically an SVG icon component) */
   icon: React.ReactNode;
+  /**
+   * Accessible label for screen readers.
+   * **Required** for accessibility - describes the button's action to assistive technologies.
+   * This is crucial since the button only displays an icon without visible text.
+   *
+   * @example "Delete file", "Close modal", "Toggle dark mode"
+   */
   ariaLabel: string;
+  /**
+   * Optional tooltip text shown on hover/focus.
+   * Provides additional context for sighted users.
+   */
   tooltip?: string;
+  /** Position of the tooltip relative to the button */
   tooltipPosition?: IconButtonTooltipPosition;
-  /** Reason shown in tooltip when button is disabled */
+  /**
+   * Reason shown in tooltip when button is disabled.
+   * Helps users understand why the action is unavailable.
+   * @example "You don't have permission to delete this item"
+   */
   disabledReason?: string;
-  /** Show loading spinner instead of icon */
+  /** Show loading spinner instead of icon. Also announces "loading" to screen readers. */
   isLoading?: boolean;
-  /** Show success state with checkmark */
+  /** Show success state with checkmark icon and "success" announcement */
   showSuccess?: boolean;
-  /** Duration to show success state in milliseconds */
+  /** Duration to show success state in milliseconds (default: 2000ms) */
   successDuration?: number;
-  /** Show error state with X mark */
+  /** Show error state with X mark icon and "error" announcement */
   showError?: boolean;
-  /** Duration to show error state in milliseconds */
+  /** Duration to show error state in milliseconds (default: 2000ms) */
   errorDuration?: number;
   /**
    * Keyboard shortcut to display in tooltip (e.g., "Ctrl+K", "Esc", "Enter")
-   * Improves UX by making keyboard shortcuts discoverable
+   * Improves UX by making keyboard shortcuts discoverable to users.
+   * The shortcut is displayed in a keyboard-style badge within the tooltip.
    */
   shortcut?: string;
   /**
@@ -93,6 +148,15 @@ const IconButton: React.FC<IconButtonProps> = ({
   const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible && !isErrorVisible;
   const hasLoadingTooltip = isLoading && Boolean(tooltip);
   const hasDisabledReason = Boolean(disabledReason) && disabled;
+
+  useEffect(() => {
+    if (import.meta.env.DEV && (!ariaLabel || ariaLabel.trim() === '')) {
+      logger.warn(
+        'IconButton requires ariaLabel prop for accessibility. Button will be invisible to screen readers.',
+        { component: 'IconButton', variant, size }
+      );
+    }
+  }, [ariaLabel, variant, size]);
 
   // Handle success state with auto-reset
   useEffect(() => {
