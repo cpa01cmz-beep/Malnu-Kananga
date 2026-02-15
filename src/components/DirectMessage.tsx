@@ -120,6 +120,7 @@ export function DirectMessage({ currentUser }: DirectMessageProps) {
             <Button
               onClick={() => setShowNewChatModal(true)}
               className="mt-4 bg-blue-600 hover:bg-blue-700"
+              shortcut="Ctrl+N"
             >
               Percakapan Baru
             </Button>

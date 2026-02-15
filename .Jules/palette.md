@@ -4,6 +4,32 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - DirectMessage & GroupChat New Chat Shortcuts
+
+**Learning**: The DirectMessage and GroupChat components' "New Conversation" and "Create Group" buttons were missing keyboard shortcut hints. These are high-traffic messaging components where users frequently start new conversations, and the lack of shortcuts made these actions less discoverable for keyboard users.
+
+**Action**: Added keyboard shortcuts to all new chat/group buttons:
+- DirectMessage.tsx Line 124: Added `shortcut="Ctrl+N"` to "Percakapan Baru" (New Conversation) button
+- GroupChat.tsx Line 218: Added `shortcut="Ctrl+N"` to "+ Buat Grup" (Create Group) button  
+- GroupChat.tsx Line 408: Added `shortcut="Ctrl+Enter"` to modal "Buat Grup" submit button
+
+**Pattern**: Messaging components with create actions should have consistent keyboard shortcuts:
+- New/Create buttons: `shortcut="Ctrl+N"` (standard convention)
+- Submit/Create in modals: `shortcut="Ctrl+Enter"` (form submission pattern)
+- Cancel buttons: `shortcut="Esc"` (modal pattern - already implemented)
+
+This follows the established pattern from UserManagement.tsx, SchoolInventory.tsx, BatchManagement.tsx, and other components where Ctrl+N is used for creating new items.
+
+**Why it matters**: Keyboard shortcuts improve efficiency for power users who frequently create new conversations or groups. The visible shortcut hint (kbd pill) makes shortcuts discoverable without requiring users to hover over each button. This is especially important in messaging workflows where users need quick access to start new conversations while navigating through messages.
+
+**Files Modified**:
+- src/components/DirectMessage.tsx - Added shortcut prop to "Percakapan Baru" button
+- src/components/GroupChat.tsx - Added shortcut props to "Buat Grup" buttons (2 locations)
+
+**PR**: #TBD
+
+---
+
 ## 2026-02-15 - Header AI Chat Button Keyboard Shortcut
 
 **Learning**: The Header component's AI Chat button ("Tanya AI") was missing a keyboard shortcut hint, while the adjacent menu button already had `shortcut="Ctrl+M"`. This inconsistency made the chat feature less discoverable for keyboard users in a high-traffic navigation component.
