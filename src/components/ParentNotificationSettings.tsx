@@ -164,6 +164,7 @@ const ParentNotificationSettings: React.FC<ParentNotificationSettingsProps> = ({
             <IconButton
               icon="×"
               ariaLabel="Tutup pesan error"
+              tooltip="Tutup pesan error"
               variant="ghost"
               size="sm"
               onClick={autoSaveActions.clearError}
