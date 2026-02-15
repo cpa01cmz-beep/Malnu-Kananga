@@ -4,6 +4,27 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-14 - ScheduledAutomationManager Keyboard Shortcuts
+
+**Learning**: The ScheduledAutomationManager component's action buttons (Tambah Tugas, Batal, Simpan) were missing keyboard shortcut hints while other admin components in the codebase consistently use shortcuts for CRUD operations.
+
+**Action**: Added keyboard shortcuts to all three action buttons:
+- Line 136: Added `shortcut="Ctrl+N"` to "Tambah Tugas" button - creates new scheduled task
+- Line 252: Added `shortcut="Esc"` to "Batal" button - cancels/closes the create form
+- Line 258: Added `shortcut="Ctrl+S"` to "Simpan" button - saves the new task
+
+**Pattern**: Admin components with CRUD operations should have consistent keyboard shortcuts:
+- Create/New buttons: `shortcut="Ctrl+N"` (standard convention)
+- Cancel/Close buttons: `shortcut="Esc"` (modal pattern)
+- Save/Submit buttons: `shortcut="Ctrl+S"` (save convention)
+
+This follows the established pattern from RoleManager.tsx, TemplateManagement.tsx, BatchManagement.tsx, and other admin components.
+
+**Files Modified**:
+- src/components/ui/ScheduledAutomationManager.tsx - 3 keyboard shortcuts
+
+**PR**: #2370
+
 ---
 
 ## 2026-02-14 - MaterialTemplatesLibrary Plain Button Type Accessibility
