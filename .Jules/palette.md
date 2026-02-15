@@ -27,7 +27,25 @@ This follows the established pattern from RoleManager.tsx, TemplateManagement.ts
 
 ---
 
-<<<<<<< HEAD
+## 2026-02-14 - MaterialTemplatesLibrary Plain Button Type Accessibility
+
+**Learning**: The MaterialTemplatesLibrary component had two plain `<button>` elements missing the `type="button"` attribute. Without `type="button"`, buttons inside forms default to `type="submit"` and trigger form submission when clicked, potentially causing unintended actions.
+
+**Action**: Added `type="button"` to two plain button elements:
+- Line 371: Added `type="button"` to "Gunakan" (Use Template) button
+- Line 470: Added `type="button"` to "Batal" (Cancel) button in create template modal
+
+**Pattern**: Always audit plain `<button>` elements for:
+1. `type="button"` - Prevents accidental form submission when nested in forms
+2. `aria-label` - Provides screen reader context beyond visible text (already present in both)
+
+This follows the same accessibility pattern documented from AICacheManager.tsx, GradingList.tsx, VoiceInputButton.tsx, and other components with plain button accessibility fixes.
+
+**Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic for modals and dialogs that may appear inside forms.
+
+**Files Modified**:
+- src/components/MaterialTemplatesLibrary.tsx - Added type="button" to 2 buttons
+
 ---
 
 ## 2026-02-14 - RoleManager Keyboard Shortcuts and Tab Accessibility
@@ -112,7 +130,6 @@ This follows the established pattern from NotificationCenter.tsx, ParentMeetings
 ---
 
 ## 2026-02-14 - ErrorMessage Toggle Button Accessibility
->>>>>>> a1f72070 (docs(palette): Add BatchManagement keyboard shortcut UX journal entry)
 
 **Learning**: The ErrorMessage component had a toggle button that showed/hid technical details (correlation ID and timestamp) with text changes between "Show" and "Hide", but was missing the `aria-pressed` attribute. Screen reader users couldn't know whether the technical details were currently visible or hidden when toggling this feature.
 
@@ -242,7 +259,6 @@ This follows the same pattern documented from StudyPlanAnalytics.tsx, VoiceNotif
 - src/components/grading/GradingList.tsx - Added type and aria-label to reset button
 
 **PR**: #2327
->>>>>>> origin/main
 
 ---
 
@@ -302,7 +318,6 @@ This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx,
 This follows the same pattern as TwoFactorAuth.tsx, LoadingState.tsx, StudyPlanAnalytics.tsx, VoiceNotificationSettings.tsx, and other components with plain button accessibility fixes.
 
 **Why it matters**: Without `type="button"`, buttons inside forms default to `type="submit"` and will trigger form submission when clicked, potentially causing unintended actions. This is particularly problematic in data tables, lists, and cards where buttons appear near form inputs.
->>>>>>> origin/main
 
 ---
 
