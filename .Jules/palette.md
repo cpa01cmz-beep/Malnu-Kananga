@@ -4,6 +4,28 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+## 2026-02-15 - StudentTimeline Filter Toggle Accessibility
+
+**Learning**: The StudentTimeline component had event type filter buttons that changed visual state (background color changes from gray to blue when selected) but were missing `aria-pressed` attribute. Screen reader users couldn't know which event types were currently selected when filtering the timeline.
+
+**Action**: Added accessibility attributes to filter toggle buttons in StudentTimeline.tsx:
+- Added `aria-pressed={selectedTypes.includes(type as TimelineEventType)}` to each filter button
+- Added descriptive `aria-label={\`Filter ${label}${selectedTypes.includes(type as TimelineEventType) ? ' (aktif)' : ''}\`}` 
+
+**Pattern**: Toggle buttons that change visual state based on selection MUST have `aria-pressed` for screen reader accessibility:
+- Any button that uses color changes (background, border) to indicate selection
+- Filter toggles in list/grid views
+- Option selection buttons where multiple can be active
+
+This follows the same pattern as ELibrary.tsx, ChatWindow.tsx, ActivityFeed.tsx, and 50+ other components where aria-pressed was added to toggle buttons.
+
+**Files Modified**:
+- src/components/Shared/StudentTimeline.tsx - Added aria-pressed and aria-label to 6+ filter toggle buttons
+
+**PR**: #2382
+
+---
+
 ## 2026-02-14 - ScheduledAutomationManager Keyboard Shortcuts
 
 **Learning**: The ScheduledAutomationManager component's action buttons (Tambah Tugas, Batal, Simpan) were missing keyboard shortcut hints while other admin components in the codebase consistently use shortcuts for CRUD operations.
