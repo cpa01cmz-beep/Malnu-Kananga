@@ -4,6 +4,8 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 
 ---
 
+---
+
 ## 2026-02-15 - Header AI Chat Button Keyboard Shortcut
 
 **Learning**: The Header component's AI Chat button ("Tanya AI") was missing a keyboard shortcut hint, while the adjacent menu button already had `shortcut="Ctrl+M"`. This inconsistency made the chat feature less discoverable for keyboard users in a high-traffic navigation component.
@@ -25,6 +27,38 @@ Critical UX/accessibility learnings specific to MA Malnu Kananga school manageme
 - src/components/Header.tsx - Added shortcut prop to AI Chat button (1 line change)
 
 **PR**: #2446
+
+---
+
+## 2026-02-15 - Button type Attribute for Plain Buttons
+
+**Learning**: Plain `<button>` elements without `type` attribute default to `type="submit"`, which can cause accidental form submissions when buttons are inside `<form>` elements. This is a subtle but critical accessibility issue.
+
+**Action**: Added `type="button"` to plain action buttons:
+- MessageThread.tsx: Reply button
+- GlobalSearchModal.tsx: Clear search button
+
+**Pattern**: Always explicitly set `type="button"` for action buttons:
+- Icon buttons: Already have `type="button"` via IconButton component
+- Plain action buttons: Must explicitly add `type="button"`
+- Form buttons: Use `type="submit"` (default, but explicit is better)
+
+```tsx
+// Good ✓ - Explicit type prevents accidental form submission
+<button type="button" onClick={handleReply}>Balas</button>
+<button type="button" onClick={() => setQuery('')}>✕</button>
+
+// Bad ✗ - Defaults to submit, can cause issues in forms
+<button onClick={handleReply}>Balas</button>
+```
+
+**Files Modified**:
+- src/components/MessageThread.tsx
+- src/components/ui/GlobalSearchModal.tsx
+
+**PR**: #2447
+
+---
 
 ---
 
