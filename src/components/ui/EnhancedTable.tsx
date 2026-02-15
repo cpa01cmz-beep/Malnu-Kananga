@@ -196,6 +196,7 @@ function EnhancedTable<T extends Record<string, string | number | boolean>>({
           {filterable && (
             <button
               onClick={() => setExpandedFilters(!expandedFilters)}
+              aria-pressed={expandedFilters}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors ${
                 expandedFilters
                   ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300'

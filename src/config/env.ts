@@ -36,7 +36,7 @@ export const ENV = {
   EXTERNAL: {
     GOOGLE_FONTS_INTER: import.meta.env.VITE_GOOGLE_FONTS_INTER || 'https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap',
     GOOGLE_FONTS_JETBRAINS: import.meta.env.VITE_GOOGLE_FONTS_JETBRAINS || 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap',
-    RDM_PORTAL: String(import.meta.env.VITE_RDM_PORTAL || 'https://rdm.ma-malnukananga.sch.id'),
+    RDM_PORTAL: String(import.meta.env.VITE_RDM_PORTAL || ''), // Flexy: No hardcoded school URL
   },
 } as const;
 

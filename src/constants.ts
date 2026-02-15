@@ -699,6 +699,12 @@ export const RETRY_CONFIG = {
     MAX_DELAY_MS: 5000,
     BACKOFF_MULTIPLIER: 2,
     INITIAL_RETRY_COUNT: 0, // Flexy: Never hardcode initial retry count!
+    WEBSOCKET_MAX_RECONNECT_ATTEMPTS: 5, // Flexy: Centralized WebSocket retry limit
+} as const;
+
+// Audit Configuration - Flexy: Centralized audit settings
+export const AUDIT_CONFIG = {
+    MAX_LOCAL_ENTRIES: 1000,
 } as const;
 
 // Grade validation limits
@@ -2535,7 +2541,7 @@ export const PLACEHOLDER_IMAGES = {
 // Input Mask Placeholders - Flexy: Never hardcode mask placeholders!
 export const INPUT_MASK_PLACEHOLDERS = {
     NISN: 'NISN 10 digit',
-    PHONE: '081-2345-67890',
+    PHONE: ENV.SCHOOL.PHONE || '08xx-xxxx-xxxx', // Flexy: Use ENV with generic fallback
     DATE: 'DD-MM-YYYY',
     YEAR: '2024',
     GRADE: '0-100',
