@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { AutoSaveStatus } from '../../hooks/useAutoSaveSimple';
-import { UI_STRINGS } from '../../constants';
+import { UI_STRINGS, TIME_MS } from '../../constants';
 
 export type { AutoSaveStatus };
 
@@ -41,7 +41,7 @@ export const AutoSaveIndicator: React.FC<AutoSaveIndicatorProps> = ({
       const timer = setTimeout(() => {
         setDisplayStatus('saved');
         setIsVisible(true);
-      }, 300);
+      }, TIME_MS.MS300);
       return () => clearTimeout(timer);
     } else if (status === 'idle') {
       // Fade out after showing saved state

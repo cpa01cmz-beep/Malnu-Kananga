@@ -7,7 +7,7 @@ import { AlertCircleIcon, CheckCircleIcon } from '../icons/StatusIcons';
 import IconButton from './IconButton';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { generateComponentId } from '../../utils/idGenerator';
-import { UI_DELAYS } from '../../constants';
+import { UI_DELAYS, TIME_MS } from '../../constants';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 export type InputState = 'default' | 'error' | 'success';
@@ -237,7 +237,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(({
       setShowSuccessAnimation(true);
       const timer = setTimeout(() => {
         setShowSuccessAnimation(false);
-      }, 600);
+      }, TIME_MS.MS600);
       return () => clearTimeout(timer);
     }
   }, [validation.state.isValid, validation.state.isTouched, state]);

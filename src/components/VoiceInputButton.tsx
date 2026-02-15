@@ -3,7 +3,7 @@ import { useVoiceRecognition } from '../hooks/useVoiceRecognition';
 import { useVoiceCommands } from '../hooks/useVoiceCommands';
 import { MicrophoneIcon } from './icons/MicrophoneIcon';
 import { MicrophoneOffIcon } from './icons/MicrophoneOffIcon';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, TIME_MS } from '../constants';
 import type { VoiceCommand } from '../types';
 import { logger } from '../utils/logger';
 import MicrophonePermissionHandler from './MicrophonePermissionHandler';
@@ -160,7 +160,7 @@ const [showPermissionHandler, setShowPermissionHandler] = useState(false);
           setTranscriptBuffer('');
           setLastActivityTime(Date.now());
         }
-      }, 10000);
+      }, TIME_MS.TEN_SECONDS);
 
       return () => {
         if (timeoutRef.current) {
