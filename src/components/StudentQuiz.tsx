@@ -528,6 +528,7 @@ export function StudentQuiz({ quiz, onSubmit, onCancel }: StudentQuizProps) {
             const isCurrent = index === progress.currentQuestion;
             return (
               <button
+                type="button"
                 key={index}
                 onClick={() => handleJumpToQuestion(index)}
                 disabled={isSubmitting}
