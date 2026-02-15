@@ -113,11 +113,11 @@ describe('SmallActionButton', () => {
       expect(button).toHaveAttribute('aria-busy', 'true');
     });
 
-    it('should not have aria-busy when not loading', () => {
+    it('should have aria-busy="false" when not loading', () => {
       render(<SmallActionButton>Not Loading</SmallActionButton>);
       
       const button = screen.getByRole('button');
-      expect(button).not.toHaveAttribute('aria-busy');
+      expect(button).toHaveAttribute('aria-busy', 'false');
     });
 
     it('should have proper focus visible states', () => {
@@ -311,11 +311,34 @@ describe('SmallActionButton', () => {
       expect(button).toHaveClass('cursor-default');
     });
 
-    it('should show success tooltip when showSuccess is true', () => {
+    it('should show success aria-label when showSuccess is true', () => {
       render(<SmallActionButton showSuccess>Save</SmallActionButton>);
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('aria-label', 'Berhasil');
+    });
+
+    it('should have aria-live="polite" for screen reader announcements', () => {
+      render(<SmallActionButton>Save</SmallActionButton>);
+
+      const button = screen.getByRole('button');
+      expect(button).toHaveAttribute('aria-live', 'polite');
+    });
+
+    it('should have screen reader announcement element', () => {
+      render(<SmallActionButton showSuccess>Save</SmallActionButton>);
+
+      const announcement = screen.getByRole('status', { hidden: true });
+      expect(announcement).toHaveAttribute('aria-live', 'polite');
+      expect(announcement).toHaveAttribute('aria-atomic', 'true');
+      expect(announcement).toHaveClass('sr-only');
+    });
+
+    it('should announce success to screen readers when showSuccess is true', () => {
+      render(<SmallActionButton showSuccess>Save</SmallActionButton>);
+
+      const announcement = screen.getByRole('status', { hidden: true });
+      expect(announcement).toHaveTextContent('Tindakan berhasil diselesaikan');
     });
 
     it('should auto-hide success state after duration', async () => {

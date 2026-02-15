@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useId, useEffect } from 'react';
-import { XML_NAMESPACES, UI_DELAYS } from '../../constants';
+import { XML_NAMESPACES } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 
 export type SmallActionButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'info' | 'warning' | 'neutral';
@@ -57,18 +57,18 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
 }) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
-  const [showShortcutHint, setShowShortcutHint] = useState(false);
+  const [screenReaderAnnouncement, setScreenReaderAnnouncement] = useState('');
   const buttonRef = useRef<HTMLButtonElement>(null);
   const tooltipId = useId();
+  const announcementId = useId();
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const shortcutHintTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const hasTooltip = Boolean(tooltip) && !isLoading && !isSuccessVisible;
 
-  // Handle success state with auto-reset
   useEffect(() => {
     if (showSuccess) {
       setIsSuccessVisible(true);
+      setScreenReaderAnnouncement('Tindakan berhasil diselesaikan');
 
       if (successTimeoutRef.current) {
         clearTimeout(successTimeoutRef.current);
@@ -76,6 +76,7 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
 
       successTimeoutRef.current = setTimeout(() => {
         setIsSuccessVisible(false);
+        setScreenReaderAnnouncement('');
       }, successDuration);
     }
 
@@ -83,31 +84,17 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
       if (successTimeoutRef.current) {
         clearTimeout(successTimeoutRef.current);
       }
-      if (shortcutHintTimeoutRef.current) {
-        clearTimeout(shortcutHintTimeoutRef.current);
-      }
     };
   }, [showSuccess, successDuration]);
 
   const showTooltip = useCallback(() => {
     if (!isSuccessVisible && !isLoading) {
       setIsTooltipVisible(true);
-      // Show shortcut hint after a delay if shortcut is provided
-      if (shortcut && !isLoading && !isSuccessVisible) {
-        shortcutHintTimeoutRef.current = setTimeout(() => {
-          setShowShortcutHint(true);
-        }, UI_DELAYS.SHORTCUT_HINT_DELAY);
-      }
     }
-  }, [isSuccessVisible, isLoading, shortcut]);
+  }, [isSuccessVisible, isLoading]);
 
   const hideTooltip = useCallback(() => {
     setIsTooltipVisible(false);
-    setShowShortcutHint(false);
-    if (shortcutHintTimeoutRef.current) {
-      clearTimeout(shortcutHintTimeoutRef.current);
-      shortcutHintTimeoutRef.current = null;
-    }
   }, []);
 
   const classes = `
@@ -119,15 +106,11 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
     ${className}
   `.replace(/\s+/g, ' ').trim();
 
-  const ariaProps: Record<string, string | boolean | undefined> = {};
-
-  if (isLoading) {
-    ariaProps['aria-busy'] = 'true';
-  }
-
-  if (isSuccessVisible) {
-    ariaProps['aria-label'] = 'Berhasil';
-  }
+  const getAriaLabel = () => {
+    if (isLoading) return 'Memuat...';
+    if (isSuccessVisible) return 'Berhasil';
+    return undefined;
+  };
 
   const tooltipPositionClasses: Record<SmallActionButtonTooltipPosition, string> = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
@@ -151,11 +134,13 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
       className={`${classes} relative`}
       disabled={disabled || isLoading}
       aria-describedby={hasTooltip ? tooltipId : undefined}
+      aria-label={getAriaLabel()}
+      aria-live="polite"
+      aria-busy={isLoading}
       onMouseEnter={hasTooltip ? showTooltip : undefined}
       onMouseLeave={hasTooltip ? hideTooltip : undefined}
       onFocus={hasTooltip ? showTooltip : undefined}
       onBlur={hasTooltip ? hideTooltip : undefined}
-      {...ariaProps}
       {...props}
     >
       {isLoading ? (
@@ -227,33 +212,15 @@ const SmallActionButton: React.FC<SmallActionButtonProps> = ({
         </span>
       )}
 
-      {/* Keyboard shortcut hint - Micro UX Delight */}
-      {showShortcutHint && shortcut && !isLoading && !isSuccessVisible && (
-        <div
-          className={`
-            absolute -top-9 left-1/2 -translate-x-1/2
-            px-2.5 py-1
-            bg-neutral-800 dark:bg-neutral-700
-            text-white text-[10px] font-medium
-            rounded-md shadow-md
-            whitespace-nowrap
-            transition-all duration-200 ease-out
-            pointer-events-none
-            z-50
-            ${showShortcutHint ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}
-          `.replace(/\s+/g, ' ').trim()}
-          role="tooltip"
-          aria-hidden={!showShortcutHint}
-        >
-          <span className="flex items-center gap-1">
-            <kbd className="px-1 py-0 bg-neutral-600 dark:bg-neutral-600 rounded text-[9px] font-bold border border-neutral-500">
-              {shortcut}
-            </kbd>
-            <span>shortcut</span>
-          </span>
-          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-neutral-800 dark:border-t-neutral-700" aria-hidden="true" />
-        </div>
-      )}
+      <span
+        id={announcementId}
+        className="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {screenReaderAnnouncement}
+      </span>
     </button>
   );
 };
