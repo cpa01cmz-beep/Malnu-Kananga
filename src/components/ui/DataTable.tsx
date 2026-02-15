@@ -11,7 +11,7 @@ import { PencilIcon } from '../icons/PencilIcon';
 import { TrashIcon } from '../icons/TrashIcon';
 import { XMarkIcon } from '../icons/MaterialIcons';
 import { HEIGHTS } from '../../config/heights';
-import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, LOADING_MESSAGES, TIME_MS, UI_DELAYS, UI_STRINGS } from '../../constants';
+import { BULK_OPERATIONS_CONFIG, DATATABLE_CONFIG, INDEX, LOADING_MESSAGES, TIME_MS, UI_DELAYS, UI_STRINGS } from '../../constants';
 import { useReducedMotion } from '../../hooks/useAccessibility';
 import { useHapticFeedback } from '../../utils/hapticFeedback';
 
@@ -493,7 +493,7 @@ const DataTable = <T extends Record<string, unknown>>({
       <div className="space-y-4 sm:hidden mobile-card-stack">
         {data.map((record, index) => {
         const isSelected = selection ? selection.selectedRowKeys.includes(selection.getRowKey(record)) : false;
-        const titleColumn = cardTitleColumn || columns[0]?.key;
+        const titleColumn = cardTitleColumn || columns[INDEX.FIRST]?.key;
         const titleColumnObj = columns.find(col => col.key === titleColumn);
         const titleValue = titleColumnObj ? getCellValue(titleColumnObj, record, index) : '';
         

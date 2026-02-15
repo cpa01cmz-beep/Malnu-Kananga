@@ -1613,12 +1613,19 @@ export const PERMISSION_CONFIG = {
     MAX_AUDIT_LOGS: 1000,
 } as const;
 
+// Email template dimensions - Flexy: Centralized email template sizing!
+export const EMAIL_TEMPLATE_DIMENSIONS = {
+    MAX_WIDTH: '600px',
+    MARGIN: '0 auto',
+    PADDING: '20px',
+} as const;
+
 // Email template styles - Flexy: Never hardcode styles in email templates!
 export const EMAIL_TEMPLATE_STYLES = {
-    CONTAINER: '.container { max-width: 600px; margin: 0 auto; padding: 20px; }',
-    CONTAINER_MAX_WIDTH: '600px',
-    CONTAINER_MARGIN: '0 auto',
-    CONTAINER_PADDING: '20px',
+    CONTAINER: `.container { max-width: ${EMAIL_TEMPLATE_DIMENSIONS.MAX_WIDTH}; margin: ${EMAIL_TEMPLATE_DIMENSIONS.MARGIN}; padding: ${EMAIL_TEMPLATE_DIMENSIONS.PADDING}; }`,
+    CONTAINER_MAX_WIDTH: EMAIL_TEMPLATE_DIMENSIONS.MAX_WIDTH,
+    CONTAINER_MARGIN: EMAIL_TEMPLATE_DIMENSIONS.MARGIN,
+    CONTAINER_PADDING: EMAIL_TEMPLATE_DIMENSIONS.PADDING,
 } as const;
 
 // Email template colors - Flexy: Never hardcode colors in email templates!
@@ -3896,6 +3903,93 @@ export const LOG_MESSAGES = {
     UNHANDLED_REJECTION: 'Unhandled promise rejection:',
   },
 } as const;
+
+// ============================================================================
+// Flexy Modularity Additions - Run #127 (2026-02-15)
+// ============================================================================
+
+/**
+ * Array Index Constants - Flexy: Never hardcode array indices!
+ * Use these semantic constants instead of magic numbers like [0]
+ */
+export const INDEX = {
+    /** First element index - use for accessing first item in arrays */
+    FIRST: 0,
+    /** Second element index */
+    SECOND: 1,
+    /** Third element index */
+    THIRD: 2,
+    /** Last element index (use with array.length - 1) */
+    LAST_OFFSET: 1,
+} as const;
+
+/**
+ * Semantic Index Constants - Flexy: Use domain-specific index names for clarity
+ */
+export const SEMANTIC_INDICES = {
+    /** First subject index in study plans */
+    FIRST_SUBJECT: INDEX.FIRST,
+    /** First column index in data tables */
+    FIRST_COLUMN: INDEX.FIRST,
+    /** First focusable element index */
+    FIRST_FOCUSABLE: INDEX.FIRST,
+    /** Initial tab index */
+    INITIAL_TAB: INDEX.FIRST,
+    /** First element in focus scope */
+    FIRST_ELEMENT: INDEX.FIRST,
+    /** Date part index for ISO date extraction (split('T')[0]) */
+    DATE_ONLY_PART: INDEX.FIRST,
+    /** Time part index for ISO date extraction (split('T')[1]) */
+    TIME_ONLY_PART: INDEX.SECOND,
+} as const;
+
+/**
+ * Document Template Constants - Flexy: Never hardcode document dimensions!
+ */
+export const DOCUMENT_TEMPLATE = {
+    /** Default page margin in pixels for document templates */
+    MARGIN_PX: 20,
+    /** Default page margin as string with px unit */
+    MARGIN: '20px',
+    /** Top margin */
+    MARGIN_TOP: '20px',
+    /** Right margin */
+    MARGIN_RIGHT: '20px',
+    /** Bottom margin */
+    MARGIN_BOTTOM: '20px',
+    /** Left margin */
+    MARGIN_LEFT: '20px',
+} as const;
+
+/**
+ * Mobile Enhancement Constants - Flexy: Never hardcode mobile-specific values!
+ */
+export const MOBILE_DIMENSIONS = {
+    /** Square element size for mobile UI elements */
+    SQUARE_SIZE: 300,
+    /** Square element size with px unit */
+    SQUARE_SIZE_PX: '300px',
+    /** Fixed element padding for mobile */
+    FIXED_PADDING: 128,
+    /** Fixed element padding with px unit */
+    FIXED_PADDING_PX: '128px',
+} as const;
+
+/**
+ * Date Parsing Constants - Flexy: Never hardcode date separators!
+ */
+export const DATE_PARSING = {
+    /** ISO date separator between date and time parts */
+    ISO_SEPARATOR: 'T',
+    /** Common date separator */
+    DATE_SEPARATOR: '-',
+    /** Time separator */
+    TIME_SEPARATOR: ':',
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #127
+// ============================================================================
 
 // ============================================================================
 // End of Flexy Modularity Additions - Run #116

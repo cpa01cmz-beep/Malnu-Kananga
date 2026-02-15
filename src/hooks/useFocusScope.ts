@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 
-import { TIME_MS, UI_ACCESSIBILITY } from '../constants';
+import { INDEX, TIME_MS, UI_ACCESSIBILITY } from '../constants';
 
 export interface FocusScopeOptions {
   restoreFocus?: boolean;
@@ -50,8 +50,8 @@ export const useFocusScope = (options: FocusScopeOptions = {}) => {
   const getEdgeElements = useCallback(() => {
     const elements = getFocusableElements();
     return {
-      first: elements[0],
-      last: elements[elements.length - 1],
+      first: elements[INDEX.FIRST],
+      last: elements[elements.length - INDEX.LAST_OFFSET],
     };
   }, [getFocusableElements]);
 
@@ -300,7 +300,7 @@ export const useFormFocus = (formRef: React.RefObject<HTMLFormElement>) => {
     ) as HTMLElement[];
 
     if (invalidElements.length > 0) {
-      const firstInvalid = invalidElements[0];
+      const firstInvalid = invalidElements[INDEX.FIRST];
       firstInvalid.focus();
       firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       

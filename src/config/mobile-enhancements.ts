@@ -3,7 +3,7 @@
  * Advanced mobile-first design patterns and touch optimizations
  */
 
-import { BREAKPOINTS } from '../constants';
+import { BREAKPOINTS, MOBILE_DIMENSIONS } from '../constants';
 
 export const MOBILE_ENHANCEMENTS = `
 /* Enhanced Mobile Container System */
@@ -79,8 +79,8 @@ export const MOBILE_ENHANCEMENTS = `
 }
 
 .btn-touch.ripple::before {
-  width: 300px;
-  height: 300px;
+  width: ${MOBILE_DIMENSIONS.SQUARE_SIZE_PX};
+  height: ${MOBILE_DIMENSIONS.SQUARE_SIZE_PX};
   opacity: 0;
 }
 

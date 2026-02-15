@@ -3,7 +3,7 @@
  * Flexy: Centralized configuration for document templates
  */
 
-import { APP_CONFIG, TIME_MS } from '../constants';
+import { APP_CONFIG, DOCUMENT_TEMPLATE, TIME_MS } from '../constants';
 
 /** Template types available in the system */
 export type DocumentTemplateType = 
@@ -335,10 +335,10 @@ export const DOCUMENT_TEMPLATE_CONFIG = {
     unit: 'mm' as const,
     format: 'a4' as const,
     margins: {
-      top: 20,
-      right: 20,
-      bottom: 20,
-      left: 20,
+      top: DOCUMENT_TEMPLATE.MARGIN_PX,
+      right: DOCUMENT_TEMPLATE.MARGIN_PX,
+      bottom: DOCUMENT_TEMPLATE.MARGIN_PX,
+      left: DOCUMENT_TEMPLATE.MARGIN_PX,
     },
   },
   
