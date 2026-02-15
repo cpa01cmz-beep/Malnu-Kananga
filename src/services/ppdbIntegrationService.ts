@@ -11,7 +11,7 @@ import { ppdbAPI, studentsAPI, usersAPI } from './apiService';
 import { unifiedNotificationManager } from './notifications/unifiedNotificationManager';
 import { emailService } from './emailService';
 import { logger } from '../utils/logger';
-import { DATE_PARSING, INDEX, STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
+import { DATE_PARSING, INDEX, STORAGE_KEYS, APP_CONFIG, DEFAULT_CLASS_CONFIG, EMAIL_COLORS, EMAIL_FONT_FAMILY, PPDB_CONFIG, ID_FORMAT, USER_ROLES, PASSWORD_GENERATION, ID_PREFIXES, USER_STATUS, STUDENT_ID_PREFIX, SERVICE_ERROR_MESSAGES } from '../constants';
 import type { PPDBRegistrant, Student, User, PPDBAutoCreationConfig, PPDBAutoCreationAudit } from '../types';
 
 /**
@@ -447,7 +447,7 @@ class PPDBIntegrationService {
         ],
         subject: `Selamat! Siswa Diterima di ${APP_CONFIG.SCHOOL_NAME}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="font-family: ${EMAIL_FONT_FAMILY}; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
             <p>Kami dengan senang hati menginformasikan bahwa <strong>${registrant.fullName}</strong> telah diterima di ${APP_CONFIG.SCHOOL_NAME}.</p>
@@ -813,7 +813,7 @@ class PPDBIntegrationService {
         ],
         subject: 'Selamat! Akun Siswa Telah Dibuat',
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="font-family: ${EMAIL_FONT_FAMILY}; max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: ${EMAIL_COLORS.GREEN_SUCCESS};">Selamat! Pendaftaran Diterima</h2>
             <p>Dear ${registrant.parentName},</p>
             <p>Kami dengan senang hati menginformasikan bahwa akun siswa untuk <strong>${registrant.fullName}</strong> telah dibuat secara otomatis.</p>

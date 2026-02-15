@@ -1664,6 +1664,9 @@ export const EMAIL_COLORS = {
     STATUS_BG: '#ffedd5',
 } as const;
 
+// Email font family - Flexy: Never hardcode fonts in email templates!
+export const EMAIL_FONT_FAMILY = 'Arial, sans-serif' as const;
+
 // Phone format constants - Flexy: Never hardcode phone formats!
 export const PHONE_FORMAT = {
     INDONESIA_PREFIX: '628',
