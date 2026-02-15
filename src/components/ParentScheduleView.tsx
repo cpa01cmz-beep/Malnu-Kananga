@@ -226,7 +226,9 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
                 Ajukan Pertemuan dengan Guru
               </h3>
               <button
+                type="button"
                 onClick={() => setShowMeetingRequest(false)}
+                aria-label="Tutup modal ajukan pertemuan"
                 className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 text-2xl"
               >
                 ×
@@ -253,7 +255,9 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
                       <div className="space-y-2">
                         {teacher.availableSlots.map((slot, idx) => (
                           <button
+                            type="button"
                             key={idx}
+                            aria-label={`Ajukan pertemuan dengan ${teacher.teacherName} pada hari ${slot.day} jam ${slot.startTime} - ${slot.endTime}`}
                             onClick={() => {
                               // Handle meeting request with this slot
                               handleMeetingRequest(
@@ -262,7 +266,7 @@ const ParentScheduleView: React.FC<ParentScheduleViewProps> = ({ onShowToast, ch
                                 slot.startTime,
                                 `Pertemuan orang tua dengan ${teacher.teacherName}`,
                                 teacher.subject,
-                                teacher.teacherName
+                                teacher.className
                               );
                             }}
                             className="w-full text-left p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
