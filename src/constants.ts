@@ -3893,6 +3893,11 @@ export const UI_STRINGS = {
   NOTIFICATIONS: {
     GRADE_UPDATE_TITLE: (subject: string) => `Nilai Update: ${subject}`,
   },
+
+  // Grading & Assignment strings (Flexy: Run #133)
+  GRADING: {
+    TITLE: 'Penilaian Tugas',
+  },
 } as const;
 
 // ============================================================================
@@ -3994,7 +3999,67 @@ export const DATE_PARSING = {
 } as const;
 
 // ============================================================================
-// End of Flexy Modularity Additions - Run #127
+// Flexy Modularity Additions - Run #133 (UI Strings & Display Limits Centralization)
+// ============================================================================
+
+/**
+ * PDF Document Constants - Flexy: Never hardcode document dimensions!
+ */
+export const PDF_DIMENSIONS = {
+    PAGE_WIDTH_MM: 54,
+    PAGE_HEIGHT_MM: 86,
+    PAGE_SIZE: [54, 86] as const,
+    FORMAT: 'pdf',
+} as const;
+
+/** Material Management UI Strings - Flexy: Run #133 */
+export const MATERIALS_UI_STRINGS = {
+    ADD_NEW_TITLE: 'Tambah Materi Baru',
+    ADD_BUTTON: 'Tambah Materi',
+    ALL_CATEGORIES: 'Semua Kategori',
+    ALL_TYPES: 'Semua Tipe',
+    NO_MATCH_MESSAGE: 'Tidak ada materi yang cocok dengan filter',
+} as const;
+
+/** Permission Management UI Strings - Flexy: Run #133 */
+export const PERMISSIONS_UI_STRINGS = {
+    MANAGEMENT_TITLE: 'Permission Management System',
+    USER_PERMISSIONS_TAB: 'User Permissions',
+    ROLE_MATRIX_TAB: 'Role Matrix',
+    AUDIT_LOGS_TAB: 'Audit Logs',
+} as const;
+
+/** Messaging & Communication UI Strings - Flexy: Run #133 */
+export const MESSAGING_UI_STRINGS = {
+    CREATE_CONVERSATION: 'Buat Percakapan',
+    TEACHER_MESSAGES_TITLE: 'Pesan Guru',
+    LOAD_ERROR: 'Gagal memuat data pesan',
+    COMPLETE_FIELDS: 'Mohon lengkapi semua field',
+} as const;
+
+/** Progress & Reports UI Strings - Flexy: Run #133 */
+export const PROGRESS_UI_STRINGS = {
+    LEARNING_REPORT_TITLE: 'Laporan Progres Belajar',
+    AI_ANALYSIS_SECTION: 'Analisis AI',
+    FEEDBACK_MAIN: 'Feedback Utama',
+} as const;
+
+/** Insights & Analytics UI Strings - Flexy: Run #133 */
+export const INSIGHTS_UI_STRINGS = {
+    ACTIVATE_AI: 'Aktifkan AI Insights',
+    LOAD_ERROR: 'Gagal Memuat Insights',
+    PERFORMANCE_ANALYSIS: 'Analisis Performa',
+} as const;
+
+/** Error Message UI Strings - Flexy: Run #133 */
+export const ERROR_UI_STRINGS = {
+    LOADING_EVENTS: 'Gagal memuat kegiatan',
+    LOADING_HISTORY: 'Gagal memuat riwayat notifikasi',
+    EVENT_SCHEDULED: 'Kegiatan berhasil dijadwalkan',
+} as const;
+
+// ============================================================================
+// End of Flexy Modularity Additions - Run #133
 // ============================================================================
 
 // ============================================================================
