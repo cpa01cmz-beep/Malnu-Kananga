@@ -48,7 +48,7 @@ const Footer: React.FC<FooterProps> = ({ onDocsClick }) => {
                           <ul className="space-y-3 text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
                                 <li>
                                     <Tooltip content={UI_STRINGS.FOOTER.TOOLTIP_HELP_CENTER} position="top">
-                                        <button type="button" onClick={onDocsClick} aria-label={UI_STRINGS.FOOTER.HELP_CENTER_ARIA_LABEL} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">Pusat Bantuan</button>
+                                        <button type="button" onClick={onDocsClick} aria-label={UI_STRINGS.FOOTER.HELP_CENTER_ARIA_LABEL} className="hover:text-primary-600 dark:hover:text-primary-400 text-left transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/50 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-neutral-800 rounded px-1 py-0.5 font-medium">{UI_STRINGS.FOOTER.HELP_CENTER_LABEL}</button>
                                     </Tooltip>
                                 </li>
                                 <li>

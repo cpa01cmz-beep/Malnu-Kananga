@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import Modal from './ui/Modal';
 import { HEIGHT_CLASSES } from '../config/heights';
-import { APP_CONFIG } from '../constants';
+import { APP_CONFIG, UI_STRINGS } from '../constants';
 import { idGenerators } from '../utils/idGenerator';
 
 interface DocumentationPageProps {
@@ -62,10 +62,10 @@ const DocumentationPage: React.FC<DocumentationPageProps> = ({ isOpen, onClose }
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Pusat Bantuan"
+      title={UI_STRINGS.DOCUMENTATION.HELP_CENTER_TITLE}
       size="xl"
       animation="scale-in"
-      description="Pusat bantuan dan dokumentasi untuk pengguna"
+      description={UI_STRINGS.DOCUMENTATION.HELP_CENTER_DESCRIPTION}
     >
       <main className={`flex-grow overflow-y-auto ${HEIGHT_CLASSES.MODAL.CONTENT}`}>
           <AccordionItem title="Untuk Pengguna Umum">
