@@ -204,6 +204,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
             rightIcon={
               query ? (
                 <button
+                  type="button"
                   onClick={() => setQuery('')}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   aria-label="Hapus pencarian"
