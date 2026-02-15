@@ -5,7 +5,7 @@ import { CloseIcon } from './icons/CloseIcon';
 import { ArrowDownTrayIcon } from './icons/ArrowDownTrayIcon';
 import { fileStorageAPI, FileUploadResponse } from '../services/apiService';
 import { logger } from '../utils/logger';
-import { mbToBytes } from '../constants';
+import { mbToBytes, BYTES_PER_KB } from '../constants';
 import Button from './ui/Button';
 import ProgressBar from './ui/ProgressBar';
 import ConfirmationDialog from './ui/ConfirmationDialog';
@@ -71,10 +71,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 B';
-    const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    const i = Math.floor(Math.log(bytes) / Math.log(BYTES_PER_KB));
+    return Math.round((bytes / Math.pow(BYTES_PER_KB, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
   const formatSpeed = (bytesPerSecond: number): string => {

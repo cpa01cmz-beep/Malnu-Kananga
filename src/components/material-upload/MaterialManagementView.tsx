@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { ELibrary as ELibraryType, MaterialFolder } from '../../types';
-import { MATERIALS_UI_STRINGS } from '../../constants';
+import { MATERIALS_UI_STRINGS, BYTES_PER_KB } from '../../constants';
 import FolderNavigation from '../FolderNavigation';
 import { HEIGHT_CLASSES } from '../../config/heights';
 import Button from '../ui/Button';
@@ -86,10 +86,9 @@ export function MaterialManagementView({
 
   const formatFileSize = (bytes: number): string => {
     if (!bytes) return '0 B';
-    const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+    const i = Math.floor(Math.log(bytes) / Math.log(BYTES_PER_KB));
+    return `${parseFloat((bytes / Math.pow(BYTES_PER_KB, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const handleClearFilters = useCallback(() => {

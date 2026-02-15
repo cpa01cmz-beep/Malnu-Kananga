@@ -262,9 +262,9 @@ export default function AuditLogViewer({ onClose }: AuditLogViewerProps) {
         emptyMessage="Tidak ada log audit"
         pagination={{
           currentPage: filter.page || 1,
-          totalPages: Math.ceil(logs.length / (filter.limit || 20)),
+          totalPages: Math.ceil(logs.length / (filter.limit || DISPLAY_LIMITS.AUDIT_LOGS)),
           totalItems: logs.length,
-          itemsPerPage: filter.limit || 20,
+          itemsPerPage: filter.limit || DISPLAY_LIMITS.AUDIT_LOGS,
           onPageChange: (page) => setFilter(prev => ({ ...prev, page })),
         }}
         onRowClick={() => {}}
