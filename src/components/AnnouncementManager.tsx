@@ -407,6 +407,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                           title="Tandai sebagai dibaca"
                           ariaLabel="Tandai sebagai dibaca"
                           variant="ghost"
+                          shortcut="M"
                         />
                       )}
                       <IconButton
@@ -415,6 +416,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                         title="Preview"
                         ariaLabel="Preview"
                         variant="ghost"
+                        shortcut="P"
                       />
                       {canManageAnnouncements && (
                         <>
@@ -438,6 +440,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             title="Edit"
                             ariaLabel="Edit"
                             variant="ghost"
+                            shortcut="E"
                           />
                           <IconButton
                             onClick={() => handleToggleStatus(announcement)}
@@ -446,6 +449,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             ariaLabel={announcement.isActive ? 'Nonaktifkan' : 'Aktifkan'}
                             aria-pressed={announcement.isActive}
                             variant="ghost"
+                            shortcut="T"
                           />
                           <IconButton
                             onClick={() => setShowAnalyticsModal(announcement)}
@@ -453,6 +457,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             title="Analytics"
                             ariaLabel="Analytics"
                             variant="ghost"
+                            shortcut="A"
                           />
                           <IconButton
                             onClick={() => requestDelete(announcement)}
@@ -460,6 +465,7 @@ const AnnouncementManager: React.FC<AnnouncementManagerProps> = ({ onBack, onSho
                             title="Hapus"
                             ariaLabel="Hapus"
                             variant="ghost"
+                            shortcut="Del"
                           />
                         </>
                       )}
