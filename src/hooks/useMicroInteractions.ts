@@ -304,7 +304,7 @@ export const useModalAnimation = (isOpen: boolean) => {
       // Delay hiding for animation
       setTimeout(() => {
         setIsVisible(false);
-      }, 300);
+      }, TIME_MS.MS300);
     }
   }, [isOpen]);
 

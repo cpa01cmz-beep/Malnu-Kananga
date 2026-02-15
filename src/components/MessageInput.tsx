@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Button from './ui/Button';
 import { XMarkIcon } from './icons/MaterialIcons';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, UI_DIMENSIONS, TEXT_LIMITS } from '../constants';
+import { STORAGE_KEYS, FILE_SIZE_LIMITS, BYTES_PER_KB, UI_DIMENSIONS, TEXT_LIMITS, UI_DELAYS } from '../constants';
 import type { User } from '../types';
 import { logger } from '../utils/logger';
 
@@ -200,7 +200,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
                   setShowClearTooltip(true);
                   shortcutHintTimeoutRef.current = setTimeout(() => {
                     setShowShortcutHint(true);
-                  }, 400);
+                  }, UI_DELAYS.SHORTCUT_HINT_DELAY);
                 }}
                 onMouseLeave={() => {
                   setShowClearTooltip(false);
@@ -214,7 +214,7 @@ export function MessageInput({ onSendMessage, disabled, placeholder = 'Ketik pes
                   setShowClearTooltip(true);
                   shortcutHintTimeoutRef.current = setTimeout(() => {
                     setShowShortcutHint(true);
-                  }, 400);
+                  }, UI_DELAYS.SHORTCUT_HINT_DELAY);
                 }}
                 onBlur={() => {
                   setShowClearTooltip(false);

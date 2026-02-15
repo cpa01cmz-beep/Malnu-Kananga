@@ -373,7 +373,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({ onShowToast }) => {
     setTimeout(() => {
       setCurrentView(view);
       setNavigatingView(null);
-    }, 300);
+    }, TIME_MS.MS300);
   }, []);
 
   // Handle manual sync
